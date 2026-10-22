@@ -50,29 +50,47 @@ Masa.svc = (() => {
 
   const OVERPASS = [
     "https://overpass-api.de/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter",
-    "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+    "https://overpass.private.coffee/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter"
   ];
-  /* Ask all mirrors at once and take the first good answer. Public Overpass servers are often busy. */
-  async function overpass(query, signal) {
-    const ctls = OVERPASS.map(() => new AbortController());
-    const stopAll = () => ctls.forEach(c => c.abort());
-    signal?.addEventListener("abort", stopAll);
+  async function overpassOnce(ep, query, signal) {
+    const j = await getJSON(ep, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "data=" + encodeURIComponent(query)
+    }, 30000, signal);
+    if (!j || !Array.isArray(j.elements)) throw new Error("bad overpass answer");
+    if (!j.elements.length && j.remark) throw new Error("overpass busy: " + j.remark);
+    return j;
+  }
+  /* Start on one mirror; if it has not answered after a few seconds, also ask the next one.
+     The first good answer wins and the others are cancelled. */
+  function overpass(query, signal, start = 0) {
+    const order = [...OVERPASS.slice(start), ...OVERPASS.slice(0, start)];
+    const ctls = [];
+    let launched = 0, failed = 0, done = false;
+    return new Promise((resolve, reject) => {
+      const finish = (ok, v) => { if (done) return; done = true; timers.forEach(clearTimeout); ctls.forEach(c => c.abort()); ok ? resolve(v) : reject(v); };
+      const launch = () => {
+        if (done || launched >= order.length) return;
+        const c = new AbortController(); ctls.push(c);
+        overpassOnce(order[launched++], query, c.signal)
+          .then(j => finish(true, j))
+          .catch(() => { failed++; if (failed >= order.length) finish(false, new Error("overpass unavailable")); else launch(); });
+      };
+      const timers = [setTimeout(launch, 6000), setTimeout(launch, 12000)];
+      signal?.addEventListener("abort", () => finish(false, new Error("aborted")));
+      launch();
+    });
+  }
+
+  /* Wikipedia articles with coordinates near a point: a fast, reliable list of real sights. */
+  async function wikiGeo(lang, lat, lng, radius, signal) {
     try {
-      return await Promise.any(OVERPASS.map((ep, i) => getJSON(ep, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "data=" + encodeURIComponent(query)
-      }, 35000, ctls[i].signal).then(j => {
-        if (!j || !Array.isArray(j.elements) || (j.remark && /runtime error|timed out/i.test(j.remark) && !j.elements.length)) throw new Error("overpass busy");
-        return j;
-      })));
-    } catch (e) {
-      throw signal?.aborted ? e : new Error("overpass unavailable");
-    } finally {
-      stopAll();
-      signal?.removeEventListener("abort", stopAll);
-    }
+      const u = `https://${lang}.wikipedia.org/w/api.php?action=query&list=geosearch&format=json&origin=*&gslimit=100&gsradius=${Math.min(10000, Math.round(radius))}&gscoord=${lat.toFixed(5)}|${lng.toFixed(5)}`;
+      const j = await getJSON(u, {}, 15000, signal);
+      return (j.query?.geosearch || []).map(g => ({ title: g.title, lat: g.lat, lng: g.lon, pageid: g.pageid, lang }));
+    } catch { return []; }
   }
 
   /* Hebrew labels, short descriptions and Wikipedia article titles, 50 ids per call. */
@@ -124,5 +142,5 @@ Masa.svc = (() => {
     } catch { return null; }
   }
 
-  return { getJSON, mapLimit, geocode, overpass, wikidata, wikiSummary, walkRoute };
+  return { getJSON, mapLimit, geocode, overpass, wikiGeo, wikidata, wikiSummary, walkRoute };
 })();

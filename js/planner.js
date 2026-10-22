@@ -70,17 +70,42 @@ Masa.planner = (() => {
     return "view";
   }
 
-  function buildQuery(lat, lng, R, interests) {
+  /* Three small queries instead of one big one: busy public servers answer small ones much more reliably. */
+  function buildQueries(lat, lng, R, interests) {
     const A = (r = R) => `(around:${Math.round(r)},${lat.toFixed(5)},${lng.toFixed(5)})`;
-    const q = [];
-    q.push(`(nwr["tourism"~"^(attraction|museum|gallery|viewpoint)$"]["name"]${A()};nwr["historic"~"^(monument|castle|ruins|archaeological_site|fort|city_gate|palace|church|monastery|memorial|building|tower|aqueduct|bridge)$"]["name"]["wikidata"]${A()};)->.a;.a out center tags qt 280;`);
-    q.push(`(nwr["amenity"="marketplace"]["name"]${A()};nwr["amenity"~"^(restaurant|cafe)$"]["name"]["wikidata"]${A()};nwr["amenity"="restaurant"]["name"]["cuisine"]["website"]${A(R * 0.45)};)->.f;.f out center tags qt 160;`);
-    q.push(`nwr["amenity"="place_of_worship"]["name"]["wikidata"]${A()}->.r;.r out center tags 60;`);
-    q.push(`(nwr["leisure"~"^(park|garden)$"]["name"]["wikidata"]${A()};nwr["natural"="beach"]["name"]${A()};)->.n;.n out center tags 50;`);
-    if (interests.includes("night")) q.push(`nwr["amenity"~"^(bar|pub|nightclub)$"]["name"]${A(R * 0.6)}->.b;.b out center tags 80;`);
-    if (interests.includes("shopping")) q.push(`nwr["shop"~"^(mall|department_store)$"]["name"]${A()}->.s;.s out center tags 30;`);
-    if (interests.includes("family")) q.push(`(nwr["tourism"~"^(zoo|aquarium|theme_park)$"]["name"]${A(R * 2)};nwr["leisure"="water_park"]["name"]${A(R * 2)};)->.k;.k out center tags 30;`);
-    return `[out:json][timeout:25];${q.join("")}`;
+    const H = "[out:json][timeout:20];";
+    const sights = H + `(nwr["tourism"~"^(attraction|museum|gallery|viewpoint)$"]["name"]${A()};nwr["historic"~"^(monument|castle|ruins|archaeological_site|fort|city_gate|palace|church|monastery|memorial|building|tower|aqueduct|bridge)$"]["name"]["wikidata"]${A()};);out center tags 220;`;
+    const food = H + `(nwr["amenity"="marketplace"]["name"]${A()};nwr["amenity"~"^(restaurant|cafe)$"]["name"]["wikidata"]${A()};nwr["amenity"="restaurant"]["name"]["cuisine"]["website"]${A(R * 0.4)};);out center tags 150;`;
+    const extra = [`nwr["amenity"="place_of_worship"]["name"]["wikidata"]${A()};`, `nwr["leisure"~"^(park|garden)$"]["name"]["wikidata"]${A()};`, `nwr["natural"="beach"]["name"]${A()};`];
+    if (interests.includes("night")) extra.push(`nwr["amenity"~"^(bar|pub|nightclub)$"]["name"]${A(R * 0.5)};`);
+    if (interests.includes("shopping")) extra.push(`nwr["shop"~"^(mall|department_store)$"]["name"]${A()};`);
+    if (interests.includes("family")) extra.push(`nwr["tourism"~"^(zoo|aquarium|theme_park)$"]["name"]${A(R * 2)};`, `nwr["leisure"="water_park"]["name"]${A(R * 2)};`);
+    return [sights, food, H + `(${extra.join("")});out center tags 150;`];
+  }
+
+  /* Wikipedia "nearby" articles as sights: used to fill in, or alone when OpenStreetMap is down */
+  const WIKI_SKIP = /(תחנת|רחוב|שדרות|כביש|קו |שדה התעופה|נמל התעופה|בית חולים|אוניברסיט|בית ספר|שגרירות|מלון|שכונ|רכבת|מטרו|חשמלית|מחוז|רובע \d|station|street|road|avenue|line\b|airport|hospital|universit|school|embassy|hotel|district|neighbourhood|neighborhood|metro|railway|tram|bus\b|constituency|company)/i;
+  function wikiCat(t) {
+    if (/(מוזיאון|גלריה|museum|gallery)/i.test(t)) return "art";
+    if (/(כנסיי|כנסיית|קתדרל|בזיליק|מנזר|בית הכנסת|מסגד|מקדש|קפלה|church|cathedral|basilica|monastery|synagogue|mosque|temple|chapel|abbey)/i.test(t)) return "religion";
+    if (/(פארק|גן |גני |park|garden)/i.test(t)) return "nature";
+    if (/(גשר|כיכר|מגדל|תצפית|bridge|square|tower|viewpoint|lookout)/i.test(t)) return "view";
+    return "history";
+  }
+  function wikiPool(items, center, interests, osmPool) {
+    const out = [];
+    for (const w of items) {
+      if (WIKI_SKIP.test(w.title)) continue;
+      const p = { osm: `wiki/${w.lang}/${w.pageid}`, name: w.title, local: w.title, cat: wikiCat(w.title), lat: w.lat, lng: w.lng, tags: {}, wikidata: null, website: null, hours: null, fee: null, charge: null };
+      p["_" + w.lang] = w.title;
+      if (osmPool.some(o => o.wikidata && km(o, p) < 0.1)) continue;
+      const twin = out.find(o => km(o, p) < 0.06);
+      if (twin) { if (w.lang === "en") twin._en = w.title; continue; }
+      p.dist = km(center, p);
+      p.score = (w.lang === "he" ? 5.5 : 3.5) + (interests.includes(p.cat) ? 4 : 0) - p.dist * 0.55;
+      out.push(p);
+    }
+    return out;
   }
 
   function score(p, interests, cc) {
@@ -315,17 +340,28 @@ Masa.planner = (() => {
     opts.onGeo?.(geo);
 
     step(1);
-    let R = 3500;
-    if (geo.bbox) R = Math.min(5000, Math.max(2000, km({ lat: geo.bbox.s, lng: geo.bbox.w }, { lat: geo.bbox.n, lng: geo.bbox.e }) * 1000 / 4.5));
+    let R = 3000;
+    if (geo.bbox) R = Math.min(4000, Math.max(1800, km({ lat: geo.bbox.s, lng: geo.bbox.w }, { lat: geo.bbox.n, lng: geo.bbox.e }) * 1000 / 4.5));
     const pkey = `${geo.lat.toFixed(2)},${geo.lng.toFixed(2)}|${[...interests].sort().join(",")}`;
     let els = cachedPool(pkey)?.els;
+    let wikiItems = [];
     if (!els) {
-      try { els = slim((await svc.overpass(buildQuery(geo.lat, geo.lng, R, interests), signal)).elements || []); }
-      catch (e) { if (signal?.aborted) throw { code: "cancelled" }; throw { code: "network" }; }
-      if (els.length) cachePool(pkey, els);
+      const [qs, qf, qx] = buildQueries(geo.lat, geo.lng, R, interests);
+      const res = await Promise.allSettled([
+        svc.overpass(qs, signal, 0), svc.overpass(qf, signal, 1), svc.overpass(qx, signal, 2),
+        svc.wikiGeo("he", geo.lat, geo.lng, R * 1.2, signal), svc.wikiGeo("en", geo.lat, geo.lng, R * 1.2, signal)
+      ]);
+      chk();
+      const osmOk = res.slice(0, 3).filter(r => r.status === "fulfilled");
+      els = slim(osmOk.flatMap(r => r.value.elements || []));
+      wikiItems = [...(res[3].value || []), ...(res[4].value || [])];
+      if (!els.length && !wikiItems.length) throw { code: "network" };
+      if (osmOk.length === 3 && els.length) cachePool(pkey, els);
     }
     chk();
-    const pool = normalize(els, geo, interests, geo.cc);
+    const osmPool = normalize(els, geo, interests, geo.cc);
+    const osmSights = osmPool.filter(p => !["food", "night"].includes(p.cat)).length;
+    const pool = osmSights >= 25 ? osmPool : [...osmPool, ...wikiPool(wikiItems, geo, interests, osmPool)];
 
     step(2);
     const perDay = { "רגוע": 3, "מאוזן": 4, "אינטנסיבי": 5 }[pace] || 4;
@@ -375,7 +411,7 @@ Masa.planner = (() => {
       experiences: take(p => p.tags.amenity === "marketplace" || ["night", "family", "shopping"].includes(p.cat) || (p.cat === "food" && p.wikidata), 4),
       free: take(p => ["view", "nature", "religion"].includes(p.cat) && p.fee !== "yes", 3)
     };
-    const idea = p => ({ ...toIdea(p), _wd: p.wikidata, _wiki: p.tags?.wikipedia || null });
+    const idea = p => ({ ...toIdea(p), _wd: p.wikidata, _wiki: p.tags?.wikipedia || null, _he: p._he || null, _en: p._en || null });
     const trip = {
       city: geo.name, cityLocal: geo.local, country: geo.country, cc: geo.cc, lat: geo.lat, lng: geo.lng, source: "osm",
       createdAt: Date.now(), pending: true, opts: { ...opts, geo: undefined, onGeo: undefined, interests },
@@ -383,6 +419,7 @@ Masa.planner = (() => {
       days: dayStops.map((list, i) => {
         const stops = list.map(p => {
           const s = toStop(p, budget);
+          s._he = p._he || null; s._en = p._en || null;
           s.nearby = (nearbyOf.get(p.osm) || []).map(idea);
           return s;
         });
@@ -397,7 +434,8 @@ Masa.planner = (() => {
       }
     };
     const n = stopsFlat.length;
-    trip.summary = `${n} תחנות אמיתיות מ-OpenStreetMap, מסודרות למסלולי הליכה לפי ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;
+    const src = stopsFlat.some(p => p.osm.startsWith("wiki/")) ? (stopsFlat.every(p => p.osm.startsWith("wiki/")) ? "מוויקיפדיה" : "מ-OpenStreetMap ומוויקיפדיה") : "מ-OpenStreetMap";
+    trip.summary = `${n} תחנות אמיתיות ${src}, מסודרות למסלולי הליכה לפי ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;
     return trip;
   }
 
@@ -412,7 +450,7 @@ Masa.planner = (() => {
     const apply = (o, id, wikiTag) => {
       const e = id && wd[id];
       if (e?.labelHe) o.name = e.labelHe;
-      o._he = e?.hewiki || null; o._en = e?.enwiki || null;
+      o._he = e?.hewiki || o._he || null; o._en = e?.enwiki || o._en || null;
       const wt = (wikiTag || "").match(/^(he|en):(.+)$/);
       if (wt && !o["_" + wt[1]]) o["_" + wt[1]] = wt[2];
       return e;
