@@ -449,7 +449,7 @@
  },
  "madrid": {
   "at": "2026-10-23T18:04:35.196Z",
-  "seconds": 413,
+  "seconds": 454,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -473,28 +473,18 @@
    "he": 55,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "Calle de Fuencarral (79)",
    "Gran Vía (44)",
-   "Calle de Claudio Coello (23)",
    "Calle de Serrano (22)",
-   "Calle Preciados (22)"
+   "Calle Preciados (22)",
+   "Calle de Goya (20)"
   ],
   "log": [
-   "overpass-api.de ok 260 33535ms",
-   "overpass-api.de ok 450 34160ms",
-   "overpass-api.de ok 300 31015ms",
-   "overpass-api.de HTTP 502 426ms",
-   "overpass-api.de ok 350 38312ms",
-   "overpass-api.de ok 300 44553ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 502 410ms",
-   "overpass-api.de ok 60 30851ms",
-   "overpass-api.de HTTP 502 409ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 106 31031ms",
-   "overpass-api.de ok 1114 32988ms",
-   "streets: 1114 shops"
+   "(updated: streets)",
+   "overpass-api.de ok 1259 32597ms",
+   "streets: 1259 shops"
   ]
  },
  "athens": {
