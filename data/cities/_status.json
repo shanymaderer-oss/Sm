@@ -286,7 +286,7 @@
  },
  "berlin": {
   "at": "2026-10-23T17:34:13.596Z",
-  "seconds": 441,
+  "seconds": 482,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -310,29 +310,18 @@
    "he": 100,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "Rosenthaler Straße (56)",
    "Alte Schönhauser Straße (31)",
-   "Oranienstraße (27)",
    "Neue Schönhauser Straße (25)",
-   "Münzstraße (24)"
+   "Oranienstraße (27)",
+   "Friedrichstraße (21)"
   ],
   "log": [
-   "overpass-api.de ok 260 44963ms",
-   "overpass-api.de ok 450 40925ms",
-   "overpass-api.de ok 300 32821ms",
-   "overpass-api.de HTTP 502 382ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 350 37947ms",
-   "overpass-api.de ok 300 36387ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de ok 200 41491ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de ok 200 31413ms",
-   "overpass-api.de HTTP 502 381ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 800 28408ms",
-   "streets: 800 shops"
+   "(updated: streets)",
+   "overpass-api.de ok 1301 32974ms",
+   "streets: 1301 shops"
   ]
  },
  "amsterdam": {
