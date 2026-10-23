@@ -870,5 +870,56 @@
    "overpass-api.de ok 1 31878ms",
    "streets: 1 shops"
   ]
+ },
+ "istanbul": {
+  "at": "2026-10-23T19:06:47.821Z",
+  "seconds": 644,
+  "osm": {
+   "sights": 241,
+   "restaurants": 0,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 192,
+   "diet": 13,
+   "extra": 200,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 53,
+   "drink": 15,
+   "buy": 26,
+   "see": 120,
+   "sleep": 67,
+   "withCoords": 253,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 55,
+   "en": 100
+  },
+  "streets": [
+   "Uzun Çarşı Caddesi (79)",
+   "Çakmakçılar Yokuşu (62)",
+   "Fevzipaşa Caddesi (59)",
+   "Mahmutpaşa Yokuşu (52)",
+   "Mercan Caddesi (46)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de ok 241 33334ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de HTTP 504 51814ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 300 28603ms",
+   "overpass-api.de ok 350 33958ms",
+   "overpass-api.de ok 192 35042ms",
+   "overpass-api.de ok 13 27295ms",
+   "overpass-api.de HTTP 502 398ms",
+   "overpass-api.de ok 200 32395ms",
+   "overpass-api.de ok 2069 45020ms",
+   "streets: 2069 shops"
+  ]
  }
 }
