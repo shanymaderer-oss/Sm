@@ -41,7 +41,7 @@
  },
  "rome": {
   "at": "2026-10-23T16:27:13.159Z",
-  "seconds": 408,
+  "seconds": 452,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -65,18 +65,18 @@
    "he": 100,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "Via Nazionale (71)",
    "Via del Corso (53)",
-   "Via Frattina (39)",
    "Via dei Condotti (37)",
+   "Via Frattina (39)",
    "Via del Tritone (18)"
   ],
   "log": [
    "(updated: streets)",
-   "overpass-api.de HTTP 502 596ms",
-   "overpass-api.de ok 785 39572ms",
-   "streets: 785 shops"
+   "overpass-api.de ok 877 35486ms",
+   "streets: 877 shops"
   ]
  },
  "barcelona": {
