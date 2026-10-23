@@ -326,10 +326,10 @@
  },
  "amsterdam": {
   "at": "2026-10-23T17:44:32.683Z",
-  "seconds": 615,
+  "seconds": 703,
   "osm": {
    "sights": 260,
-   "restaurants": 0,
+   "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
@@ -350,31 +350,20 @@
    "he": 87,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "Kalverstraat (80)",
    "Nieuwendijk (55)",
    "Leidsestraat (43)",
    "Pieter Cornelisz. Hooftstraat (36)",
-   "Utrechtsestraat (31)"
+   "Ferdinand Bolstraat (26)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 260 34929ms",
-   "overpass-api.de HTTP 502 388ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 502 409ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 300 23533ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de ok 350 32654ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 300 28938ms",
-   "overpass-api.de ok 60 42065ms",
-   "overpass-api.de ok 84 31189ms",
-   "overpass-api.de ok 966 33855ms",
-   "streets: 966 shops"
+   "(updated: restaurants, streets)",
+   "overpass-api.de HTTP 502 463ms",
+   "overpass-api.de ok 450 32071ms",
+   "overpass-api.de ok 1089 29697ms",
+   "streets: 1089 shops"
   ]
  },
  "lisbon": {
