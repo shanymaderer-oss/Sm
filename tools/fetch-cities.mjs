@@ -31,7 +31,7 @@ async function overpass(q, log) {
     } catch (e) { log.push(`${new URL(ep).host} ${e.name === "AbortError" ? "timeout" : e.message} ${Date.now() - t0}ms`); }
     await sleep(10000 * (i + 1));
   }
-  return [];
+  return null; // every server failed: not the same as "nothing there"
 }
 async function voyage(title) {
   const get = async t => {
@@ -62,7 +62,7 @@ const only = process.argv.slice(2);
 mkdirSync("data/cities", { recursive: true });
 const statusPath = "data/cities/_status.json";
 const status = existsSync(statusPath) ? JSON.parse(readFileSync(statusPath, "utf8")) : {};
-const OPTIONAL = ["diet", "streets"]; // these can honestly be empty (no kosher places, no street addresses)
+const OPTIONAL = ["diet"]; // there can honestly be no kosher places; streets are asked again until found (cheap, one query)
 async function doCity(c) {
   const t0 = Date.now();
   const log = [];
@@ -76,8 +76,8 @@ async function doCity(c) {
   let streets = prev?.streets || [];
   for (const k of need) {
     const e = await overpass(q[k], log);
-    if (k === "streets") { streets = S.shopStreets(e); counts[k] = streets.length; log.push(`streets: ${e.length} shops`); }
-    else { counts[k] = e.length; els.push(...e); }
+    if (k === "streets") { if (e) { streets = S.shopStreets(e); counts[k] = streets.length; log.push(`streets: ${e.length} shops`); } else delete counts[k]; }
+    else { counts[k] = e ? e.length : 0; els.push(...(e || [])); }
     await sleep(8000);
   }
   let v, he, en;
