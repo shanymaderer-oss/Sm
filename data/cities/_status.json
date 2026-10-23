@@ -186,5 +186,43 @@
    "overpass-api.de HTTP 502 386ms",
    "overpass-api.de ok 200 30455ms"
   ]
+ },
+ "budapest": {
+  "at": "2026-10-23T16:53:25.525Z",
+  "seconds": 295,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 29,
+   "extra": 105
+  },
+  "voyage": {
+   "eat": 75,
+   "drink": 28,
+   "buy": 71,
+   "see": 239,
+   "sleep": 68,
+   "withCoords": 502,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "log": [
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 260 25749ms",
+   "overpass-api.de ok 450 34237ms",
+   "overpass-api.de ok 300 31809ms",
+   "overpass-api.de ok 350 25041ms",
+   "overpass-api.de ok 300 30991ms",
+   "overpass-api.de HTTP 502 554ms",
+   "overpass-api.de ok 29 28675ms",
+   "overpass-api.de HTTP 502 335ms",
+   "overpass-api.de ok 105 30780ms"
+  ]
  }
 }
