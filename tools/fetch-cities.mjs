@@ -29,7 +29,7 @@ async function overpass(q, log) {
       if (Array.isArray(j.elements) && (j.elements.length || !j.remark)) { log.push(`${new URL(ep).host} ok ${j.elements.length} ${Date.now() - t0}ms`); return j.elements; }
       log.push(`${new URL(ep).host} remark ${String(j.remark).slice(0, 80)}`);
     } catch (e) { log.push(`${new URL(ep).host} ${e.name === "AbortError" ? "timeout" : e.message} ${Date.now() - t0}ms`); }
-    await sleep(6000 * (i + 1));
+    await sleep(10000 * (i + 1));
   }
   return [];
 }
@@ -67,7 +67,7 @@ async function doCity(c) {
   const log = [];
   const q = S.buildQueries(c.lat, c.lng, c.R);
   const els = [], counts = {};
-  for (const [k, v] of Object.entries(q)) { const e = await overpass(v, log); counts[k] = e.length; els.push(...e); await sleep(2500); }
+  for (const [k, v] of Object.entries(q)) { const e = await overpass(v, log); counts[k] = e.length; els.push(...e); await sleep(8000); }
   const [v, he, en] = await Promise.all([voyage(c.en), wikiGeo("he", c.lat, c.lng, c.R * 1.2), wikiGeo("en", c.lat, c.lng, c.R * 1.2)]);
   const data = { city: c, fetchedAt: new Date().toISOString(), els: S.slim(els), voyage: v.list, wiki: { he, en } };
   const by = t => v.list.filter(x => x.type === t).length;
@@ -77,7 +77,16 @@ async function doCity(c) {
   console.log(c.slug, JSON.stringify(status[c.slug]));
 }
 const list = CITIES.filter(c => !only.length || only.includes(c.slug));
+const FORCE = process.env.FORCE === "1" || only.length > 0;
+const fresh = c => {
+  const st = status[c.slug];
+  if (!st || !existsSync(`data/cities/${c.slug}.json`)) return false;
+  const ageDays = (Date.now() - Date.parse(st.at)) / 864e5;
+  const keys = Object.keys(S.buildQueries(c.lat, c.lng, c.R));
+  return ageDays < 6 && keys.every(k => (st.osm || {})[k] > 0);
+};
 for (const c of list) {
+  if (!FORCE && fresh(c)) { console.log(c.slug, "fresh, skipped"); continue; }
   await doCity(c);
   commit(`נתוני עיר: ${c.slug}`);
   await sleep(3000);

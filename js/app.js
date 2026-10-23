@@ -551,6 +551,7 @@ SCREENS.place = {
     ${(s.signals || []).length ? `<div class="sigs">${s.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
     ${s.whyLang === "en" ? `<div class="vquote"><p dir="ltr" lang="en">${esc(s.why)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : `<p>${esc(s.why)}</p>`}
     ${contactRow(s)}
+    ${brokerRow(s)}
     <div class="card storycard"><h2>${ic("book")} הסיפור של המקום</h2>
       ${s.history ? `<p class="story" ${s.histLang === "en" ? 'dir="ltr" lang="en" style="text-align:left"' : ""}>${esc(s.history)}</p>` : `<p class="lead">${S.trip.pending ? "טוענים את הסיפור…" : ai.enabled() ? "עוד אין כאן סיפור. המדריך החכם יכול לספר אותו." : "לא מצאנו ערך בוויקיפדיה על המקום הזה."}</p>`}
       ${s.fact ? `<div class="didyou"><b>הידעתם? </b>${esc(s.fact)}</div>` : ""}
@@ -987,6 +988,7 @@ SCREENS.poi = {
     ${p.signals?.length ? `<div class="sigs">${p.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
     ${p.vtext ? `<div class="vquote"><p dir="ltr" lang="en">${esc(p.vtext)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : ""}
     ${contactRow(p)}
+    ${HOTEL_KINDS.includes(p.kind) ? "" : brokerRow(p)}
     ${p.hours ? `<div class="hoursrow">${ic("clock")}<span>שעות פתיחה: <bdi dir="ltr" class="nowrap">${esc(p.hours)}</bdi></span></div>` : ""}
     ${HOTEL_KINDS.includes(p.kind) ? hotelBook(p) : `<div class="card"><h2>${ic("plus")} הוספה למסלול</h2>
       <div class="keyrow"><select id="poiDay" class="select" style="flex:1">${dayOpts}</select><button type="button" class="btn" id="poiAdd">הוספה</button></div></div>`}
@@ -1022,6 +1024,30 @@ $("gsearch").onsubmit = e => {
   if (known) flyCenter(known, 11);
   go("goals");
 };
+
+/* ================= broker links: one tap to the site that books it ================= */
+const cityName = () => S.trip?.cityEn || S.trip?.cityLocal || "";
+function brokerRow(p) {
+  const q = `${p.local || p.name} ${cityName()}`;
+  if (["restaurant", "cafe"].includes(p.kind) || p.meal === "lunch" || p.meal === "dinner") {
+    return `<div class="broker"><span>הזמנת שולחן</span><div class="chiprow">
+      ${p.website ? `<a class="chipbtn" href="${esc(p.website)}" target="_blank" rel="noopener">${ic("ext")}אתר המסעדה</a>` : ""}
+      <a class="chipbtn" href="https://www.thefork.com/search?queryText=${encodeURIComponent(q)}" target="_blank" rel="noopener">${ic("ext")}TheFork</a>
+      <a class="chipbtn" href="${reviewsUrl(p)}" target="_blank" rel="noopener">${ic("pin")}בגוגל מפות</a></div></div>`;
+  }
+  if (["museum", "gallery", "attraction", "sight", "zoo", "themepark", "view", "church"].includes(p.kind) || p.booking?.needed) {
+    return `<div class="broker"><span>כרטיסים וסיורים</span><div class="chiprow">
+      ${p.website ? `<a class="chipbtn" href="${esc(p.website)}" target="_blank" rel="noopener">${ic("shield")}אתר רשמי</a>` : `<a class="chipbtn" href="${gSearch(`${p.local || p.name} official site tickets`)}" target="_blank" rel="noopener">${ic("shield")}חיפוש האתר הרשמי</a>`}
+      <a class="chipbtn" href="https://www.getyourguide.com/s/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">${ic("ext")}GetYourGuide</a>
+      <a class="chipbtn" href="https://www.tiqets.com/en/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">${ic("ext")}Tiqets</a></div>
+      <small class="muted">באתר הרשמי בדרך כלל הכי זול. באתרים האחרים יש סיורים מודרכים וכרטיסי דילוג על התור.</small></div>`;
+  }
+  return "";
+}
+function flightsUrl() {
+  const { start, end, people } = tripDates();
+  return `https://www.google.com/travel/flights?q=${encodeURIComponent(`Flights from TLV to ${cityName()} on ${dstr(start)} through ${dstr(end)} for ${people} adults`)}`;
+}
 
 /* ================= hotels: a broker to the booking sites ================= */
 function tripCenter(t = S.trip) {
@@ -1126,6 +1152,8 @@ SCREENS.info = {
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backInfo" aria-label="חזרה">${ic("back")}</button><span class="eyebrow">לפני שטסים</span><span style="width:38px"></span></div>
     <h1 style="font-size:1.5rem">מה צריך לדעת ב${esc(t.country || t.city)}</h1>
+    <div class="card"><h2>${ic("nav")} טיסות</h2><p>חיפוש טיסות מתל אביב ל${esc(t.city)} בתאריכים של הטיול, בהשוואת מחירים של גוגל.</p>
+      <div class="chiprow"><a class="chipbtn" href="${flightsUrl()}" target="_blank" rel="noopener">${ic("ext")}טיסות ב-Google Flights</a><a class="chipbtn" href="https://www.skyscanner.co.il/" target="_blank" rel="noopener">${ic("ext")}Skyscanner</a></div></div>
     <div class="card"><h2>${ic("sun")} מזג אוויר</h2>${wx}</div>
     ${ci ? `<div class="card"><h2>${ic("coin")} כסף: ${esc(ci.curHe)}</h2>${money}<p>${esc(ci.pay)}</p></div>` : ""}
     <div class="factgrid">

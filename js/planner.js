@@ -61,7 +61,7 @@ Masa.planner = (() => {
   const SLOT_KINDS = {
     history: ["sight", "church", "attraction"], art: ["museum", "gallery"], view: ["view", "attraction", "sight"],
     nature: ["park", "beach", "view"], shopping: ["mall", "store", "market", "shop"], family: ["zoo", "themepark", "park", "museum"],
-    food: ["market", "deli", "dessert", "cafe", "bakery"], night: ["bar"]
+    food: ["market", "deli", "bakery", "dessert", "cafe"], night: ["bar"]
   };
 
   /* typical crowd level per hour, 07:00–22:00 (16 values). An estimate, shown as such. */
@@ -250,7 +250,7 @@ Masa.planner = (() => {
       let bi = -1, bv = -Infinity;
       rest.forEach((p, i) => {
         if ([...chosen, ...out].some(o => o.id === p.id || km(o, p) < minGapKm)) return;
-        const v = p.q - p.dist * 0.6 - 1.4 * (cnt[p.kind] || 0);
+        const v = p.q - p.dist * 0.6 - (p.kind === "church" || p.kind === "cafe" ? 3 : 2) * (cnt[p.kind] || 0);
         if (v > bv) { bv = v; bi = i; }
       });
       if (bi < 0) break;
@@ -461,9 +461,9 @@ Masa.planner = (() => {
 
     const q = SRC.buildQueries(geo.lat, geo.lng, R);
     const data = { els: [], voyage: [], wiki: { he: [], en: [] } };
-    const done = { sights: false, restaurants: false, cafes: false, hotels: false, extra: false, voyage: false, wiki: false };
+    const done = { sights: false, restaurants: false, cafes: false, hotels: false, shopping: false, extra: false, voyage: false, wiki: false };
     /* the main server allows about two queries at a time per visitor, so queue them: most important first */
-    const order = ["sights", "restaurants", "cafes", "hotels", "extra"].filter(k => q[k]);
+    const order = ["sights", "restaurants", "cafes", "hotels", "shopping", "extra"].filter(k => q[k]);
     let qi = 0;
     const worker = async () => {
       while (qi < order.length) {
@@ -536,26 +536,81 @@ Masa.planner = (() => {
     const perDay = { "רגוע": 3, "מאוזן": 4, "אינטנסיבי": 5 }[pace] || 4;
     const wantFood = interests.includes("food"), wantNight = interests.includes("night");
     const W = {};
-    for (const c of ["history", "art", "view", "nature", "shopping", "family", "food"]) W[c] = interests.includes(c) ? 3 : ["history", "view", "art", "nature"].includes(c) ? 0.7 : 0;
-    if (interests.length === 1 && interests[0] === "food") W.food = 4;
+    const chosenActs = interests.filter(c => !["food", "night"].includes(c));
+    const sprinkle = chosenActs.length ? 0.35 : 0.7;
+    for (const c of ["history", "art", "view", "nature", "shopping", "family", "food"]) W[c] = interests.includes(c) ? 3 : ["history", "view", "art", "nature"].includes(c) ? sprinkle : 0;
+    // food lives mostly in the meals; as an activity it only leads when it is the main thing chosen
+    if (wantFood) W.food = chosenActs.length ? 0.8 : 4;
     const MUST = ["attraction", "sight", "museum", "view", "church", "park"];
+    /* 1. one anchor per day: the city's must-see places, spread apart so each day covers its own area */
     const mustPool = by(MUST).filter(p => p.q >= 6);
-    const mustN = Math.min(days, mustPool.length);
-    const chosen = pickFor(mustPool, mustN, [], 0.4);
-    chosen.forEach(p => { p.must = true; });
-    const slots = Math.max(0, days * (perDay - (wantFood ? 1 : 0)) - chosen.length);
+    const anchors = pickFor(mustPool, days, [], 1.0);
+    if (anchors.length < days) anchors.push(...pickFor(by([...MUST, ...Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c])]), days - anchors.length, anchors, 1.0));
+    anchors.forEach(p => { if (p.q >= 6) p.must = true; });
+    if (!anchors.length) throw { code: "too_few" };
+    const used = new Set(anchors.map(p => p.id));
+    /* 2. activity mix per day, by the weights */
+    const perDayActs = Math.max(1, perDay - (wantFood ? 1 : 0) - 1);
     const totalW = Object.values(W).reduce((a, b) => a + b, 0) || 1;
-    const shares = Object.entries(W).filter(([, w]) => w > 0).map(([c, w]) => ({ c, exact: slots * w / totalW }));
+    /* split all activity slots of the trip by weight, then spread each category over the days */
+    const totalSlots = perDayActs * anchors.length;
+    const shares = Object.entries(W).filter(([, w]) => w > 0).map(([c, w]) => ({ c, exact: totalSlots * w / totalW }));
     shares.forEach(x => { x.n = Math.floor(x.exact); });
-    let left = slots - shares.reduce((a, x) => a + x.n, 0);
+    let left = totalSlots - shares.reduce((a, x) => a + x.n, 0);
     shares.sort((x, y) => (y.exact - y.n) - (x.exact - x.n)).forEach(x => { if (left > 0) { x.n++; left--; } });
-    const act = shares.filter(x => x.n > 0).map(x => x.c);
-    for (const { c, n } of shares.sort((x, y) => W[y.c] - W[x.c])) if (n) chosen.push(...pickFor(by(SLOT_KINDS[c]), n, chosen, c === "shopping" ? 0.3 : 0.15));
-    const target = slots + mustN;
-    if (chosen.length < target) chosen.push(...pickFor(by([...new Set(Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c]))]), target - chosen.length, chosen));
-    if (chosen.length < Math.min(2, target)) chosen.push(...pickFor(by(["attraction", "sight", "view", "museum", "park", "market"]), target - chosen.length, chosen));
-    if (!chosen.length) throw { code: "too_few" };
-    const used = new Set(chosen.map(p => p.id));
+    const quotaFor = d => shares.map((x, ci) => ({ c: x.c, n: Math.floor(x.n / anchors.length) + ((d + ci) % anchors.length < x.n % anchors.length ? 1 : 0) }));
+    const kindCount = {};
+    /* diet first: kosher or vegetarian travelers get a matching restaurant even if it is a bit farther */
+    const dietOk = p => opts.diet === "כשר" ? p.kosher : opts.diet === "צמחוני" ? (p.veg || /vegetarian|vegan/.test(p.cuisine || "")) : true;
+    let dietRest = null;
+    const mealPick = (anchor, near, far, extra) => {
+      if (opts.diet && opts.diet !== "הכול") {
+        dietRest = dietRest || restaurants.filter(dietOk);
+        const d = nearBest(dietRest, anchor, opts.diet === "כשר" ? 3.5 : 1.5, extra);
+        if (d) return d;
+        const any = nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra);
+        if (any) any._dietMiss = true;
+        return any;
+      }
+      return nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra);
+    };
+    const groups = anchors.map((anchor, d) => {
+      const dayPick = [anchor];
+      kindCount[anchor.kind] = (kindCount[anchor.kind] || 0) + 1;
+      const quota = quotaFor(d);
+      let budget = perDayActs;
+      for (const { c, n } of quota.sort((x, y) => W[y.c] - W[x.c])) {
+        for (let k = 0; k < n && budget > 0; k++) {
+          const kinds = c === "food" && chosenActs.length ? ["market", "deli", "bakery"] : SLOT_KINDS[c];
+          const cands = by(kinds).filter(p => !used.has(p.id));
+          let best = null, bv = -Infinity;
+          for (const p of cands) {
+            const dk = km(anchor, p);
+            if (dk > 2.5 || dayPick.some(o => km(o, p) < (c === "shopping" ? 0.25 : 0.12))) continue;
+            const sameDay = dayPick.filter(o => o.kind === p.kind).length;
+            const v = p.q - 1.4 * dk - 3 * sameDay - 0.6 * (kindCount[p.kind] || 0);
+            if (v > bv) { bv = v; best = p; }
+          }
+          if (!best) break;
+          used.add(best.id); dayPick.push(best); budget--;
+          kindCount[best.kind] = (kindCount[best.kind] || 0) + 1;
+        }
+      }
+      // fill any empty slots with the best nearby place from the chosen interests
+      const fillKinds = [...new Set(Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c]))];
+      while (budget > 0) {
+        let best = null, bv = -Infinity;
+        for (const p of by(fillKinds)) {
+          if (used.has(p.id) || km(anchor, p) > 3 || dayPick.some(o => km(o, p) < 0.12)) continue;
+          const v = p.q - 1.4 * km(anchor, p) - 3 * dayPick.filter(o => o.kind === p.kind).length;
+          if (v > bv) { bv = v; best = p; }
+        }
+        if (!best) break;
+        used.add(best.id); dayPick.push(best); budget--;
+      }
+      return orderDay(dayPick, hotel);
+    });
+    const act = Object.keys(W).filter(c => W[c] > 0);
 
     const restaurants = by(["restaurant"]);
     const cafes = by(["cafe", "bakery"]);
@@ -577,8 +632,7 @@ Masa.planner = (() => {
     };
     const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) : 0) + (f.voyage ? 1 : 0);
 
-    const groups = splitDays(chosen, days).map(g => orderDay(g, hotel));
-    while (groups.length < days) groups.push([]);
+
     const dayPlans = groups.map(g => {
       const list = g.map(p => ({ p, meal: null }));
       const first = g[0] || geo, last = g[g.length - 1] || geo;
@@ -589,14 +643,15 @@ Masa.planner = (() => {
       const li = list.findIndex((x, i) => i >= Math.ceil(g.length / 2) + (wantFood ? 1 : 0));
       const at = li < 0 ? list.length : li;
       const anchor = list[Math.max(0, at - 1)]?.p || first;
-      const lunch = nearBest(restaurants, anchor, 0.8) || nearBest(restaurants, anchor, 2.5);
+      const lunch = mealPick(anchor, 0.8, 2.5);
       if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
       if (wantFood && g.length >= 2) {
         const ti = Math.min(list.length, at + 2);
-        const tr = nearBest(treats, list[ti - 1]?.p || anchor, 0.8);
+        const dayKinds = new Set(list.map(x => x.p.kind));
+        const tr = nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 0.8) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 1.5);
         if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
       }
-      const dinner = nearBest(restaurants, last, 1.2, dinnerBoost) || nearBest(restaurants, last, 3, dinnerBoost);
+      const dinner = mealPick(last, 1.2, 3, dinnerBoost);
       if (dinner) list.push({ p: dinner, meal: "dinner" });
       if (wantNight) {
         const bar = nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
@@ -634,7 +689,9 @@ Masa.planner = (() => {
       hotel: hotel ? { ...hotel } : null,
       summary: "",
       days: dayPlans.map((list, i) => {
-        const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); if (p.must && !meal) s.must = true; s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
+        const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); if (p.must && !meal) s.must = true;
+          if (p._dietMiss && (meal === "lunch" || meal === "dinner")) s.tip = opts.diet === "כשר" ? "לא מצאנו מסעדה כשרה מסומנת קרוב למסלול של היום. ברשימת המסעדות אפשר לסנן לפי כשר, וכדאי לבדוק גם בבית חב״ד המקומי." : "לא מצאנו מסעדה צמחונית מסומנת קרוב למסלול. רוב המסעדות מציעות מנות צמחוניות, כדאי לשאול.";
+          s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
         const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null };
         assignTimes(d);

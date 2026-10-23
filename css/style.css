@@ -432,3 +432,6 @@ body{margin:0}
 .factgrid b{font-size:.95rem}
 .factgrid b.sm{font-size:.84rem;font-weight:600}
 @media (max-width:420px){.duo,.twocol{grid-template-columns:1fr}}
+.broker{display:flex;flex-direction:column;gap:6px}
+.broker>span{font-weight:800;font-size:.85rem}
+.broker small.muted{color:var(--muted);font-size:.78rem}
