@@ -42,17 +42,14 @@ Masa.svc = (() => {
       lat: +x.lat, lng: +x.lon,
       name: nd["name:he"] || x.name || q.split(",")[0].trim(),
       local: nd.name || x.name || q,
+      en: nd["name:en"] || null,
       country: x.address?.country || "",
       cc: (x.address?.country_code || "").toLowerCase(),
       bbox: bb.length === 4 ? { s: bb[0], n: bb[1], w: bb[2], e: bb[3] } : null
     };
   }
 
-  const OVERPASS = [
-    "https://overpass-api.de/api/interpreter",
-    "https://overpass.private.coffee/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter"
-  ];
+  const OVERPASS = Masa.sources.OVERPASS;
   async function overpassOnce(ep, query, signal) {
     const j = await getJSON(ep, {
       method: "POST",
@@ -82,6 +79,25 @@ Masa.svc = (() => {
       signal?.addEventListener("abort", () => finish(false, new Error("aborted")));
       launch();
     });
+  }
+
+  /* Wikivoyage recommendations for a city, including its district pages */
+  async function voyage(title, signal) {
+    if (!title) return [];
+    const get = async t => {
+      try {
+        const j = await getJSON(`https://en.wikivoyage.org/w/api.php?action=parse&page=${encodeURIComponent(t)}&prop=wikitext&formatversion=2&format=json&redirects=1&origin=*`, {}, 15000, signal);
+        return j.parse?.wikitext || "";
+      } catch { return ""; }
+    };
+    const S = Masa.sources;
+    const main = await get(title);
+    if (!main) return [];
+    let list = S.parseVoyage(main);
+    const districts = S.voyageDistricts(main, title);
+    const parts = await mapLimit(districts, 4, async d => S.parseVoyage(await get(d)).map(x => ({ ...x, district: d.split("/").pop() })));
+    parts.forEach(p => { if (p) list = list.concat(p); });
+    return list;
   }
 
   /* Wikipedia articles with coordinates near a point: a fast, reliable list of real sights. */
@@ -142,5 +158,5 @@ Masa.svc = (() => {
     } catch { return null; }
   }
 
-  return { getJSON, mapLimit, geocode, overpass, wikiGeo, wikidata, wikiSummary, walkRoute };
+  return { getJSON, mapLimit, geocode, overpass, voyage, wikiGeo, wikidata, wikiSummary, walkRoute };
 })();

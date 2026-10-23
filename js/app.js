@@ -28,12 +28,13 @@ function toast(t) { const el = $("toast"); el.textContent = t; el.hidden = false
 /* ---------- state ---------- */
 const S = {
   screen: "home", prev: "home", dest: null,
-  form: { days: 3, interests: ["history", "food"], budget: "בינוני", pace: "מאוזן", notes: "" },
+  form: { days: 3, interests: ["food", "view"], budget: "בינוני", pace: "מאוזן", diet: "הכול", notes: "" },
+  list: { chip: "food", sort: "best", open: false, cuisine: null, price: null, diet: null, q: "", page: 1 }, poi: null,
   trip: null, day: 0, stop: 0, openBook: null, chat: [], chatLog: [], busy: false, me: null
 };
 let checks = store.get("masa-checks", {});
 const ckey = (s, i) => `${S.trip?.city}|${s.name}|${i}`;
-const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover"];
+const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi"];
 
 /* ---------- speech (built into the browser, free) ---------- */
 const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -147,7 +148,20 @@ function renderMap() {
     if (S.me) addMarker(S.me, node("me-dot", ""), { anchor: "center" });
     return;
   }
-  const t = S.trip, d = t.days[S.day], dc = C(DAYC[S.day % 5]);
+  const t = S.trip;
+  if (S.screen === "list" || S.screen === "poi") {
+    setRoute([]);
+    const items = S.screen === "poi" && S.poi ? [S.poi] : listItems().slice(0, 60);
+    items.filter(hasXY).forEach((p, i) => {
+      const sel = S.screen === "poi";
+      addMarker(p, node(`mk gpin${sel ? " on" : ""}`, `<span class="mk-label">${esc(p.name)}</span><span class="gpinbody" style="--c:${C(CATS[catOf(p)].c)}">${ic(CHIP_ICON[p.kind] || catOf(p), 2.2)}</span>`),
+        { z: sel ? 5 : 2 }, () => { S.poi = p; go("poi"); });
+    });
+    if (S.me) addMarker(S.me, node("me-dot", ""), { anchor: "center", z: 6 });
+    syncLabels();
+    return;
+  }
+  const d = t.days[S.day], dc = C(DAYC[S.day % 5]);
   const line = d.route?.length > 1 ? d.route : d.stops.filter(hasXY).map(s => [s.lat, s.lng]);
   setRoute(line.length > 1 ? [{ type: "Feature", properties: { color: dc, straight: !d.route }, geometry: { type: "LineString", coordinates: line.map(([la, ln]) => [ln, la]) } }] : []);
   t.days.forEach((dd, di) => {
@@ -214,10 +228,13 @@ function go(screen, opts = {}) {
   S.screen = screen;
   renderPanel();
   renderMap();
+  renderChips();
   if (!S.trip || !TRIP_SCREENS.includes(screen)) { if (isMobile()) $("panel").classList.remove("collapsed"); return; }
   if (screen === "plan" && !opts.noFly) fitPoints(S.trip.days[S.day].stops);
   if (screen === "place") { const s = S.trip.days[S.day].stops[S.stop]; fitPoints([s, ...(s.nearby || [])], 17); }
   if (screen === "discover" && !opts.noFly) fitPoints([...S.trip.days.flatMap(d => d.stops), ...discItems()], 15);
+  if (screen === "list" && !opts.noFly) { const it = listItems().slice(0, 25); if (it.length) fitPoints(it, 16); }
+  if (screen === "poi" && S.poi) flyCenter(S.poi, 16.5);
   if (isMobile()) $("panel").classList.remove("collapsed");
 }
 function pickDest(d) { S.dest = d; const inp = $("destInput"); if (inp) inp.value = d.q; flyCenter(d, 11); renderMap(); }
@@ -227,11 +244,11 @@ function setNav() {
   nav.hidden = !show;
   if (!show) return;
   const pending = S.trip.days.flatMap(d => d.stops).filter(s => s.booking?.needed && !(s.booking.steps || []).every((_, i) => checks[ckey(s, i)])).length;
-  const items = [["plan", "route", "מסלול"], ["discover", "compass", "גלו עוד"], ["book", "ticket", "הזמנות"], ["guide", "chat", "מדריך"], ["home", "home", "בית"]];
-  nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && S.screen === "place")}">${ic(i)}${l}${k === "book" && pending ? `<span class="badge">${pending}</span>` : ""}</button>`).join("");
+  const items = [["plan", "route", "מסלול"], ["discover", "compass", "גלו"], ["book", "ticket", "הזמנות"], ["guide", "chat", "מדריך"], ["home", "home", "בית"]];
+  nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && S.screen === "place") || (k === "discover" && (S.screen === "list" || S.screen === "poi"))}">${ic(i)}${l}${k === "book" && pending ? `<span class="badge">${pending}</span>` : ""}</button>`).join("");
   nav.querySelectorAll("button").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
-    if (k === "home") { stopSpeak(); S.screen = "home"; S.dest = null; renderPanel(); renderMap(); flyWorld(); }
+    if (k === "home") { stopSpeak(); S.screen = "home"; S.dest = null; renderPanel(); renderMap(); renderChips(); flyWorld(); }
     else go(k);
   });
 }
@@ -347,6 +364,8 @@ SCREENS.goals = {
     <div class="tiles">${INTERESTS.map(k => `<button type="button" class="tile" data-k="${k}" aria-pressed="${f.interests.includes(k)}"><span class="ic" style="background:${cv(CATS[k].c)}">${ic(k)}</span>${CATS[k].he}</button>`).join("")}</div>
     <div class="section-label">תקציב</div>
     <div class="seg" id="budget">${["חסכוני", "בינוני", "מפנק"].map(v => `<button type="button" aria-pressed="${f.budget === v}">${v}</button>`).join("")}</div>
+    <div class="section-label">אוכל</div>
+    <div class="seg" id="diet">${["הכול", "צמחוני", "כשר"].map(v => `<button type="button" aria-pressed="${f.diet === v}">${v}</button>`).join("")}</div>
     <div class="section-label">קצב</div>
     <div class="seg" id="pace">${["רגוע", "מאוזן", "אינטנסיבי"].map(v => `<button type="button" aria-pressed="${f.pace === v}">${v}</button>`).join("")}</div>
     <label class="section-label" for="notes">עוד משהו שחשוב לדעת?</label>
@@ -363,13 +382,13 @@ SCREENS.goals = {
     $("dminus").onclick = () => setD(f.days - 1);
     $("dplus").onclick = () => setD(f.days + 1);
     document.querySelectorAll(".tile").forEach(t => t.onclick = () => { const k = t.dataset.k, on = f.interests.includes(k); f.interests = on ? f.interests.filter(x => x !== k) : [...f.interests, k]; t.setAttribute("aria-pressed", !on); });
-    ["budget", "pace"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.onclick = () => { f[id] = b.textContent; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); }));
+    ["budget", "pace", "diet"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.onclick = () => { f[id] = b.textContent; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); }));
     $("notes").oninput = e => f.notes = e.target.value;
     $("buildBtn").onclick = build;
   }
 };
 
-const LSTEPS = ["מאתרים את היעד", "אוספים מקומות אמיתיים מ-OpenStreetMap", "בונים מסלול הליכה לכל יום"];
+const LSTEPS = ["מאתרים את היעד", "אוספים מסעדות, קניונים ואטרקציות", "בונים מסלול לפי מה שבחרתם"];
 let buildCtl = null;
 SCREENS.loading = {
   view() {
@@ -391,7 +410,7 @@ async function build() {
   const step = i => document.querySelectorAll("#lsteps div").forEach((d, k) => d.className = k < i ? "on" : k === i ? "now" : "");
   const onGeo = g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.3, reduced ? 0 : 5200); };
   try {
-    const trip = await planner.build({ query: S.dest.q, ...S.form, geo: S.dest.geo, onGeo }, step, buildCtl.signal);
+    const trip = await planner.build({ query: S.dest.q, ...S.form, onGeo }, step, buildCtl.signal);
     saveTrip(trip);
     openTrip(trip);
     toast(`המסלול ב${trip.city} מוכן`);
@@ -429,7 +448,7 @@ SCREENS.plan = {
       if (i) { const L2 = legInfo(d, i), p = d.stops[i - 1];
         leg = `<div class="leg">${ic(L2.transit ? "train" : "nav")} ${L2.kmv.toFixed(1)} ק״מ · ${L2.transit ? "עדיף תחבורה ציבורית" : `${L2.min} דק׳ הליכה`} · <a href="${gmDir(p, s, L2.transit ? "transit" : "walking")}" target="_blank" rel="noopener">ניווט</a></div>`; }
       return leg + `<button type="button" class="stop" data-i="${i}">${s.image ? `<span class="thumb" style="background-image:url('${esc(s.image)}')"><span class="n" style="color:${col}">${i + 1}</span></span>` : `<span class="ic" style="background:${cv(CATS[catOf(s)].c)}">${ic(catOf(s))}<span class="n" style="color:${col}">${i + 1}</span></span>`}
-        <span style="min-width:0"><span class="t">${esc(s.name)}</span><span class="meta">${s.time ? `<span>${ic("clock")}${esc(s.time)}</span>` : ""}${s.duration ? `<span>${ic("hourglass")}${esc(s.duration)}</span>` : ""}${s.busy ? `<span>${ic("users")}${peakWord(s)}</span>` : ""}</span></span>
+        <span style="min-width:0">${s.mealHe ? `<span class="mealtag">${esc(s.mealHe)}</span>` : ""}<span class="t">${esc(s.name)}</span>${placeLine(s) ? `<span class="pline">${placeLine(s)}</span>` : ""}<span class="meta">${s.time ? `<span>${ic("clock")}${esc(s.time)}</span>` : ""}${s.duration ? `<span>${ic("hourglass")}${esc(s.duration)}</span>` : ""}${s.busy ? `<span>${ic("users")}${peakWord(s)}</span>` : ""}</span></span>
         <span class="tag ${s._added ? "new" : s.booking?.needed ? "book" : "free"}">${s._added ? "הוספתם" : s.booking?.needed ? "דורש הזמנה" : "בלי הזמנה"}</span></button>`;
     }).join("")}</div>
     ${ideas.length ? `<div class="ideas"><h2>${ic("sparkle")} נשאר לכם זמן היום? רעיונות בדרך</h2>
@@ -502,7 +521,10 @@ SCREENS.place = {
       <h1>${esc(s.name)}</h1>${s.local && s.local !== s.name ? `<div class="local">${esc(s.local)}</div>` : ""}
       ${s.image && s.wikiUrl ? `<a class="credit" href="${esc(s.wikiUrl)}" target="_blank" rel="noopener">תמונה: ויקיפדיה</a>` : ""}</div>
     ${(s.time || s.duration || s.cost) ? `<div class="facts"><div><small>${ic("clock")}שעה</small><b>${esc(s.time || "—")}</b></div><div><small>${ic("hourglass")}משך</small><b>${esc(s.duration || "—")}</b></div><div><small>${ic("coin")}עלות</small><b>${esc(s.cost || "—")}</b></div></div>` : ""}
-    <p>${esc(s.why)}</p>
+    ${placeLine(s) ? `<div class="pline big">${placeLine(s)}</div>` : ""}
+    ${(s.signals || []).length ? `<div class="sigs">${s.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
+    ${s.whyLang === "en" ? `<div class="vquote"><p dir="ltr" lang="en">${esc(s.why)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : `<p>${esc(s.why)}</p>`}
+    ${contactRow(s)}
     <div class="card storycard"><h2>${ic("book")} הסיפור של המקום</h2>
       ${s.history ? `<p class="story" ${s.histLang === "en" ? 'dir="ltr" lang="en" style="text-align:left"' : ""}>${esc(s.history)}</p>` : `<p class="lead">${S.trip.pending ? "טוענים את הסיפור…" : ai.enabled() ? "עוד אין כאן סיפור. המדריך החכם יכול לספר אותו." : "לא מצאנו ערך בוויקיפדיה על המקום הזה."}</p>`}
       ${s.fact ? `<div class="didyou"><b>הידעתם? </b>${esc(s.fact)}</div>` : ""}
@@ -586,6 +608,7 @@ SCREENS.discover = {
     const etiq = D.etiquette?.length ? D.etiquette : ETIQUETTE_GENERIC;
     return `<div class="screen">
     <div><div class="eyebrow">גלו עוד ב${esc(t.city)}</div><h1 style="margin-top:4px">מה עוד אפשר לעשות?</h1><p class="lead" style="margin-top:6px">רעיונות מעבר למסלול. רעיון עם מיקום אפשר להוסיף ליום שתבחרו, והוא מסומן גם על המפה.</p></div>
+    <div class="catgrid">${CHIPS.filter(([k, , kinds]) => (t.places || []).some(p => kinds.includes(p.kind))).map(([k, label, kinds, icon]) => `<button type="button" data-chip="${k}"><span class="ic" style="background:${cv(CATS[catOf({ cat: planner.KIND[kinds[0]]?.cat })].c)}">${ic(icon)}</span>${label}<small>${(t.places || []).filter(p => kinds.includes(p.kind)).length}</small></button>`).join("")}</div>
     <label class="section-label" for="addDay">להוסיף רעיונות אל</label>
     <select id="addDay" class="select">${dayOpts}</select>
     ${DSECS.map(([k, i, title, col]) => (D[k] || []).length ? `<section class="dsec"><h2><span class="chipic" style="background:${cv(col)}">${ic(i)}</span>${title}</h2>
@@ -603,6 +626,7 @@ SCREENS.discover = {
   },
   bind() {
     const D = S.trip.discover || {};
+    document.querySelectorAll(".catgrid [data-chip]").forEach(b => b.onclick = () => openList(b.dataset.chip));
     $("addDay").onchange = e => { S.day = +e.target.value; renderMap(); };
     document.querySelectorAll("[data-dadd]").forEach(b => b.onclick = () => { const it = discItems().find(x => x.name === b.dataset.dadd); if (it) { addToDay(it, +$("addDay").value); rerenderKeepScroll(); } });
     const ph = D.phrases || PHRASES.en;
@@ -748,6 +772,210 @@ SCREENS.settings = {
     $("clearNo").onclick = () => { $("confirmClear").hidden = true; };
     $("clearYes").onclick = () => { store.set("masa-trips", []); store.set("masa-checks", {}); checks = {}; rerenderKeepScroll(); toast("הנתונים נמחקו"); };
   }
+};
+
+/* ================= explore, Google Maps style ================= */
+const CUISINE_HE = { italian: "איטלקי", pizza: "פיצה", french: "צרפתי", spanish: "ספרדי", tapas: "טאפאס", japanese: "יפני", sushi: "סושי", ramen: "ראמן",
+  chinese: "סיני", thai: "תאילנדי", indian: "הודי", mexican: "מקסיקני", burger: "המבורגר", steak_house: "סטייקים", seafood: "פירות ים", fish: "דגים",
+  vegetarian: "צמחוני", vegan: "טבעוני", greek: "יווני", turkish: "טורקי", kebab: "קבב", czech: "צ׳כי", portuguese: "פורטוגלי", regional: "מקומי",
+  mediterranean: "ים תיכוני", american: "אמריקאי", asian: "אסייתי", korean: "קוריאני", vietnamese: "וייטנאמי", lebanese: "לבנוני", israeli: "ישראלי",
+  middle_eastern: "מזרח תיכוני", coffee_shop: "קפה", ice_cream: "גלידה", cake: "עוגות", breakfast: "ארוחות בוקר", german: "גרמני", austrian: "אוסטרי",
+  hungarian: "הונגרי", british: "בריטי", dutch: "הולנדי", roman: "רומאי", tuscan: "טוסקני", catalan: "קטלאני", basque: "באסקי", international: "בינלאומי",
+  sandwich: "כריכים", bistro: "ביסטרו", wine_bar: "בר יין", brunch: "בראנץ׳", crepe: "קרפים", noodle: "נודלס", dumpling: "כיסונים", bagel: "בייגל",
+  georgian: "גאורגי", polish: "פולני", russian: "רוסי", african: "אפריקאי", ethiopian: "אתיופי", peruvian: "פרואני", argentinian: "ארגנטינאי", brazilian: "ברזילאי",
+  tea: "תה", pastry: "מאפים", bakery: "מאפייה", gelato: "ג׳לטו", local: "מקומי", fine_dining: "פיין דיינינג" };
+const cuisineList = c => String(c || "").split(/[;,]/).map(x => x.trim().toLowerCase()).filter(Boolean);
+const cuisineHe = c => cuisineList(c).slice(0, 3).map(x => CUISINE_HE[x] || x.replace(/_/g, " ")).join(" · ");
+const CHIPS = [
+  ["food", "מסעדות", ["restaurant"], "food"], ["cafe", "בתי קפה", ["cafe", "bakery"], "cafe"], ["dessert", "קינוחים", ["dessert"], "heart"],
+  ["market", "שווקים", ["market", "deli"], "shopping"], ["mall", "קניונים וקניות", ["mall", "store", "shop"], "shopping"], ["bar", "ברים ולילה", ["bar", "club"], "night"],
+  ["sights", "אטרקציות", ["attraction", "sight", "view", "church"], "history"], ["museum", "מוזיאונים", ["museum", "gallery"], "art"], ["park", "פארקים וטבע", ["park", "beach", "zoo", "themepark"], "nature"]
+];
+const CHIP_ICON = { restaurant: "food", cafe: "cafe", bakery: "cafe", dessert: "heart", market: "shopping", deli: "shopping", mall: "shopping", store: "shopping", shop: "shopping", bar: "night", club: "night", museum: "art", gallery: "art", park: "nature", beach: "nature", zoo: "family", themepark: "family", church: "religion", view: "view", sight: "history", attraction: "view" };
+const PRICE = { budget: "זול", mid: "מחיר בינוני", splurge: "יוקרתי" };
+/* local time in the trip's city, so "open now" is right even when planning from home */
+function cityNow() {
+  if (S.me && S.trip && km(S.me, S.trip) < 50) return new Date();
+  const tz = S.trip?.tz;
+  if (!tz) return null;
+  try { return new Date(new Date().toLocaleString("en-US", { timeZone: tz })); } catch { return null; }
+}
+function openState(p) {
+  const now = cityNow();
+  if (!now || !p.hours) return null;
+  return planner.isOpen(p.hours, now);
+}
+function placeLine(p) {
+  const bits = [];
+  if (p.kindHe && !p.mealHe) bits.push(p.kindHe);
+  else if (!p.kindHe && planner.KIND[p.kind]) bits.push(planner.KIND[p.kind].he);
+  if (p.cuisine) bits.push(cuisineHe(p.cuisine));
+  if (p.priceClass) bits.push(PRICE[p.priceClass]);
+  const o = openState(p);
+  if (o === true) bits.push(`<b class="open">פתוח עכשיו</b>`);
+  if (o === false) bits.push(`<b class="closed">סגור עכשיו</b>`);
+  return bits.map(b => b.startsWith("<b") ? b : esc(b)).join(" · ");
+}
+const reviewsUrl = p => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.local || p.name} ${p.address || ""} ${cityQ()}`.trim())}`;
+function contactRow(p) {
+  const items = [];
+  items.push(`<a class="chipbtn" href="${reviewsUrl(p)}" target="_blank" rel="noopener">${ic("users")}ביקורות ותמונות בגוגל</a>`);
+  if (p.website) items.push(`<a class="chipbtn" href="${esc(p.website)}" target="_blank" rel="noopener">${ic("ext")}אתר</a>`);
+  if (p.phone) items.push(`<a class="chipbtn" href="tel:${esc(p.phone.replace(/[^\d+]/g, ""))}">${ic("speech")}<bdi dir="ltr">${esc(p.phone)}</bdi></a>`);
+  return `<div class="chiprow">${items.join("")}</div>${p.address ? `<div class="hoursrow">${ic("pin")}<span><bdi dir="ltr">${esc(p.address)}</bdi></span></div>` : ""}`;
+}
+function renderChips() {
+  const el = $("gchips");
+  const show = !!S.trip && TRIP_SCREENS.includes(S.screen);
+  el.hidden = !show;
+  if (!show) return;
+  const counts = Object.fromEntries(CHIPS.map(([k, , kinds]) => [k, (S.trip.places || []).filter(p => kinds.includes(p.kind)).length]));
+  el.innerHTML = CHIPS.filter(([k]) => counts[k]).map(([k, label, , icon]) => `<button type="button" data-chip="${k}" aria-pressed="${S.screen === "list" && S.list.chip === k && !S.list.q}">${ic(icon)}${label}</button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.onclick = () => openList(b.dataset.chip));
+}
+function openList(chip, q = "") {
+  if (!["list", "poi"].includes(S.screen)) S.prevTrip = S.screen;
+  S.list = { chip, sort: "best", open: false, cuisine: null, price: null, diet: null, q, page: 1 };
+  go("list");
+}
+function listItems() {
+  const L2 = S.list, all = S.trip?.places || [];
+  let items;
+  if (L2.q) {
+    const q = L2.q.toLowerCase();
+    items = all.filter(p => [p.name, p.local, cuisineHe(p.cuisine), p.cuisine, planner.KIND[p.kind]?.he].some(x => String(x || "").toLowerCase().includes(q)));
+  } else {
+    const kinds = CHIPS.find(c => c[0] === L2.chip)?.[2] || [];
+    items = all.filter(p => kinds.includes(p.kind));
+  }
+  if (L2.cuisine) items = items.filter(p => cuisineList(p.cuisine).includes(L2.cuisine));
+  if (L2.price) items = items.filter(p => p.priceClass === L2.price);
+  if (L2.diet === "veg") items = items.filter(p => p.veg);
+  if (L2.diet === "kosher") items = items.filter(p => p.kosher);
+  if (L2.open) items = items.filter(p => openState(p) === true);
+  const ref = S.me && km(S.me, S.trip) < 50 ? S.me : S.trip.days[S.day]?.stops?.[S.stop] || S.trip;
+  items = items.map(p => ({ ...p, _d: km(ref, p) }));
+  items.sort(L2.sort === "near" ? (a, b) => a._d - b._d : (a, b) => (b.q - b._d * 0.4) - (a.q - a._d * 0.4));
+  return items;
+}
+const fmtDist = d => d < 1 ? `${Math.round(d * 1000 / 10) * 10} מ׳` : `${d.toFixed(1)} ק״מ`;
+function placeCard(p, i) {
+  const o = openState(p);
+  const inTrip = S.trip.days.some(d => d.stops.some(s => s.osm === p.id || s.name === p.name));
+  return `<article class="pcard" data-i="${i}">
+    <button type="button" class="pmain" data-open="${i}">
+      <span class="ic" style="background:${cv(CATS[catOf(p)].c)}">${ic(CHIP_ICON[p.kind] || catOf(p))}</span>
+      <span style="min-width:0">
+        <span class="t">${esc(p.name)}</span>
+        <span class="pline">${[planner.KIND[p.kind]?.he, cuisineHe(p.cuisine), p.priceClass ? PRICE[p.priceClass] : ""].filter(Boolean).map(esc).join(" · ")}${o === true ? ` · <b class="open">פתוח עכשיו</b>` : o === false ? ` · <b class="closed">סגור</b>` : ""}</span>
+        ${p.signals?.length ? `<span class="sigs small">${p.signals.slice(0, 3).map(x => `<span>${esc(x)}</span>`).join("")}</span>` : ""}
+        ${p.vtext ? `<span class="vtext" dir="ltr" lang="en">${esc(p.vtext.slice(0, 140))}${p.vtext.length > 140 ? "…" : ""}</span>` : ""}
+      </span>
+      <span class="dist">${fmtDist(p._d)}</span>
+    </button>
+    <div class="pact">
+      ${inTrip ? `<span class="tag new">במסלול</span>` : `<button type="button" class="btn small" data-addp="${i}">${ic("plus")}למסלול</button>`}
+      <a class="btn small soft" href="${gmDir(S.me || S.trip.days[S.day]?.stops?.[S.stop] || S.trip, p)}" target="_blank" rel="noopener" style="text-decoration:none">${ic("nav")}ניווט</a>
+      <a class="btn small soft" href="${reviewsUrl(p)}" target="_blank" rel="noopener" style="text-decoration:none">${ic("users")}ביקורות</a>
+    </div>
+  </article>`;
+}
+SCREENS.list = {
+  view() {
+    const L2 = S.list, all = listItems();
+    const chip = CHIPS.find(c => c[0] === L2.chip);
+    const title = L2.q ? `תוצאות עבור "${esc(L2.q)}"` : `${chip?.[1] || "מקומות"} ב${esc(S.trip.city)}`;
+    const base = L2.q ? all : (S.trip.places || []).filter(p => (chip?.[2] || []).includes(p.kind));
+    const cuisines = Object.entries(base.flatMap(p => cuisineList(p.cuisine)).reduce((a, c) => (a[c] = (a[c] || 0) + 1, a), {})).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const showFood = ["food", "cafe", "dessert"].includes(L2.chip) || L2.q;
+    const hasPrice = base.some(p => p.priceClass);
+    const now = cityNow();
+    const shown = all.slice(0, L2.page * 25);
+    return `<div class="screen">
+    <div class="topnav"><button class="iconbtn" id="backList" aria-label="חזרה">${ic("back")}</button><span class="eyebrow">${all.length} מקומות</span><span style="width:38px"></span></div>
+    <h1 style="font-size:1.5rem">${title}</h1>
+    <div class="filters">
+      <button type="button" data-sort="best" aria-pressed="${L2.sort === "best"}">הכי מומלץ</button>
+      <button type="button" data-sort="near" aria-pressed="${L2.sort === "near"}">${S.me ? "הכי קרוב אליי" : "הכי קרוב למסלול"}</button>
+      ${now ? `<button type="button" id="fOpen" aria-pressed="${L2.open}">פתוח עכשיו</button>` : ""}
+      ${hasPrice ? ["budget", "mid", "splurge"].map(k => `<button type="button" data-price="${k}" aria-pressed="${L2.price === k}">${PRICE[k]}</button>`).join("") : ""}
+      ${showFood ? `<button type="button" data-diet="veg" aria-pressed="${L2.diet === "veg"}">צמחוני</button><button type="button" data-diet="kosher" aria-pressed="${L2.diet === "kosher"}">כשר</button>` : ""}
+    </div>
+    ${cuisines.length > 1 && showFood ? `<div class="filters scroll-x">${cuisines.map(([c, n]) => `<button type="button" data-cu="${esc(c)}" aria-pressed="${L2.cuisine === c}">${esc(CUISINE_HE[c] || c.replace(/_/g, " "))} <small>${n}</small></button>`).join("")}</div>` : ""}
+    <div class="disclaim">${ic("info")}<span>הדירוג לפי סימני איכות פתוחים: המלצות Wikivoyage, כוכבי מישלן, מקום מוכר, מטבח מקומי ואתר פעיל. לדירוג כוכבים ולביקורות לחצו על "ביקורות".${now && !S.me ? ` "פתוח עכשיו" לפי השעה ב${esc(S.trip.city)}.` : ""}</span></div>
+    <div class="plist">${shown.map(placeCard).join("") || `<p class="lead">${L2.q ? `לא מצאנו את "${esc(L2.q)}" ב${esc(S.trip.city)}.` : "לא נמצאו מקומות. נסו להוריד סינון."}</p>`}</div>
+    ${L2.q ? `<button type="button" class="btn soft block" id="asDest">${ic("search")} לחפש את "${esc(L2.q)}" כיעד חדש</button>` : ""}
+    ${all.length > shown.length ? `<button type="button" class="btn soft block" id="more">עוד ${Math.min(25, all.length - shown.length)} מקומות</button>` : ""}
+    ${!L2.q && ["food", "bar", "mall"].includes(L2.chip) && (S.trip.voyageNoGeo || []).some(v => (CHIPS.find(c => c[0] === L2.chip)?.[2] || []).includes(v.kind)) ? `<div class="card"><h2>${ic("book")} עוד המלצות מ-Wikivoyage, בלי מיקום על המפה</h2>${S.trip.voyageNoGeo.filter(v => (CHIPS.find(c => c[0] === L2.chip)?.[2] || []).includes(v.kind)).slice(0, 12).map(v => `<div class="vrow"><b>${esc(v.name)}</b>${v.price ? ` <small>${esc(v.price)}</small>` : ""}${v.vtext ? `<p dir="ltr" lang="en">${esc(v.vtext.slice(0, 160))}</p>` : ""}<a href="${reviewsUrl(v)}" target="_blank" rel="noopener">חיפוש בגוגל מפות</a></div>`).join("")}</div>` : ""}
+  </div>`;
+  },
+  bind() {
+    const L2 = S.list;
+    const refresh = (fly) => { L2.page = 1; rerenderKeepScroll(); renderMap(); if (fly) { const it = listItems().slice(0, 25); if (it.length) fitPoints(it, 16); } };
+    $("backList").onclick = () => go(S.prevTrip || "plan");
+    document.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { L2.sort = b.dataset.sort; refresh(false); });
+    $("fOpen") && ($("fOpen").onclick = () => { L2.open = !L2.open; refresh(true); });
+    document.querySelectorAll("[data-price]").forEach(b => b.onclick = () => { L2.price = L2.price === b.dataset.price ? null : b.dataset.price; refresh(true); });
+    document.querySelectorAll("[data-diet]").forEach(b => b.onclick = () => { L2.diet = L2.diet === b.dataset.diet ? null : b.dataset.diet; refresh(true); });
+    document.querySelectorAll("[data-cu]").forEach(b => b.onclick = () => { L2.cuisine = L2.cuisine === b.dataset.cu ? null : b.dataset.cu; refresh(true); });
+    $("asDest") && ($("asDest").onclick = () => { S.dest = { q: L2.q, he: L2.q.split(",")[0].trim() }; go("goals"); });
+    $("more") && ($("more").onclick = () => { L2.page++; rerenderKeepScroll(); renderMap(); });
+    const items = listItems();
+    document.querySelectorAll("[data-open]").forEach(b => b.onclick = () => { S.poi = items[+b.dataset.open]; go("poi"); });
+    document.querySelectorAll("[data-addp]").forEach(b => b.onclick = () => { addPlace(items[+b.dataset.addp]); rerenderKeepScroll(); });
+  }
+};
+function addPlace(p, dayIdx = S.day) {
+  addToDay({ ...p, why: p.vtext || planner.KIND[p.kind]?.he || "", osm: p.id }, dayIdx);
+  const d = S.trip.days[dayIdx], st = d.stops.find(s => s.name === p.name);
+  if (st) Object.assign(st, { osm: p.id, kind: p.kind, kindHe: planner.KIND[p.kind]?.he, cuisine: p.cuisine, priceClass: p.priceClass, signals: p.signals || [], hours: p.hours, phone: p.phone, address: p.address, website: p.website, why: p.vtext || st.why, whyLang: p.vtext ? "en" : "he" });
+}
+SCREENS.poi = {
+  view() {
+    const p = S.poi;
+    if (!p) return `<div class="screen"><p class="lead">לא נבחר מקום.</p></div>`;
+    const o = openState(p);
+    const dayOpts = S.trip.days.map((d, i) => `<option value="${i}" ${i === S.day ? "selected" : ""}>${esc(d.label)}</option>`).join("");
+    const ref = S.me && km(S.me, S.trip) < 50 ? S.me : S.trip.days[S.day]?.stops?.[S.stop] || S.trip;
+    return `<div class="screen">
+    <div class="topnav"><button class="iconbtn" id="backPoi" aria-label="חזרה לרשימה">${ic("back")}</button><span class="eyebrow">${esc(planner.KIND[p.kind]?.he || "")}</span><span style="width:38px"></span></div>
+    <div class="placehero" style="background:linear-gradient(140deg,${cv(CATS[catOf(p)].c)},${cv("--violet")})"><span class="bigic">${ic(CHIP_ICON[p.kind] || catOf(p), 1.8)}</span>
+      <h1>${esc(p.name)}</h1>${p.local && p.local !== p.name ? `<div class="local">${esc(p.local)}</div>` : ""}</div>
+    <div class="pline big">${[cuisineHe(p.cuisine), p.priceClass ? PRICE[p.priceClass] : "", p.price || ""].filter(Boolean).map(esc).join(" · ")}${o === true ? ` · <b class="open">פתוח עכשיו</b>` : o === false ? ` · <b class="closed">סגור עכשיו</b>` : ""} · ${fmtDist(km(ref, p))}</div>
+    ${p.signals?.length ? `<div class="sigs">${p.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
+    ${p.vtext ? `<div class="vquote"><p dir="ltr" lang="en">${esc(p.vtext)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : ""}
+    ${contactRow(p)}
+    ${p.hours ? `<div class="hoursrow">${ic("clock")}<span>שעות פתיחה: <bdi dir="ltr" class="nowrap">${esc(p.hours)}</bdi></span></div>` : ""}
+    <div class="card"><h2>${ic("plus")} הוספה למסלול</h2>
+      <div class="keyrow"><select id="poiDay" class="select" style="flex:1">${dayOpts}</select><button type="button" class="btn" id="poiAdd">הוספה</button></div></div>
+    <div class="linkrow">
+      <a class="lnk primary" href="${gmDir(ref, p)}" target="_blank" rel="noopener">${ic("nav")}ניווט</a>
+      <a class="lnk" href="${reviewsUrl(p)}" target="_blank" rel="noopener">${ic("pin")}בגוגל מפות</a>
+    </div>
+    <div class="disclaim">${ic("info")}<span>המידע מ-OpenStreetMap${p.vtext ? " ומ-Wikivoyage" : ""}. שעות ומחירים יכולים להשתנות.</span></div>
+  </div>`;
+  },
+  bind() {
+    $("backPoi").onclick = () => go("list", { noFly: true });
+    $("poiAdd").onclick = () => { const di = +$("poiDay").value; addPlace(S.poi, di); toast(`${S.poi.name} נוסף ל${S.trip.days[di].label}`); };
+  }
+};
+/* the search bar on the map: a place in the current city, or a new destination */
+$("gsearch").onsubmit = e => {
+  e.preventDefault();
+  const v = $("gq").value.trim();
+  if (!v) return;
+  $("gq").blur();
+  if (S.trip && !Masa.cities.findCity(v)) {
+    S.list = { chip: null, sort: "best", open: false, cuisine: null, price: null, diet: null, q: v, page: 1 };
+    if (!["list", "poi"].includes(S.screen) && TRIP_SCREENS.includes(S.screen)) S.prevTrip = S.screen;
+    go("list");
+    return;
+  }
+  const known = DESTS.find(d => v.includes(d.he));
+  S.dest = known || { q: v, he: v.split(",")[0].trim() };
+  if (known) flyCenter(known, 11);
+  go("goals");
 };
 
 /* ---------- boot ---------- */

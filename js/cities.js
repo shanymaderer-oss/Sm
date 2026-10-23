@@ -1,7 +1,8 @@
 /* מסע · popular cities. Their map data is fetched ahead of time by a GitHub Action
    (tools/fetch-cities.mjs → data/cities/<slug>.json), so these trips load almost instantly. */
 (function (root) {
-  const C = (slug, he, en, local, country, cc, lat, lng, R) => ({ slug, he, en, local, country, cc, lat, lng, R });
+  const TZ = {"rome": "Europe/Rome", "paris": "Europe/Paris", "barcelona": "Europe/Madrid", "london": "Europe/London", "prague": "Europe/Prague", "budapest": "Europe/Budapest", "vienna": "Europe/Vienna", "berlin": "Europe/Berlin", "amsterdam": "Europe/Amsterdam", "lisbon": "Europe/Lisbon", "porto": "Europe/Lisbon", "madrid": "Europe/Madrid", "athens": "Europe/Athens", "milan": "Europe/Rome", "florence": "Europe/Rome", "venice": "Europe/Rome", "new-york": "America/New_York", "bangkok": "Asia/Bangkok", "tokyo": "Asia/Tokyo", "istanbul": "Europe/Istanbul"};
+  const C = (slug, he, en, local, country, cc, lat, lng, R) => ({ slug, he, en, local, country, cc, lat, lng, R, tz: TZ[slug] });
   const CITIES = [
     C("rome", "רומא", "Rome", "Roma", "איטליה", "it", 41.8986, 12.4769, 3200),
     C("paris", "פריז", "Paris", "Paris", "צרפת", "fr", 48.8589, 2.3469, 3800),
@@ -24,7 +25,12 @@
     C("tokyo", "טוקיו", "Tokyo", "東京", "יפן", "jp", 35.6812, 139.7671, 4000),
     C("istanbul", "איסטנבול", "Istanbul", "İstanbul", "טורקיה", "tr", 41.0100, 28.9750, 3200)
   ];
-  const api = { CITIES };
+  /* find a popular city in free text, in Hebrew or English */
+  function findCity(q) {
+    const t = String(q || "").toLowerCase();
+    return CITIES.find(c => t.includes(c.he) || t.includes(c.en.toLowerCase()) || t.includes(c.local.toLowerCase()) || t.includes(c.slug.replace("-", " "))) || null;
+  }
+  const api = { CITIES, findCity };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else { root.Masa = root.Masa || {}; root.Masa.cities = api; }
 })(typeof window !== "undefined" ? window : globalThis);

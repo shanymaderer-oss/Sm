@@ -210,7 +210,8 @@ Object.assign(P,{
   trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   wiki:'<path d="M3 6h5M16 6h5M5 6l4 12 3-8 3 8 4-12"/>',
   home:'<path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-6h4v6"/>',
-  save:'<path d="M6 3h12v18l-6-4-6 4z"/>'
+  save:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+  cafe:'<path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/>'
 });
 const SAMPLE_WIKI={"Colosseo":"Colosseum","Foro Romano":"Roman Forum","Musei Vaticani":"Vatican Museums","Basilica di San Pietro":"St. Peter's Basilica","Pantheon":"Pantheon, Rome","Fontana di Trevi":"Trevi Fountain","Campo de' Fiori":"Campo de' Fiori","Galleria Borghese":"Galleria Borghese","Mercato di Testaccio":"Testaccio","Da Enzo al 29":"Trastevere"};
 SAMPLE.days.forEach(d=>d.stops.forEach(s=>{s.wikiEn=SAMPLE_WIKI[s.local]||null;s.histLang="he";s.busySrc="est";}));

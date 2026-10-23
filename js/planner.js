@@ -1,9 +1,11 @@
-/* מסע · trip planner. Builds a real trip from OpenStreetMap + Wikipedia with no AI,
-   then lets the optional AI guide add stories and tips on top of real places. */
+/* מסע · trip planner.
+   Builds each day from what the traveler chose: restaurants and cafés ranked by quality signals and budget,
+   malls and markets, nightlife, and sights only from the categories they picked.
+   Data: OpenStreetMap + Wikivoyage recommendations + Wikipedia. The optional AI adds stories on top. */
 window.Masa = window.Masa || {};
 Masa.planner = (() => {
   const { CATS, PHRASES, COUNTRY_LANG, ETIQUETTE_GENERIC } = window.MASA_DATA;
-  const svc = Masa.svc;
+  const svc = Masa.svc, SRC = Masa.sources, CITIES = Masa.cities;
 
   const km = (a, b) => {
     const R = 6371, r = Math.PI / 180, dl = (b.lat - a.lat) * r, dg = (b.lng - a.lng) * r;
@@ -11,168 +13,239 @@ Masa.planner = (() => {
     return 2 * R * Math.asin(Math.sqrt(h));
   };
 
-  /* minutes on site, by category */
-  const DUR = { art: 120, history: 75, view: 40, religion: 45, nature: 60, food: 75, night: 90, shopping: 60, family: 120 };
+  /* ---------- place kinds ---------- */
+  /* kind = what the place is; cat = which interest it serves (colors and icons) */
+  const KIND = {
+    restaurant: { cat: "food", he: "מסעדה", min: 75 }, cafe: { cat: "food", he: "בית קפה", min: 45 }, dessert: { cat: "food", he: "קינוח", min: 30 },
+    bakery: { cat: "food", he: "מאפייה", min: 25 }, market: { cat: "food", he: "שוק", min: 60 }, deli: { cat: "food", he: "מעדנייה", min: 30 },
+    bar: { cat: "night", he: "בר", min: 90 }, club: { cat: "night", he: "מועדון", min: 120 },
+    mall: { cat: "shopping", he: "קניון", min: 90 }, shop: { cat: "shopping", he: "חנות", min: 40 }, store: { cat: "shopping", he: "כלבו", min: 60 },
+    museum: { cat: "art", he: "מוזיאון", min: 110 }, gallery: { cat: "art", he: "גלריה", min: 60 },
+    sight: { cat: "history", he: "אתר היסטורי", min: 70 }, church: { cat: "history", he: "מבנה דתי", min: 40 },
+    view: { cat: "view", he: "תצפית", min: 35 }, attraction: { cat: "view", he: "אטרקציה", min: 60 },
+    park: { cat: "nature", he: "פארק", min: 60 }, beach: { cat: "nature", he: "חוף", min: 120 },
+    zoo: { cat: "family", he: "גן חיות", min: 150 }, themepark: { cat: "family", he: "פארק שעשועים", min: 180 }
+  };
+  function kindFromTags(t) {
+    const a = t.amenity, tu = t.tourism, sh = t.shop;
+    if (a === "restaurant") return "restaurant";
+    if (a === "cafe") return "cafe";
+    if (a === "ice_cream" || sh === "pastry" || sh === "confectionery") return "dessert";
+    if (sh === "bakery") return "bakery";
+    if (a === "marketplace" || a === "food_court") return "market";
+    if (sh === "deli" || sh === "wine") return "deli";
+    if (a === "nightclub") return "club";
+    if (a === "bar" || a === "pub" || a === "biergarten") return "bar";
+    if (sh === "mall") return "mall";
+    if (sh === "department_store") return "store";
+    if (sh) return "shop";
+    if (tu === "museum") return "museum";
+    if (tu === "gallery") return "gallery";
+    if (tu === "zoo" || tu === "aquarium") return "zoo";
+    if (tu === "theme_park" || t.leisure === "water_park") return "themepark";
+    if (tu === "viewpoint") return "view";
+    if (a === "place_of_worship" || /^(church|monastery)$/.test(t.historic || "")) return "church";
+    if (t.natural === "beach") return "beach";
+    if (/^(park|garden)$/.test(t.leisure || "")) return "park";
+    if (t.historic) return "sight";
+    if (tu === "attraction") return /^(church|cathedral|chapel|basilica|mosque|synagogue|temple)$/.test(t.building || "") ? "church" : "attraction";
+    return "attraction";
+  }
+  /* which kinds can fill an activity slot for each interest */
+  const SLOT_KINDS = {
+    history: ["sight", "church", "attraction"], art: ["museum", "gallery"], view: ["view", "attraction", "sight"],
+    nature: ["park", "beach", "view"], shopping: ["mall", "store", "market", "shop"], family: ["zoo", "themepark", "park", "museum"],
+    food: ["market", "deli", "dessert", "cafe", "bakery"], night: ["bar"]
+  };
 
   /* typical crowd level per hour, 07:00–22:00 (16 values). An estimate, shown as such. */
   const BUSY = {
-    art:      [0, 0, 30, 60, 85, 90, 85, 80, 75, 60, 35, 0, 0, 0, 0, 0],
-    history:  [10, 25, 45, 70, 85, 90, 88, 85, 80, 70, 55, 40, 25, 0, 0, 0],
-    view:     [10, 15, 25, 40, 55, 60, 60, 60, 65, 75, 90, 95, 70, 40, 20, 10],
-    religion: [10, 25, 45, 60, 70, 65, 50, 45, 50, 45, 35, 20, 0, 0, 0, 0],
-    nature:   [15, 25, 35, 45, 55, 60, 60, 60, 65, 70, 65, 50, 30, 15, 0, 0],
-    food:     [0, 0, 10, 15, 40, 85, 90, 50, 20, 20, 30, 60, 90, 95, 70, 40],
-    night:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 20, 35, 55, 75, 90, 95],
-    shopping: [0, 0, 15, 35, 55, 65, 70, 70, 75, 80, 80, 70, 40, 0, 0, 0],
-    family:   [0, 0, 35, 65, 85, 90, 85, 80, 70, 50, 30, 0, 0, 0, 0, 0]
+    art: [0, 0, 30, 60, 85, 90, 85, 80, 75, 60, 35, 0, 0, 0, 0, 0], history: [10, 25, 45, 70, 85, 90, 88, 85, 80, 70, 55, 40, 25, 0, 0, 0],
+    view: [10, 15, 25, 40, 55, 60, 60, 60, 65, 75, 90, 95, 70, 40, 20, 10], nature: [15, 25, 35, 45, 55, 60, 60, 60, 65, 70, 65, 50, 30, 15, 0, 0],
+    food: [0, 0, 10, 15, 40, 85, 90, 50, 20, 20, 30, 60, 90, 95, 70, 40], cafe: [20, 55, 75, 70, 55, 45, 40, 55, 65, 60, 40, 20, 0, 0, 0, 0],
+    night: [0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 20, 35, 55, 75, 90, 95], shopping: [0, 0, 15, 35, 55, 65, 70, 70, 75, 80, 80, 70, 40, 0, 0, 0],
+    family: [0, 0, 35, 65, 85, 90, 85, 80, 70, 50, 30, 0, 0, 0, 0, 0], market: [10, 45, 70, 85, 90, 80, 55, 30, 15, 0, 0, 0, 0, 0, 0, 0]
   };
-
   const WHY = {
-    art: "מוזיאון או גלריה שמומלצים לחובבי אמנות.",
-    history: "אתר היסטורי שמספר חלק מהסיפור של העיר.",
-    view: "מקום מצולם במיוחד או נקודת תצפית.",
-    religion: "מבנה דתי מרשים, בדרך כלל פתוח למבקרים.",
-    nature: "פארק או גן לנשימה בין האטרקציות.",
-    food: "מקום אוכל שנבחר לפי הקרבה למסלול.",
-    night: "מקום לבילוי בערב.",
-    shopping: "מקום לקניות ולשיטוט.",
-    family: "אטרקציה שמתאימה גם לילדים."
+    restaurant: "מסעדה שנבחרה לפי סימני איכות, התקציב והקרבה למסלול.", cafe: "בית קפה טוב לעצירה.", dessert: "עצירה למשהו מתוק.",
+    bakery: "מאפייה מקומית.", market: "שוק אוכל מקומי, מקום טוב לטעום הרבה דברים.", deli: "מעדנייה לטעימות ולמזכרות אכילות.",
+    bar: "מקום לבילוי בערב.", club: "מועדון לילה.", mall: "קניון גדול עם הרבה חנויות במקום אחד.", store: "כלבו גדול.", shop: "חנות מומלצת.",
+    museum: "מוזיאון שמומלץ לחובבי אמנות ותרבות.", gallery: "גלריה לאמנות.", sight: "אתר היסטורי שמספר חלק מהסיפור של העיר.",
+    church: "מבנה דתי מרשים, בדרך כלל פתוח למבקרים.", view: "נקודת תצפית או מקום מצולם במיוחד.", attraction: "אטרקציה מוכרת בעיר.",
+    park: "פארק או גן לנשימה בין האטרקציות.", beach: "חוף לבילוי.", zoo: "אטרקציה שמתאימה גם לילדים.", themepark: "פארק שעשועים."
   };
   const TIPS = {
-    art: "הרבה מוזיאונים סגורים יום אחד בשבוע. כדאי לבדוק באתר לפני שמגיעים.",
-    history: "נעליים נוחות ובקבוק מים. באתרים פתוחים יש בדרך כלל מעט צל.",
-    view: "הכי יפה בשקיעה. הגיעו בערך 20 דקות לפני.",
-    religion: "לבוש צנוע: כתפיים וברכיים מכוסות. בזמן תפילה לא מסתובבים בפנים.",
-    nature: "מקום טוב לפיקניק. אפשר לקנות משהו בשוק בדרך.",
-    food: "שאלו מה המנה של הבית. תפריט באנגלית בלבד ליד אטרקציה הוא לפעמים סימן למלכודת תיירים.",
-    night: "בהרבה ערים הלילה מתחיל מאוחר. בדקו מתי המקום מתמלא.",
-    shopping: "השוו מחירים לפני שקונים. בשווקים בהרבה מדינות מקובל להתמקח.",
-    family: "בחופשות כדאי להזמין מראש ולהגיע בפתיחה."
+    restaurant: "בערב במסעדות טובות כדאי להזמין שולחן מראש. בצהריים יש לפעמים תפריט עסקי זול יותר.",
+    cafe: "בהרבה ערים קפה בעמידה ליד הבר זול יותר מקפה לשולחן.", dessert: "הגלידה הכי טובה בדרך כלל בכלים מכוסים, לא בערימות צבעוניות.",
+    market: "הגיעו רעבים ובבוקר, כשהדוכנים מלאים. חלק מהשווקים סגורים ביום ראשון.", mall: "בדקו החזר מע״מ לתיירים בקניות גדולות.",
+    shop: "השוו מחירים לפני שקונים.", bar: "בהרבה ערים הלילה מתחיל מאוחר. בדקו מתי המקום מתמלא.",
+    museum: "הרבה מוזיאונים סגורים יום אחד בשבוע. כדאי לבדוק באתר לפני שמגיעים.", sight: "נעליים נוחות ובקבוק מים.",
+    church: "לבוש צנוע: כתפיים וברכיים מכוסות.", view: "הכי יפה בשקיעה. הגיעו בערך 20 דקות לפני.", park: "מקום טוב לפיקניק."
   };
   const LOCAL_CUISINE = {
-    it: ["italian", "roman", "regional", "pizza"], fr: ["french", "regional"], es: ["spanish", "tapas", "regional"],
+    it: ["italian", "roman", "regional", "pizza", "tuscan", "venetian"], fr: ["french", "regional"], es: ["spanish", "tapas", "regional", "catalan", "basque"],
     pt: ["portuguese", "regional"], gr: ["greek", "regional"], cz: ["czech", "regional"], jp: ["japanese", "ramen", "sushi", "regional"],
-    th: ["thai", "regional"], de: ["german", "regional"], at: ["austrian", "regional"], gb: ["british", "regional"],
-    us: ["american", "regional"], nl: ["dutch", "regional"], hu: ["hungarian", "regional"], tr: ["turkish", "regional"]
+    th: ["thai", "regional"], de: ["german", "regional"], at: ["austrian", "regional"], gb: ["british", "regional"], us: ["american", "regional"],
+    nl: ["dutch", "regional"], hu: ["hungarian", "regional"], tr: ["turkish", "regional", "kebab"]
+  };
+  const CHAIN = /mcdonald|burger king|kfc|starbucks|subway|domino|pizza hut|costa coffee|dunkin|five guys|wendy|taco bell|tim hortons|vapiano|nando|hard rock/i;
+
+  /* ---------- normalize sources into one pool ---------- */
+  const normName = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9֐-׿Ͱ-ϿЀ-ӿ฀-๿぀-ヿ一-鿿]+/g, " ").trim();
+  const similar = (a, b) => {
+    const x = normName(a), y = normName(b);
+    if (!x || !y) return false;
+    if (x.includes(y) || y.includes(x)) return true;
+    const A = new Set(x.split(" ")), B = new Set(y.split(" "));
+    const inter = [...A].filter(w => w.length > 2 && B.has(w)).length;
+    return inter / Math.min(A.size, B.size) >= 0.5;
   };
 
-  function catFromTags(t) {
-    if (/^(museum|gallery)$/.test(t.tourism)) return "art";
-    if (/^(zoo|aquarium|theme_park)$/.test(t.tourism) || t.leisure === "water_park") return "family";
-    if (t.tourism === "viewpoint") return "view";
-    if (t.amenity === "place_of_worship") return "religion";
-    if (/^(restaurant|cafe|marketplace|food_court)$/.test(t.amenity)) return "food";
-    if (/^(bar|pub|nightclub)$/.test(t.amenity)) return "night";
-    if (t.shop) return "shopping";
-    if (/^(park|garden)$/.test(t.leisure) || t.natural === "beach") return "nature";
-    if (t.historic) return /^(church|monastery)$/.test(t.historic) ? "religion" : "history";
-    if (t.tourism === "attraction") return /^(church|cathedral|chapel|basilica|mosque|synagogue|temple)$/.test(t.building) ? "religion" : "view";
-    return "view";
+  function fromOSM(e, cc) {
+    const t = e.tags || {};
+    const name = t["name:he"] || t.name;
+    if (!name) return null;
+    const kind = kindFromTags(t);
+    return {
+      id: `${e.type}/${e.id}`, src: "osm", name, local: t.name || name, kind, cat: KIND[kind].cat, lat: e.lat, lng: e.lon,
+      wikidata: t.wikidata || null, wikiTag: t.wikipedia || null, website: t.website || t["contact:website"] || t.url || null,
+      phone: t.phone || t["contact:phone"] || null, hours: t.opening_hours || null, cuisine: t.cuisine || null,
+      fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || ""),
+      kosher: /yes|only/.test(t["diet:kosher"] || ""), michelin: +t["michelin:stars"] || 0, brand: !!t.brand, heritage: !!t.heritage, hasHe: !!t["name:he"],
+      address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") || null, reservation: t.reservation || null,
+      tourism: t.tourism || null, historic: t.historic || null
+    };
+  }
+  function voyageKind(v) {
+    const txt = `${v.name} ${v.content || ""}`;
+    if (v.type === "eat") return /caf[eé]|coffee|bakery|pastr|ice cream|gelat|dessert/i.test(txt) && !/restaurant/i.test(txt) ? (/ice cream|gelat|dessert|pastr/i.test(txt) ? "dessert" : "cafe") : /market|food hall/i.test(txt) ? "market" : "restaurant";
+    if (v.type === "drink") return /caf[eé]|coffee|tea/i.test(txt) && !/bar|pub|beer|wine|cocktail/i.test(txt) ? "cafe" : /club/i.test(txt) ? "club" : "bar";
+    if (v.type === "buy") return /mall|shopping cent|galer|department/i.test(txt) ? "mall" : /market/i.test(txt) ? "market" : "shop";
+    if (v.type === "see") return /museum/i.test(txt) ? "museum" : /gallery/i.test(txt) ? "gallery" : /church|cathedral|basilica|synagogue|mosque|temple|monastery/i.test(txt) ? "church" : /park|garden/i.test(txt) ? "park" : /view|lookout|tower/i.test(txt) ? "view" : "sight";
+    return /zoo|aquarium/i.test(txt) ? "zoo" : /park|garden/i.test(txt) ? "park" : /beach/i.test(txt) ? "beach" : "attraction";
+  }
+  /* Wikipedia "nearby" articles as sights (only used when the map data is thin) */
+  const WIKI_SKIP = /(תחנת|רחוב|שדרות|כביש|קו |שדה התעופה|נמל התעופה|בית חולים|אוניברסיט|בית ספר|שגרירות|מלון|שכונ|רכבת|מטרו|חשמלית|מחוז|station|street|road|avenue|line\b|airport|hospital|universit|school|embassy|hotel|district|neighbourhood|neighborhood|metro|railway|tram|bus\b|constituency|company)/i;
+  function wikiKind(t) {
+    if (/(מוזיאון|גלריה|museum|gallery)/i.test(t)) return "museum";
+    if (/(כנסיי|קתדרל|בזיליק|מנזר|בית הכנסת|מסגד|מקדש|קפלה|church|cathedral|basilica|monastery|synagogue|mosque|temple|chapel|abbey)/i.test(t)) return "church";
+    if (/(פארק|גן |גני |park|garden)/i.test(t)) return "park";
+    if (/(גשר|כיכר|מגדל|תצפית|bridge|square|tower|viewpoint)/i.test(t)) return "view";
+    return "sight";
   }
 
-  /* Three small queries instead of one big one: busy public servers answer small ones much more reliably. */
-  function buildQueries(lat, lng, R, interests) {
-    const A = (r = R) => `(around:${Math.round(r)},${lat.toFixed(5)},${lng.toFixed(5)})`;
-    const H = "[out:json][timeout:20];";
-    const sights = H + `(nwr["tourism"~"^(attraction|museum|gallery|viewpoint)$"]["name"]${A()};nwr["historic"~"^(monument|castle|ruins|archaeological_site|fort|city_gate|palace|church|monastery|memorial|building|tower|aqueduct|bridge)$"]["name"]["wikidata"]${A()};);out center tags 220;`;
-    const food = H + `(nwr["amenity"="marketplace"]["name"]${A()};nwr["amenity"~"^(restaurant|cafe)$"]["name"]["wikidata"]${A()};nwr["amenity"="restaurant"]["name"]["cuisine"]["website"]${A(R * 0.4)};);out center tags 150;`;
-    const extra = [`nwr["amenity"="place_of_worship"]["name"]["wikidata"]${A()};`, `nwr["leisure"~"^(park|garden)$"]["name"]["wikidata"]${A()};`, `nwr["natural"="beach"]["name"]${A()};`];
-    if (interests.includes("night")) extra.push(`nwr["amenity"~"^(bar|pub|nightclub)$"]["name"]${A(R * 0.5)};`);
-    if (interests.includes("shopping")) extra.push(`nwr["shop"~"^(mall|department_store)$"]["name"]${A()};`);
-    if (interests.includes("family")) extra.push(`nwr["tourism"~"^(zoo|aquarium|theme_park)$"]["name"]${A(R * 2)};`, `nwr["leisure"="water_park"]["name"]${A(R * 2)};`);
-    return [sights, food, H + `(${extra.join("")});out center tags 150;`];
-  }
-
-  /* Wikipedia "nearby" articles as sights: used to fill in, or alone when OpenStreetMap is down */
-  const WIKI_SKIP = /(תחנת|רחוב|שדרות|כביש|קו |שדה התעופה|נמל התעופה|בית חולים|אוניברסיט|בית ספר|שגרירות|מלון|שכונ|רכבת|מטרו|חשמלית|מחוז|רובע \d|station|street|road|avenue|line\b|airport|hospital|universit|school|embassy|hotel|district|neighbourhood|neighborhood|metro|railway|tram|bus\b|constituency|company)/i;
-  function wikiCat(t) {
-    if (/(מוזיאון|גלריה|museum|gallery)/i.test(t)) return "art";
-    if (/(כנסיי|כנסיית|קתדרל|בזיליק|מנזר|בית הכנסת|מסגד|מקדש|קפלה|church|cathedral|basilica|monastery|synagogue|mosque|temple|chapel|abbey)/i.test(t)) return "religion";
-    if (/(פארק|גן |גני |park|garden)/i.test(t)) return "nature";
-    if (/(גשר|כיכר|מגדל|תצפית|bridge|square|tower|viewpoint|lookout)/i.test(t)) return "view";
-    return "history";
-  }
-  function wikiPool(items, center, interests, osmPool) {
-    const out = [];
-    for (const w of items) {
-      if (WIKI_SKIP.test(w.title)) continue;
-      const p = { osm: `wiki/${w.lang}/${w.pageid}`, name: w.title, local: w.title, cat: wikiCat(w.title), lat: w.lat, lng: w.lng, tags: {}, wikidata: null, website: null, hours: null, fee: null, charge: null };
-      p["_" + w.lang] = w.title;
-      if (osmPool.some(o => o.wikidata && km(o, p) < 0.1)) continue;
-      const twin = out.find(o => km(o, p) < 0.06);
-      if (twin) { if (w.lang === "en") twin._en = w.title; continue; }
-      p.dist = km(center, p);
-      p.score = (w.lang === "he" ? 5.5 : 3.5) + (interests.includes(p.cat) ? 4 : 0) - p.dist * 0.55;
-      out.push(p);
-    }
-    return out;
-  }
-
-  function score(p, interests, cc) {
-    const t = p.tags;
-    let s = 0;
-    if (p.wikidata) s += 4;
-    if (t.wikipedia) s += 3;
-    if (t["name:he"]) s += 3;
-    if (t.tourism === "attraction") s += 2;
-    if (t.tourism === "museum") s += 1.5;
-    if (t.heritage) s += 1.5;
-    if (p.website) s += 0.8;
-    if (t.wikimedia_commons || t.image) s += 0.6;
-    if (t.opening_hours) s += 0.3;
-    if (interests.includes(p.cat)) s += 4;
-    if (p.cat === "food") {
-      if (t.amenity === "marketplace") s += 2;
-      const cu = (t.cuisine || "").toLowerCase();
-      if ((LOCAL_CUISINE[cc] || []).some(c => cu.includes(c))) s += 2.5;
-      if (/(burger|kebab|fast_food|chicken)/.test(cu)) s -= 2;
-      if (/mcdonald|burger king|kfc|starbucks|subway|domino/i.test(t.name || "")) s -= 10;
-    }
-    if (t.tourism === "attraction" && !p.wikidata && !t.historic) s -= 1.5;
-    return s - p.dist * 0.55;
-  }
-
-  function normalize(els, center, interests, cc) {
+  function buildPool(data, geo) {
+    const cc = geo.cc;
+    const pool = [];
     const seen = new Map();
-    for (const e of els || []) {
-      const t = e.tags || {};
-      const lat = e.lat ?? e.center?.lat, lng = e.lon ?? e.center?.lon;
-      if (lat == null || lng == null) continue;
-      const name = t["name:he"] || t.name;
-      if (!name) continue;
-      const p = {
-        osm: `${e.type}/${e.id}`, name, local: t.name || name, cat: catFromTags(t), lat, lng, tags: t,
-        wikidata: t.wikidata || null, website: t.website || t["contact:website"] || t.url || null,
-        hours: t.opening_hours || null, fee: t.fee || null, charge: t.charge || null
-      };
-      p.dist = km(center, p);
-      p.score = score(p, interests, cc);
-      const key = t.wikidata || (t.name || name).toLowerCase().replace(/\s+/g, " ").trim();
-      const prev = seen.get(key);
-      if (!prev || p.score > prev.score) seen.set(key, p);
+    for (const e of data.els || []) {
+      const p = fromOSM(e, cc);
+      if (!p) continue;
+      const key = p.wikidata || `${p.kind}|${normName(p.local)}`;
+      if (seen.has(key)) continue;
+      seen.set(key, p);
+      pool.push(p);
     }
-    return [...seen.values()];
+    // Wikivoyage: attach to the matching OpenStreetMap place, or add as a new place
+    const noGeo = [];
+    for (const v of data.voyage || []) {
+      const kind = voyageKind(v);
+      if (v.lat == null) { noGeo.push({ ...v, kind, cat: KIND[kind].cat }); continue; }
+      if (km(geo, { lat: v.lat, lng: v.lng }) > 12) continue;
+      const match = pool.find(p => km(p, v) < 0.15 && (similar(p.local, v.name) || (v.alt && similar(p.local, v.alt))));
+      const vo = { text: v.content, price: v.price, priceClass: v.priceClass, hours: v.hours, district: v.district || null };
+      if (match) {
+        match.voyage = vo;
+        match.website = match.website || v.url; match.phone = match.phone || v.phone; match.address = match.address || v.address;
+        if (v.wikidata && !match.wikidata) match.wikidata = v.wikidata;
+      } else {
+        pool.push({ id: `wv/${normName(v.name)}`, src: "voyage", name: v.name, local: v.name, kind, cat: KIND[kind].cat, lat: v.lat, lng: v.lng,
+          wikidata: v.wikidata, website: v.url, phone: v.phone, hours: null, address: v.address, voyage: vo });
+      }
+    }
+    // Wikipedia nearby articles: only fill in sights when the map data has few of them
+    const sights = pool.filter(p => ["history", "art", "view"].includes(p.cat)).length;
+    if (sights < 30) {
+      const wiki = [...(data.wiki?.he || []), ...(data.wiki?.en || [])];
+      const added = [];
+      for (const w of wiki) {
+        if (WIKI_SKIP.test(w.title)) continue;
+        if (pool.some(p => p.wikidata && km(p, w) < 0.1)) continue;
+        const twin = added.find(o => km(o, w) < 0.06);
+        if (twin) { if (w.lang === "en") twin._en = w.title; continue; }
+        const kind = wikiKind(w.title);
+        const p = { id: `wiki/${w.lang}/${w.pageid}`, src: "wiki", name: w.title, local: w.title, kind, cat: KIND[kind].cat, lat: w.lat, lng: w.lng, wikiBonus: w.lang === "he" ? 3 : 1.5 };
+        p["_" + w.lang] = w.title;
+        added.push(p);
+      }
+      pool.push(...added);
+    }
+    pool.forEach(p => { p.dist = km(geo, p); });
+    return { pool, noGeo };
   }
 
-  /* greedy pick with a diversity penalty and a minimum gap between places */
-  function pick(cands, n, minGapKm = 0.15) {
-    const out = [], cnt = {}, rest = [...cands];
+  /* ---------- quality ---------- */
+  const BUDGET_CLASS = { "חסכוני": "budget", "בינוני": "mid", "מפנק": "splurge" };
+  /* "signals" are shown to the traveler, so the ranking is never a black box */
+  function rate(p, cc, budget) {
+    let q = 0;
+    const sig = [];
+    if (p.michelin) { q += 6; sig.push(`כוכב מישלן${p.michelin > 1 ? ` ×${p.michelin}` : ""}`); }
+    if (p.voyage) { q += 4; sig.push("מומלץ ב-Wikivoyage"); }
+    if (p.wikidata) { q += 2.5; if (p.cat === "food" || p.cat === "night" || p.cat === "shopping") sig.push("מקום מוכר"); }
+    if (p.wikiTag || p._he || p._en) q += 2;
+    if (p.hasHe) q += 2.5;
+    if (p.wikiBonus) q += p.wikiBonus;
+    if (p.heritage) q += 1;
+    if (p.tourism === "attraction") q += 1.5;
+    if (p.kind === "museum") q += 1;
+    if (p.website) q += 1;
+    if (p.hours) q += 0.7;
+    if (p.phone) q += 0.3;
+    if (p.cat === "food") {
+      const cu = (p.cuisine || "").toLowerCase();
+      if (cu) q += 0.4;
+      if ((LOCAL_CUISINE[cc] || []).some(c => cu.includes(c))) { q += 1.6; sig.push("מטבח מקומי"); }
+      if (/(burger|kebab|fast_food|chicken|friture)/.test(cu)) q -= 2.5;
+      if (p.kind === "market") { q += 1.5; }
+      const pc = p.voyage?.priceClass, want = BUDGET_CLASS[budget];
+      if (pc && want) {
+        if (pc === want) { q += 2; }
+        else if ((want === "budget" && pc === "splurge") || (want === "splurge" && pc === "budget")) q -= 2.5;
+        else q -= 0.6;
+      }
+      if (p.outdoor) sig.push("ישיבה בחוץ");
+      if (p.veg) sig.push("אפשרויות צמחוניות");
+      if (p.kosher) sig.push("כשר");
+    }
+    if (p.brand || CHAIN.test(p.local || "")) { q -= p.kind === "mall" || p.kind === "store" ? 0 : 6; }
+    if (p.kind === "mall") q += 1.5;
+    p.q = Math.round(q * 10) / 10;
+    p.signals = sig;
+    return p;
+  }
+  const PRICE_SIGN = { budget: "זול", mid: "מחיר בינוני", splurge: "יוקרתי" };
+
+  /* ---------- picking ---------- */
+  function pickFor(cands, n, chosen, minGapKm = 0.15) {
+    const out = [];
+    const cnt = {};
+    for (const p of chosen) cnt[p.kind] = (cnt[p.kind] || 0) + 1;
+    const rest = [...cands];
     while (out.length < n && rest.length) {
       let bi = -1, bv = -Infinity;
       rest.forEach((p, i) => {
-        if (out.some(o => km(o, p) < minGapKm)) return;
-        const v = p.score - 2.2 * (cnt[p.cat] || 0);
+        if ([...chosen, ...out].some(o => o.id === p.id || km(o, p) < minGapKm)) return;
+        const v = p.q - p.dist * 0.6 - 1.4 * (cnt[p.kind] || 0);
         if (v > bv) { bv = v; bi = i; }
       });
       if (bi < 0) break;
       const p = rest.splice(bi, 1)[0];
       out.push(p);
-      cnt[p.cat] = (cnt[p.cat] || 0) + 1;
+      cnt[p.kind] = (cnt[p.kind] || 0) + 1;
     }
     return out;
   }
-
-  /* split places into days as wedges around the center, starting after the biggest empty gap */
   function splitDays(pts, days) {
     if (days <= 1 || pts.length <= 1) return [pts];
     const c = { lat: pts.reduce((a, p) => a + p.lat, 0) / pts.length, lng: pts.reduce((a, p) => a + p.lng, 0) / pts.length };
@@ -180,17 +253,14 @@ Masa.planner = (() => {
     const arr = pts.map(p => ({ p, a: Math.atan2(p.lat - c.lat, (p.lng - c.lng) * k) })).sort((x, y) => x.a - y.a);
     let start = 0, best = -1;
     for (let i = 0; i < arr.length; i++) {
-      const nx = arr[(i + 1) % arr.length];
-      const gap = (nx.a - arr[i].a + 2 * Math.PI) % (2 * Math.PI);
+      const gap = (arr[(i + 1) % arr.length].a - arr[i].a + 2 * Math.PI) % (2 * Math.PI);
       if (gap > best) { best = gap; start = (i + 1) % arr.length; }
     }
     const rot = [...arr.slice(start), ...arr.slice(0, start)].map(x => x.p);
     const out = [];
     for (let d = 0; d < days; d++) out.push(rot.slice(Math.round(d * rot.length / days), Math.round((d + 1) * rot.length / days)));
-    return out.filter(x => x.length);
+    return out;
   }
-
-  /* shortest open walking order (brute force for small days) */
   function orderDay(pts) {
     if (pts.length <= 2) return pts;
     if (pts.length > 7) {
@@ -199,41 +269,78 @@ Masa.planner = (() => {
       return out;
     }
     let best = null, bestLen = Infinity;
-    const perm = (arr, used, cur, len) => {
+    const perm = (used, cur, len) => {
       if (len >= bestLen) return;
-      if (cur.length === arr.length) { bestLen = len; best = [...cur]; return; }
-      for (let i = 0; i < arr.length; i++) {
+      if (cur.length === pts.length) { bestLen = len; best = [...cur]; return; }
+      for (let i = 0; i < pts.length; i++) {
         if (used[i]) continue;
-        used[i] = true; cur.push(arr[i]);
-        perm(arr, used, cur, len + (cur.length > 1 ? km(cur[cur.length - 2], arr[i]) : 0));
+        used[i] = true; cur.push(pts[i]);
+        perm(used, cur, len + (cur.length > 1 ? km(cur[cur.length - 2], pts[i]) : 0));
         cur.pop(); used[i] = false;
       }
     };
-    perm(pts, [], [], 0);
+    perm([], [], 0);
     return best;
   }
 
-  /* first HH:MM-HH:MM range in an OSM opening_hours string */
+  /* ---------- hours ---------- */
+  const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  /* "open now" for common OpenStreetMap formats. Returns true/false, or null when unsure. */
+  function isOpen(hours, date) {
+    if (!hours) return null;
+    const h = hours.trim();
+    if (/24\/7/.test(h)) return true;
+    const dow = (date.getDay() + 6) % 7, mins = date.getHours() * 60 + date.getMinutes();
+    let decided = null;
+    for (const rule of h.split(";").map(r => r.trim()).filter(Boolean)) {
+      if (/PH|SH|week|[A-Z][a-z]{2}\s\d/.test(rule) && !/^(Mo|Tu|We|Th|Fr|Sa|Su)/.test(rule)) continue;
+      const m = rule.match(/^((?:(?:Mo|Tu|We|Th|Fr|Sa|Su)(?:-(?:Mo|Tu|We|Th|Fr|Sa|Su))?,?\s*)+)?\s*(.*)$/);
+      if (!m) return null;
+      let applies = true;
+      if (m[1]) {
+        applies = false;
+        for (const part of m[1].split(",").map(x => x.trim()).filter(Boolean)) {
+          const [a, b] = part.split("-").map(x => DAYS.indexOf(x));
+          if (a < 0) return null;
+          const end = b >= 0 ? b : a;
+          if (a <= end ? dow >= a && dow <= end : dow >= a || dow <= end) applies = true;
+        }
+      }
+      if (!applies) continue;
+      const rest = m[2].trim();
+      if (/^(off|closed)$/i.test(rest)) { decided = false; continue; }
+      const ranges = [...rest.matchAll(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g)];
+      if (!ranges.length) return null;
+      decided = ranges.some(r => {
+        const s = +r[1] * 60 + +r[2]; let e = +r[3] * 60 + +r[4];
+        if (e <= s) e += 24 * 60;
+        return (mins >= s && mins < e) || (mins + 24 * 60 >= s && mins + 24 * 60 < e);
+      });
+    }
+    return decided;
+  }
   function openRange(h) {
     if (!h) return null;
     if (/24\/7/.test(h)) return [0, 24];
     const m = h.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
-    if (!m) return null;
-    return [+m[1] + +m[2] / 60, (+m[3] || 24) + +m[4] / 60];
+    return m ? [+m[1] + +m[2] / 60, (+m[3] || 24) + +m[4] / 60] : null;
   }
-  function busyFor(cat, hours) {
-    let b = [...(BUSY[cat] || BUSY.history)];
-    const r = openRange(hours);
+  function busyFor(p) {
+    const key = p.kind === "market" ? "market" : (p.kind === "cafe" || p.kind === "bakery" || p.kind === "dessert") ? "cafe" : p.cat;
+    let b = [...(BUSY[key] || BUSY.history)];
+    const r = openRange(p.hours);
     if (r) b = b.map((v, i) => { const h = 7 + i; return h + 0.5 < r[0] || h >= r[1] ? 0 : Math.max(v, 15); });
     return b;
   }
-  function bestTime(busy, cat) {
-    const cands = busy.map((v, i) => ({ v, h: 7 + i })).filter(x => x.v > 0 && (cat === "night" ? x.h >= 19 : cat === "view" ? true : x.h >= 8 && x.h <= 18));
+  function bestTime(busy, p) {
+    const cands = busy.map((v, i) => ({ v, h: 7 + i })).filter(x => x.v > 0 && (p.cat === "night" ? x.h >= 19 : p.kind === "view" ? true : x.h >= 8 && x.h <= 18));
     if (!cands.length) return "";
-    if (cat === "view") { const peak = cands.reduce((a, b) => b.v > a.v ? b : a); return `לשקיעה, בסביבות ${peak.h}:00. לפחות אנשים: בבוקר`; }
+    if (p.kind === "view") { const peak = cands.reduce((a, b) => b.v > a.v ? b : a); return `לשקיעה, בסביבות ${peak.h}:00. לפחות אנשים: בבוקר`; }
     const low = cands.reduce((a, b) => b.v < a.v ? b : a);
     return `בסביבות ${String(low.h).padStart(2, "0")}:00`;
   }
+
+  /* ---------- stop objects ---------- */
   const fmtTime = m => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}:${String(Math.round(m % 60)).padStart(2, "0")}`;
   const fmtDur = m => {
     if (m < 60) return `${m} דקות`;
@@ -243,66 +350,66 @@ Masa.planner = (() => {
     return `${h === 1 ? "שעה" : h === 2 ? "שעתיים" : h + " שעות"}${r ? ` ו-${r} דק׳` : ""}`;
   };
   function costText(p, budget) {
+    if (p.voyage?.price) return p.voyage.price;
     if (p.fee === "no") return "חינם";
     if (p.charge) return p.charge;
-    if (p.cat === "food") return { "חסכוני": "זול", "בינוני": "בינוני", "מפנק": "יקר יותר" }[budget] || "בינוני";
+    if (p.cat === "food") return p.voyage?.priceClass ? PRICE_SIGN[p.voyage.priceClass] : { "חסכוני": "זול", "בינוני": "מחיר בינוני", "מפנק": "יוקרתי" }[budget] || "מחיר בינוני";
     if (p.fee === "yes") return "בתשלום";
-    return { art: "בתשלום, בדרך כלל", family: "בתשלום", view: "בדרך כלל חינם", nature: "בדרך כלל חינם", religion: "בדרך כלל חינם", night: "לפי מה שמזמינים", shopping: "—" }[p.cat] || "תלוי במקום";
+    return { art: "בתשלום, בדרך כלל", family: "בתשלום", view: "בדרך כלל חינם", nature: "בדרך כלל חינם", night: "לפי מה שמזמינים", shopping: "—" }[p.cat] || "תלוי במקום";
   }
-  function bookingFor(p) {
-    const needed = p.cat === "art" || p.cat === "family" || p.fee === "yes" || p.tags?.tourism === "museum";
-    const q = `${p.local} official site tickets`;
+  function bookingFor(p, meal) {
+    const needed = ["museum", "zoo", "themepark"].includes(p.kind) || p.fee === "yes" || (meal === "dinner" && (p.reservation === "yes" || p.reservation === "recommended" || p.michelin || p.voyage?.priceClass === "splurge"));
+    const q = `${p.local} ${p.cat === "food" ? "reservation" : "official site tickets"}`;
+    if (p.cat === "food") return {
+      needed, query: q, url: p.website || null,
+      steps: needed
+        ? [p.website ? "פותחים את האתר של המסעדה (הכפתור למטה) ומחפשים הזמנת שולחן." : "מחפשים את המסעדה בגוגל מפות ומתקשרים או מזמינים דרך האתר שלה.", "בוחרים שעה. במסעדות מבוקשות כדאי להזמין כמה ימים מראש.", "שומרים את אישור ההזמנה בטלפון."]
+        : [p.hours ? `שעות פתיחה: ${p.hours}` : "בודקים שעות פתיחה בגוגל מפות.", p.website ? "אפשר לבדוק באתר אם יש הזמנת שולחן." : "אם אין הזמנה מראש, מגיעים קצת לפני או אחרי שעת השיא."]
+    };
     if (needed) return {
       needed, query: q, url: p.website || null,
-      steps: [
-        p.website ? "פותחים את האתר הרשמי של המקום (הכפתור למטה)." : "מחפשים את האתר הרשמי (הכפתור למטה). היזהרו מאתרי מכירה חיצוניים עם עמלה.",
-        "בודקים שעות פתיחה ויום סגור שבועי.",
-        "בוחרים תאריך ושעת כניסה. בבוקר בדרך כלל פחות עמוס.",
-        "משלמים באתר ושומרים את הכרטיס בטלפון."
-      ]
+      steps: [p.website ? "פותחים את האתר הרשמי של המקום (הכפתור למטה)." : "מחפשים את האתר הרשמי (הכפתור למטה). היזהרו מאתרי מכירה חיצוניים עם עמלה.", "בודקים שעות פתיחה ויום סגור שבועי.", "בוחרים תאריך ושעת כניסה. בבוקר בדרך כלל פחות עמוס.", "משלמים באתר ושומרים את הכרטיס בטלפון."]
     };
-    if (p.cat === "food") return {
-      needed: false, query: `${p.local} reservation`, url: p.website || null,
-      steps: [p.hours ? `שעות פתיחה לפי OpenStreetMap: ${p.hours}` : "בודקים שעות פתיחה בגוגל מפות.", p.website ? "אפשר לבדוק באתר של המקום אם יש הזמנת שולחן." : "אם אין הזמנה מראש, מגיעים מוקדם או קצת אחרי שעת השיא."]
-    };
+    return { needed: false, query: q, url: p.website || null, steps: ["אין צורך בהזמנה מראש.", p.hours ? `שעות פתיחה: ${p.hours}` : "בדקו שעות פתיחה לפני שמגיעים."] };
+  }
+  const MEAL = { breakfast: "ארוחת בוקר", lunch: "ארוחת צהריים", treat: "הפסקה מתוקה", dinner: "ארוחת ערב", drinks: "בילוי ערב" };
+  const MEAL_MIN = { breakfast: 45, lunch: 75, treat: 30, dinner: 90, drinks: 90 };
+  function toStop(p, budget, meal = null) {
+    const busy = busyFor(p);
+    const min = meal ? MEAL_MIN[meal] : (KIND[p.kind]?.min || 60);
+    const why = p.voyage?.text ? p.voyage.text : WHY[p.kind] || WHY.attraction;
     return {
-      needed: false, query: q, url: p.website || null,
-      steps: ["אין צורך בהזמנה מראש.", p.hours ? `שעות פתיחה לפי OpenStreetMap: ${p.hours}` : "בדקו שעות פתיחה לפני שמגיעים."]
+      name: p.name, local: p.local, cat: p.cat, kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: meal ? MEAL[meal] : null,
+      lat: p.lat, lng: p.lng, time: "", duration: fmtDur(min), _min: min, cost: costText(p, budget),
+      why, whyLang: p.voyage?.text ? "en" : "he", history: "", histLang: "he", wikiUrl: null, fact: "",
+      busy, busySrc: "est", best: bestTime(busy, p), tip: TIPS[p.kind] || "", nearby: [],
+      booking: bookingFor(p, meal), website: p.website || null, phone: p.phone || null, address: p.address || null, image: null, hours: p.hours || p.voyage?.hours || null,
+      cuisine: p.cuisine || null, signals: p.signals || [], q: p.q, priceClass: p.voyage?.priceClass || null,
+      wikidata: p.wikidata || null, osm: p.id, _wikiTag: p.wikiTag || null, _he: p._he || null, _en: p._en || null, voyage: !!p.voyage
     };
   }
-  const firstSentences = (text, max) => {
-    if (!text) return "";
-    if (text.length <= max) return text;
-    const cut = text.slice(0, max);
-    const i = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("׃ "));
-    return i > 80 ? cut.slice(0, i + 1) : cut.replace(/\s+\S*$/, "") + "…";
-  };
-
-  function toStop(p, budget) {
-    const busy = busyFor(p.cat, p.hours);
-    return {
-      name: p.name, local: p.local, cat: p.cat, lat: p.lat, lng: p.lng,
-      time: "", duration: fmtDur(DUR[p.cat] || 60), _min: DUR[p.cat] || 60, cost: costText(p, budget),
-      why: WHY[p.cat], history: "", histLang: "he", wikiUrl: null, fact: "", busy, busySrc: "est", best: bestTime(busy, p.cat),
-      tip: TIPS[p.cat], nearby: [], booking: bookingFor(p), website: p.website, image: null, hours: p.hours,
-      wikidata: p.wikidata, osm: p.osm, _wikiTag: p.tags?.wikipedia || null
-    };
-  }
-  const toIdea = p => ({ name: p.name, local: p.local, cat: p.cat, lat: p.lat, lng: p.lng, why: WHY[p.cat], website: p.website, wikidata: p.wikidata });
+  /* compact form kept in the trip for the explore lists */
+  const toPlace = p => ({
+    id: p.id, name: p.name, local: p.local, kind: p.kind, cat: p.cat, lat: +p.lat.toFixed(6), lng: +p.lng.toFixed(6), q: p.q, signals: p.signals,
+    cuisine: p.cuisine || null, hours: p.hours || p.voyage?.hours || null, website: p.website || null, phone: p.phone || null, address: p.address || null,
+    price: p.voyage?.price || null, priceClass: p.voyage?.priceClass || null, vtext: p.voyage?.text || null, veg: p.veg || false, kosher: p.kosher || false,
+    outdoor: p.outdoor || false, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null
+  });
 
   function assignTimes(day) {
     let t = 9 * 60;
     day.stops.forEach((s, i) => {
-      if (s.cat === "food" && t < 12.5 * 60 && t > 10.5 * 60) t = 12.5 * 60;
-      if (s.cat === "night") t = Math.max(t, 20.5 * 60);
+      if (s.meal === "breakfast") t = Math.max(t, 8.75 * 60);
+      if (s.meal === "lunch") t = Math.max(t, 12.75 * 60);
+      if (s.meal === "dinner") t = Math.max(t, 19.5 * 60);
+      if (s.meal === "drinks") t = Math.max(t, 21.25 * 60);
       t = Math.round(t / 15) * 15;
       s.time = fmtTime(t);
       const leg = day.legs?.[i];
-      const walk = leg ? leg.s / 60 : (day.stops[i + 1] ? km(s, day.stops[i + 1]) / 4.5 * 60 : 0);
+      const walk = leg ? leg.s / 60 : (day.stops[i + 1] ? km(s, day.stops[i + 1]) * 1.25 / 4.6 * 60 : 0);
       t += (s._min || 60) + Math.min(walk, 40) + 10;
     });
   }
-
   async function computeRoute(day, signal) {
     const r = await svc.walkRoute(day.stops, signal);
     day.route = r?.line || null;
@@ -311,141 +418,202 @@ Masa.planner = (() => {
     return day;
   }
 
-  /* ---------- main entry ----------
-     build() returns as soon as the places are chosen, so the traveler sees the trip fast.
-     hydrate() then adds Hebrew names, Wikipedia stories and photos, walking routes and the AI layer in the background. */
-  const POOL_KEY = "masa-pools";
-  function cachedPool(key) { try { return (JSON.parse(localStorage.getItem(POOL_KEY) || "{}"))[key] || null; } catch { return null; } }
-  function cachePool(key, els) {
+  /* ---------- loading data: instant for popular cities, time-boxed for the rest ---------- */
+  const POOL_KEY = "masa-pools2";
+  function cachedData(key) { try { return (JSON.parse(localStorage.getItem(POOL_KEY) || "{}"))[key] || null; } catch { return null; } }
+  function cacheData(key, data) {
     try {
       const all = JSON.parse(localStorage.getItem(POOL_KEY) || "{}");
-      all[key] = { t: Date.now(), els };
-      const keys = Object.keys(all).sort((x, y) => all[y].t - all[x].t);
-      keys.slice(4).forEach(k => delete all[k]);
+      all[key] = { ...data, t: Date.now() };
+      Object.keys(all).sort((x, y) => all[y].t - all[x].t).slice(3).forEach(k => delete all[k]);
       localStorage.setItem(POOL_KEY, JSON.stringify(all));
     } catch {}
   }
-  const KEEP = ["name", "name:he", "tourism", "historic", "amenity", "leisure", "natural", "shop", "building", "wikidata", "wikipedia", "website", "contact:website", "url", "opening_hours", "fee", "charge", "cuisine", "heritage", "wikimedia_commons", "image"];
-  const slim = els => els.map(e => ({ type: e.type, id: e.id, lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon, tags: Object.fromEntries(Object.entries(e.tags || {}).filter(([k]) => KEEP.includes(k))) }));
+  async function loadData(geo, R, signal, onStep) {
+    const city = CITIES.findCity(geo.slug || geo.en || geo.local || geo.name);
+    if (city && km(city, geo) < 15) {
+      try {
+        const d = await svc.getJSON(`data/cities/${city.slug}.json`, {}, 12000, signal);
+        if (d?.els?.length) return { ...d, source: "ready" };
+      } catch {}
+    }
+    const key = `${geo.lat.toFixed(2)},${geo.lng.toFixed(2)}`;
+    const cached = cachedData(key);
+    if (cached?.els?.length) return { ...cached, source: "cache" };
 
+    const q = SRC.buildQueries(geo.lat, geo.lng, R);
+    const data = { els: [], voyage: [], wiki: { he: [], en: [] } };
+    const done = { sights: false, restaurants: false, cafes: false, extra: false, voyage: false, wiki: false };
+    const jobs = [
+      ...Object.entries(q).map(([k, v], i) => svc.overpass(v, signal, i % 3).then(j => { data.els.push(...SRC.slim(j.elements || [])); done[k] = true; onStep?.(k); })),
+      svc.voyage(geo.en || geo.local, signal).then(v => { data.voyage = v; done.voyage = true; }),
+      Promise.all([svc.wikiGeo("he", geo.lat, geo.lng, R * 1.2, signal), svc.wikiGeo("en", geo.lat, geo.lng, R * 1.2, signal)]).then(([he, en]) => { data.wiki = { he, en }; done.wiki = true; })
+    ].map(p => p.catch(() => {}));
+    const all = Promise.all(jobs);
+    const enough = () => (done.sights || done.wiki) && (done.restaurants || done.voyage);
+    // wait for everything, but stop waiting after 9 seconds once we have enough to plan a trip
+    const t0 = Date.now();
+    await new Promise(resolve => {
+      all.then(resolve);
+      const tick = setInterval(() => {
+        if (signal?.aborted) { clearInterval(tick); resolve(); return; }
+        const el = Date.now() - t0;
+        if ((el > 9000 && enough()) || (el > 9000 && (data.els.length || data.voyage.length || data.wiki.he.length)) || el > 28000) { clearInterval(tick); resolve(); }
+      }, 300);
+      all.then(() => clearInterval(tick));
+    });
+    if (signal?.aborted) throw { code: "cancelled" };
+    const complete = Object.values(done).every(Boolean);
+    if (complete && data.els.length) cacheData(key, data);
+    else all.then(() => { if (Object.values(done).every(Boolean) && data.els.length) cacheData(key, data); });
+    return { ...data, els: [...data.els], source: complete ? "live" : "partial" };
+  }
+
+  /* ---------- main entry ----------
+     build() returns as soon as the places are chosen; hydrate() adds names, stories, photos, routes and AI later. */
   async function build(opts, step, signal) {
-    const { query, days, interests: rawInterests, budget, pace } = opts;
-    const interests = rawInterests.length ? rawInterests : ["history", "view", "art", "food"];
+    const { query, days, budget, pace } = opts;
+    const interests = opts.interests.length ? opts.interests : ["food", "history", "view"];
     const chk = () => { if (signal?.aborted) throw { code: "cancelled" }; };
 
     step(0);
-    const geo = opts.geo || await svc.geocode(query, signal);
+    let geo = opts.geo;
+    if (!geo) {
+      const city = CITIES.findCity(query);
+      geo = city ? { lat: city.lat, lng: city.lng, name: city.he, local: city.local, en: city.en, country: city.country, cc: city.cc, slug: city.slug, tz: city.tz, R: city.R } : await svc.geocode(query, signal);
+    }
     if (!geo) throw { code: "not_found" };
     chk();
     opts.onGeo?.(geo);
 
     step(1);
-    let R = 3000;
-    if (geo.bbox) R = Math.min(4000, Math.max(1800, km({ lat: geo.bbox.s, lng: geo.bbox.w }, { lat: geo.bbox.n, lng: geo.bbox.e }) * 1000 / 4.5));
-    const pkey = `${geo.lat.toFixed(2)},${geo.lng.toFixed(2)}|${[...interests].sort().join(",")}`;
-    let els = cachedPool(pkey)?.els;
-    let wikiItems = [];
-    if (!els) {
-      const [qs, qf, qx] = buildQueries(geo.lat, geo.lng, R, interests);
-      const res = await Promise.allSettled([
-        svc.overpass(qs, signal, 0), svc.overpass(qf, signal, 1), svc.overpass(qx, signal, 2),
-        svc.wikiGeo("he", geo.lat, geo.lng, R * 1.2, signal), svc.wikiGeo("en", geo.lat, geo.lng, R * 1.2, signal)
-      ]);
-      chk();
-      const osmOk = res.slice(0, 3).filter(r => r.status === "fulfilled");
-      els = slim(osmOk.flatMap(r => r.value.elements || []));
-      wikiItems = [...(res[3].value || []), ...(res[4].value || [])];
-      if (!els.length && !wikiItems.length) throw { code: "network" };
-      if (osmOk.length === 3 && els.length) cachePool(pkey, els);
-    }
+    let R = geo.R || 3000;
+    if (!geo.R && geo.bbox) R = Math.min(4000, Math.max(1800, km({ lat: geo.bbox.s, lng: geo.bbox.w }, { lat: geo.bbox.n, lng: geo.bbox.e }) * 1000 / 4.5));
+    const data = await loadData(geo, R, signal);
     chk();
-    const osmPool = normalize(els, geo, interests, geo.cc);
-    const osmSights = osmPool.filter(p => !["food", "night"].includes(p.cat)).length;
-    const pool = osmSights >= 25 ? osmPool : [...osmPool, ...wikiPool(wikiItems, geo, interests, osmPool)];
+    if (!data.els.length && !data.voyage.length && !(data.wiki?.he?.length || data.wiki?.en?.length)) throw { code: "network" };
 
     step(2);
+    const { pool, noGeo } = buildPool(data, geo);
+    pool.forEach(p => rate(p, geo.cc, budget));
+    if (opts.diet === "כשר") pool.forEach(p => { if (p.cat === "food") p.q += p.kosher ? 8 : -1; });
+    if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });
+    const by = kinds => pool.filter(p => kinds.includes(p.kind)).sort((a, b) => (b.q - b.dist * 0.6) - (a.q - a.dist * 0.6));
+
+    // activity slots per day, shared between the chosen interests (food and night become meals and evenings)
     const perDay = { "רגוע": 3, "מאוזן": 4, "אינטנסיבי": 5 }[pace] || 4;
-    const sightsPool = pool.filter(p => !["food", "night"].includes(p.cat)).sort((a, b) => b.score - a.score);
-    const chosen = pick(sightsPool, days * (perDay - 1));
-    if (chosen.length < Math.min(3, days * 2)) throw { code: "too_few" };
-    const used = new Set(chosen.map(p => p.osm));
-    const groups = splitDays(chosen, days).map(orderDay);
-    const foods = pool.filter(p => p.cat === "food").sort((a, b) => b.score - a.score);
-    const bars = pool.filter(p => p.cat === "night").sort((a, b) => b.score - a.score);
-    const nearBest = (list, anchor, maxKm) => {
+    const wantFood = interests.includes("food"), wantNight = interests.includes("night");
+    let act = interests.filter(i => !["food", "night"].includes(i));
+    if (!act.length) act = wantFood ? ["food"] : ["view"];
+    const slots = days * (perDay - (wantFood && act[0] !== "food" ? 1 : 0));
+    const need = {};
+    act.forEach((c, i) => { need[c] = Math.floor(slots / act.length) + (i < slots % act.length ? 1 : 0); });
+    const chosen = [];
+    for (const c of act) chosen.push(...pickFor(by(SLOT_KINDS[c]), need[c], chosen, c === "shopping" ? 0.3 : 0.15));
+    // not enough places in a category: fill from the other chosen ones, then from the best overall
+    if (chosen.length < slots) chosen.push(...pickFor(by(act.flatMap(c => SLOT_KINDS[c])), slots - chosen.length, chosen));
+    if (chosen.length < Math.min(2, slots)) chosen.push(...pickFor(by(["attraction", "sight", "view", "museum", "park", "market"]), slots - chosen.length, chosen));
+    if (!chosen.length) throw { code: "too_few" };
+    const used = new Set(chosen.map(p => p.id));
+
+    const restaurants = by(["restaurant"]);
+    const cafes = by(["cafe", "bakery"]);
+    const treats = by(["dessert", "market", "deli", "bakery"]);
+    const bars = by(["bar", "club"]);
+    const cuisinesUsed = {};
+    const nearBest = (list, anchor, maxKm, extra = () => 0) => {
       let best = null, bv = -Infinity;
       for (const f of list) {
-        if (used.has(f.osm)) continue;
+        if (used.has(f.id)) continue;
         const d = km(anchor, f);
         if (d > maxKm) continue;
-        const v = f.score - 3 * d;
+        const cu = (f.cuisine || "").split(";")[0];
+        const v = f.q - 2.6 * d - (cu ? 1.4 * (cuisinesUsed[cu] || 0) : 0) + extra(f);
         if (v > bv) { bv = v; best = f; }
       }
+      if (best) { used.add(best.id); const cu = (best.cuisine || "").split(";")[0]; if (cu) cuisinesUsed[cu] = (cuisinesUsed[cu] || 0) + 1; }
       return best;
     };
-    const dayStops = groups.map(g => {
-      const list = [...g];
-      const li = Math.min(2, list.length);
-      const anchor = list[li - 1] || list[0];
-      const lunch = nearBest(foods, anchor, 0.9) || nearBest(foods, anchor, 2.5);
-      if (lunch) { used.add(lunch.osm); list.splice(li, 0, lunch); }
-      if (interests.includes("night")) {
-        const bar = nearBest(bars, list[list.length - 1], 1.2);
-        if (bar) { used.add(bar.osm); list.push(bar); }
+    const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) : 0) + (f.voyage ? 1 : 0);
+
+    const groups = splitDays(chosen, days).map(orderDay);
+    while (groups.length < days) groups.push([]);
+    const dayPlans = groups.map(g => {
+      const list = g.map(p => ({ p, meal: null }));
+      const first = g[0] || geo, last = g[g.length - 1] || geo;
+      if (wantFood) {
+        const b = nearBest(cafes, first, 0.8) || nearBest(cafes, first, 2);
+        if (b) list.unshift({ p: b, meal: "breakfast" });
+      }
+      const li = list.findIndex((x, i) => i >= Math.ceil(g.length / 2) + (wantFood ? 1 : 0));
+      const at = li < 0 ? list.length : li;
+      const anchor = list[Math.max(0, at - 1)]?.p || first;
+      const lunch = nearBest(restaurants, anchor, 0.8) || nearBest(restaurants, anchor, 2.5);
+      if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
+      if (wantFood && act[0] !== "food" && g.length >= 2) {
+        const ti = Math.min(list.length, at + 2);
+        const tr = nearBest(treats, list[ti - 1]?.p || anchor, 0.8);
+        if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
+      }
+      const dinner = nearBest(restaurants, last, 1.2, dinnerBoost) || nearBest(restaurants, last, 3, dinnerBoost);
+      if (dinner) list.push({ p: dinner, meal: "dinner" });
+      if (wantNight) {
+        const bar = nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
+        if (bar) list.push({ p: bar, meal: "drinks" });
       }
       return list;
     });
-    const stopsFlat = dayStops.flat();
+
+    // "also around here": two more places near each activity, matching the chosen interests
+    const interestKinds = new Set([...act.flatMap(c => SLOT_KINDS[c]), ...(wantFood ? ["restaurant", "cafe", "dessert", "market"] : [])]);
     const nearbyOf = new Map();
-    for (const s of stopsFlat) {
-      if (s.cat === "food" || s.cat === "night") continue;
-      const cands = pool.filter(p => !used.has(p.osm) && p.cat !== "night" && km(s, p) < 0.9 && (p.cat !== "food" || p.wikidata))
-        .sort((a, b) => (b.score - 2 * km(s, b)) - (a.score - 2 * km(s, a))).slice(0, 2);
-      cands.forEach(c => used.add(c.osm));
-      nearbyOf.set(s.osm, cands);
+    for (const { p } of dayPlans.flat()) {
+      if (p.cat === "food" || p.cat === "night") continue;
+      const cands = pool.filter(x => !used.has(x.id) && interestKinds.has(x.kind) && km(p, x) < 0.9)
+        .sort((a, b) => (b.q - 2 * km(p, b)) - (a.q - 2 * km(p, a))).slice(0, 2);
+      cands.forEach(c => used.add(c.id));
+      nearbyOf.set(p.id, cands);
     }
-    const rest = pool.filter(p => !used.has(p.osm)).sort((a, b) => b.score - a.score);
-    const take = (f, n) => { const out = []; for (const p of rest) { if (out.length >= n) break; if (!used.has(p.osm) && f(p)) { out.push(p); used.add(p.osm); } } return out; };
+    const idea = p => ({ name: p.name, local: p.local, cat: p.cat, kind: p.kind, lat: p.lat, lng: p.lng, why: p.voyage?.text || WHY[p.kind] || "", website: p.website || null, wikidata: p.wikidata || null, _wd: p.wikidata || null, _wiki: p.wikiTag || null, _he: p._he || null, _en: p._en || null });
+    const rest = pool.filter(p => !used.has(p.id)).sort((a, b) => b.q - a.q);
+    const take = (f, n) => { const out = []; for (const p of rest) { if (out.length >= n) break; if (!used.has(p.id) && f(p)) { out.push(p); used.add(p.id); } } return out; };
     const disc = {
-      gems: take(p => p.wikidata && ["history", "art", "religion", "view"].includes(p.cat), 4),
-      experiences: take(p => p.tags.amenity === "marketplace" || ["night", "family", "shopping"].includes(p.cat) || (p.cat === "food" && p.wikidata), 4),
-      free: take(p => ["view", "nature", "religion"].includes(p.cat) && p.fee !== "yes", 3)
+      gems: take(p => (p.voyage || p.wikidata) && ["sight", "museum", "church", "view", "gallery"].includes(p.kind) && p.tourism !== "attraction", 4),
+      experiences: take(p => ["market", "mall", "bar", "zoo", "themepark", "deli"].includes(p.kind) && p.q > 2, 4),
+      free: take(p => ["view", "park", "church", "beach"].includes(p.kind) && p.fee !== "yes", 3)
     };
-    const idea = p => ({ ...toIdea(p), _wd: p.wikidata, _wiki: p.tags?.wikipedia || null, _he: p._he || null, _en: p._en || null });
+
+    const placeList = pool.filter(p => p.q > -3).sort((a, b) => b.q - a.q).slice(0, 900).map(toPlace);
     const trip = {
-      city: geo.name, cityLocal: geo.local, country: geo.country, cc: geo.cc, lat: geo.lat, lng: geo.lng, source: "osm",
-      createdAt: Date.now(), pending: true, opts: { ...opts, geo: undefined, onGeo: undefined, interests },
+      city: geo.name, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
+      source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,
+      opts: { query, days, budget, pace, diet: opts.diet || "הכול", notes: opts.notes || "", interests },
       summary: "",
-      days: dayStops.map((list, i) => {
-        const stops = list.map(p => {
-          const s = toStop(p, budget);
-          s._he = p._he || null; s._en = p._en || null;
-          s.nearby = (nearbyOf.get(p.osm) || []).map(idea);
-          return s;
-        });
-        const cats = [...new Set(stops.filter(s => s.cat !== "food").map(s => s.cat))].slice(0, 2).map(c => CATS[c].he);
-        const d = { label: `יום ${i + 1}`, theme: cats.join(" ו"), stops, route: null, legs: null };
+      days: dayPlans.map((list, i) => {
+        const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
+        const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
+        const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null };
         assignTimes(d);
         return d;
-      }),
+      }).filter(d => d.stops.length),
+      places: placeList,
+      voyageNoGeo: noGeo.filter(v => ["eat", "drink", "buy"].includes(v.type)).slice(0, 60).map(v => ({ name: v.name, kind: v.kind, cat: v.cat, price: v.price, priceClass: v.priceClass, vtext: v.content, website: v.url, hours: v.hours, address: v.address })),
       discover: {
         gems: disc.gems.map(idea), experiences: disc.experiences.map(idea), free: disc.free.map(idea), daytrips: [],
         dishes: [], phrases: PHRASES[COUNTRY_LANG[geo.cc] || "en"], etiquette: ETIQUETTE_GENERIC
       }
     };
-    const n = stopsFlat.length;
-    const src = stopsFlat.some(p => p.osm.startsWith("wiki/")) ? (stopsFlat.every(p => p.osm.startsWith("wiki/")) ? "מוויקיפדיה" : "מ-OpenStreetMap ומוויקיפדיה") : "מ-OpenStreetMap";
-    trip.summary = `${n} תחנות אמיתיות ${src}, מסודרות למסלולי הליכה לפי ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;
+    const n = trip.days.reduce((a, d) => a + d.stops.length, 0);
+    const meals = trip.days.reduce((a, d) => a + d.stops.filter(s => s.meal).length, 0);
+    trip.summary = `${n} תחנות אמיתיות, מתוכן ${meals} ארוחות ובילויים, מסודרות למסלולי הליכה לפי ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;
     return trip;
   }
 
-  /* Fill in the slow parts. onUpdate(stage) is called after each one so the screen can refresh. */
+  /* Fill in the slow parts in the background. onUpdate(stage) lets the screen refresh as they arrive. */
   async function hydrate(trip, onUpdate) {
     const stops = trip.days.flatMap(d => d.stops);
     const ideas = [...stops.flatMap(s => s.nearby || []), ...["gems", "experiences", "free"].flatMap(k => trip.discover[k] || [])];
-    // 1. walking routes (fast, one call per day, in parallel)
     const routes = Promise.all(trip.days.map(d => computeRoute(d))).then(() => onUpdate("routes"));
-    // 2. Hebrew names + Wikipedia titles
     const wd = await svc.wikidata([...stops.map(s => s.wikidata), ...ideas.map(i => i._wd)].filter(Boolean));
     const apply = (o, id, wikiTag) => {
       const e = id && wd[id];
@@ -455,10 +623,9 @@ Masa.planner = (() => {
       if (wt && !o["_" + wt[1]]) o["_" + wt[1]] = wt[2];
       return e;
     };
-    stops.forEach(s => { const e = apply(s, s.wikidata, s._wikiTag); if (e?.descHe) s.why = e.descHe.replace(/^./, c => c.toUpperCase()).replace(/\.?$/, "."); });
-    ideas.forEach(i => { const e = apply(i, i._wd, i._wiki); if (e?.descHe) i.why = e.descHe.replace(/\.?$/, "."); });
+    stops.forEach(s => { const e = apply(s, s.wikidata, s._wikiTag); if (e?.descHe && s.whyLang !== "en") s.why = e.descHe.replace(/^./, c => c.toUpperCase()).replace(/\.?$/, "."); });
+    ideas.forEach(i => { const e = apply(i, i._wd, i._wiki); if (e?.descHe && !i.why) i.why = e.descHe.replace(/\.?$/, "."); });
     onUpdate("names");
-    // 3. stories + photos, in route order so the first stops fill first
     await svc.mapLimit(stops, 5, async s => {
       const sum = (s._he && await svc.wikiSummary("he", s._he)) || (s._en && await svc.wikiSummary("en", s._en));
       if (sum) {
@@ -469,7 +636,6 @@ Masa.planner = (() => {
       }
     });
     await routes;
-    // 4. optional AI layer
     if (Masa.ai.enabled()) {
       onUpdate("ai-start");
       try { await enrichWithAI(trip, trip.opts || {}); }
@@ -479,19 +645,26 @@ Masa.planner = (() => {
     onUpdate("done");
     return trip;
   }
+  const firstSentences = (text, max) => {
+    if (!text) return "";
+    if (text.length <= max) return text;
+    const cut = text.slice(0, max);
+    const i = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("׃ "));
+    return i > 80 ? cut.slice(0, i + 1) : cut.replace(/\s+\S*$/, "") + "…";
+  };
 
   /* The AI only writes text about places that already exist on the map. It never adds coordinates. */
   async function enrichWithAI(trip, opts) {
     const stops = trip.days.flatMap((d, di) => d.stops.map(s => ({ s, di })));
-    const list = stops.map(({ s, di }, i) => ({ i, day: di + 1, name: s.name, local: s.local, cat: s.cat, source: (s.history || "").slice(0, 300) }));
-    const prompt = `You are an expert local tour guide and historian in ${trip.cityLocal}, ${trip.country}. A traveler plans ${trip.days.length} days. Interests: ${(opts.interests || []).join(", ")}. Budget: ${opts.budget}. Pace: ${opts.pace}. Notes: ${opts.notes || "none"}.
-These are REAL places already on the route (from OpenStreetMap). "source" is a Wikipedia excerpt when available; use it as the factual basis and do not invent facts you are not sure about.
+    const list = stops.map(({ s, di }, i) => ({ i, day: di + 1, name: s.name, local: s.local, kind: s.kind, meal: s.meal, cuisine: s.cuisine, source: (s.history || (s.whyLang === "en" ? s.why : "") || "").slice(0, 300) }));
+    const prompt = `You are an expert local tour guide, food critic and historian in ${trip.cityEn || trip.cityLocal}, ${trip.country}. A traveler plans ${trip.days.length} days. Interests: ${(opts.interests || []).join(", ")}. Budget: ${opts.budget}. Pace: ${opts.pace}. Notes from the traveler: ${opts.notes || "none"}.
+These are REAL places already on the route (from OpenStreetMap and Wikivoyage). "source" is a Wikipedia or Wikivoyage excerpt when available; use it as the factual basis and do not invent facts you are not sure about. For restaurants, describe what they are known for only if you actually know; otherwise describe the cuisine and what to order there.
 ${JSON.stringify(list)}
 
 Write everything in natural Hebrew. Reply with only JSON:
-{"summary":"1-2 sentences about this trip",
+{"summary":"1-2 sentences about this trip, addressing the traveler's notes",
  "days":[{"theme":"short theme for each day, in order"}],
- "stops":[{"i":0,"why":"one sentence why to go","history":"2-4 sentences, the real story like a guide speaking (dates, people, what to look for). For a restaurant or market, the story of the neighborhood or the dish","fact":"one surprising true sentence","tip":"one practical tip","best":"best time to visit, short","busy":[16 integers 0-100, typical crowd per hour 07:00..22:00, 0=closed],"booking_needed":true,"booking_steps":["2-4 short steps; name the official seller, never invent URLs"]}],
+ "stops":[{"i":0,"why":"one sentence why to go","history":"2-4 sentences: the real story like a guide speaking. For a restaurant, café or market: what it is known for and what to order","fact":"one surprising true sentence","tip":"one practical tip","best":"best time to visit, short","busy":[16 integers 0-100, typical crowd per hour 07:00..22:00, 0=closed],"booking_needed":true,"booking_steps":["2-4 short steps; name the official seller, never invent URLs"]}],
  "dishes":[6 x {"name":"Hebrew","local":"local name","why":"one sentence"}],
  "experiences":[3 x {"name":"Hebrew","local":"local name for web search","why":"one sentence"}],
  "daytrips":[2 x {"name":"Hebrew","local":"local name","why":"one sentence including travel time"}],
@@ -503,15 +676,13 @@ Write everything in natural Hebrew. Reply with only JSON:
       const ref = stops[+x.i];
       if (!ref) return;
       const s = ref.s;
-      if (x.why) s.why = x.why;
+      if (x.why) { s.why = x.why; s.whyLang = "he"; }
       if (x.history && (!s.history || s.histLang !== "he")) { s.history = x.history; s.histLang = "he"; s.histAI = true; }
       if (x.fact) s.fact = x.fact;
       if (x.tip) s.tip = x.tip;
       if (x.best) s.best = x.best;
       if (Array.isArray(x.busy) && x.busy.length >= 12) { s.busy = Array.from({ length: 16 }, (_, k) => Math.max(0, Math.min(100, Math.round(+x.busy[k] || 0)))); s.busySrc = "ai"; }
-      if (Array.isArray(x.booking_steps) && x.booking_steps.length) {
-        s.booking = { ...s.booking, needed: !!x.booking_needed || s.booking.needed, steps: x.booking_steps.map(String) };
-      }
+      if (Array.isArray(x.booking_steps) && x.booking_steps.length) s.booking = { ...s.booking, needed: !!x.booking_needed || s.booking.needed, steps: x.booking_steps.map(String) };
     });
     const D = trip.discover;
     if (Array.isArray(r.dishes)) D.dishes = r.dishes.slice(0, 6);
@@ -521,5 +692,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { build, hydrate, computeRoute, assignTimes, km, BUSY, HOURS: 16 };
+  return { build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

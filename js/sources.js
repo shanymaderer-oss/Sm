@@ -25,7 +25,7 @@
   /* keep only the tags the app uses, so cached data stays small */
   const KEEP = ["name", "name:he", "name:en", "tourism", "historic", "amenity", "leisure", "natural", "shop", "building", "wikidata", "wikipedia",
     "website", "contact:website", "url", "phone", "contact:phone", "opening_hours", "fee", "charge", "cuisine", "heritage", "wikimedia_commons", "image",
-    "outdoor_seating", "diet:vegetarian", "diet:vegan", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation"];
+    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "diet:halal", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation"];
   const slim = els => els.map(e => ({
     type: e.type, id: e.id, lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon,
     tags: Object.fromEntries(Object.entries(e.tags || {}).filter(([k]) => KEEP.includes(k)))
