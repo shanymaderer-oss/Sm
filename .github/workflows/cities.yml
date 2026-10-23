@@ -1,0 +1,32 @@
+name: Refresh city data
+on:
+  workflow_dispatch:
+    inputs:
+      cities:
+        description: "City slugs separated by spaces (empty = all)"
+        required: false
+  push:
+    paths: ["tools/fetch-cities.mjs", "js/sources.js", "js/cities.js"]
+  schedule:
+    - cron: "17 3 * * 1"
+permissions:
+  contents: write
+concurrency:
+  group: city-data
+  cancel-in-progress: true
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tools/fetch-cities.mjs ${{ github.event.inputs.cities }}
+      - name: Commit data
+        run: |
+          git config user.name "masa-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/cities
+          git diff --cached --quiet || (git commit -m "עדכון נתוני ערים" && git push)
