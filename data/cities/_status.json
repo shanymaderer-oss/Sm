@@ -436,5 +436,53 @@
    "overpass-api.de ok 347 36344ms",
    "streets: 347 shops"
   ]
+ },
+ "porto": {
+  "at": "2026-10-23T17:57:36.930Z",
+  "seconds": 380,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 238,
+   "diet": 14,
+   "extra": 78,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 21,
+   "drink": 8,
+   "buy": 4,
+   "see": 19,
+   "sleep": 24,
+   "withCoords": 79,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 13,
+   "en": 100
+  },
+  "streets": [
+   "Rua de Santa Catarina (69)",
+   "Rua de Cedofeita (22)",
+   "Rua 31 de Janeiro (22)",
+   "Rua de Sá da Bandeira (19)",
+   "Rua Formosa (15)"
+  ],
+  "log": [
+   "overpass-api.de ok 260 39492ms",
+   "overpass-api.de ok 450 35802ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 300 34486ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 350 23500ms",
+   "overpass-api.de ok 238 40879ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 14 41031ms",
+   "overpass-api.de ok 78 36947ms",
+   "overpass-api.de ok 331 32231ms",
+   "streets: 331 shops"
+  ]
  }
 }
