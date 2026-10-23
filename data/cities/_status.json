@@ -906,5 +906,53 @@
    "overpass-api.de ok 94 31546ms",
    "streets: 94 shops"
   ]
+ },
+ "larnaca": {
+  "at": "2026-10-23T21:19:23.819Z",
+  "seconds": 393,
+  "osm": {
+   "sights": 23,
+   "restaurants": 73,
+   "cafes": 85,
+   "hotels": 61,
+   "shopping": 27,
+   "diet": 1,
+   "extra": 9,
+   "streets": 5
+  },
+  "voyage": {
+   "eat": 10,
+   "drink": 5,
+   "buy": 2,
+   "see": 5,
+   "sleep": 8,
+   "withCoords": 25,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 4,
+   "en": 15
+  },
+  "streetsV": 2,
+  "streets": [
+   "Ermou (48)",
+   "Zinonos Kitieos (33)",
+   "D.N. Dimitriou (7)",
+   "Lordou Vyronos (7)",
+   "Archiepiskopou Kyprianou Avenue (6)"
+  ],
+  "log": [
+   "overpass-api.de ok 23 38295ms",
+   "overpass-api.de ok 73 39400ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de ok 85 37403ms",
+   "overpass-api.de ok 61 42148ms",
+   "overpass-api.de ok 27 41746ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de ok 1 36167ms",
+   "overpass-api.de ok 9 37342ms",
+   "overpass-api.de ok 172 35513ms",
+   "streets: 172 shops"
+  ]
  }
 }
