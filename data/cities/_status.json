@@ -75,5 +75,42 @@
    "overpass-api.de HTTP 502 387ms",
    "overpass-api.de ok 200 30622ms"
   ]
+ },
+ "barcelona": {
+  "at": "2026-10-23T16:37:49.867Z",
+  "seconds": 306,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 66,
+   "extra": 163
+  },
+  "voyage": {
+   "eat": 118,
+   "drink": 49,
+   "buy": 66,
+   "see": 116,
+   "sleep": 120,
+   "withCoords": 409,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 80,
+   "en": 100
+  },
+  "log": [
+   "overpass-api.de ok 260 31436ms",
+   "overpass-api.de ok 450 20723ms",
+   "overpass-api.de ok 300 37094ms",
+   "overpass-api.de HTTP 502 347ms",
+   "overpass-api.de ok 350 42167ms",
+   "overpass-api.de ok 300 28626ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 66 34996ms",
+   "overpass-api.de ok 163 33444ms"
+  ]
  }
 }
