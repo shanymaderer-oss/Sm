@@ -81,7 +81,7 @@
  },
  "barcelona": {
   "at": "2026-10-23T16:37:49.867Z",
-  "seconds": 306,
+  "seconds": 362,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -89,7 +89,8 @@
    "hotels": 350,
    "shopping": 300,
    "diet": 66,
-   "extra": 163
+   "extra": 163,
+   "streets": 14
   },
   "voyage": {
    "eat": 118,
@@ -104,16 +105,18 @@
    "he": 80,
    "en": 100
   },
+  "streets": [
+   "Gran Via de les Corts Catalanes (33)",
+   "Avinguda del Portal de l'Àngel (33)",
+   "Avinguda Diagonal (26)",
+   "Passeig de Gràcia (21)",
+   "Carrer de Balmes (21)"
+  ],
   "log": [
-   "overpass-api.de ok 260 31436ms",
-   "overpass-api.de ok 450 20723ms",
-   "overpass-api.de ok 300 37094ms",
-   "overpass-api.de HTTP 502 347ms",
-   "overpass-api.de ok 350 42167ms",
-   "overpass-api.de ok 300 28626ms",
-   "overpass-api.de HTTP 502 395ms",
-   "overpass-api.de ok 66 34996ms",
-   "overpass-api.de ok 163 33444ms"
+   "(updated: streets)",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 964 37700ms",
+   "streets: 964 shops"
   ]
  },
  "london": {
