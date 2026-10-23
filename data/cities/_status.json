@@ -149,5 +149,42 @@
    "overpass-api.de ok 152 41784ms",
    "overpass-api.de ok 200 35378ms"
   ]
+ },
+ "prague": {
+  "at": "2026-10-23T16:48:24.887Z",
+  "seconds": 302,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 63,
+   "extra": 200
+  },
+  "voyage": {
+   "eat": 188,
+   "drink": 59,
+   "buy": 10,
+   "see": 150,
+   "sleep": 102,
+   "withCoords": 512,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 62,
+   "en": 100
+  },
+  "log": [
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 260 32040ms",
+   "overpass-api.de ok 450 30090ms",
+   "overpass-api.de ok 300 28596ms",
+   "overpass-api.de ok 350 30666ms",
+   "overpass-api.de ok 300 36660ms",
+   "overpass-api.de ok 63 35921ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 200 30455ms"
+  ]
  }
 }
