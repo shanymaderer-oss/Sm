@@ -954,5 +954,51 @@
    "overpass-api.de ok 172 35513ms",
    "streets: 172 shops"
   ]
+ },
+ "limassol": {
+  "at": "2026-10-23T21:26:22.311Z",
+  "seconds": 414,
+  "osm": {
+   "sights": 23,
+   "restaurants": 97,
+   "cafes": 136,
+   "hotels": 36,
+   "shopping": 52,
+   "diet": 1,
+   "extra": 5,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 18,
+   "drink": 7,
+   "buy": 0,
+   "see": 5,
+   "sleep": 4,
+   "withCoords": 27,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 2,
+   "en": 22
+  },
+  "streetsV": 2,
+  "streets": [
+   "Anexartisias (8)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 23 32411ms",
+   "overpass-api.de ok 97 39777ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 136 40933ms",
+   "overpass-api.de HTTP 502 448ms",
+   "overpass-api.de ok 36 36631ms",
+   "overpass-api.de ok 52 44144ms",
+   "overpass-api.de ok 1 44885ms",
+   "overpass-api.de ok 5 40034ms",
+   "overpass-api.de HTTP 502 443ms",
+   "overpass-api.de ok 45 28981ms",
+   "streets: 45 shops"
+  ]
  }
 }
