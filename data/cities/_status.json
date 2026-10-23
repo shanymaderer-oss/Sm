@@ -1322,5 +1322,51 @@
    "overpass-api.de ok 95 31111ms",
    "streets: 95 shops"
   ]
+ },
+ "bucharest": {
+  "at": "2026-10-23T22:18:15.560Z",
+  "seconds": 323,
+  "osm": {
+   "sights": 186,
+   "restaurants": 294,
+   "cafes": 252,
+   "hotels": 191,
+   "shopping": 195,
+   "diet": 11,
+   "extra": 68,
+   "streets": 8
+  },
+  "voyage": {
+   "eat": 21,
+   "drink": 25,
+   "buy": 15,
+   "see": 44,
+   "sleep": 42,
+   "withCoords": 93,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 41,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "Calea Vitan (58)",
+   "Calea Victoriei (31)",
+   "Strada Mihail Sebastian (18)",
+   "Strada Ziduri Moși (17)",
+   "Strada Lipscani (20)"
+  ],
+  "log": [
+   "overpass-api.de ok 186 25138ms",
+   "overpass-api.de ok 294 22487ms",
+   "overpass-api.de ok 252 21502ms",
+   "overpass-api.de ok 191 35173ms",
+   "overpass-api.de ok 195 39235ms",
+   "overpass-api.de ok 11 44796ms",
+   "overpass-api.de ok 68 42232ms",
+   "overpass-api.de ok 338 27741ms",
+   "streets: 338 shops"
+  ]
  }
 }
