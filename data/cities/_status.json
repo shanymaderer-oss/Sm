@@ -732,5 +732,52 @@
    "overpass-api.de ok 196 26443ms",
    "streets: 196 shops"
   ]
+ },
+ "new-york": {
+  "at": "2026-10-23T18:42:13.154Z",
+  "seconds": 374,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 156,
+   "extra": 200,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 0,
+   "drink": 0,
+   "buy": 0,
+   "see": 3,
+   "sleep": 0,
+   "withCoords": 0,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "streets": [
+   "5th Avenue (30)",
+   "Broadway (25)",
+   "West 34th Street (25)",
+   "Columbus Circle (24)",
+   "Columbus Avenue (23)"
+  ],
+  "log": [
+   "overpass-api.de ok 260 29615ms",
+   "overpass-api.de ok 450 41683ms",
+   "overpass-api.de ok 300 38809ms",
+   "overpass-api.de ok 350 34593ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de ok 300 26477ms",
+   "overpass-api.de ok 156 38470ms",
+   "overpass-api.de HTTP 502 376ms",
+   "overpass-api.de ok 200 31856ms",
+   "overpass-api.de ok 818 47735ms",
+   "streets: 818 shops"
+  ]
  }
 }
