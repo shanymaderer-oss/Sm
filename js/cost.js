@@ -189,7 +189,7 @@ Masa.cost = (() => {
     })();
     return fxLoading[key];
   }
-  const roundILS = v => v >= 2000 ? Math.round(v / 100) * 100 : v >= 300 ? Math.round(v / 10) * 10 : v >= 30 ? Math.round(v / 5) * 5 : Math.round(v);
+  const roundILS = v => v >= 2000 ? Math.round(v / 100) * 100 : v >= 300 ? Math.round(v / 10) * 10 : v >= 10 ? Math.round(v / 5) * 5 : Math.round(v);
   const fmtNum = v => Math.round(v).toLocaleString("en-US");
   const ils = eur => `₪${fmtNum(roundILS(eur * FX.eurILS))}`;
   const ilsRange = (lo, hi) => { const a = roundILS(lo * FX.eurILS), b = roundILS(hi * FX.eurILS); return a === b ? `₪${fmtNum(a)}` : `₪${fmtNum(a)}–${fmtNum(b)}`; };

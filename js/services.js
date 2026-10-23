@@ -50,7 +50,17 @@ Masa.svc = (() => {
   }
 
   const OVERPASS = Masa.sources.OVERPASS;
+  /* the main server answers "busy" (429/502/504) in a fraction of a second when full; a short wait and a retry usually works */
   async function overpassOnce(ep, query, signal) {
+    for (let i = 0; ; i++) {
+      try { return await overpassTry(ep, query, signal); }
+      catch (e) {
+        if (signal?.aborted || i >= 3 || ![429, 502, 503, 504].includes(e.status)) throw e;
+        await new Promise(r => setTimeout(r, 1500 * (i + 1) + Math.random() * 800));
+      }
+    }
+  }
+  async function overpassTry(ep, query, signal) {
     const j = await getJSON(ep, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
