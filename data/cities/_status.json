@@ -1560,5 +1560,54 @@
    "overpass-api.de ok 484 39655ms",
    "streets: 484 shops"
   ]
+ },
+ "edinburgh": {
+  "at": "2026-10-23T22:51:45.366Z",
+  "seconds": 460,
+  "osm": {
+   "sights": 213,
+   "restaurants": 360,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 21,
+   "extra": 62,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 82,
+   "drink": 53,
+   "buy": 34,
+   "see": 125,
+   "sleep": 100,
+   "withCoords": 306,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 22,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "George Street (43)",
+   "Princes Street (29)",
+   "High Street (37)",
+   "Bruntsfield Place (26)",
+   "Canongate (26)"
+  ],
+  "log": [
+   "overpass-api.de ok 213 43626ms",
+   "overpass-api.de ok 360 43028ms",
+   "overpass-api.de HTTP 502 446ms",
+   "overpass-api.de ok 300 34041ms",
+   "overpass-api.de HTTP 504 48958ms",
+   "overpass-api.de ok 350 41314ms",
+   "overpass-api.de ok 300 39994ms",
+   "overpass-api.de ok 21 44793ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 62 38663ms",
+   "overpass-api.de ok 605 29640ms",
+   "streets: 605 shops"
+  ]
  }
 }
