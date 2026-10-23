@@ -1,7 +1,7 @@
 {
  "paris": {
   "at": "2026-10-23T16:32:39.468Z",
-  "seconds": 322,
+  "seconds": 380,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -9,7 +9,8 @@
    "hotels": 350,
    "shopping": 300,
    "diet": 200,
-   "extra": 200
+   "extra": 200,
+   "streets": 14
   },
   "voyage": {
    "eat": 69,
@@ -24,17 +25,18 @@
    "he": 100,
    "en": 100
   },
+  "streets": [
+   "Rue du Faubourg Saint-Antoine (47)",
+   "Rue Saint-Antoine (29)",
+   "Rue du Caire (28)",
+   "Rue du Temple (26)",
+   "Rue Montmartre (25)"
+  ],
   "log": [
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de HTTP 502 338ms",
-   "overpass-api.de ok 260 33014ms",
-   "overpass-api.de ok 450 20142ms",
-   "overpass-api.de ok 300 29317ms",
-   "overpass-api.de ok 350 29359ms",
-   "overpass-api.de HTTP 502 335ms",
-   "overpass-api.de ok 300 31613ms",
-   "overpass-api.de ok 200 42203ms",
-   "overpass-api.de ok 200 38429ms"
+   "(updated: streets)",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 1545 39566ms",
+   "streets: 1545 shops"
   ]
  },
  "rome": {
