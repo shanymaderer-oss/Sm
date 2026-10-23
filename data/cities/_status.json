@@ -1276,5 +1276,51 @@
    "overpass-api.de ok 1010 32206ms",
    "streets: 1010 shops"
   ]
+ },
+ "sofia": {
+  "at": "2026-10-23T22:12:48.306Z",
+  "seconds": 348,
+  "osm": {
+   "sights": 260,
+   "restaurants": 323,
+   "cafes": 300,
+   "hotels": 146,
+   "shopping": 247,
+   "diet": 11,
+   "extra": 31,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 12,
+   "drink": 9,
+   "buy": 12,
+   "see": 55,
+   "sleep": 18,
+   "withCoords": 91,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 20,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "Георги С. Раковски (7)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 443ms",
+   "overpass-api.de ok 260 29543ms",
+   "overpass-api.de ok 323 25896ms",
+   "overpass-api.de ok 300 30417ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de ok 146 24070ms",
+   "overpass-api.de ok 247 35816ms",
+   "overpass-api.de ok 11 35706ms",
+   "overpass-api.de HTTP 502 1273ms",
+   "overpass-api.de ok 31 28373ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 95 31111ms",
+   "streets: 95 shops"
+  ]
  }
 }
