@@ -1136,5 +1136,50 @@
    "overpass-api.de ok 1166 36535ms",
    "streets: 1166 shops"
   ]
+ },
+ "dubai": {
+  "at": "2026-10-23T21:54:46.991Z",
+  "seconds": 310,
+  "osm": {
+   "sights": 31,
+   "restaurants": 182,
+   "cafes": 90,
+   "hotels": 112,
+   "shopping": 58,
+   "diet": 13,
+   "extra": 12,
+   "streets": 4
+  },
+  "voyage": {
+   "eat": 59,
+   "drink": 26,
+   "buy": 29,
+   "see": 47,
+   "sleep": 44,
+   "withCoords": 190,
+   "districts": 5
+  },
+  "wiki": {
+   "he": 15,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "Al Satwa Road (37)",
+   "Al Satwa Street (33)",
+   "Satwa Road (34)",
+   "Jumeira Street (7)"
+  ],
+  "log": [
+   "overpass-api.de ok 31 35545ms",
+   "overpass-api.de ok 182 35319ms",
+   "overpass-api.de ok 90 23873ms",
+   "overpass-api.de ok 112 26337ms",
+   "overpass-api.de ok 58 32277ms",
+   "overpass-api.de ok 13 25898ms",
+   "overpass-api.de ok 12 33373ms",
+   "overpass-api.de ok 196 32444ms",
+   "streets: 196 shops"
+  ]
  }
 }
