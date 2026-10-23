@@ -632,5 +632,54 @@
    "overpass-api.de ok 1281 42319ms",
    "streets: 1281 shops"
   ]
+ },
+ "florence": {
+  "at": "2026-10-23T18:29:04.299Z",
+  "seconds": 447,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 213,
+   "diet": 12,
+   "extra": 128,
+   "streets": 5
+  },
+  "voyage": {
+   "eat": 20,
+   "drink": 6,
+   "buy": 6,
+   "see": 32,
+   "sleep": 71,
+   "withCoords": 51,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 49,
+   "en": 100
+  },
+  "streets": [
+   "Ponte Vecchio (46)",
+   "Via dei Ginori (14)",
+   "Via Vacchereccia (9)",
+   "Via Guelfa (6)",
+   "Via dei Pecori (6)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 260 38777ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de ok 450 48848ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 300 41875ms",
+   "overpass-api.de ok 350 51029ms",
+   "overpass-api.de ok 213 39798ms",
+   "overpass-api.de ok 12 38182ms",
+   "overpass-api.de ok 128 35917ms",
+   "overpass-api.de ok 244 36305ms",
+   "streets: 244 shops"
+  ]
  }
 }
