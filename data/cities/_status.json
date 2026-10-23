@@ -1227,5 +1227,54 @@
    "overpass-api.de ok 187 22974ms",
    "streets: 187 shops"
   ]
+ },
+ "warsaw": {
+  "at": "2026-10-23T22:06:55.612Z",
+  "seconds": 421,
+  "osm": {
+   "sights": 260,
+   "restaurants": 398,
+   "cafes": 300,
+   "hotels": 138,
+   "shopping": 300,
+   "diet": 59,
+   "extra": 95,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 53,
+   "drink": 26,
+   "buy": 14,
+   "see": 113,
+   "sleep": 45,
+   "withCoords": 199,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 82,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "Mokotowska (64)",
+   "Chmielna (28)",
+   "Targowa (25)",
+   "Marszałkowska (18)",
+   "Koszykowa (19)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 504 40989ms",
+   "overpass-api.de ok 260 39431ms",
+   "overpass-api.de HTTP 502 448ms",
+   "overpass-api.de ok 398 43198ms",
+   "overpass-api.de ok 300 45173ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de ok 138 27180ms",
+   "overpass-api.de ok 300 27424ms",
+   "overpass-api.de ok 59 36563ms",
+   "overpass-api.de ok 95 32779ms",
+   "overpass-api.de ok 1010 32206ms",
+   "streets: 1010 shops"
+  ]
  }
 }
