@@ -121,7 +121,7 @@
  },
  "london": {
   "at": "2026-10-23T16:43:17.509Z",
-  "seconds": 323,
+  "seconds": 602,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -129,7 +129,8 @@
    "hotels": 350,
    "shopping": 300,
    "diet": 152,
-   "extra": 200
+   "extra": 200,
+   "streets": 0
   },
   "voyage": {
    "eat": 86,
@@ -144,16 +145,15 @@
    "he": 100,
    "en": 100
   },
+  "streets": [],
   "log": [
-   "overpass-api.de ok 260 35172ms",
-   "overpass-api.de ok 450 31346ms",
-   "overpass-api.de HTTP 502 346ms",
-   "overpass-api.de ok 300 38002ms",
-   "overpass-api.de ok 350 31076ms",
-   "overpass-api.de HTTP 502 339ms",
-   "overpass-api.de ok 300 33122ms",
-   "overpass-api.de ok 152 41784ms",
-   "overpass-api.de ok 200 35378ms"
+   "(updated: streets)",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "streets: 0 shops"
   ]
  },
  "prague": {
