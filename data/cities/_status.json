@@ -158,7 +158,7 @@
  },
  "prague": {
   "at": "2026-10-23T16:48:24.887Z",
-  "seconds": 302,
+  "seconds": 344,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -166,7 +166,8 @@
    "hotels": 350,
    "shopping": 300,
    "diet": 63,
-   "extra": 200
+   "extra": 200,
+   "streets": 10
   },
   "voyage": {
    "eat": 188,
@@ -181,16 +182,17 @@
    "he": 62,
    "en": 100
   },
+  "streets": [
+   "Pařížská (33)",
+   "Václavské náměstí (16)",
+   "Milady Horákové (10)",
+   "Lidická (10)",
+   "Ječná (9)"
+  ],
   "log": [
-   "overpass-api.de HTTP 502 386ms",
-   "overpass-api.de ok 260 32040ms",
-   "overpass-api.de ok 450 30090ms",
-   "overpass-api.de ok 300 28596ms",
-   "overpass-api.de ok 350 30666ms",
-   "overpass-api.de ok 300 36660ms",
-   "overpass-api.de ok 63 35921ms",
-   "overpass-api.de HTTP 502 386ms",
-   "overpass-api.de ok 200 30455ms"
+   "(updated: streets)",
+   "overpass-api.de ok 346 34354ms",
+   "streets: 346 shops"
   ]
  },
  "budapest": {
