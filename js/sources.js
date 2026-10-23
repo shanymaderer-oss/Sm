@@ -23,6 +23,7 @@
       cafes: H(R * 0.45) + `(nwr["amenity"~"^(cafe|ice_cream|marketplace|food_court)$"]["name"];nwr["shop"~"^(bakery|pastry|confectionery|deli|wine)$"]["name"];);out center tags 300;`,
       hotels: H(R * 1.1) + `nwr["tourism"~"^(hotel|hostel|guest_house|apartment|motel)$"]["name"];out center tags 350;`,
       shopping: H(R * 0.9) + `(nwr["shop"~"^(mall|department_store)$"]["name"];nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"];);out center tags 300;`,
+      diet: H(R * 2) + `(nwr["diet:kosher"~"^(yes|only)$"]["name"];nwr["cuisine"~"kosher|jewish"]["name"];nwr["diet:vegan"="only"]["name"];nwr["diet:vegetarian"="only"]["name"];);out center tags 200;`,
       extra: H(R * 1.1) + `(nwr["amenity"="place_of_worship"]["name"]["wikidata"];nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"];nwr["natural"="beach"]["name"];);out center tags 200;`
     };
   }

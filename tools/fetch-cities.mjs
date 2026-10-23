@@ -83,7 +83,7 @@ const fresh = c => {
   if (!st || !existsSync(`data/cities/${c.slug}.json`)) return false;
   const ageDays = (Date.now() - Date.parse(st.at)) / 864e5;
   const keys = Object.keys(S.buildQueries(c.lat, c.lng, c.R));
-  return ageDays < 6 && keys.every(k => (st.osm || {})[k] > 0);
+  return ageDays < 6 && keys.filter(k => k !== "diet").every(k => (st.osm || {})[k] > 0) && "diet" in (st.osm || {});
 };
 for (const c of list) {
   if (!FORCE && fresh(c)) { console.log(c.slug, "fresh, skipped"); continue; }

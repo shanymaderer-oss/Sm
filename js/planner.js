@@ -30,6 +30,9 @@ Masa.planner = (() => {
   };
   function kindFromTags(t) {
     const a = t.amenity, tu = t.tourism, sh = t.shop;
+    // a place tagged both as a hotel and as a food place is usually the food place, unless its name says hotel
+    if (/^(hotel|motel|hostel|guest_house|apartment)$/.test(tu || "") && /^(restaurant|cafe|fast_food|bar|pub|ice_cream)$/.test(a || "") && !/hotel|hostel|inn\b|suite|resid|albergo|hôtel|b&b|apart/i.test(t.name || ""))
+      return a === "cafe" ? "cafe" : a === "ice_cream" ? "dessert" : a === "bar" || a === "pub" ? "bar" : "restaurant";
     if (tu === "hotel" || tu === "motel") return "hotel";
     if (tu === "hostel") return "hostel";
     if (tu === "guest_house") return "guesthouse";
@@ -116,8 +119,8 @@ Masa.planner = (() => {
       id: `${e.type}/${e.id}`, src: "osm", name, local: t.name || name, kind, cat: KIND[kind].cat, lat: e.lat, lng: e.lon,
       wikidata: t.wikidata || null, wikiTag: t.wikipedia || null, website: t.website || t["contact:website"] || t.url || null,
       phone: t.phone || t["contact:phone"] || null, hours: t.opening_hours || null, cuisine: t.cuisine || null,
-      fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || ""),
-      kosher: /yes|only/.test(t["diet:kosher"] || ""), michelin: +t["michelin:stars"] || 0, brand: !!t.brand, heritage: !!t.heritage, hasHe: !!t["name:he"],
+      fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || "") || /vegetarian|vegan/.test(t.cuisine || ""),
+      kosher: /yes|only/.test(t["diet:kosher"] || "") || /kosher|jewish/.test(t.cuisine || "") || /kosher|cacher|casher|כשר/i.test(t.name || ""), michelin: +t["michelin:stars"] || 0, brand: !!t.brand, heritage: !!t.heritage, hasHe: !!t["name:he"],
       address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") || null, reservation: t.reservation || null,
       tourism: t.tourism || null, historic: t.historic || null, stars: parseFloat(t.stars) || 0
     };
@@ -161,13 +164,16 @@ Masa.planner = (() => {
       if (km(geo, { lat: v.lat, lng: v.lng }) > 12) continue;
       const match = pool.find(p => km(p, v) < 0.15 && (similar(p.local, v.name) || (v.alt && similar(p.local, v.alt))));
       const vo = { text: v.content, price: v.price, priceClass: v.priceClass, hours: v.hours, district: v.district || null };
+      const vk = /kosher|cacher|glatt/i.test(`${v.name} ${v.content || ""}`), vv = /vegetarian|vegan/i.test(`${v.name} ${v.content || ""}`);
       if (match) {
         match.voyage = vo;
+        if (vk) match.kosher = true;
+        if (vv) match.veg = true;
         match.website = match.website || v.url; match.phone = match.phone || v.phone; match.address = match.address || v.address;
         if (v.wikidata && !match.wikidata) match.wikidata = v.wikidata;
       } else {
         pool.push({ id: `wv/${normName(v.name)}`, src: "voyage", name: v.name, local: v.name, kind, cat: KIND[kind].cat, lat: v.lat, lng: v.lng,
-          wikidata: v.wikidata, website: v.url, phone: v.phone, hours: null, address: v.address, voyage: vo });
+          wikidata: v.wikidata, website: v.url, phone: v.phone, hours: null, address: v.address, voyage: vo, kosher: vk, veg: vv });
       }
     }
     // Wikipedia nearby articles: only fill in sights when the map data has few of them
@@ -461,9 +467,9 @@ Masa.planner = (() => {
 
     const q = SRC.buildQueries(geo.lat, geo.lng, R);
     const data = { els: [], voyage: [], wiki: { he: [], en: [] } };
-    const done = { sights: false, restaurants: false, cafes: false, hotels: false, shopping: false, extra: false, voyage: false, wiki: false };
+    const done = { sights: false, restaurants: false, cafes: false, hotels: false, shopping: false, diet: false, extra: false, voyage: false, wiki: false };
     /* the main server allows about two queries at a time per visitor, so queue them: most important first */
-    const order = ["sights", "restaurants", "cafes", "hotels", "shopping", "extra"].filter(k => q[k]);
+    const order = ["sights", "restaurants", "cafes", "hotels", "shopping", "diet", "extra"].filter(k => q[k]);
     let qi = 0;
     const worker = async () => {
       while (qi < order.length) {
@@ -525,7 +531,7 @@ Masa.planner = (() => {
     step(2);
     const { pool, noGeo } = buildPool(data, geo);
     const hotel = opts.hotel && hasXY(opts.hotel) ? opts.hotel : null;
-    if (hotel) pool.forEach(p => { p.dist = 0.5 * p.dist + 0.5 * km(hotel, p); });
+    if (hotel) pool.forEach(p => { p.dist = 0.3 * p.dist + 0.7 * km(hotel, p); });
     pool.forEach(p => rate(p, geo.cc, budget));
     if (opts.diet === "כשר") pool.forEach(p => { if (p.cat === "food") p.q += p.kosher ? 8 : -1; });
     if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });

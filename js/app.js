@@ -885,7 +885,7 @@ function listItems() {
   if (L2.htype) items = items.filter(p => p.kind === L2.htype);
   const ref = S.me && km(S.me, S.trip) < 50 ? S.me : S.trip.days[S.day]?.stops?.[S.stop] || S.trip;
   items = items.map(p => ({ ...p, _d: km(ref, p) }));
-  if (L2.sort === "fit") { const c = tripCenter(); items.forEach(p => { p._fit = km(c, p); }); items.sort((a, b) => (b.q - b._fit * 2.2) - (a.q - a._fit * 2.2)); }
+  if (L2.sort === "fit") { const c = tripCenter(); items.forEach(p => { p._fit = km(c, p); }); items.sort((a, b) => (b.q - b._fit * 4) - (a.q - a._fit * 4)); }
   else items.sort(L2.sort === "near" ? (a, b) => a._d - b._d : (a, b) => (b.q - b._d * 0.4) - (a.q - a._d * 0.4));
   return items;
 }
