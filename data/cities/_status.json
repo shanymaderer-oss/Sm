@@ -735,7 +735,7 @@
  },
  "tokyo": {
   "at": "2026-10-23T18:55:59.638Z",
-  "seconds": 432,
+  "seconds": 486,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -759,18 +759,12 @@
    "he": 49,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [],
   "log": [
-   "overpass-api.de ok 260 42346ms",
-   "overpass-api.de ok 450 42127ms",
-   "overpass-api.de ok 300 43008ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 350 46749ms",
-   "overpass-api.de ok 300 44024ms",
-   "overpass-api.de HTTP 502 423ms",
-   "overpass-api.de ok 47 43625ms",
-   "overpass-api.de ok 200 52934ms",
-   "overpass-api.de ok 1 31878ms",
+   "(updated: streets)",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 1 35585ms",
    "streets: 1 shops"
   ]
  },
