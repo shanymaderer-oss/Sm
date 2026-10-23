@@ -810,5 +810,55 @@
    "overpass.private.coffee timeout 60001ms",
    "overpass.kumi.systems timeout 60000ms"
   ]
+ },
+ "batumi": {
+  "at": "2026-10-23T21:05:03.630Z",
+  "seconds": 401,
+  "osm": {
+   "sights": 23,
+   "restaurants": 124,
+   "cafes": 173,
+   "hotels": 227,
+   "shopping": 85,
+   "diet": 3,
+   "extra": 8,
+   "streets": 6
+  },
+  "voyage": {
+   "eat": 11,
+   "drink": 1,
+   "buy": 4,
+   "see": 17,
+   "sleep": 15,
+   "withCoords": 30,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 4,
+   "en": 30
+  },
+  "streetsV": 2,
+  "streets": [
+   "ზურაბ გორგილაძის ქუჩა (22)",
+   "ილია ჭავჭავაძის ქუჩა (15)",
+   "კონსტანტინე გამსახურდიას ქუჩა (14)",
+   "ზვიად გამსახურდიას ქუჩა (14)",
+   "ნიკოლოზ ბარათაშვილის ქუჩა (9)"
+  ],
+  "log": [
+   "overpass-api.de ok 23 38478ms",
+   "overpass-api.de ok 124 46129ms",
+   "overpass-api.de ok 173 31885ms",
+   "overpass-api.de HTTP 502 433ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de ok 227 34267ms",
+   "overpass-api.de HTTP 502 740ms",
+   "overpass-api.de ok 85 35155ms",
+   "overpass-api.de ok 3 36192ms",
+   "overpass-api.de ok 8 32486ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de ok 187 29483ms",
+   "streets: 187 shops"
+  ]
  }
 }
