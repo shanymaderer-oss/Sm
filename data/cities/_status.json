@@ -32,22 +32,23 @@
   ]
  },
  "rome": {
-  "at": "2026-10-23T16:03:06.837Z",
-  "seconds": 366,
+  "at": "2026-10-23T16:13:25.430Z",
+  "seconds": 289,
   "osm": {
    "sights": 260,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "extra": 0
+   "shopping": 231,
+   "extra": 200
   },
   "voyage": {
-   "eat": 57,
-   "drink": 13,
+   "eat": 68,
+   "drink": 17,
    "buy": 16,
-   "see": 140,
-   "sleep": 127,
-   "withCoords": 341,
+   "see": 158,
+   "sleep": 139,
+   "withCoords": 370,
    "districts": 8
   },
   "wiki": {
@@ -55,16 +56,17 @@
    "en": 100
   },
   "log": [
-   "overpass-api.de ok 260 48319ms",
-   "overpass-api.de HTTP 502 95ms",
-   "overpass-api.de ok 450 27061ms",
-   "overpass-api.de ok 300 31273ms",
-   "overpass-api.de ok 350 28999ms",
-   "overpass-api.de HTTP 502 94ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de HTTP 502 363ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60002ms"
+   "overpass-api.de ok 260 34687ms",
+   "overpass-api.de HTTP 502 350ms",
+   "overpass-api.de ok 450 27529ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de ok 300 32854ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de HTTP 502 297ms",
+   "overpass-api.de ok 350 29610ms",
+   "overpass-api.de HTTP 502 351ms",
+   "overpass-api.de ok 231 23603ms",
+   "overpass-api.de ok 200 30980ms"
   ]
  }
 }
