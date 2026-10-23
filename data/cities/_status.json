@@ -1,21 +1,23 @@
 {
  "paris": {
-  "at": "2026-10-23T16:06:35.555Z",
-  "seconds": 204,
+  "at": "2026-10-23T16:32:39.468Z",
+  "seconds": 322,
   "osm": {
    "sights": 260,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "extra": 350
+   "shopping": 300,
+   "diet": 200,
+   "extra": 200
   },
   "voyage": {
-   "eat": 72,
-   "drink": 41,
-   "buy": 50,
-   "see": 107,
+   "eat": 69,
+   "drink": 38,
+   "buy": 45,
+   "see": 112,
    "sleep": 101,
-   "withCoords": 258,
+   "withCoords": 247,
    "districts": 8
   },
   "wiki": {
@@ -23,12 +25,16 @@
    "en": 100
   },
   "log": [
-   "overpass-api.de ok 260 33210ms",
-   "overpass-api.de ok 450 33984ms",
-   "overpass-api.de ok 300 32090ms",
-   "overpass-api.de HTTP 502 94ms",
-   "overpass-api.de ok 350 36731ms",
-   "overpass-api.de ok 350 48810ms"
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de HTTP 502 338ms",
+   "overpass-api.de ok 260 33014ms",
+   "overpass-api.de ok 450 20142ms",
+   "overpass-api.de ok 300 29317ms",
+   "overpass-api.de ok 350 29359ms",
+   "overpass-api.de HTTP 502 335ms",
+   "overpass-api.de ok 300 31613ms",
+   "overpass-api.de ok 200 42203ms",
+   "overpass-api.de ok 200 38429ms"
   ]
  },
  "rome": {
