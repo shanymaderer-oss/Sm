@@ -1,0 +1,74 @@
+{
+ "paris": {
+  "at": "2026-10-23T15:54:37.070Z",
+  "seconds": 323,
+  "osm": {
+   "sights": 260,
+   "restaurants": 0,
+   "cafes": 300,
+   "hotels": 350,
+   "extra": 0
+  },
+  "voyage": {
+   "eat": 72,
+   "drink": 41,
+   "buy": 50,
+   "see": 107,
+   "sleep": 101,
+   "withCoords": 258,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "log": [
+   "overpass-api.de ok 260 35115ms",
+   "overpass-api.de HTTP 502 113ms",
+   "overpass.private.coffee timeout 45000ms",
+   "overpass.kumi.systems timeout 45001ms",
+   "overpass-api.de ok 300 30693ms",
+   "overpass-api.de ok 350 23911ms",
+   "overpass-api.de timeout 45002ms",
+   "overpass.private.coffee timeout 45001ms",
+   "overpass.kumi.systems timeout 45001ms"
+  ]
+ },
+ "rome": {
+  "at": "2026-10-23T15:55:07.626Z",
+  "seconds": 354,
+  "osm": {
+   "sights": 260,
+   "restaurants": 0,
+   "cafes": 300,
+   "hotels": 0,
+   "extra": 0
+  },
+  "voyage": {
+   "eat": 62,
+   "drink": 12,
+   "buy": 15,
+   "see": 148,
+   "sleep": 132,
+   "withCoords": 346,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "log": [
+   "overpass-api.de ok 260 33185ms",
+   "overpass-api.de HTTP 502 113ms",
+   "overpass.private.coffee timeout 45001ms",
+   "overpass.kumi.systems timeout 45001ms",
+   "overpass-api.de ok 300 41581ms",
+   "overpass-api.de HTTP 502 130ms",
+   "overpass.private.coffee timeout 45000ms",
+   "overpass.kumi.systems timeout 45000ms",
+   "overpass-api.de HTTP 502 337ms",
+   "overpass.private.coffee timeout 45000ms",
+   "overpass.kumi.systems timeout 45000ms"
+  ]
+ }
+}
