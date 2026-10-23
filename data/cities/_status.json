@@ -123,7 +123,7 @@
  },
  "london": {
   "at": "2026-10-23T16:43:17.509Z",
-  "seconds": 655,
+  "seconds": 758,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -147,17 +147,19 @@
    "he": 100,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "New Bond Street (69)",
    "Regent Street (59)",
    "King's Road (56)",
-   "Marylebone High Street (56)",
-   "Oxford Street (45)"
+   "Oxford Street (45)",
+   "Marylebone High Street (56)"
   ],
   "log": [
    "(updated: streets)",
-   "overpass-api.de ok 1965 44805ms",
-   "streets: 1965 shops"
+   "overpass-api.de HTTP 504 48099ms",
+   "overpass-api.de ok 2438 36720ms",
+   "streets: 2438 shops"
   ]
  },
  "prague": {
