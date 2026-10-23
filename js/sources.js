@@ -23,10 +23,10 @@
       cafes: H(R * 0.45) + `(nwr["amenity"~"^(cafe|ice_cream|marketplace|food_court)$"]["name"];nwr["shop"~"^(bakery|pastry|confectionery|deli|wine)$"]["name"];);out center tags 300;`,
       hotels: H(R * 1.1) + `nwr["tourism"~"^(hotel|hostel|guest_house|apartment|motel)$"]["name"];out center tags 350;`,
       shopping: H(R * 0.9) + `(nwr["shop"~"^(mall|department_store)$"]["name"];nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"];);out center tags 300;`,
-      diet: H(R * 2) + `(nwr["diet:kosher"~"^(yes|only)$"]["name"];nwr["cuisine"~"kosher|jewish"]["name"];nwr["diet:vegan"="only"]["name"];nwr["diet:vegetarian"="only"]["name"];);out center tags 200;`,
+      diet: H(R * 2) + `(nwr["diet:kosher"~"^(yes|only)$"]["name"];nwr["cuisine"~"kosher|jewish"]["name"];nwr["diet:vegan"="only"]["name"];nwr["diet:vegetarian"="only"]["name"];nwr["amenity"="place_of_worship"]["religion"="jewish"]["name"];);out center tags 250;`,
       extra: H(R * 1.1) + `(nwr["amenity"="place_of_worship"]["name"]["wikidata"];nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"];nwr["natural"="beach"]["name"];);out center tags 200;`,
       /* every fashion, shoe, gift… shop with a street address. Counted per street to find the main shopping streets. */
-      streets: H(R * 0.75, 40) + `nwr["shop"~"^(${STREET_SHOPS})$"]["addr:street"];out center tags 3000;`
+      streets: H(R, 50) + `nwr["shop"~"^(${STREET_SHOPS})$"]["addr:street"];out center tags 5000;`
     };
   }
 
@@ -35,6 +35,9 @@
     cosmetics: "קוסמטיקה", perfumery: "בשמים", gift: "מתנות", souvenir: "מזכרות", books: "ספרים", toys: "צעצועים", sports: "ספורט", department_store: "כלבו",
     chocolate: "שוקולד", optician: "משקפיים", electronics: "אלקטרוניקה", mobile_phone: "טלפונים", art: "אמנות", antiques: "עתיקות", interior_decoration: "עיצוב לבית", houseware: "כלי בית" };
   const dkm = (a, b) => { const k = Math.cos(a.lat * Math.PI / 180); return Math.hypot(a.lat - b.lat, (a.lng - b.lng) * k) * 111.32; };
+  const SQUARE = /(náměstí|namesti|piazza|plaza|\bplace\b|platz|square|\btér\b|\bplac\b|rynek|praça|plaça|meydan|площад)/i;
+  /* many shops, of many kinds (a street of only jewelers is a niche), with well-known brands */
+  const streetScore = s => s.n * (1.15 - 0.5 * (s.topShare ?? 0.6)) + (s.brands || 0) * 0.4 + Math.min(2, s.mentions || 0) * 6;
   /* Main shopping streets: the streets with the most shops on one walkable stretch (about 700 m). */
   function shopStreets(els, max = 14) {
     const by = {};
@@ -55,16 +58,19 @@
       // the two ends of the stretch, for the walking direction
       let ends = [best[0], best[0]], far = 0;
       for (const a of best) for (const b of best) { const d = dkm(a, b); if (d > far) { far = d; ends = [a, b]; } }
-      out.push({ name, n: best.length, total: pts.length, brands: best.filter(p => p.brand).length, lat: +lat.toFixed(6), lng: +lng.toFixed(6),
+      const topShare = kinds.length ? kinds[0][1] / best.length : 1;
+      // a square lined with a few shops is not a shopping street, unless it is a big one (Wenceslas Square)
+      if (SQUARE.test(name) && best.length < 15) continue;
+      out.push({ name, n: best.length, topShare: +topShare.toFixed(2), total: pts.length, brands: best.filter(p => p.brand).length, lat: +lat.toFixed(6), lng: +lng.toFixed(6),
         len: Math.round(far * 1000), kinds: kinds.slice(0, 4).map(([k, n]) => [k, n]), ends: ends.map(p => [+p.lat.toFixed(6), +p.lng.toFixed(6)]) });
     }
-    return out.sort((a, b) => b.n - a.n).slice(0, max);
+    return out.sort((a, b) => streetScore(b) - streetScore(a)).slice(0, max);
   }
 
   /* keep only the tags the app uses, so cached data stays small */
   const KEEP = ["name", "name:he", "name:en", "tourism", "historic", "amenity", "leisure", "natural", "shop", "building", "wikidata", "wikipedia",
     "website", "contact:website", "url", "phone", "contact:phone", "opening_hours", "fee", "charge", "cuisine", "heritage", "wikimedia_commons", "image",
-    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "diet:halal", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation", "rooms", "beds", "internet_access", "operator"];
+    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "diet:halal", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation", "rooms", "beds", "internet_access", "operator", "religion", "denomination"];
   const slim = els => els.map(e => ({
     type: e.type, id: e.id, lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon,
     tags: Object.fromEntries(Object.entries(e.tags || {}).filter(([k]) => KEEP.includes(k)))
@@ -158,7 +164,7 @@
     return [...set].slice(0, 10);
   }
 
-  const api = { OVERPASS, bbox, buildQueries, slim, shopStreets, SHOP_HE, parseVoyage, voyageDistricts, cleanWiki };
+  const api = { OVERPASS, bbox, buildQueries, slim, shopStreets, streetScore, SHOP_HE, parseVoyage, voyageDistricts, cleanWiki };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else { root.Masa = root.Masa || {}; root.Masa.sources = api; }
 })(typeof window !== "undefined" ? window : globalThis);

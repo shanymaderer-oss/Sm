@@ -127,8 +127,17 @@ Masa.svc = (() => {
     if (!main) return [];
     let list = S.parseVoyage(main);
     const districts = S.voyageDistricts(main, title);
-    const parts = await mapLimit(districts, 4, async d => S.parseVoyage(await get(d)).map(x => ({ ...x, district: d.split("/").pop() })));
-    parts.forEach(p => { if (p) list = list.concat(p); });
+    // huge cities (New York, London…) have districts with their own sub-districts: go one level deeper, up to 12 pages
+    const pages = [];
+    await mapLimit(districts, 4, async d => {
+      const wt = await get(d);
+      const items = S.parseVoyage(wt);
+      pages.push(...items.map(x => ({ ...x, district: d.split("/").pop() })));
+      if (items.length < 8) for (const sub of S.voyageDistricts(wt, d).slice(0, 4)) pages.push({ _sub: sub });
+    });
+    const subs = pages.filter(p => p._sub).map(p => p._sub).slice(0, 12);
+    list = list.concat(pages.filter(p => !p._sub));
+    await mapLimit(subs, 4, async d => { list = list.concat(S.parseVoyage(await get(d)).map(x => ({ ...x, district: d.split("/").pop() }))); });
     return list;
   }
 

@@ -38,13 +38,13 @@ const fmtDay = d => d.toLocaleDateString("he-IL", { weekday: "short", day: "nume
 /* ---------- state ---------- */
 const S = {
   screen: "home", prev: "home", dest: null,
-  form: { days: 3, interests: ["food", "history", "view"], budget: "בינוני", pace: "מאוזן", diet: "הכול", notes: "", start: isoDate(addDays(new Date(), 21)), people: 2 },
+  form: { days: 3, interests: ["food", "history", "view"], budget: "בינוני", pace: "מאוזן", diet: "הכול", mobility: "", notes: "", start: isoDate(addDays(new Date(), 21)), people: 2 },
   list: { chip: "food", sort: "best", open: false, cuisine: null, price: null, diet: null, q: "", page: 1 }, poi: null,
   trip: null, day: 0, stop: 0, openBook: null, chat: [], chatLog: [], busy: false, me: null
 };
 let checks = store.get("masa-checks", {});
 const ckey = (s, i) => `${S.trip?.city}|${s.name}|${i}`;
-const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info"];
+const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move"];
 
 /* ---------- speech (built into the browser, free) ---------- */
 const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -65,7 +65,7 @@ if (canSpeak) { try { speechSynthesis.getVoices(); } catch {} }
 
 /* ---------- map: 3D globe (MapLibre) ----------
    From far away: a satellite globe in space. Zooming into a city: the satellite fades into a street map. */
-const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SAT_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 const STREET_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 const FALLBACK_STYLE = {
@@ -219,6 +219,7 @@ function locate() {
   if (!navigator.geolocation) { toast("הדפדפן הזה לא תומך במיקום"); return; }
   navigator.geolocation.getCurrentPosition(p => {
     S.me = { lat: p.coords.latitude, lng: p.coords.longitude };
+    autoVisited();
     renderMap();
     flyCenter(S.me, 16);
   }, () => toast("לא הצלחנו לקבל מיקום. בדקו שהרשאת המיקום פתוחה בדפדפן."), { enableHighAccuracy: true, timeout: 12000 });
@@ -387,6 +388,8 @@ SCREENS.goals = {
     <div class="seg" id="budget">${["חסכוני", "בינוני", "מפנק"].map(v => `<button type="button" aria-pressed="${f.budget === v}">${v}</button>`).join("")}</div>
     <div class="section-label">אוכל</div>
     <div class="seg" id="diet">${["הכול", "צמחוני", "כשר"].map(v => `<button type="button" aria-pressed="${f.diet === v}">${v}</button>`).join("")}</div>
+    <div class="section-label">נגישות <small class="muted">נעדיף מקומות נגישים, פחות הליכה והצעות למונית</small></div>
+    <div class="seg wrap" id="mobility">${MOBILITY.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(f.mobility || "") === v}">${l}</button>`).join("")}</div>
     <div class="section-label">קצב</div>
     <div class="seg" id="pace">${["רגוע", "מאוזן", "אינטנסיבי"].map(v => `<button type="button" aria-pressed="${f.pace === v}">${v}</button>`).join("")}</div>
     <label class="section-label" for="notes">עוד משהו שחשוב לדעת?</label>
@@ -404,6 +407,7 @@ SCREENS.goals = {
     $("dplus").onclick = () => setD(f.days + 1);
     document.querySelectorAll(".tile").forEach(t => t.onclick = () => { const k = t.dataset.k, on = f.interests.includes(k); f.interests = on ? f.interests.filter(x => x !== k) : [...f.interests, k]; t.setAttribute("aria-pressed", !on); });
     ["budget", "pace", "diet"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.onclick = () => { f[id] = b.textContent; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); }));
+    $("mobility").querySelectorAll("button").forEach(b => b.onclick = () => { f.mobility = b.dataset.v; $("mobility").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
     $("notes").oninput = e => f.notes = e.target.value;
     $("startDate").onchange = e => { f.start = e.target.value; };
     const setP = v => { f.people = Math.min(8, Math.max(1, v)); $("pval").textContent = f.people; };
@@ -413,6 +417,7 @@ SCREENS.goals = {
   }
 };
 
+const MOBILITY = [["", "בלי מגבלה"], ["wheelchair", "כיסא גלגלים"], ["stroller", "עגלת תינוק"], ["walking", "קושי בהליכה"]];
 const LSTEPS = ["מאתרים את היעד", "אוספים מסעדות, קניונים ואטרקציות", "בונים מסלול לפי מה שבחרתם"];
 let buildCtl = null;
 SCREENS.loading = {
@@ -435,7 +440,8 @@ async function build() {
   const step = i => document.querySelectorAll("#lsteps div").forEach((d, k) => d.className = k < i ? "on" : k === i ? "now" : "");
   const onGeo = g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.3, reduced ? 0 : 5200); };
   try {
-    const trip = await planner.build({ query: S.dest.q, ...S.form, onGeo }, step, buildCtl.signal);
+    const trip = await planner.build({ query: S.dest.q, ...S.form, ...memoryOpts(), onGeo }, step, buildCtl.signal);
+    rememberForm(S.form);
     saveTrip(trip);
     openTrip(trip);
     toast(`המסלול ב${trip.city} מוכן`);
@@ -469,14 +475,15 @@ SCREENS.plan = {
     <div class="duo">
       ${t.source === "sample" ? "" : t.hotel ? `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>המלון שלכם</small><b>${esc(t.hotel.name)}</b></span></button>`
         : `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>איפה לישון?</small><b>מלונות שמתאימים למסלול</b></span></button>`}
-      <button type="button" class="duocard" id="infoCard"><span class="ic" style="background:var(--teal)">${ic("info")}</span><span><small>לפני שטסים</small><b>מזג אוויר, כסף, חירום</b></span></button>
+      <button type="button" class="duocard" id="infoCard"><span class="ic" style="background:var(--teal)">${ic("info")}</span><span><small>לפני שטסים</small><b>מזג אוויר, כסף, eSIM</b></span></button>
+      <button type="button" class="duocard" id="moveCard"><span class="ic" style="background:var(--violet)">${ic("bus")}</span><span><small>תחבורה</small><b>מהשדה לעיר ובתוך העיר</b></span></button>
     </div>
     <div class="daytabs" role="tablist">${t.days.map((x, i) => `<button type="button" role="tab" class="daytab" data-i="${i}" aria-selected="${i === S.day}" style="${i === S.day ? `background:${cv(DAYC[i % 5])}` : ""}"><span class="dot" style="background:${i === S.day ? "#fff" : cv(DAYC[i % 5])}"></span>${esc(x.label)}</button>`).join("")}</div>
     ${d.theme ? `<div class="daytheme">${esc(d.theme)}</div>` : ""}
     <div class="timeline">${d.stops.map((s, i) => {
       let leg = "";
       if (i) { const L2 = legInfo(d, i), p = d.stops[i - 1];
-        leg = `<div class="leg">${ic(L2.transit ? "train" : "nav")} ${L2.kmv.toFixed(1)} ק״מ · ${L2.transit ? "עדיף תחבורה ציבורית" : `${L2.min} דק׳ הליכה`} · <a href="${gmDir(p, s, L2.transit ? "transit" : "walking")}" target="_blank" rel="noopener">ניווט</a></div>`; }
+        leg = legRow(t, p, s, L2); }
       return leg + `<button type="button" class="stop" data-i="${i}">${s.image ? `<span class="thumb" style="background-image:url('${esc(s.image)}')"><span class="n" style="color:${col}">${i + 1}</span></span>` : `<span class="ic" style="background:${cv(CATS[catOf(s)].c)}">${ic(catOf(s))}<span class="n" style="color:${col}">${i + 1}</span></span>`}
         <span style="min-width:0">${s.mealHe ? `<span class="mealtag">${esc(s.mealHe)}</span>` : s.must ? `<span class="mealtag must">חובה לראות</span>` : ""}<span class="t">${esc(s.name)}</span>${placeLine(s) ? `<span class="pline">${placeLine(s)}</span>` : ""}<span class="meta">${s.time ? `<span>${ic("clock")}${esc(s.time)}</span>` : ""}${s.duration ? `<span>${ic("hourglass")}${esc(s.duration)}</span>` : ""}${s.busy ? `<span>${ic("users")}${peakWord(s)}</span>` : ""}</span></span>
         <span class="tag ${s._added ? "new" : s.booking?.needed ? "book" : "free"}">${s._added ? "הוספתם" : s.booking?.needed ? "דורש הזמנה" : "בלי הזמנה"}</span></button>`;
@@ -484,6 +491,7 @@ SCREENS.plan = {
     ${ideas.length ? `<div class="ideas"><h2>${ic("sparkle")} נשאר לכם זמן היום? רעיונות בדרך</h2>
       ${ideas.map(n => `<div class="idea"><span class="ic" style="background:${cv(CATS[catOf(n)].c)}">${ic(catOf(n))}</span><span><b>${esc(n.name)}</b><small>ליד ${esc(n._near)} · ${esc(n.why)}</small></span><button type="button" class="btn small soft" data-add="${esc(n.name)}">${ic("plus")}הוספה</button></div>`).join("")}</div>` : ""}
     ${t.cc || t.slug ? costCard(t) : ""}
+    ${t.source === "sample" ? "" : familyCard(t)}
     <button type="button" class="btn soft block" id="toDiscover">${ic("compass")} עוד דברים מיוחדים לעשות ב${esc(t.city)}</button>
     <div class="disclaim">${ic("info")}<span>שעות, מחירים ועומסים הם הערכה. לפני שמזמינים, בדקו באתר הרשמי של המקום.</span></div>
   </div>`;
@@ -502,6 +510,8 @@ SCREENS.plan = {
     $("cpMinus") && ($("cpMinus").onclick = () => setPeople((S.trip.opts?.people || 2) - 1));
     $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
     $("infoCard").onclick = () => go("info");
+    $("moveCard").onclick = () => go("move");
+    bindFamily();
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
   }
 };
@@ -559,6 +569,7 @@ SCREENS.place = {
       ${s.image && s.wikiUrl ? `<a class="credit" href="${esc(s.wikiUrl)}" target="_blank" rel="noopener">תמונה: ויקיפדיה</a>` : ""}</div>
     ${(s.time || s.duration || s.cost) ? `<div class="facts"><div><small>${ic("clock")}שעה</small><b>${esc(s.time || "—")}</b></div><div><small>${ic("hourglass")}משך</small><b>${esc(s.duration || "—")}</b></div><div><small>${ic("coin")}עלות</small><b>${money(esc(stopCost(s) || "—"))}</b></div></div>` : ""}
     ${placeLine(s) ? `<div class="pline big">${placeLine(s)}</div>` : ""}
+    ${s.isHotel ? "" : visitedRow(s)}
     ${(s.signals || []).length ? `<div class="sigs">${s.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
     ${s.whyLang === "en" ? `<div class="vquote"><p dir="ltr" lang="en">${esc(s.why)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : `<p>${esc(s.why)}</p>`}
     ${contactRow(s)}
@@ -573,6 +584,7 @@ SCREENS.place = {
       </div>
       ${histSrc ? `<div class="source">${histSrc}</div>` : ""}
       <div class="status" id="histStatus"></div></div>
+    ${S.trip.source === "sample" ? "" : notesCard(s)}
     ${busyChart(s)}
     ${s.tip ? `<div class="tipbox">${ic("bulb")}<span><b>טיפ מהמדריך: </b>${esc(s.tip)}</span></div>` : ""}
     ${(s.nearby || []).length ? `<div class="ideas"><h2>${ic("gem")} גם בסביבה, ופחות מוכר</h2>
@@ -595,6 +607,7 @@ SCREENS.place = {
     $("prevStop").onclick = () => { if (S.stop > 0) { S.stop--; go("place"); } };
     $("nextStop").onclick = () => { if (S.stop < S.trip.days[S.day].stops.length - 1) { S.stop++; go("place"); } };
     $("toBook") && ($("toBook").onclick = () => { S.openBook = s.name; go("book"); });
+    bindVisited(s); bindNotes(s);
     $("genHist") && ($("genHist").onclick = () => s.history && s.histLang === "he"
       ? (go("guide"), ask(`ספר לי עוד על ${s.name}, כאילו אתה מדריך שעומד איתי שם. מה לחפש בעיניים כשאני מגיע?`))
       : genHistory(s));
@@ -768,6 +781,13 @@ SCREENS.settings = {
     const on = ai.enabled();
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backPrev" aria-label="חזרה">${ic("back")}</button><h1 style="font-size:1.5rem">הגדרות</h1><span style="width:38px"></span></div>
+    <div class="card"><h2>${ic("access")} נגישות ותצוגה</h2>
+      <div class="section-label">גודל טקסט</div>
+      <div class="seg" id="a11ySize">${[["100", "רגיל"], ["115", "גדול"], ["130", "גדול מאוד"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${A11Y.size === v}">${l}</button>`).join("")}</div>
+      <label class="switchrow"><input type="checkbox" id="a11yHc" ${A11Y.hc ? "checked" : ""}><span>ניגודיות גבוהה וקווים עבים יותר</span></label>
+      <label class="switchrow"><input type="checkbox" id="a11yMotion" ${A11Y.still ? "checked" : ""}><span>בלי אנימציות במפה</span></label>
+      <label class="switchrow"><input type="checkbox" id="a11yLinks" ${A11Y.links ? "checked" : ""}><span>קו תחתון לכל הקישורים</span></label>
+    </div>
     <div class="card"><h2>${ic("sparkle")} המדריך החכם <span class="tag ${on ? "free" : "book"}">${on ? "פעיל" : "כבוי"}</span></h2>
       <p>בלי המדריך, מסע עובד עם מידע פתוח מ-OpenStreetMap ומוויקיפדיה. עם מפתח חינמי של Google Gemini מקבלים גם צ׳אט עם מדריך, סיפורים בעברית לכל מקום, טיפים אישיים ומנות מקומיות.</p>
       <ol class="howto">
@@ -795,6 +815,10 @@ SCREENS.settings = {
   </div>`;
   },
   bind() {
+    $("a11ySize").querySelectorAll("button").forEach(b => b.onclick = () => { A11Y.size = b.dataset.v; applyA11y(); rerenderKeepScroll(); });
+    $("a11yHc").onchange = e => { A11Y.hc = e.target.checked; applyA11y(); };
+    $("a11yMotion").onchange = e => { A11Y.still = e.target.checked; applyA11y(); };
+    $("a11yLinks").onchange = e => { A11Y.links = e.target.checked; applyA11y(); };
     $("backPrev").onclick = () => go(S.prev && S.prev !== "settings" && (S.trip || !TRIP_SCREENS.includes(S.prev)) ? S.prev : "home");
     $("keyForm").onsubmit = async e => {
       e.preventDefault();
@@ -941,6 +965,7 @@ function listItems() {
   if (L2.open) items = items.filter(p => openState(p) === true);
   if (L2.stars) items = items.filter(p => (p.stars || 0) >= L2.stars);
   if (L2.htype) items = items.filter(p => p.kind === L2.htype);
+  if (L2.acc) items = items.filter(p => p.wheel === "yes" || p.wheel === "limited");
   const ref = S.me && km(S.me, S.trip) < 50 ? S.me : S.trip.days[S.day]?.stops?.[S.stop] || S.trip;
   items = items.map(p => ({ ...p, _d: km(ref, p) }));
   if (L2.sort === "fit") { const c = tripCenter(); items.forEach(p => { p._fit = km(c, p); }); items.sort((a, b) => (b.q - b._fit * 4) - (a.q - a._fit * 4)); }
@@ -955,7 +980,7 @@ function placeCard(p, i) {
     <button type="button" class="pmain" data-open="${i}">
       <span class="ic" style="background:${cv(CATS[catOf(p)].c)}">${ic(CHIP_ICON[p.kind] || catOf(p))}</span>
       <span style="min-width:0">
-        <span class="t">${esc(p.name)}</span>
+        <span class="t">${esc(p.name)}${isVisited(p) ? ` <span class="tag new">הייתם כאן</span>` : ""}${p.wheel === "yes" ? ` <span class="acc" title="נגיש לכיסא גלגלים" aria-label="נגיש לכיסא גלגלים">${ic("access")}</span>` : ""}</span>
         <span class="pline">${[planner.KIND[p.kind]?.he, p.stars ? "★".repeat(Math.min(5, Math.round(p.stars))) : "", cuisineHe(p.cuisine), p.kind === "street" ? `${p.shops} חנויות` : ""].filter(Boolean).map(esc).join(" · ")}${priceLabel(p) ? ` · ${priceLabel(p)}` : p.priceClass ? ` · ${PRICE[p.priceClass]}` : ""}${o === true ? ` · <b class="open">פתוח עכשיו</b>` : o === false ? ` · <b class="closed">סגור</b>` : ""}</span>
         ${p.signals?.length ? `<span class="sigs small">${p.signals.slice(0, 3).map(x => `<span>${esc(x)}</span>`).join("")}</span>` : ""}
         ${p.vtext ? `<span class="vtext" dir="ltr" lang="en">${esc(p.vtext.slice(0, 140))}${p.vtext.length > 140 ? "…" : ""}</span>` : p.vtext2 ? `<span class="vtext">${esc(p.vtext2)}</span>` : ""}
@@ -994,6 +1019,7 @@ SCREENS.list = {
       ${now && L2.chip !== "hotel" ? `<button type="button" id="fOpen" aria-pressed="${L2.open}">פתוח עכשיו</button>` : ""}
       ${hasPrice ? ["budget", "mid", "splurge"].map(k => `<button type="button" data-price="${k}" aria-pressed="${L2.price === k}">${PRICE[k]}</button>`).join("") : ""}
       ${L2.chip === "hotel" ? `<button type="button" data-stars="3" aria-pressed="${L2.stars === 3}">3 כוכבים ומעלה</button><button type="button" data-stars="4" aria-pressed="${L2.stars === 4}">4 כוכבים ומעלה</button>${["hotel", "hostel", "apartment", "guesthouse"].filter(k => base.some(p => p.kind === k)).map(k => `<button type="button" data-ht="${k}" aria-pressed="${L2.htype === k}">${planner.KIND[k].he}</button>`).join("")}` : ""}
+      ${base.some(p => p.wheel === "yes") ? `<button type="button" id="fAcc" aria-pressed="${!!L2.acc}">${ic("access")}נגיש</button>` : ""}
       ${showFood ? `<button type="button" data-diet="veg" aria-pressed="${L2.diet === "veg"}">צמחוני</button><button type="button" data-diet="kosher" aria-pressed="${L2.diet === "kosher"}">כשר</button>` : ""}
     </div>
     ${cuisines.length > 1 && showFood ? `<div class="filters scroll-x">${cuisines.map(([c, n]) => `<button type="button" data-cu="${esc(c)}" aria-pressed="${L2.cuisine === c}">${esc(CUISINE_HE[c] || c.replace(/_/g, " "))} <small>${n}</small></button>`).join("")}</div>` : ""}
@@ -1011,6 +1037,7 @@ SCREENS.list = {
     $("backList").onclick = () => go(S.prevTrip || "plan");
     document.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { L2.sort = b.dataset.sort; refresh(false); });
     $("fOpen") && ($("fOpen").onclick = () => { L2.open = !L2.open; refresh(true); });
+    $("fAcc") && ($("fAcc").onclick = () => { L2.acc = !L2.acc; refresh(true); });
     document.querySelectorAll("[data-price]").forEach(b => b.onclick = () => { L2.price = L2.price === b.dataset.price ? null : b.dataset.price; refresh(true); });
     $("editDates") && ($("editDates").onclick = () => { L2.editDates = true; rerenderKeepScroll(); });
     $("hSave") && ($("hSave").onclick = () => { S.trip.opts.start = $("hStart").value || S.trip.opts.start; S.trip.opts.people = Math.min(8, Math.max(1, +$("hPeople").value || 2)); L2.editDates = false; saveTrip(S.trip); rerenderKeepScroll(); toast("התאריכים עודכנו בקישורים להזמנה"); });
@@ -1217,6 +1244,7 @@ SCREENS.info = {
       <div class="chiprow"><a class="chipbtn" href="${flightsUrl()}" target="_blank" rel="noopener">${ic("ext")}טיסות ב-Google Flights</a><a class="chipbtn" href="https://www.skyscanner.co.il/" target="_blank" rel="noopener">${ic("ext")}Skyscanner</a></div></div>
     <div class="card"><h2>${ic("sun")} מזג אוויר</h2>${wx}</div>
     ${ci ? `<div class="card"><h2>${ic("coin")} כסף: ${esc(ci.curHe)}</h2>${money}<p>${esc(ci.pay)}</p></div>` : ""}
+    ${esimCard(t)}
     <div class="factgrid">
       ${ci ? `<div><small>${ic("info")}חירום</small><b>${esc(ci.sos)}</b></div>` : `<div><small>${ic("info")}חירום באירופה</small><b>112</b></div>`}
       ${off != null ? `<div><small>${ic("clock")}הפרש שעות מישראל</small><b>${off === 0 ? "אותה שעה" : `${off > 0 ? "+" : ""}${off} שעות`}</b></div>` : ""}
@@ -1242,7 +1270,262 @@ SCREENS.info = {
   }
 };
 
+/* ================= getting there and around ================= */
+const TR = Masa.transport;
+function legRow(t, a, b, L2) {
+  const nav = `<a href="${gmDir(a, b, L2.transit ? "transit" : "walking")}" target="_blank" rel="noopener">ניווט</a>`;
+  const mob = t.opts?.mobility;
+  const far = L2.min > (mob ? 12 : 25);
+  let extra = "";
+  if (far) {
+    const tx = TR.taxi(t.slug, t.cc, L2.kmv);
+    const apps = (TR.city(t.slug)?.apps || []);
+    const uber = apps.includes("Uber") ? `https://m.uber.com/ul/?action=setPickup&pickup[latitude]=${a.lat}&pickup[longitude]=${a.lng}&dropoff[latitude]=${b.lat}&dropoff[longitude]=${b.lng}` : null;
+    extra = `<span class="legopts"><a href="${gmDir(a, b, "transit")}" target="_blank" rel="noopener">${ic("bus")}תחבורה ציבורית</a>${tx ? `<span>${ic("car")}מונית כ-${money(COST.ils(tx))}${uber ? ` · <a href="${uber}" target="_blank" rel="noopener">Uber</a>` : apps.length ? ` · ${esc(apps.slice(0, 2).join(" / "))}` : ""}</span>` : ""}</span>`;
+  }
+  return `<div class="leg">${ic(L2.transit ? "train" : "nav")} ${L2.kmv.toFixed(1)} ק״מ · ${L2.transit ? "רחוק להליכה" : `${L2.min} דק׳ הליכה`} · ${nav}${extra}</div>`;
+}
+SCREENS.move = {
+  view() {
+    const t = S.trip, mob = t.opts?.mobility, fam = (t.opts?.people || 2) >= 3;
+    const groups = TR.airport(t.slug, { mobility: !!mob, family: fam });
+    const c = TR.city(t.slug);
+    const row = o => `<div class="mvrow${o.easy ? " easy" : ""}"><span class="ic" style="background:${cv(o.m === "taxi" ? "--coral" : o.m === "bus" ? "--sky" : "--violet")}">${ic(TR.MODE_IC[o.m] || "bus")}</span>
+      <span class="mvmain"><b>${esc(o.n)}</b><small>${esc(TR.MODE_HE[o.m] || "")} · ${o.min} דק׳ · עד ${esc(o.to)}</small>${o.note ? `<small class="mvnote">${esc(o.note)}</small>` : ""}
+      <span class="mvtags">${o.easy ? `<span class="tag new">הכי נוח</span>` : ""}${o.cheap ? `<span class="tag free">הכי זול</span>` : ""}${o.fast && !o.easy ? `<span class="tag">הכי מהיר</span>` : ""}</span></span>
+      <span class="mvprice"><b>${money(esc(o.p))}</b><small>כ-${money(COST.ils(o.eur))}${o.m === "taxi" ? " למונית" : " לאדם"}</small></span></div>`;
+    const airportLink = code => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(code + " airport")}&destination=${t.lat},${t.lng}&travelmode=transit`;
+    return `<div class="screen">
+    <div class="topnav"><button class="iconbtn" id="backMove" aria-label="חזרה">${ic("back")}</button><span class="eyebrow">תחבורה</span><span style="width:38px"></span></div>
+    <h1 style="font-size:1.5rem">איך מגיעים ומתניידים ב${esc(t.city)}</h1>
+    ${groups ? groups.map(g => {
+      const easy = g.list.find(o => o.easy), cheap = g.list.find(o => o.cheap);
+      return `<div class="card"><h2>${ic("nav")} משדה התעופה ${esc(g.he)} (${esc(g.code)}) לעיר</h2>
+      <p class="lead">${easy ? `<b>הכי נוח:</b> ${esc(easy.n)}${mob ? " (עם כיסא גלגלים, עגלה או קושי בהליכה, מונית מהשדה היא הכי פשוטה)" : fam ? " (עם ילדים ומזוודות, מונית שווה את ההפרש)" : ""}.` : ""} ${cheap && cheap !== easy ? `<b>הכי זול:</b> ${esc(cheap.n)}.` : ""}</p>
+      <div class="mvlist">${g.list.map(row).join("")}</div>
+      <a class="chipbtn" href="${airportLink(g.code)}" target="_blank" rel="noopener">${ic("pin")}מסלול מהשדה בגוגל מפות</a></div>`;
+    }).join("") : `<div class="card"><h2>${ic("nav")} משדה התעופה לעיר</h2><p>עוד אין לנו פירוט לעיר הזאת. בגוגל מפות רואים את כל האפשרויות מהשדה הקרוב.</p>
+      <a class="chipbtn" href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(`${t.cityEn || t.city} airport`)}&destination=${t.lat},${t.lng}&travelmode=transit" target="_blank" rel="noopener">${ic("pin")}מהשדה לעיר בגוגל מפות</a></div>`}
+    <div class="card"><h2>${ic("bus")} בתוך העיר</h2>
+      ${c?.note ? `<p>${esc(c.note)}</p>` : ""}
+      <div class="mvtips">
+        <div><b>${ic("heart")}הכי נוח</b><span>במרכז הולכים ברגל, וכשהמרחק יותר מ-2 ק״מ לוקחים מונית באפליקציה. המחיר ידוע מראש ואין צורך לדבר בשפה המקומית.${(c?.apps || []).length ? ` כאן עובדים: ${esc(c.apps.join(", "))}.` : ""}</span></div>
+        <div><b>${ic("coin")}הכי זול</b><span>${esc(c?.pass || "תחבורה ציבורית עם כרטיס יומי או כרטיס נטען. בהרבה ערים אפשר לשלם בכרטיס אשראי ישירות בשער.")}</span></div>
+        ${c?.km ? `<div><b>${ic("car")}כמה עולה מונית</b><span>כ-${money(COST.ils(c.flag + c.km * 3))} לנסיעה של 3 ק״מ בעיר. במסלול שלכם, כשתחנה רחוקה להליכה, מופיעה הערכה למונית ולתחבורה ציבורית.</span></div>` : ""}
+      </div></div>
+    ${mob ? `<div class="tipbox">${ic("access")}<span>${mob === "stroller" ? "עם עגלה: בהרבה תחנות מטרו ישנות אין מעלית. אוטובוסים וחשמליות בדרך כלל נוחים יותר." : "בהרבה תחנות מטרו ישנות אין מעלית. אוטובוסים וחשמליות חדשים בדרך כלל נגישים. מונית עם רמפה כדאי להזמין יום מראש דרך המלון."} באפליקציה של התחבורה בעיר אפשר לסנן מסלול בלי מדרגות.</span></div>` : ""}
+    <div class="disclaim">${ic("info")}<span>זמנים ומחירים הם הערכה לפי מחירונים שפורסמו, ומשתנים. לפני הטיסה כדאי לבדוק באתר של שדה התעופה או של חברת התחבורה.</span></div>
+  </div>`;
+  },
+  bind() { $("backMove").onclick = () => go("plan"); }
+};
+
+/* ================= internet abroad: eSIM ================= */
+const EU = new Set(["it", "fr", "es", "pt", "de", "at", "nl", "gr", "cz", "hu", "cy", "pl", "bg", "ro", "ie", "dk", "be", "hr", "si", "sk", "se", "fi", "ee", "lv", "lt", "lu", "mt"]);
+function esimCard(t) {
+  const days = t.days.length + 2; // the flight days too
+  const need = days * 0.8;
+  const gb = [3, 5, 10, 20].find(x => x >= need) || 20;
+  const cc = t.cc;
+  const region = EU.has(cc) ? "חבילת \"אירופה\" מכסה את רוב מדינות האיחוד, כך שאפשר להשתמש בה גם בטיול לכמה מדינות."
+    : cc === "gb" ? "בריטניה לא באיחוד האירופי. ודאו שחבילת \"אירופה\" כוללת אותה, או קנו חבילה לבריטניה."
+    : ["ge", "tr", "rs", "ae", "us", "th", "jp"].includes(cc) ? `קנו חבילה ל${esc(t.country)} עצמה. חבילות "אירופה" לא תמיד כוללות אותה.`
+    : `קנו חבילה ל${esc(t.country || "מדינה")} או לאזור שלה.`;
+  const prov = [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["Nomad", "https://www.getnomad.app/"], ["Holafly", "https://esim.holafly.com/"]];
+  return `<div class="card esimcard"><h2>${ic("sim")} אינטרנט בחו״ל: eSIM</h2>
+    <p>eSIM הוא כרטיס סים דיגיטלי. קונים חבילת גלישה באינטרנט, סורקים קוד, והטלפון מתחבר לרשת המקומית ברגע הנחיתה. בדרך כלל זה זול בהרבה מחבילת חו״ל של החברה הישראלית.</p>
+    <div class="esimcmp">
+      <div><small>חבילת חו״ל של חברה ישראלית</small><b>כ-${money("₪199")}</b><span>ל-5–10GB</span></div>
+      <div class="good"><small>eSIM בינלאומי</small><b>כ-${money("₪50–75")}</b><span>ל-5GB לחודש</span></div>
+      <div><small>eSIM בלי הגבלה</small><b>כ-${money("₪110–150")}</b><span>לשבוע עד 10 ימים</span></div>
+    </div>
+    <div class="tipbox">${ic("bulb")}<span>לטיול של ${t.days.length} ${t.days.length === 1 ? "יום" : "ימים"} מספיקה בדרך כלל חבילה של <b>${gb}GB</b> (מפות, וואטסאפ, תמונות). ${region}</span></div>
+    <ol class="howto">
+      <li><b>בודקים שהטלפון תומך:</b> בהגדרות, תחת סים או רשת סלולרית, מחפשים "הוספת eSIM". נתמך באייפון XS ומעלה, גלקסי S20 ומעלה ופיקסל 3 ומעלה. הטלפון צריך להיות פתוח לכל הרשתות.</li>
+      <li><b>קונים ומתקינים בבית,</b> יום-יומיים לפני הטיסה, כשיש Wi-Fi. סורקים את הקוד שמקבלים במייל. החבילה מתחילה לרוץ רק כשמגיעים ליעד (ברוב החברות).</li>
+      <li><b>משאירים את הקו הישראלי פעיל</b> כדי לקבל SMS (קודים מהבנק), אבל <b>מכבים בו נדידת נתונים</b> (Data Roaming), כדי לא לשלם לחברה הישראלית.</li>
+      <li><b>כשנוחתים:</b> בוחרים את ה-eSIM לנתונים הסלולריים ומפעילים בו נדידת נתונים. וואטסאפ ממשיך לעבוד עם המספר הישראלי.</li>
+    </ol>
+    <div class="chiprow">${prov.map(([n, u]) => `<a class="chipbtn" href="${u}" target="_blank" rel="noopener">${ic("ext")}${n}</a>`).join("")}<a class="chipbtn" href="https://esimdb.com/" target="_blank" rel="noopener">${ic("search")}השוואת מחירים (eSIMDB)</a></div>
+    <div class="disclaim">${ic("info")}<span>מחירים לדוגמה מהשוואות שפורסמו בשנה האחרונה, והם משתנים. יש גם eSIM של חברות ישראליות (למשל Tuki של פלאפון). מסע לא מקבל עמלה על הקישורים.</span></div>
+  </div>`;
+}
+
+/* ================= accessibility and display ================= */
+const A11Y = Object.assign({ size: "100", hc: false, still: false, links: false }, store.get("masa-a11y", {}));
+function applyA11y() {
+  const r = document.documentElement;
+  r.style.fontSize = A11Y.size === "100" ? "" : A11Y.size + "%";
+  r.classList.toggle("hc", !!A11Y.hc);
+  r.classList.toggle("ul", !!A11Y.links);
+  reduced = !!A11Y.still || matchMedia("(prefers-reduced-motion: reduce)").matches;
+  store.set("masa-a11y", A11Y);
+}
+
+/* ================= memory: where you have been and what you like ================= */
+const me = Object.assign({ name: "", visited: {}, form: null }, store.get("masa-me", {}));
+const saveMe = () => store.set("masa-me", me);
+const placeKey = s => s.osm || `${String(s.local || s.name || "").toLowerCase()}@${(+s.lat).toFixed(3)},${(+s.lng).toFixed(3)}`;
+const isVisited = s => !!(s && me.visited[placeKey(s)]);
+function memoryOpts() {
+  const v = Object.entries(me.visited);
+  const cu = {};
+  v.forEach(([, x]) => (x.cuisine || "").split(";").filter(Boolean).forEach(c => { cu[c] = (cu[c] || 0) + 1; }));
+  return { visited: v.map(([k, x]) => [k, x.local || x.name]).flat(), likeCuisines: Object.entries(cu).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]) };
+}
+function rememberForm(f) { me.form = { interests: f.interests, budget: f.budget, diet: f.diet, pace: f.pace, mobility: f.mobility || "", people: f.people }; saveMe(); }
+function markVisited(s, on) {
+  const k = placeKey(s);
+  if (on) me.visited[k] = { name: s.name, local: s.local, kind: s.kind, cuisine: s.cuisine || null, lat: +s.lat, lng: +s.lng, city: S.trip?.city || "", at: Date.now() };
+  else delete me.visited[k];
+  saveMe();
+  const t = S.trip;
+  if (t && t.source !== "sample") {
+    t.fam = t.fam || { visited: {}, notes: {} };
+    const who = me.name || "אני";
+    const set = new Set(t.fam.visited[k] || []);
+    on ? set.add(who) : set.delete(who);
+    t.fam.visited[k] = [...set];
+    saveTrip(t);
+  }
+}
+/* when the traveler asks for their location, places on the route they are standing at are marked as visited */
+function autoVisited() {
+  const t = S.trip;
+  if (!t || !S.me || km(S.me, t) > 50) return;
+  const here = t.days.flatMap(d => d.stops).filter(s => !s.isHotel && !isVisited(s) && km(S.me, s) < 0.08);
+  here.forEach(s => markVisited(s, true));
+  if (here.length) toast(`סימנו שאתם ב${here[0].name}. נזכור את זה לטיולים הבאים.`);
+}
+function visitedRow(s) {
+  const who = (S.trip.fam?.visited?.[placeKey(s)] || []).filter(n => !(isVisited(s) && n === (me.name || "אני")));
+  return `<div class="visitrow"><button type="button" class="btn small ${isVisited(s) ? "" : "soft"}" id="visitBtn" aria-pressed="${isVisited(s)}">${ic("check")}${isVisited(s) ? "הייתי כאן" : "סימון: הייתי כאן"}</button>${who.length ? `<span class="pline">היו כאן גם: ${esc(who.join(", "))}</span>` : ""}</div>`;
+}
+function bindVisited(s) { $("visitBtn") && ($("visitBtn").onclick = () => { markVisited(s, !isVisited(s)); rerenderKeepScroll(); }); }
+
+/* ================= family mode: share the trip, everyone adds notes and marks, send it back ================= */
+function notesCard(s) {
+  const notes = S.trip.fam?.notes?.[placeKey(s)] || [];
+  return `<div class="card famnotes"><h2>${ic("speech")} הערות המשפחה</h2>
+    ${!me.name ? `<p class="lead">כדי שיידעו מי כתב, כתבו את השם שלכם בכרטיס "מצב משפחתי" במסך המסלול.</p>` : ""}
+    ${notes.length ? notes.map(n => `<div class="note"><b>${esc(n.by || "מישהו")}</b><span>${esc(n.text)}</span></div>`).join("") : `<p class="lead">הערה שתכתבו כאן תגיע לכל מי שתשלחו לו את הטיול.</p>`}
+    <form id="noteForm" class="keyrow"><input id="noteIn" class="select" maxlength="200" placeholder="למשל: היה מעולה, להזמין שולחן ליד החלון" aria-label="הערה"><button class="btn small" type="submit">הוספה</button></form></div>`;
+}
+function bindNotes(s) {
+  const f = $("noteForm");
+  if (!f) return;
+  f.onsubmit = e => {
+    e.preventDefault();
+    const text = $("noteIn").value.trim();
+    if (!text) return;
+    const t = S.trip;
+    t.fam = t.fam || { visited: {}, notes: {} };
+    const k = placeKey(s);
+    (t.fam.notes[k] = t.fam.notes[k] || []).push({ by: me.name || "אני", text, at: Date.now() });
+    saveTrip(t); rerenderKeepScroll(); toast("ההערה נשמרה. שלחו את הטיול כדי שכולם יראו.");
+  };
+}
+function familyCard(t) {
+  const notes = Object.values(t.fam?.notes || {}).reduce((a, l) => a + l.length, 0);
+  const people = [...new Set(Object.values(t.fam?.visited || {}).flat().concat(Object.values(t.fam?.notes || {}).flat().map(n => n.by)))].filter(Boolean);
+  return `<div class="card famcard"><h2>${ic("users")} מצב משפחתי</h2>
+    <p>שולחים את הטיול למשפחה או לחברים. כל אחד פותח את הקישור, מסמן איפה היה ומוסיף הערות, ושולח בחזרה. ההערות והסימונים מתאחדים.</p>
+    ${me.name ? `<div class="pline">שמך בהערות: <b>${esc(me.name)}</b> · <button type="button" class="linkbtn" id="famRename">שינוי</button></div>`
+      : `<form class="keyrow" id="famNameForm"><input id="famName" class="select" maxlength="30" placeholder="איך קוראים לך? (יופיע ליד ההערות)" aria-label="השם שלך"><button type="submit" class="btn small">שמירה</button></form>`}
+    ${notes || people.length ? `<div class="pline">${notes} הערות${people.length ? ` · משתתפים: ${esc(people.join(", "))}` : ""}</div>` : ""}
+    <div class="chiprow"><button type="button" class="chipbtn" id="famWa">${ic("speech")}שליחה בוואטסאפ</button><button type="button" class="chipbtn" id="famShare">${ic("share")}שיתוף</button><button type="button" class="chipbtn" id="famCopy">${ic("save")}העתקת קישור</button></div>
+    <div class="disclaim">${ic("shield")}<span>הטיול נשמר בתוך הקישור עצמו ולא בשרת. מי שמקבל את הקישור רואה את המסלול וההערות.</span></div></div>`;
+}
+function bindFamily() {
+  const t = S.trip;
+  $("famNameForm") && ($("famNameForm").onsubmit = e => {
+    e.preventDefault(); const v = $("famName").value.trim(); if (!v) return;
+    const old = me.name || "אני";
+    me.name = v; saveMe();
+    // notes and marks made before the name was set now carry it
+    for (const tr of [t, ...savedTrips().filter(x => x.id !== t.id)]) {
+      if (!tr.fam) continue;
+      Object.values(tr.fam.notes || {}).forEach(l => l.forEach(n => { if (n.by === old || n.by === "אני") n.by = v; }));
+      Object.keys(tr.fam.visited || {}).forEach(k => { tr.fam.visited[k] = [...new Set(tr.fam.visited[k].map(x => x === old || x === "אני" ? v : x))]; });
+      saveTrip(tr);
+    }
+    rerenderKeepScroll();
+  });
+  $("famRename") && ($("famRename").onclick = () => { me.name = ""; saveMe(); rerenderKeepScroll(); });
+  const link = async () => { try { return await shareLink(t); } catch { toast("לא הצלחנו ליצור קישור"); return null; } };
+  const msg = u => `${me.name ? me.name + " שיתף/ה" : "שיתפו"} איתך טיול ל${t.city} במסע. פותחים, מסמנים איפה הייתם ומוסיפים הערות: ${u}`;
+  $("famWa") && ($("famWa").onclick = async () => { const u = await link(); if (u) window.open(`https://wa.me/?text=${encodeURIComponent(msg(u))}`, "_blank", "noopener"); });
+  $("famShare") && ($("famShare").onclick = async () => {
+    const u = await link(); if (!u) return;
+    if (navigator.share) { try { await navigator.share({ title: `טיול ל${t.city}`, text: msg(""), url: u }); } catch {} }
+    else { try { await navigator.clipboard.writeText(u); toast("הקישור הועתק"); } catch { toast("לא הצלחנו להעתיק"); } }
+  });
+  $("famCopy") && ($("famCopy").onclick = async () => { const u = await link(); if (!u) return; try { await navigator.clipboard.writeText(u); toast("הקישור הועתק. אפשר להדביק בכל אפליקציה."); } catch { toast("לא הצלחנו להעתיק"); } });
+}
+const b64 = u8 => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode(...u8.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const unb64 = s => { const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/")); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+async function zip(str) {
+  const bytes = new TextEncoder().encode(str);
+  if (typeof CompressionStream === "undefined") return "u" + b64(bytes);
+  const out = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer());
+  return "z" + b64(out);
+}
+async function unzip(s) {
+  const u = unb64(s.slice(1));
+  if (s[0] === "u") return new TextDecoder().decode(u);
+  return await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).text();
+}
+const SHARE_KEYS = ["name", "local", "cat", "kind", "kindHe", "meal", "mealHe", "lat", "lng", "time", "duration", "_min", "osm", "wikidata", "cuisine", "priceClass", "price", "fee", "mich", "wheel", "website", "phone", "address", "hours", "must", "signals", "cost", "isHotel", "q", "_wikiTag", "_he", "_en", "shops", "whyLang", "voyage"];
+async function shareLink(t) {
+  t.id = t.id || `t${Date.now()}`;
+  const slim = s => { const o = {}; SHARE_KEYS.forEach(k => { if (s[k] != null && s[k] !== "" && !(Array.isArray(s[k]) && !s[k].length)) o[k] = s[k]; }); o.why = String(s.why || "").slice(0, 300); if (s.booking) o.booking = { needed: s.booking.needed, steps: s.booking.steps, query: s.booking.query, url: s.booking.url || null }; return o; };
+  const data = { v: 1, id: t.id, from: me.name || "", city: t.city, slug: t.slug, cityLocal: t.cityLocal, cityEn: t.cityEn, country: t.country, cc: t.cc, tz: t.tz, lat: t.lat, lng: t.lng,
+    opts: t.opts, hotel: t.hotel, summary: t.summary, days: t.days.map(d => ({ label: d.label, theme: d.theme, stops: d.stops.map(slim) })), fam: t.fam || null };
+  return `${location.origin}${location.pathname}#t=${await zip(JSON.stringify(data))}`;
+}
+function mergeFam(a, b) {
+  const out = { visited: { ...(a?.visited || {}) }, notes: { ...(a?.notes || {}) } };
+  for (const [k, list] of Object.entries(b?.visited || {})) out.visited[k] = [...new Set([...(out.visited[k] || []), ...list])];
+  let added = 0;
+  for (const [k, list] of Object.entries(b?.notes || {})) {
+    const cur = out.notes[k] = [...(out.notes[k] || [])];
+    for (const n of list) if (!cur.some(x => x.by === n.by && x.text === n.text)) { cur.push(n); added++; }
+    cur.sort((x, y) => (x.at || 0) - (y.at || 0));
+  }
+  return { fam: out, added };
+}
+async function importShared() {
+  const m = location.hash.match(/^#t=([\w-]+)$/);
+  if (!m) return false;
+  history.replaceState(null, "", location.pathname + location.search);
+  let d;
+  try { d = JSON.parse(await unzip(m[1])); } catch { toast("הקישור לא תקין או חתוך. בקשו שישלחו אותו שוב."); return false; }
+  const mine = savedTrips().find(x => x.id === d.id);
+  if (mine) {
+    const r = mergeFam(mine.fam, d.fam);
+    mine.fam = r.fam;
+    saveTrip(mine); openTrip(mine);
+    toast(r.added ? `${r.added === 1 ? "נוספה הערה חדשה" : `נוספו ${r.added} הערות חדשות`}${d.from ? ` מ${d.from}` : ""}` : "הטיול עודכן");
+    return true;
+  }
+  const t = { ...d, source: "shared", pending: true, createdAt: Date.now(), places: [], voyageNoGeo: [], discover: { gems: [], experiences: [], free: [], daytrips: [], dishes: [], phrases: PHRASES[MASA_DATA.COUNTRY_LANG?.[d.cc] || "en"] || PHRASES.en, etiquette: ETIQUETTE_GENERIC },
+    days: d.days.map(x => ({ ...x, route: null, legs: null, stops: x.stops.map(s => ({ history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], image: null, booking: { needed: false, steps: [] }, why: "", ...s })) })) };
+  delete t.v; delete t.from;
+  saveTrip(t); openTrip(t);
+  toast(`${d.from ? d.from + " שיתף/ה" : "קיבלתם"} טיול ל${d.city}`);
+  // bring back the lists of restaurants, hotels and ideas for this city
+  planner.build({ ...t.opts, query: t.opts?.query || t.city, hotel: t.hotel || null }, () => {}, null).then(full => {
+    t.places = full.places; t.voyageNoGeo = full.voyageNoGeo; t.discover = { ...full.discover, phrases: t.discover.phrases };
+    saveTrip(t); if (S.trip === t) refreshSoon();
+  }).catch(() => {});
+  return true;
+}
+
 /* ---------- boot ---------- */
+applyA11y();
+if (me.form) S.form = { ...S.form, ...me.form };
 renderPanel();
 renderMap();
+importShared();
+addEventListener("hashchange", () => importShared());
 })();

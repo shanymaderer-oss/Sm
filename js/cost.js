@@ -32,7 +32,9 @@ Masa.cost = (() => {
     paris: { hotel: 210, meal: 38 }, london: { hotel: 230 }, "new-york": { hotel: 300, meal: 50 }, amsterdam: { hotel: 210 }, venice: { hotel: 220, meal: 38 },
     florence: { hotel: 170 }, milan: { hotel: 170 }, rome: { hotel: 160 }, barcelona: { hotel: 160 }, madrid: { hotel: 140 }, lisbon: { hotel: 130 },
     porto: { hotel: 105 }, prague: { hotel: 100 }, budapest: { hotel: 95 }, vienna: { hotel: 140 }, berlin: { hotel: 125 }, athens: { hotel: 115 },
-    bangkok: { hotel: 70 }, tokyo: { hotel: 150 }, istanbul: { hotel: 100 }
+    bangkok: { hotel: 70 }, tokyo: { hotel: 150 }, istanbul: { hotel: 100 },
+    dubai: { hotel: 170, meal: 40 }, copenhagen: { hotel: 190 }, dublin: { hotel: 200 }, edinburgh: { hotel: 170 }, nice: { hotel: 160 }, munich: { hotel: 150 },
+    batumi: { hotel: 70 }, tbilisi: { hotel: 75 }, larnaca: { hotel: 110 }, limassol: { hotel: 140 }, paphos: { hotel: 110 }, naples: { hotel: 120, meal: 25 }
   };
   function base(cc, slug) {
     const b = COUNTRY[cc] || Object.fromEntries(Object.entries(BASE).map(([k, v]) => [k, v * (LEVEL[cc] || 1)]));
@@ -40,25 +42,67 @@ Masa.cost = (() => {
   }
 
   /* ---------- reading prices written in Wikivoyage ("Mains €12–18", "1,500-3,000 yen") ---------- */
-  const STATIC_EUR = { EUR: 1, GBP: 1.16, USD: 0.87, CZK: 0.041, HUF: 0.0025, THB: 0.026, JPY: 0.0058, TRY: 0.021, CHF: 1.07, PLN: 0.235, DKK: 0.134, SEK: 0.09, NOK: 0.085, ILS: 0.27 };
+  const STATIC_EUR = { EUR: 1, GBP: 1.16, USD: 0.87, CZK: 0.041, HUF: 0.0025, THB: 0.026, JPY: 0.0058, TRY: 0.021, CHF: 1.07, PLN: 0.235, DKK: 0.134, SEK: 0.09, NOK: 0.085, ILS: 0.27, GEL: 0.32, AED: 0.235, RON: 0.2, RSD: 0.0085 };
   const SYMBOLS = [[/€|\beur\b|\beuros?\b/i, "EUR"], [/£|\bgbp\b/i, "GBP"], [/us\$|\$|\busd\b/i, "USD"], [/kč|\bczk\b/i, "CZK"], [/\bft\b|\bhuf\b|forint/i, "HUF"],
-    [/฿|\bbaht\b|\bthb\b/i, "THB"], [/¥|\byen\b|\bjpy\b|円/i, "JPY"], [/₺|\btl\b|\btry\b|\blira\b/i, "TRY"], [/\bchf\b|\bfr\.?\s?\d/i, "CHF"], [/zł|\bpln\b/i, "PLN"]];
-  const LOCAL_CUR = { gb: "GBP", us: "USD", cz: "CZK", hu: "HUF", th: "THB", jp: "JPY", tr: "TRY", ch: "CHF", pl: "PLN", dk: "DKK", se: "SEK", no: "NOK" };
+    [/฿|\bbaht\b|\bthb\b/i, "THB"], [/¥|\byen\b|\bjpy\b|円/i, "JPY"], [/₺|\btl\b|\btry\b|\blira\b/i, "TRY"], [/\bchf\b|\bfr\.?\s?\d/i, "CHF"], [/zł|\bpln\b/i, "PLN"], [/₾|\bgel\b|\blari\b/i, "GEL"], [/\baed\b|\bdhs?\b|dirham/i, "AED"], [/\blei\b|\bron\b/i, "RON"], [/\brsd\b|\bdin\b|dinar/i, "RSD"], [/\bdkk\b|\bkr\.?\s?\d|\d\s?kr\b/i, "DKK"]];
+  const LOCAL_CUR = { ge: "GEL", ae: "AED", ro: "RON", rs: "RSD", gb: "GBP", us: "USD", cz: "CZK", hu: "HUF", th: "THB", jp: "JPY", tr: "TRY", ch: "CHF", pl: "PLN", dk: "DKK", se: "SEK", no: "NOK" };
   function num(s) {
     if (/^\d{1,3}([,.]\d{3})+$/.test(s)) return +s.replace(/[,.]/g, "");
     return +s.replace(",", ".");
   }
-  function parsePrice(text, cc) {
+  /* Only numbers written next to a currency count ("€12–18", "40 Kč", "Ft1000"), so "3 dishes" or "4-bed dorm" are never read as prices.
+     mode "food" ignores room prices, "room" prefers double-room prices. */
+  const CUR_RX = "US\\$|€|£|\\$|¥|฿|₺|₾|zł|kč|ft|kr|lei|dhs?|aed|eur|euros?|gbp|usd|czk|huf|thb|jpy|try|pln|dkk|gel|ron|rsd|chf|yen|baht|lari|dinars?|forint";
+  const NUM = "\\d[\\d.,]*";
+  const BEFORE = new RegExp(`(${CUR_RX})\\s?(${NUM})(?:\\s?(?:-|–|—|to)\\s?(?:${CUR_RX})?\\s?(${NUM}))?`, "gi");
+  const AFTER = new RegExp(`(${NUM})(?:\\s?(?:${CUR_RX})?\\s?(?:-|–|—|to)\\s?(${NUM}))?\\s?(${CUR_RX})(?![a-z])`, "gi");
+  function curCode(sym, cc) {
+    for (const [re, c] of SYMBOLS) if (re.test(sym) || re.test(sym + " 1")) return c;
+    if (/^dinars?$/i.test(sym)) return "RSD";
+    return LOCAL_CUR[cc] || "EUR";
+  }
+  const ROOMY = /(double|single|twin|room|dorm|bed\b|beds\b|night|b&b|suite|apartment|studio|per person per night)/i;
+  const MAINS = /(main|secondi|primi|entr[ée]e|\bplat\b|\bdish\b|\bplate\b|pizza|burger|tapas|pasta)/i;
+  const MENU = /(menu|tasting|per person|meal|lunch|dinner|average|buffet)/i;
+  function parsePrice(text, cc, mode = "food") {
     if (!text) return null;
-    const t = String(text);
-    let cur = null;
-    for (const [re, c] of SYMBOLS) if (re.test(t)) { cur = c; break; }
-    if (!cur) { if (t.length > 30) return null; cur = LOCAL_CUR[cc] || "EUR"; }
-    const ns = (t.match(/\d[\d.,]*\d|\d/g) || []).map(num).filter(n => n > 0 && isFinite(n));
-    if (!ns.length) return null;
-    const two = ns.slice(0, 2);
-    const eur = (Math.min(...two) + Math.max(...two)) / 2 * (STATIC_EUR[cur] || 1);
-    return { eur, lo: Math.min(...two) * (STATIC_EUR[cur] || 1), hi: Math.max(...two) * (STATIC_EUR[cur] || 1) };
+    const t = String(text).replace(/&euro;/g, "€").replace(/&pound;/g, "£").replace(/&nbsp;/g, " ");
+    if (/^\s*(free|gratis|no charge)\b/i.test(t)) return { eur: 0, lo: 0, hi: 0, ctx: "free" };
+    const found = [];
+    const add = (sym, a, b, idx) => {
+      const cur = curCode(sym, cc), r = STATIC_EUR[cur] || 1;
+      const lo = num(a), hi = b ? num(b) : lo;
+      if (!(lo > 0) || !isFinite(lo) || !isFinite(hi)) return;
+      const before = t.slice(Math.max(0, idx - 28), idx);
+      found.push({ lo: Math.min(lo, hi) * r, hi: Math.max(lo, hi) * r, before, idx });
+    };
+    let m;
+    BEFORE.lastIndex = 0; while ((m = BEFORE.exec(t))) add(m[1], m[2], m[3], m.index);
+    AFTER.lastIndex = 0; while ((m = AFTER.exec(t))) if (!found.some(f => Math.abs(f.idx - m.index) < 3)) add(m[3], m[1], m[2], m.index);
+    if (!found.length) {
+      // a short bare number ("15") is in the local currency
+      if (t.length > 25) return null;
+      const ns = (t.match(/\d[\d.,]*\d|\d/g) || []).map(num).filter(n => n > 0);
+      if (!ns.length) return null;
+      const r = STATIC_EUR[LOCAL_CUR[cc] || "EUR"] || 1;
+      found.push({ lo: Math.min(...ns.slice(0, 2)) * r, hi: Math.max(...ns.slice(0, 2)) * r, before: "", idx: 0 });
+    }
+    let list = found, ctx = "generic";
+    if (mode === "food") {
+      list = found.filter(f => !ROOMY.test(f.before));
+      if (!list.length) return null;
+      const mains = list.filter(f => MAINS.test(f.before)), menus = list.filter(f => MENU.test(f.before));
+      if (mains.length) { list = mains; ctx = "main"; } else if (menus.length) { list = menus; ctx = "menu"; }
+    } else if (mode === "room") {
+      const dbl = found.filter(f => /(double|twin|room|from)/i.test(f.before) && !/dorm/i.test(f.before));
+      if (dbl.length) { list = dbl; ctx = "room"; }
+    }
+    // the middle of all the prices mentioned (a long menu lists cheap starters and expensive mains)
+    const mids = list.map(f => (f.lo + f.hi) / 2).sort((a, b) => a - b);
+    const h = mids.length >> 1;
+    const eur = mids.length % 2 ? mids[h] : (mids[h - 1] + mids[h]) / 2;
+    const lo = Math.min(...list.map(f => f.lo)), hi = Math.max(...list.map(f => f.hi));
+    return { eur, lo: Math.max(lo, eur * 0.6), hi: Math.min(hi, eur * 1.6), ctx };
   }
 
   /* ---------- one place ---------- */
@@ -66,6 +110,7 @@ Masa.cost = (() => {
   const KIND_MEAL = { restaurant: 1, cafe: 0.4, bakery: 0.25, dessert: 0.2, market: 0.6, deli: 0.45, bar: 0.6, club: 0.9 };
   const MEAL_PART = { breakfast: 0.45, lunch: 0.8, dinner: 1, treat: 1, drinks: 1 };
   const CHEAP = /pizza|kebab|burger|sandwich|fast_food|street|noodle|falafel|crepe|ramen|friture|fish_and_chips|chicken|bagel|hot_dog|empanada|taco|doner|souvlaki|gyros|bubble_tea/i;
+  const SIMPLE = /trattoria|osteria|taverna|pizzeria|bistro|tapas|street|kebab|d[öo]ner|falafel|sandwich|snack|canteen|kantine|mensa|imbiss|bufet|taqueria|noodle|ramen/i;
   const r5 = v => v < 12 ? Math.max(1, Math.round(v)) : Math.round(v / 5) * 5;
 
   /* per person, for a meal or a drink */
@@ -73,25 +118,32 @@ Masa.cost = (() => {
     const b = base(cc, slug);
     const kindF = KIND_MEAL[p.kind] ?? 1;
     let eur = null, src = "est";
-    const parsed = parsePrice(p.price, cc);
-    if (parsed && p.kind === "restaurant") {
-      const v = parsed.eur * 1.25; // listed prices are usually for one main dish
-      if (v >= b.meal * 0.25 && v <= b.meal * 8) { eur = v; src = "wv"; }
-    } else if (parsed && p.kind !== "restaurant" && parsed.eur >= 1 && parsed.eur <= b.meal * Math.max(0.6, kindF) * 3) { eur = parsed.eur; src = "wv"; }
+    const parsed = parsePrice(p.price, cc, "food");
+    if (parsed && parsed.eur > 0 && p.kind === "restaurant") {
+      // a main dish is about 70% of the bill (plus a drink, bread, service); a set menu is already the whole meal
+      const v = parsed.eur * (parsed.ctx === "menu" ? 1.05 : parsed.ctx === "main" ? 1.7 : 1.3);
+      if (v >= b.meal * 0.3 && v <= b.meal * 10) { eur = v; src = "wv"; }
+    } else if (parsed && parsed.eur > 0 && ["bar", "club"].includes(p.kind)) {
+      // a listed drink price: an evening is two or three drinks
+      const v = parsed.eur < b.meal * 0.35 ? parsed.eur * 2.5 : parsed.eur;
+      if (v <= b.meal * 3) { eur = v; src = "wv"; }
+    } else if (parsed && parsed.eur >= 1 && p.kind !== "restaurant" && parsed.eur <= b.meal * Math.max(0.6, kindF) * 3) { eur = parsed.eur; src = "wv"; }
     if (eur == null) {
       let f = CLASS[p.priceClass] || 1;
       if (!p.priceClass && CHEAP.test(p.cuisine || "")) f = 0.6;
+      else if (!p.priceClass && SIMPLE.test(p.local || p.name || "")) f = 0.8;
       if (p.mich) f = Math.max(f, 3 + p.mich);
       eur = b.meal * kindF * f;
       if (p.priceClass) src = "class";
     }
+    if (p.mich) eur = Math.max(eur, b.meal * (2 + p.mich * 1.5)); // starred restaurants: the tasting menu is the meal
     eur *= p.kind === "restaurant" ? (MEAL_PART[meal] || 1) : 1;
     return { eur, lo: r5(eur * 0.8), hi: r5(eur * 1.25), src };
   }
   /* one room (or one hostel bed) per night */
   function night(p, cc, slug, budget) {
     const b = base(cc, slug);
-    const parsed = p && parsePrice(p.price, cc);
+    const parsed = p && parsePrice(p.price, cc, p.kind === "hostel" ? "bed" : "room");
     if (parsed && parsed.eur >= 12 && parsed.eur <= b.hotel * 6) return { eur: parsed.eur, lo: r5(parsed.lo), hi: r5(parsed.hi), src: "wv", perBed: p.kind === "hostel" };
     let f;
     if (p?.kind === "hostel") return { eur: b.hotel * 0.28, lo: r5(b.hotel * 0.22), hi: r5(b.hotel * 0.35), src: "est", perBed: true };
@@ -107,7 +159,7 @@ Masa.cost = (() => {
   function ticket(s, cc, slug) {
     const b = base(cc, slug);
     if (s.fee === "no") return 0;
-    const parsed = parsePrice(s.price, cc);
+    const parsed = parsePrice(s.price, cc, "ticket");
     if (parsed && parsed.eur <= b.ticket * 5) return parsed.eur;
     if (/^(free|gratis|חינם|no)$/i.test(String(s.price || "").trim())) return 0;
     const k = s.kind;
@@ -144,10 +196,11 @@ Masa.cost = (() => {
         }
       }
       // meals the plan didn't place still cost money: a simple breakfast and lunch every day
-      if (!has.has("breakfast")) food += b.meal * 0.3;
-      if (!has.has("lunch")) food += b.meal * 0.6;
-      if (!has.has("dinner")) food += b.meal * 0.9;
-      food += b.meal * 0.15; // water, coffee and snacks along the way
+      const bf = { "חסכוני": 0.75, "בינוני": 1, "מפנק": 1.4 }[o.budget] || 1;
+      if (!has.has("breakfast")) food += b.meal * 0.3 * bf;
+      if (!has.has("lunch")) food += b.meal * 0.6 * bf;
+      if (!has.has("dinner")) food += b.meal * 0.9 * bf;
+      food += b.meal * 0.15 * bf; // water, coffee and snacks along the way
     }
     const h = t.hotel ? night(t.hotel, cc, slug, o.budget) : night(null, cc, slug, o.budget);
     const sleepTotal = h.perBed ? h.eur * people * nights : h.eur * rooms * nights;
@@ -193,7 +246,7 @@ Masa.cost = (() => {
   const fmtNum = v => Math.round(v).toLocaleString("en-US");
   const ils = eur => `₪${fmtNum(roundILS(eur * FX.eurILS))}`;
   const ilsRange = (lo, hi) => { const a = roundILS(lo * FX.eurILS), b = roundILS(hi * FX.eurILS); return a === b ? `₪${fmtNum(a)}` : `₪${fmtNum(a)}–${fmtNum(b)}`; };
-  const SIGN = { EUR: "€", GBP: "£", USD: "$", JPY: "¥", THB: "฿", TRY: "₺", CZK: "Kč", HUF: "Ft", CHF: "CHF", PLN: "zł" };
+  const SIGN = { GEL: "₾", AED: "AED", RON: "lei", RSD: "RSD", DKK: "kr", EUR: "€", GBP: "£", USD: "$", JPY: "¥", THB: "฿", TRY: "₺", CZK: "Kč", HUF: "Ft", CHF: "CHF", PLN: "zł" };
   function local(eur, cur) {
     cur = cur || "EUR";
     let v;
