@@ -693,7 +693,7 @@
  },
  "bangkok": {
   "at": "2026-10-23T18:48:43.207Z",
-  "seconds": 386,
+  "seconds": 465,
   "osm": {
    "sights": 228,
    "restaurants": 450,
@@ -717,28 +717,20 @@
    "he": 29,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
-   "ถนนเจริญกรุง (32)",
+   "ถนนเจริญกรุง (50)",
+   "ถนนมหาราช (19)",
    "ถนนตะนาว (22)",
    "ซอยจุฬาลงกรณ์ 12 (20)",
-   "ถนนมหาราช (19)",
-   "ซอยจุฬาลงกรณ์ 10 (17)"
+   "ถนนสีลม (14)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 376ms",
-   "overpass-api.de ok 228 27833ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 450 23488ms",
-   "overpass-api.de HTTP 502 395ms",
-   "overpass-api.de ok 286 39028ms",
-   "overpass-api.de ok 350 47223ms",
-   "overpass-api.de ok 226 34279ms",
-   "overpass-api.de ok 26 29813ms",
+   "(updated: streets)",
+   "overpass-api.de HTTP 502 452ms",
    "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 200 27337ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de ok 326 40035ms",
-   "streets: 326 shops"
+   "overpass-api.de ok 373 40144ms",
+   "streets: 373 shops"
   ]
  },
  "tokyo": {
