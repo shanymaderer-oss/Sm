@@ -813,7 +813,7 @@ SCREENS.settings = {
 };
 
 /* ================= explore, Google Maps style ================= */
-const CUISINE_HE = { italian: "איטלקי", pizza: "פיצה", french: "צרפתי", spanish: "ספרדי", tapas: "טאפאס", japanese: "יפני", sushi: "סושי", ramen: "ראמן",
+const CUISINE_HE = { creative: "יצירתי", fusion: "פיוז׳ן", italian: "איטלקי", pizza: "פיצה", french: "צרפתי", spanish: "ספרדי", tapas: "טאפאס", japanese: "יפני", sushi: "סושי", ramen: "ראמן",
   chinese: "סיני", thai: "תאילנדי", indian: "הודי", mexican: "מקסיקני", burger: "המבורגר", steak_house: "סטייקים", seafood: "פירות ים", fish: "דגים",
   vegetarian: "צמחוני", vegan: "טבעוני", greek: "יווני", turkish: "טורקי", kebab: "קבב", czech: "צ׳כי", portuguese: "פורטוגלי", regional: "מקומי",
   mediterranean: "ים תיכוני", american: "אמריקאי", asian: "אסייתי", korean: "קוריאני", vietnamese: "וייטנאמי", lebanese: "לבנוני", israeli: "ישראלי",
