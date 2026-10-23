@@ -612,7 +612,7 @@
  },
  "venice": {
   "at": "2026-10-23T18:35:54.355Z",
-  "seconds": 405,
+  "seconds": 456,
   "osm": {
    "sights": 176,
    "restaurants": 450,
@@ -636,29 +636,19 @@
    "he": 83,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "San Marco (52)",
    "Calle dei Fabbri (28)",
    "Dorsoduro (17)",
-   "Cannaregio (15)",
-   "Castello (15)"
+   "Castello (15)",
+   "Cannaregio (15)"
   ],
   "log": [
-   "overpass-api.de ok 176 25651ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de HTTP 502 429ms",
-   "overpass-api.de ok 450 38252ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de HTTP 502 397ms",
-   "overpass-api.de ok 179 33229ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 350 35302ms",
-   "overpass-api.de ok 145 30870ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 5 30996ms",
-   "overpass-api.de ok 116 36836ms",
-   "overpass-api.de ok 196 26443ms",
-   "streets: 196 shops"
+   "(updated: streets)",
+   "overpass-api.de HTTP 502 428ms",
+   "overpass-api.de ok 205 32932ms",
+   "streets: 205 shops"
   ]
  },
  "new-york": {
