@@ -530,7 +530,7 @@
  },
  "milan": {
   "at": "2026-10-23T18:21:32.968Z",
-  "seconds": 405,
+  "seconds": 454,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -554,26 +554,18 @@
    "he": 38,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "Via Monte Napoleone (58)",
-   "Corso di Porta Ticinese (54)",
    "Corso Genova (51)",
-   "Via Alessandro Manzoni (36)",
-   "Via della Spiga (36)"
+   "Corso di Porta Ticinese (54)",
+   "Via Torino (32)",
+   "Via Dante (31)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 423ms",
-   "overpass-api.de ok 260 36613ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de ok 450 33479ms",
-   "overpass-api.de ok 300 42726ms",
-   "overpass-api.de ok 350 40939ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 300 32352ms",
-   "overpass-api.de ok 29 42529ms",
-   "overpass-api.de ok 156 38148ms",
-   "overpass-api.de ok 1281 42319ms",
-   "streets: 1281 shops"
+   "(updated: streets)",
+   "overpass-api.de ok 1492 41164ms",
+   "streets: 1492 shops"
   ]
  },
  "florence": {
