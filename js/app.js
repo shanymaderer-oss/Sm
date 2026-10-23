@@ -288,6 +288,7 @@ function saveTrip(t) {
 }
 function openTrip(t) {
   S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = [];
+  COST.loadFX(COUNTRY_INFO[t.cc]?.cur || "EUR").then(() => { if (S.trip === t && TRIP_SCREENS.includes(S.screen) && S.screen !== "guide") rerenderKeepScroll(); }).catch(() => {});
   go("plan");
   if (t.source === "sample") hydrateSample(t);
   else if (t.pending) runHydrate(t);
@@ -464,7 +465,7 @@ SCREENS.plan = {
     return `<div class="screen">
     <div class="triphero"><div class="eyebrow" style="color:#fff;opacity:.9">${tag} · ${esc(t.country || "")}</div>
       <h1>${esc(t.city)} · ${t.days.length} ${t.days.length === 1 ? "יום" : "ימים"}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
-      <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div></div></div>
+      <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${t.cc || t.slug ? `<button type="button" id="costStat"><b>${money(COST.ils(COST.trip(t).total))}</b><small>עלות משוערת</small></button>` : ""}</div></div>
     <div class="duo">
       ${t.source === "sample" ? "" : t.hotel ? `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>המלון שלכם</small><b>${esc(t.hotel.name)}</b></span></button>`
         : `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>איפה לישון?</small><b>מלונות שמתאימים למסלול</b></span></button>`}
@@ -482,6 +483,7 @@ SCREENS.plan = {
     }).join("")}</div>
     ${ideas.length ? `<div class="ideas"><h2>${ic("sparkle")} נשאר לכם זמן היום? רעיונות בדרך</h2>
       ${ideas.map(n => `<div class="idea"><span class="ic" style="background:${cv(CATS[catOf(n)].c)}">${ic(catOf(n))}</span><span><b>${esc(n.name)}</b><small>ליד ${esc(n._near)} · ${esc(n.why)}</small></span><button type="button" class="btn small soft" data-add="${esc(n.name)}">${ic("plus")}הוספה</button></div>`).join("")}</div>` : ""}
+    ${t.cc || t.slug ? costCard(t) : ""}
     <button type="button" class="btn soft block" id="toDiscover">${ic("compass")} עוד דברים מיוחדים לעשות ב${esc(t.city)}</button>
     <div class="disclaim">${ic("info")}<span>שעות, מחירים ועומסים הם הערכה. לפני שמזמינים, בדקו באתר הרשמי של המקום.</span></div>
   </div>`;
@@ -495,6 +497,10 @@ SCREENS.plan = {
       if (n) { addToDay(n); rerenderKeepScroll(); }
     });
     $("toDiscover").onclick = () => go("discover");
+    $("costStat") && ($("costStat").onclick = () => $("costCard")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    const setPeople = v => { const t = S.trip; t.opts = t.opts || {}; t.opts.people = Math.min(12, Math.max(1, v)); saveTrip(t); rerenderKeepScroll(); };
+    $("cpMinus") && ($("cpMinus").onclick = () => setPeople((S.trip.opts?.people || 2) - 1));
+    $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
     $("infoCard").onclick = () => go("info");
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
   }
@@ -551,7 +557,7 @@ SCREENS.place = {
       <span class="tag" style="background:rgba(255,255,255,.22);color:#fff;align-self:flex-start">${c.he}</span>
       <h1>${esc(s.name)}</h1>${s.local && s.local !== s.name ? `<div class="local">${esc(s.local)}</div>` : ""}
       ${s.image && s.wikiUrl ? `<a class="credit" href="${esc(s.wikiUrl)}" target="_blank" rel="noopener">תמונה: ויקיפדיה</a>` : ""}</div>
-    ${(s.time || s.duration || s.cost) ? `<div class="facts"><div><small>${ic("clock")}שעה</small><b>${esc(s.time || "—")}</b></div><div><small>${ic("hourglass")}משך</small><b>${esc(s.duration || "—")}</b></div><div><small>${ic("coin")}עלות</small><b>${esc(s.cost || "—")}</b></div></div>` : ""}
+    ${(s.time || s.duration || s.cost) ? `<div class="facts"><div><small>${ic("clock")}שעה</small><b>${esc(s.time || "—")}</b></div><div><small>${ic("hourglass")}משך</small><b>${esc(s.duration || "—")}</b></div><div><small>${ic("coin")}עלות</small><b>${money(esc(stopCost(s) || "—"))}</b></div></div>` : ""}
     ${placeLine(s) ? `<div class="pline big">${placeLine(s)}</div>` : ""}
     ${(s.signals || []).length ? `<div class="sigs">${s.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
     ${s.whyLang === "en" ? `<div class="vquote"><p dir="ltr" lang="en">${esc(s.why)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : `<p>${esc(s.why)}</p>`}
@@ -821,11 +827,57 @@ const cuisineHe = c => cuisineList(c).slice(0, 3).map(x => CUISINE_HE[x] || x.re
 const HOTEL_KINDS = ["hotel", "hostel", "guesthouse", "apartment"];
 const CHIPS = [
   ["hotel", "מלונות", HOTEL_KINDS, "bed"], ["food", "מסעדות", ["restaurant"], "food"], ["cafe", "בתי קפה", ["cafe", "bakery"], "cafe"], ["dessert", "קינוחים", ["dessert"], "heart"],
-  ["market", "שווקים", ["market", "deli"], "shopping"], ["mall", "קניונים וקניות", ["mall", "store", "shop"], "shopping"], ["bar", "ברים ולילה", ["bar", "club"], "night"],
+  ["market", "שווקים", ["market", "deli"], "shopping"], ["street", "רחובות קניות", ["street"], "shopping"], ["mall", "קניונים וחנויות", ["mall", "store", "shop"], "shopping"], ["bar", "ברים ולילה", ["bar", "club"], "night"],
   ["sights", "אטרקציות", ["attraction", "sight", "view", "church"], "history"], ["museum", "מוזיאונים", ["museum", "gallery"], "art"], ["park", "פארקים וטבע", ["park", "beach", "zoo", "themepark"], "nature"]
 ];
-const CHIP_ICON = { hotel: "bed", hostel: "bed", guesthouse: "bed", apartment: "bed", restaurant: "food", cafe: "cafe", bakery: "cafe", dessert: "heart", market: "shopping", deli: "shopping", mall: "shopping", store: "shopping", shop: "shopping", bar: "night", club: "night", museum: "art", gallery: "art", park: "nature", beach: "nature", zoo: "family", themepark: "family", church: "religion", view: "view", sight: "history", attraction: "view" };
+const CHIP_ICON = { hotel: "bed", hostel: "bed", guesthouse: "bed", apartment: "bed", restaurant: "food", cafe: "cafe", bakery: "cafe", dessert: "heart", market: "shopping", deli: "shopping", mall: "shopping", street: "shopping", store: "shopping", shop: "shopping", bar: "night", club: "night", museum: "art", gallery: "art", park: "nature", beach: "nature", zoo: "family", themepark: "family", church: "religion", view: "view", sight: "history", attraction: "view" };
 const PRICE = { budget: "זול", mid: "מחיר בינוני", splurge: "יוקרתי" };
+/* ---------- prices: per person at restaurants, per night at hotels, the whole trip ---------- */
+const COST = Masa.cost;
+const FOODK = ["restaurant", "cafe", "bakery", "dessert", "market", "deli", "bar", "club"];
+const tripCur = () => COUNTRY_INFO[S.trip?.cc]?.cur || "EUR";
+const money = (html) => `<bdi dir="ltr">${html}</bdi>`;
+function priceInfo(p) {
+  const t = S.trip;
+  if (!t || !p) return null;
+  if (HOTEL_KINDS.includes(p.kind)) { const n = COST.night(p, t.cc, t.slug, t.opts?.budget); return { ...n, unit: n.perBed ? "למיטה ללילה" : "ללילה לחדר" }; }
+  if (FOODK.includes(p.kind)) { const m = COST.perPerson(p, t.cc, t.slug, p.meal || null); return { ...m, unit: "לאדם" }; }
+  return null;
+}
+function priceLabel(p, long = false) {
+  const i = priceInfo(p);
+  if (!i) return "";
+  return `<b class="price">${money(COST.ilsRange(i.lo, i.hi))} ${i.unit}</b>${long ? ` <small class="pricesub">(${money(COST.localRange(i.lo, i.hi, tripCur()))}${i.src === "wv" ? ", לפי המחירים ב-Wikivoyage" : ", הערכה"})</small>` : ""}`;
+}
+/* entry fee for a stop, only when it is likely to cost money */
+function ticketLabel(s) {
+  if (!S.trip || s.meal || FOODK.includes(s.kind) || HOTEL_KINDS.includes(s.kind) || s.kind === "street") return "";
+  const sure = s.fee === "yes" || ["museum", "zoo", "themepark", "gallery"].includes(s.kind) || (s.must && ["sight", "attraction"].includes(s.kind)) || s.price;
+  if (!sure) return "";
+  const v = COST.ticket(s, S.trip.cc, S.trip.slug);
+  return v > 0 ? `כ-${COST.ils(v)} לאדם` : "";
+}
+function stopCost(s) {
+  if (s.kind === "street") return "חינם להסתובב";
+  const i = !s.isHotel && priceInfo(s);
+  if (i) return `${COST.ilsRange(i.lo, i.hi)} ${i.unit}`;
+  return ticketLabel(s) || s.cost || "";
+}
+function costCard(t) {
+  const c = COST.trip(t);
+  const max = Math.max(...c.rows.map(r => r.eur));
+  const cur = tripCur();
+  return `<div class="card costcard" id="costCard"><h2>${ic("coin")} כמה הטיול יעלה?</h2>
+    <div class="costtop">
+      <div class="main"><small>לכל ${c.people === 1 ? "המטייל" : `${c.people} המטיילים`}</small><b>${money(COST.ils(c.total))}</b>${cur !== "ILS" ? `<span>${money(COST.local(c.total, cur))}</span>` : ""}</div>
+      <div><small>לאדם</small><b>${money(COST.ils(c.perPerson))}</b></div>
+      <div><small>ליום</small><b>${money(COST.ils(c.perDay))}</b></div>
+    </div>
+    <div class="keyrow costpeople"><span>מטיילים</span><span class="stepper small"><button type="button" class="iconbtn" id="cpMinus" aria-label="פחות מטיילים" style="background:var(--surface)">${ic("minus", 2.4)}</button><output>${c.people}</output><button type="button" class="iconbtn" id="cpPlus" aria-label="יותר מטיילים" style="background:var(--surface)">${ic("plus", 2.4)}</button></span></div>
+    <div class="costrows">${c.rows.map(r => `<div class="crow"><span class="cl"><b>${esc(r.he)}</b><small>${esc(r.note)}</small></span><b class="cv">${money(COST.ils(r.eur))}</b><span class="bar"><i style="width:${Math.max(3, Math.round(r.eur / max * 100))}%"></i></span></div>`).join("")}</div>
+    <div class="disclaim">${ic("info")}<span>הערכה לפי המקומות במסלול, ${t.hotel ? "המלון שבחרתם" : "התקציב שבחרתם"} ומחירים מקובלים ב${esc(t.city)}. לא כולל טיסות וקניות.${COST.FX.live ? ` שער: €1 = ₪${COST.FX.eurILS.toFixed(2)}.` : ""}</span></div>
+  </div>`;
+}
 /* local time in the trip's city, so "open now" is right even when planning from home */
 function cityNow() {
   if (S.me && S.trip && km(S.me, S.trip) < 50) return new Date();
@@ -843,7 +895,8 @@ function placeLine(p) {
   if (p.kindHe && !p.mealHe) bits.push(p.kindHe);
   else if (!p.kindHe && planner.KIND[p.kind]) bits.push(planner.KIND[p.kind].he);
   if (p.cuisine) bits.push(cuisineHe(p.cuisine));
-  if (p.priceClass) bits.push(PRICE[p.priceClass]);
+  const pl = !p.isHotel && priceLabel(p);
+  if (pl) bits.push(pl); else if (p.priceClass) bits.push(PRICE[p.priceClass]);
   const o = openState(p);
   if (o === true) bits.push(`<b class="open">פתוח עכשיו</b>`);
   if (o === false) bits.push(`<b class="closed">סגור עכשיו</b>`);
@@ -903,9 +956,9 @@ function placeCard(p, i) {
       <span class="ic" style="background:${cv(CATS[catOf(p)].c)}">${ic(CHIP_ICON[p.kind] || catOf(p))}</span>
       <span style="min-width:0">
         <span class="t">${esc(p.name)}</span>
-        <span class="pline">${[planner.KIND[p.kind]?.he, p.stars ? "★".repeat(Math.min(5, Math.round(p.stars))) : "", cuisineHe(p.cuisine), p.priceClass ? PRICE[p.priceClass] : ""].filter(Boolean).map(esc).join(" · ")}${o === true ? ` · <b class="open">פתוח עכשיו</b>` : o === false ? ` · <b class="closed">סגור</b>` : ""}</span>
+        <span class="pline">${[planner.KIND[p.kind]?.he, p.stars ? "★".repeat(Math.min(5, Math.round(p.stars))) : "", cuisineHe(p.cuisine), p.kind === "street" ? `${p.shops} חנויות` : ""].filter(Boolean).map(esc).join(" · ")}${priceLabel(p) ? ` · ${priceLabel(p)}` : p.priceClass ? ` · ${PRICE[p.priceClass]}` : ""}${o === true ? ` · <b class="open">פתוח עכשיו</b>` : o === false ? ` · <b class="closed">סגור</b>` : ""}</span>
         ${p.signals?.length ? `<span class="sigs small">${p.signals.slice(0, 3).map(x => `<span>${esc(x)}</span>`).join("")}</span>` : ""}
-        ${p.vtext ? `<span class="vtext" dir="ltr" lang="en">${esc(p.vtext.slice(0, 140))}${p.vtext.length > 140 ? "…" : ""}</span>` : ""}
+        ${p.vtext ? `<span class="vtext" dir="ltr" lang="en">${esc(p.vtext.slice(0, 140))}${p.vtext.length > 140 ? "…" : ""}</span>` : p.vtext2 ? `<span class="vtext">${esc(p.vtext2)}</span>` : ""}
       </span>
       <span class="dist">${p._fit != null && HOTEL_KINDS.includes(p.kind) ? `${fmtDist(p._fit)}<small>ממרכז המסלול</small>` : fmtDist(p._d)}</span>
     </button>
@@ -989,8 +1042,10 @@ SCREENS.poi = {
     <div class="topnav"><button class="iconbtn" id="backPoi" aria-label="חזרה לרשימה">${ic("back")}</button><span class="eyebrow">${esc(planner.KIND[p.kind]?.he || "")}</span><span style="width:38px"></span></div>
     <div class="placehero" style="background:linear-gradient(140deg,${cv(CATS[catOf(p)].c)},${cv("--violet")})"><span class="bigic">${ic(CHIP_ICON[p.kind] || catOf(p), 1.8)}</span>
       <h1>${esc(p.name)}</h1>${p.local && p.local !== p.name ? `<div class="local">${esc(p.local)}</div>` : ""}</div>
-    <div class="pline big">${[p.stars ? "★".repeat(Math.min(5, Math.round(p.stars))) : "", cuisineHe(p.cuisine), p.priceClass ? PRICE[p.priceClass] : "", p.price || ""].filter(Boolean).map(esc).join(" · ")}${o === true ? ` · <b class="open">פתוח עכשיו</b>` : o === false ? ` · <b class="closed">סגור עכשיו</b>` : ""} · ${fmtDist(km(ref, p))}</div>
+    <div class="pline big">${[...[p.stars ? "★".repeat(Math.min(5, Math.round(p.stars))) : "", cuisineHe(p.cuisine), p.priceClass ? PRICE[p.priceClass] : "", p.price || ""].filter(Boolean).map(esc), o === true ? `<b class="open">פתוח עכשיו</b>` : o === false ? `<b class="closed">סגור עכשיו</b>` : "", `${fmtDist(km(ref, p))} ממך`.replace(" ממך", S.me && km(S.me, S.trip) < 50 ? " ממך" : " מהמסלול")].filter(Boolean).join(" · ")}</div>
     ${p.signals?.length ? `<div class="sigs">${p.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
+    ${priceInfo(p) ? `<div class="pricebox">${ic("coin")}<span>${HOTEL_KINDS.includes(p.kind) ? "מחיר משוער" : "כמה זה יעלה"}: ${priceLabel(p, true)}</span></div>` : ""}
+    ${p.kind === "street" ? `<p>${esc(p.vtext2 || "")}</p><div class="linkrow">${p.ends ? `<a class="lnk primary" href="https://www.google.com/maps/dir/?api=1&origin=${p.ends[0][0]},${p.ends[0][1]}&destination=${p.ends[1][0]},${p.ends[1][1]}&travelmode=walking" target="_blank" rel="noopener">${ic("nav")}מסלול הליכה לאורך הרחוב</a>` : ""}</div>` : ""}
     ${p.vtext ? `<div class="vquote"><p dir="ltr" lang="en">${esc(p.vtext)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : ""}
     ${contactRow(p)}
     ${HOTEL_KINDS.includes(p.kind) ? "" : brokerRow(p)}

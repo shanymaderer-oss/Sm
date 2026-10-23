@@ -1,6 +1,7 @@
 /* מסע · data. Generated from the prototype, then extended. */
 window.MASA_DATA = (() => {
 const P = {
+  minus:'<path d="M5 12h14"/>',
   history:'<path d="M4 20h16M5.5 20v-9M9.5 20v-9M14.5 20v-9M18.5 20v-9M3 11l9-6 9 6z"/>',
   food:'<path d="M7 3v18M4.5 3v5a2.5 2.5 0 0 0 5 0V3M17 21V3c-2.2 0-3.5 2.4-3.5 6s1.2 4 3.5 4"/>',
   art:'<path d="M12 3a9 9 0 1 0 0 18c1 0 1.6-.7 1.6-1.5 0-1.2-1-1.4-1-2.4 0-.9.7-1.5 1.6-1.5H17a4 4 0 0 0 4-4C21 6.8 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/>',

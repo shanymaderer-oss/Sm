@@ -62,17 +62,33 @@ const only = process.argv.slice(2);
 mkdirSync("data/cities", { recursive: true });
 const statusPath = "data/cities/_status.json";
 const status = existsSync(statusPath) ? JSON.parse(readFileSync(statusPath, "utf8")) : {};
+const OPTIONAL = ["diet", "streets"]; // these can honestly be empty (no kosher places, no street addresses)
 async function doCity(c) {
   const t0 = Date.now();
   const log = [];
   const q = S.buildQueries(c.lat, c.lng, c.R);
-  const els = [], counts = {};
-  for (const [k, v] of Object.entries(q)) { const e = await overpass(v, log); counts[k] = e.length; els.push(...e); await sleep(8000); }
-  const [v, he, en] = await Promise.all([voyage(c.en), wikiGeo("he", c.lat, c.lng, c.R * 1.2), wikiGeo("en", c.lat, c.lng, c.R * 1.2)]);
-  const data = { city: c, fetchedAt: new Date().toISOString(), els: S.slim(els), voyage: v.list, wiki: { he, en } };
+  const path = `data/cities/${c.slug}.json`;
+  const st0 = status[c.slug];
+  // recent data that only misses a few queries (for example a new kind of query): fetch just those and keep the rest
+  const prev = !FORCE && st0 && existsSync(path) && (Date.now() - Date.parse(st0.at)) / 864e5 < 6 ? JSON.parse(readFileSync(path, "utf8")) : null;
+  const need = Object.keys(q).filter(k => !prev || !(k in (st0.osm || {})) || (st0.osm[k] === 0 && !OPTIONAL.includes(k)));
+  const els = [], counts = { ...(prev ? st0.osm : {}) };
+  let streets = prev?.streets || [];
+  for (const k of need) {
+    const e = await overpass(q[k], log);
+    if (k === "streets") { streets = S.shopStreets(e); counts[k] = streets.length; log.push(`streets: ${e.length} shops`); }
+    else { counts[k] = e.length; els.push(...e); }
+    await sleep(8000);
+  }
+  let v, he, en;
+  if (prev) { v = { list: prev.voyage, districts: [] }; ({ he, en } = prev.wiki); }
+  else [v, he, en] = await Promise.all([voyage(c.en), wikiGeo("he", c.lat, c.lng, c.R * 1.2), wikiGeo("en", c.lat, c.lng, c.R * 1.2)]);
+  const data = { city: c, fetchedAt: prev ? prev.fetchedAt : new Date().toISOString(), els: [...(prev?.els || []), ...S.slim(els)], streets, voyage: v.list, wiki: { he, en } };
   const by = t => v.list.filter(x => x.type === t).length;
-  status[c.slug] = { at: data.fetchedAt, seconds: Math.round((Date.now() - t0) / 1000), osm: counts, voyage: { eat: by("eat"), drink: by("drink"), buy: by("buy"), see: by("see"), sleep: by("sleep"), withCoords: v.list.filter(x => x.lat).length, districts: v.districts.length }, wiki: { he: he.length, en: en.length }, log };
-  if (data.els.length || v.list.length) writeFileSync(`data/cities/${c.slug}.json`, JSON.stringify(data));
+  status[c.slug] = { at: data.fetchedAt, seconds: Math.round((Date.now() - t0) / 1000) + (prev ? st0.seconds || 0 : 0), osm: counts,
+    voyage: prev ? st0.voyage : { eat: by("eat"), drink: by("drink"), buy: by("buy"), see: by("see"), sleep: by("sleep"), withCoords: v.list.filter(x => x.lat).length, districts: v.districts.length },
+    wiki: { he: he.length, en: en.length }, streets: streets.slice(0, 5).map(x => `${x.name} (${x.n})`), log: [...(prev ? ["(updated: " + need.join(", ") + ")"] : []), ...log] };
+  if (data.els.length || v.list.length) writeFileSync(path, JSON.stringify(data));
   writeFileSync(statusPath, JSON.stringify(status, null, 1));
   console.log(c.slug, JSON.stringify(status[c.slug]));
 }
@@ -83,7 +99,7 @@ const fresh = c => {
   if (!st || !existsSync(`data/cities/${c.slug}.json`)) return false;
   const ageDays = (Date.now() - Date.parse(st.at)) / 864e5;
   const keys = Object.keys(S.buildQueries(c.lat, c.lng, c.R));
-  return ageDays < 6 && keys.filter(k => k !== "diet").every(k => (st.osm || {})[k] > 0) && "diet" in (st.osm || {});
+  return ageDays < 6 && keys.every(k => OPTIONAL.includes(k) ? k in (st.osm || {}) : (st.osm || {})[k] > 0);
 };
 for (const c of list) {
   if (!FORCE && fresh(c)) { console.log(c.slug, "fresh, skipped"); continue; }

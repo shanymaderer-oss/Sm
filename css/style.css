@@ -122,7 +122,7 @@ textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface-2);bo
 .triphero{border-radius:16px;padding:16px;color:#fff;background:linear-gradient(135deg,var(--primary),var(--violet) 70%,var(--rose))}
 .triphero h1{color:#fff}
 .triphero p{margin-top:6px;opacity:.92;font-size:.95rem}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:8px;margin-top:14px}
 .stats div{background:rgba(255,255,255,.16);border-radius:10px;padding:8px;text-align:center}
 .stats b{display:block;font-family:var(--display);font-size:1.25rem;font-variant-numeric:tabular-nums}
 .stats small{font-size:.75rem;font-weight:600}
@@ -435,3 +435,31 @@ body{margin:0}
 .broker{display:flex;flex-direction:column;gap:6px}
 .broker>span{font-weight:800;font-size:.85rem}
 .broker small.muted{color:var(--muted);font-size:.78rem}
+
+/* prices and trip cost */
+.stats button{all:unset;cursor:pointer;background:rgba(255,255,255,.26);border-radius:10px;padding:8px;text-align:center;color:inherit;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45)}
+.stats button:focus-visible{outline:2px solid #fff}
+.stats b bdi{font-size:1.05rem}
+b.price{color:var(--teal);font-weight:700}
+.pricesub{color:var(--muted);font-weight:600}
+.pricebox{display:flex;gap:8px;align-items:flex-start;background:color-mix(in srgb,var(--teal) 10%,transparent);border-radius:12px;padding:10px 12px;font-size:.92rem}
+.pricebox svg{width:18px;height:18px;flex:none;color:var(--teal);margin-top:2px}
+.costcard{scroll-margin-top:12px}
+.costtop{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:8px}
+.costtop>div{background:var(--surface-2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.costtop .main{background:color-mix(in srgb,var(--teal) 14%,var(--surface-2))}
+.costtop small{color:var(--muted);font-weight:700;font-size:.72rem}
+.costtop b{font-family:var(--display);font-size:1.15rem;font-variant-numeric:tabular-nums}
+.costtop .main b{font-size:1.45rem;color:var(--teal)}
+.costtop span{font-size:.78rem;color:var(--muted);font-weight:600}
+.costpeople{justify-content:space-between;align-items:center;font-weight:700;font-size:.9rem}
+.costpeople .stepper{gap:10px;padding:4px}
+.costpeople .stepper output{min-width:28px;font-size:1rem}
+.costrows{display:flex;flex-direction:column;gap:10px}
+.crow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
+.crow .cl{display:flex;flex-direction:column;min-width:0}
+.crow .cl small{color:var(--muted);font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crow .cv{font-variant-numeric:tabular-nums}
+.crow .bar{grid-column:1 / -1;height:6px;background:var(--surface-2);border-radius:6px;overflow:hidden}
+.crow .bar i{display:block;height:100%;background:var(--teal);border-radius:6px}
+@media (max-width:380px){.costtop{grid-template-columns:1fr 1fr}.costtop .main{grid-column:1 / -1}}

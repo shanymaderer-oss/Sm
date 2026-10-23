@@ -20,7 +20,7 @@ Masa.planner = (() => {
     restaurant: { cat: "food", he: "מסעדה", min: 75 }, cafe: { cat: "food", he: "בית קפה", min: 45 }, dessert: { cat: "food", he: "קינוח", min: 30 },
     bakery: { cat: "food", he: "מאפייה", min: 25 }, market: { cat: "food", he: "שוק", min: 60 }, deli: { cat: "food", he: "מעדנייה", min: 30 },
     bar: { cat: "night", he: "בר", min: 90 }, club: { cat: "night", he: "מועדון", min: 120 },
-    mall: { cat: "shopping", he: "קניון", min: 90 }, shop: { cat: "shopping", he: "חנות", min: 40 }, store: { cat: "shopping", he: "כלבו", min: 60 },
+    street: { cat: "shopping", he: "רחוב קניות", min: 75 }, mall: { cat: "shopping", he: "קניון", min: 90 }, shop: { cat: "shopping", he: "חנות", min: 40 }, store: { cat: "shopping", he: "כלבו", min: 60 },
     museum: { cat: "art", he: "מוזיאון", min: 110 }, gallery: { cat: "art", he: "גלריה", min: 60 },
     sight: { cat: "history", he: "אתר היסטורי", min: 70 }, church: { cat: "history", he: "מבנה דתי", min: 40 },
     view: { cat: "view", he: "תצפית", min: 35 }, attraction: { cat: "view", he: "אטרקציה", min: 60 },
@@ -63,7 +63,7 @@ Masa.planner = (() => {
   /* which kinds can fill an activity slot for each interest */
   const SLOT_KINDS = {
     history: ["sight", "church", "attraction"], art: ["museum", "gallery"], view: ["view", "attraction", "sight"],
-    nature: ["park", "beach", "view"], shopping: ["mall", "store", "market", "shop"], family: ["zoo", "themepark", "park", "museum"],
+    nature: ["park", "beach", "view"], shopping: ["street", "mall", "store", "market", "shop"], family: ["zoo", "themepark", "park", "museum"],
     food: ["market", "deli", "bakery", "dessert", "cafe"], night: ["bar"]
   };
 
@@ -78,7 +78,7 @@ Masa.planner = (() => {
   const WHY = {
     restaurant: "מסעדה שנבחרה לפי סימני איכות, התקציב והקרבה למסלול.", cafe: "בית קפה טוב לעצירה.", dessert: "עצירה למשהו מתוק.",
     bakery: "מאפייה מקומית.", market: "שוק אוכל מקומי, מקום טוב לטעום הרבה דברים.", deli: "מעדנייה לטעימות ולמזכרות אכילות.",
-    bar: "מקום לבילוי בערב.", club: "מועדון לילה.", mall: "קניון גדול עם הרבה חנויות במקום אחד.", store: "כלבו גדול.", shop: "חנות מומלצת.",
+    bar: "מקום לבילוי בערב.", club: "מועדון לילה.", street: "אחד מרחובות הקניות המרכזיים בעיר.", mall: "קניון גדול עם הרבה חנויות במקום אחד.", store: "כלבו גדול.", shop: "חנות מומלצת.",
     museum: "מוזיאון שמומלץ לחובבי אמנות ותרבות.", gallery: "גלריה לאמנות.", sight: "אתר היסטורי שמספר חלק מהסיפור של העיר.",
     church: "מבנה דתי מרשים, בדרך כלל פתוח למבקרים.", view: "נקודת תצפית או מקום מצולם במיוחד.", attraction: "אטרקציה מוכרת בעיר.",
     park: "פארק או גן לנשימה בין האטרקציות.", beach: "חוף לבילוי.", zoo: "אטרקציה שמתאימה גם לילדים.", themepark: "פארק שעשועים."
@@ -86,7 +86,7 @@ Masa.planner = (() => {
   const TIPS = {
     restaurant: "בערב במסעדות טובות כדאי להזמין שולחן מראש. בצהריים יש לפעמים תפריט עסקי זול יותר.",
     cafe: "בהרבה ערים קפה בעמידה ליד הבר זול יותר מקפה לשולחן.", dessert: "הגלידה הכי טובה בדרך כלל בכלים מכוסים, לא בערימות צבעוניות.",
-    market: "הגיעו רעבים ובבוקר, כשהדוכנים מלאים. חלק מהשווקים סגורים ביום ראשון.", mall: "בדקו החזר מע״מ לתיירים בקניות גדולות.",
+    market: "הגיעו רעבים ובבוקר, כשהדוכנים מלאים. חלק מהשווקים סגורים ביום ראשון.", mall: "בדקו החזר מע״מ לתיירים בקניות גדולות.", street: "הולכים לאורך הרחוב מקצה לקצה. בקניות גדולות בחנות אחת שואלים על החזר מע״מ לתיירים (Tax Free).",
     shop: "השוו מחירים לפני שקונים.", bar: "בהרבה ערים הלילה מתחיל מאוחר. בדקו מתי המקום מתמלא.",
     museum: "הרבה מוזיאונים סגורים יום אחד בשבוע. כדאי לבדוק באתר לפני שמגיעים.", sight: "נעליים נוחות ובקבוק מים.",
     church: "לבוש צנוע: כתפיים וברכיים מכוסות.", view: "הכי יפה בשקיעה. הגיעו בערך 20 דקות לפני.", park: "מקום טוב לפיקניק."
@@ -130,6 +130,7 @@ Masa.planner = (() => {
     if (v.type === "sleep") return /hostel/i.test(txt) ? "hostel" : /apartment|flat|aparthotel/i.test(txt) ? "apartment" : /guest ?house|b&b|bed and breakfast|pension/i.test(txt) ? "guesthouse" : "hotel";
     if (v.type === "eat") return /caf[eé]|coffee|bakery|pastr|ice cream|gelat|dessert/i.test(txt) && !/restaurant/i.test(txt) ? (/ice cream|gelat|dessert|pastr/i.test(txt) ? "dessert" : "cafe") : /market|food hall/i.test(txt) ? "market" : "restaurant";
     if (v.type === "drink") return /caf[eé]|coffee|tea/i.test(txt) && !/bar|pub|beer|wine|cocktail/i.test(txt) ? "cafe" : /club/i.test(txt) ? "club" : "bar";
+    if (v.type === "buy" && /\b(street|avenue|boulevard|road|lane|via|rue|calle|carrer|rua|strasse|straße|ulice|utca|dori|dōri|soi|caddesi|sokak|gasse|straat)\b|street$/i.test(v.name)) return "street";
     if (v.type === "buy") return /mall|shopping cent|galer|department/i.test(txt) ? "mall" : /market/i.test(txt) ? "market" : "shop";
     if (v.type === "see") return /museum/i.test(txt) ? "museum" : /gallery/i.test(txt) ? "gallery" : /church|cathedral|basilica|synagogue|mosque|temple|monastery/i.test(txt) ? "church" : /park|garden/i.test(txt) ? "park" : /view|lookout|tower/i.test(txt) ? "view" : "sight";
     return /zoo|aquarium/i.test(txt) ? "zoo" : /park|garden/i.test(txt) ? "park" : /beach/i.test(txt) ? "beach" : "attraction";
@@ -144,6 +145,8 @@ Masa.planner = (() => {
     return "sight";
   }
 
+  const VOY_CATS = { sleep: ["sleep"], eat: ["food", "night"], drink: ["food", "night"], buy: ["shopping", "food"],
+    see: ["history", "art", "view", "nature", "family"], do: ["history", "art", "view", "nature", "family", "night"] };
   function buildPool(data, geo) {
     const cc = geo.cc;
     const pool = [];
@@ -156,13 +159,31 @@ Masa.planner = (() => {
       seen.set(key, p);
       pool.push(p);
     }
+    // main shopping streets, counted from the shops along them
+    const SHOP_HE = SRC.SHOP_HE || {};
+    for (const st of data.streets || []) {
+      if (km(geo, st) > 12) continue;
+      const kinds = (st.kinds || []).map(([k]) => SHOP_HE[k]).filter(Boolean);
+      pool.push({ id: `street/${normName(st.name)}`, src: "osm", name: st.name, local: st.name, kind: "street", cat: "shopping", lat: st.lat, lng: st.lng,
+        shops: st.n, brands: st.brands || 0, streetLen: st.len || 0, shopKinds: [...new Set(kinds)].slice(0, 3), ends: st.ends || null, wikidata: null, website: null });
+    }
+    const streetNames = pool.filter(p => p.kind === "street").map(p => ({ p, n: normName(p.local) })).filter(x => x.n.length >= 5);
     // Wikivoyage: attach to the matching OpenStreetMap place, or add as a new place
     const noGeo = [];
     for (const v of data.voyage || []) {
       const kind = voyageKind(v);
+      // a shopping street that Wikivoyage mentions in an address or a recommendation
+      const vt = normName(`${v.address || ""} ${v.content || ""} ${v.name}`);
+      for (const x of streetNames) if (vt.includes(x.n)) x.p.mentions = (x.p.mentions || 0) + 1;
+      if (kind === "street") {
+        const same = pool.find(p => p.kind === "street" && similar(p.local, v.name) && (v.lat == null || km(p, v) < 1.5));
+        if (same) { same.voyage = { text: v.content, price: null, priceClass: null, hours: v.hours, district: v.district || null }; continue; }
+      }
       if (v.lat == null) { noGeo.push({ ...v, kind, cat: KIND[kind].cat }); continue; }
       if (km(geo, { lat: v.lat, lng: v.lng }) > 12) continue;
-      const match = pool.find(p => km(p, v) < 0.15 && (similar(p.local, v.name) || (v.alt && similar(p.local, v.alt))));
+      // only match the same kind of place: a hotel listing must not become a restaurant's (or a square's) recommendation
+      const fits = VOY_CATS[v.type] || [];
+      const match = pool.find(p => fits.includes(p.cat) && km(p, v) < 0.15 && (similar(p.local, v.name) || (v.alt && similar(p.local, v.alt))));
       const vo = { text: v.content, price: v.price, priceClass: v.priceClass, hours: v.hours, district: v.district || null };
       const vk = /kosher|cacher|glatt/i.test(`${v.name} ${v.content || ""}`), vv = /vegetarian|vegan/i.test(`${v.name} ${v.content || ""}`);
       if (match) {
@@ -233,6 +254,12 @@ Masa.planner = (() => {
     }
     if (p.brand || CHAIN.test(p.local || "")) { q -= p.kind === "mall" || p.kind === "store" ? 0 : 6; }
     if (p.kind === "mall") q += 1.5;
+    if (p.kind === "street") {
+      q += 2 + Math.min(5, p.shops / 9) + Math.min(3, (p.mentions || 0) * 1) + Math.min(1.5, (p.brands || 0) / 10);
+      sig.push(`${p.shops} חנויות ברחוב`);
+      if (p.shopKinds?.length) sig.push(p.shopKinds.join(", "));
+      if (p.mentions) sig.push("מוזכר ב-Wikivoyage");
+    }
     if (p.cat === "sleep") {
       if (p.brand) q += 6;
       if (p.stars) { q += p.stars * 0.8; sig.push("★".repeat(Math.min(5, Math.round(p.stars)))); }
@@ -372,6 +399,7 @@ Masa.planner = (() => {
     return `${h === 1 ? "שעה" : h === 2 ? "שעתיים" : h + " שעות"}${r ? ` ו-${r} דק׳` : ""}`;
   };
   function costText(p, budget) {
+    if (p.kind === "street") return "חינם להסתובב";
     if (p.voyage?.price) return p.voyage.price;
     if (p.fee === "no") return "חינם";
     if (p.charge) return p.charge;
@@ -394,13 +422,14 @@ Masa.planner = (() => {
     };
     return { needed: false, query: q, url: p.website || null, steps: ["אין צורך בהזמנה מראש.", p.hours ? `שעות פתיחה: ${p.hours}` : "בדקו שעות פתיחה לפני שמגיעים."] };
   }
+  const streetWhy = p => `אחד מרחובות הקניות המרכזיים בעיר: כ-${p.shops} חנויות${p.shopKinds?.length ? ` (${p.shopKinds.join(", ")})` : ""} לאורך ${p.streetLen > 150 ? `${Math.round(p.streetLen / 50) * 50} מטר` : "קטע קצר"} של רחוב אחד.`;
   const MEAL = { hotel: "יוצאים מהמלון", breakfast: "ארוחת בוקר", lunch: "ארוחת צהריים", treat: "הפסקה מתוקה", dinner: "ארוחת ערב", drinks: "בילוי ערב" };
   const MEAL_MIN = { hotel: 0, breakfast: 45, lunch: 75, treat: 30, dinner: 90, drinks: 90 };
   function toStop(p, budget, meal = null) {
     const busy = busyFor(p);
     const min = meal ? MEAL_MIN[meal] : (KIND[p.kind]?.min || 60);
     if (meal === "hotel") return { name: p.name, local: p.local, cat: "sleep", kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: MEAL.hotel, lat: p.lat, lng: p.lng, time: "", duration: "", _min: 0, cost: "", why: "המלון שבחרתם. כל יום יוצא מכאן.", whyLang: "he", history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], booking: { needed: false, steps: [], query: p.local }, website: p.website || null, phone: p.phone || null, address: p.address || null, image: null, hours: null, signals: p.signals || [], q: p.q, priceClass: p.priceClass || null, osm: p.id, isHotel: true };
-    const why = p.voyage?.text ? p.voyage.text : WHY[p.kind] || WHY.attraction;
+    const why = p.voyage?.text ? p.voyage.text : p.kind === "street" ? streetWhy(p) : WHY[p.kind] || WHY.attraction;
     return {
       name: p.name, local: p.local, cat: p.cat, kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: meal ? MEAL[meal] : null,
       lat: p.lat, lng: p.lng, time: "", duration: fmtDur(min), _min: min, cost: costText(p, budget),
@@ -408,6 +437,7 @@ Masa.planner = (() => {
       busy, busySrc: "est", best: bestTime(busy, p), tip: TIPS[p.kind] || "", nearby: [],
       booking: bookingFor(p, meal), website: p.website || null, phone: p.phone || null, address: p.address || null, image: null, hours: p.hours || p.voyage?.hours || null,
       cuisine: p.cuisine || null, signals: p.signals || [], q: p.q, priceClass: p.voyage?.priceClass || null,
+      price: p.voyage?.price || null, fee: p.fee || null, mich: p.michelin || 0, shops: p.shops || 0, ends: p.ends || null,
       wikidata: p.wikidata || null, osm: p.id, _wikiTag: p.wikiTag || null, _he: p._he || null, _en: p._en || null, voyage: !!p.voyage
     };
   }
@@ -416,7 +446,9 @@ Masa.planner = (() => {
     id: p.id, name: p.name, local: p.local, kind: p.kind, cat: p.cat, lat: +p.lat.toFixed(6), lng: +p.lng.toFixed(6), q: p.q, signals: p.signals,
     cuisine: p.cuisine || null, hours: p.hours || p.voyage?.hours || null, website: p.website || null, phone: p.phone || null, address: p.address || null,
     price: p.voyage?.price || null, priceClass: p.priceClass || p.voyage?.priceClass || null, stars: p.stars || 0, vtext: p.voyage?.text || null, veg: p.veg || false, kosher: p.kosher || false,
-    outdoor: p.outdoor || false, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null
+    outdoor: p.outdoor || false, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null,
+    fee: p.fee || null, mich: p.michelin || 0, shops: p.shops || 0, shopKinds: p.shopKinds || null, streetLen: p.streetLen || 0, ends: p.ends || null,
+    vtext2: p.kind === "street" && !p.voyage?.text ? streetWhy(p) : null
   });
 
   function assignTimes(day) {
@@ -467,14 +499,20 @@ Masa.planner = (() => {
 
     const q = SRC.buildQueries(geo.lat, geo.lng, R);
     const data = { els: [], voyage: [], wiki: { he: [], en: [] } };
-    const done = { sights: false, restaurants: false, cafes: false, hotels: false, shopping: false, diet: false, extra: false, voyage: false, wiki: false };
+    data.streets = [];
+    const done = { sights: false, restaurants: false, cafes: false, hotels: false, shopping: false, diet: false, extra: false, streets: false, voyage: false, wiki: false };
     /* the main server allows about two queries at a time per visitor, so queue them: most important first */
-    const order = ["sights", "restaurants", "cafes", "hotels", "shopping", "diet", "extra"].filter(k => q[k]);
+    const order = ["sights", "restaurants", "cafes", "hotels", "shopping", "diet", "extra", "streets"].filter(k => q[k]);
     let qi = 0;
     const worker = async () => {
       while (qi < order.length) {
         const k = order[qi++];
-        try { const j = await svc.overpass(q[k], signal, 0); data.els.push(...SRC.slim(j.elements || [])); done[k] = true; onStep?.(k); }
+        try {
+          const j = await svc.overpass(q[k], signal, 0);
+          if (k === "streets") data.streets = SRC.shopStreets(j.elements || []);
+          else data.els.push(...SRC.slim(j.elements || []));
+          done[k] = true; onStep?.(k);
+        }
         catch { if (signal?.aborted) return; }
       }
     };
@@ -682,14 +720,14 @@ Masa.planner = (() => {
     const take = (f, n) => { const out = []; for (const p of rest) { if (out.length >= n) break; if (!used.has(p.id) && f(p)) { out.push(p); used.add(p.id); } } return out; };
     const disc = {
       gems: take(p => (p.voyage || p.wikidata) && ["sight", "museum", "church", "view", "gallery"].includes(p.kind) && p.tourism !== "attraction", 4),
-      experiences: take(p => ["market", "mall", "bar", "zoo", "themepark", "deli"].includes(p.kind) && p.q > 2, 4),
+      experiences: take(p => ["street", "market", "mall", "bar", "zoo", "themepark", "deli"].includes(p.kind) && p.q > 2, 4),
       free: take(p => ["view", "park", "church", "beach"].includes(p.kind) && p.fee !== "yes", 3)
     };
 
     const ranked = pool.filter(p => p.q > -3).sort((a, b) => b.q - a.q);
     const placeList = [...ranked.filter(p => p.cat !== "sleep").slice(0, 800), ...ranked.filter(p => p.cat === "sleep").slice(0, 250)].map(toPlace);
     const trip = {
-      city: geo.name, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
+      city: geo.name, slug: geo.slug || null, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
       source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,
       opts: { query, days, budget, pace, diet: opts.diet || "הכול", notes: opts.notes || "", interests, start: opts.start || null, people: opts.people || 2 },
       hotel: hotel ? { ...hotel } : null,

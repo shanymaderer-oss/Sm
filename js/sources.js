@@ -24,8 +24,41 @@
       hotels: H(R * 1.1) + `nwr["tourism"~"^(hotel|hostel|guest_house|apartment|motel)$"]["name"];out center tags 350;`,
       shopping: H(R * 0.9) + `(nwr["shop"~"^(mall|department_store)$"]["name"];nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"];);out center tags 300;`,
       diet: H(R * 2) + `(nwr["diet:kosher"~"^(yes|only)$"]["name"];nwr["cuisine"~"kosher|jewish"]["name"];nwr["diet:vegan"="only"]["name"];nwr["diet:vegetarian"="only"]["name"];);out center tags 200;`,
-      extra: H(R * 1.1) + `(nwr["amenity"="place_of_worship"]["name"]["wikidata"];nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"];nwr["natural"="beach"]["name"];);out center tags 200;`
+      extra: H(R * 1.1) + `(nwr["amenity"="place_of_worship"]["name"]["wikidata"];nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"];nwr["natural"="beach"]["name"];);out center tags 200;`,
+      /* every fashion, shoe, gift… shop with a street address. Counted per street to find the main shopping streets. */
+      streets: H(R * 0.75, 40) + `nwr["shop"~"^(${STREET_SHOPS})$"]["addr:street"];out center tags 3000;`
     };
+  }
+
+  const STREET_SHOPS = "clothes|shoes|boutique|jewelry|fashion_accessories|bag|cosmetics|perfumery|gift|watches|leather|department_store|books|toys|sports|optician|chocolate|souvenir|fashion|tailor|hat|variety_store|mobile_phone|electronics|art|antiques|interior_decoration|houseware";
+  const SHOP_HE = { clothes: "אופנה", boutique: "בוטיקים", fashion: "אופנה", shoes: "נעליים", jewelry: "תכשיטים", watches: "שעונים", bag: "תיקים", leather: "מוצרי עור",
+    cosmetics: "קוסמטיקה", perfumery: "בשמים", gift: "מתנות", souvenir: "מזכרות", books: "ספרים", toys: "צעצועים", sports: "ספורט", department_store: "כלבו",
+    chocolate: "שוקולד", optician: "משקפיים", electronics: "אלקטרוניקה", mobile_phone: "טלפונים", art: "אמנות", antiques: "עתיקות", interior_decoration: "עיצוב לבית", houseware: "כלי בית" };
+  const dkm = (a, b) => { const k = Math.cos(a.lat * Math.PI / 180); return Math.hypot(a.lat - b.lat, (a.lng - b.lng) * k) * 111.32; };
+  /* Main shopping streets: the streets with the most shops on one walkable stretch (about 700 m). */
+  function shopStreets(els, max = 14) {
+    const by = {};
+    for (const e of els || []) {
+      const t = e.tags || {}, st = (t["addr:street"] || "").trim();
+      const lat = e.lat ?? e.center?.lat, lng = e.lon ?? e.center?.lon;
+      if (!st || lat == null) continue;
+      (by[st] = by[st] || []).push({ lat, lng, k: t.shop, brand: !!t.brand });
+    }
+    const out = [];
+    for (const [name, pts] of Object.entries(by)) {
+      if (pts.length < 6) continue;
+      let best = null;
+      for (const p of pts) { const near = pts.filter(q => dkm(p, q) < 0.35); if (!best || near.length > best.length) best = near; }
+      if (best.length < 6) continue;
+      const lat = best.reduce((a, p) => a + p.lat, 0) / best.length, lng = best.reduce((a, p) => a + p.lng, 0) / best.length;
+      const kinds = Object.entries(best.reduce((a, p) => (a[p.k] = (a[p.k] || 0) + 1, a), {})).sort((a, b) => b[1] - a[1]);
+      // the two ends of the stretch, for the walking direction
+      let ends = [best[0], best[0]], far = 0;
+      for (const a of best) for (const b of best) { const d = dkm(a, b); if (d > far) { far = d; ends = [a, b]; } }
+      out.push({ name, n: best.length, total: pts.length, brands: best.filter(p => p.brand).length, lat: +lat.toFixed(6), lng: +lng.toFixed(6),
+        len: Math.round(far * 1000), kinds: kinds.slice(0, 4).map(([k, n]) => [k, n]), ends: ends.map(p => [+p.lat.toFixed(6), +p.lng.toFixed(6)]) });
+    }
+    return out.sort((a, b) => b.n - a.n).slice(0, max);
   }
 
   /* keep only the tags the app uses, so cached data stays small */
@@ -125,7 +158,7 @@
     return [...set].slice(0, 10);
   }
 
-  const api = { OVERPASS, bbox, buildQueries, slim, parseVoyage, voyageDistricts, cleanWiki };
+  const api = { OVERPASS, bbox, buildQueries, slim, shopStreets, SHOP_HE, parseVoyage, voyageDistricts, cleanWiki };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else { root.Masa = root.Masa || {}; root.Masa.sources = api; }
 })(typeof window !== "undefined" ? window : globalThis);
