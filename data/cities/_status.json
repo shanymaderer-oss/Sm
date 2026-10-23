@@ -1090,5 +1090,51 @@
    "overpass-api.de ok 130 32062ms",
    "streets: 130 shops"
   ]
+ },
+ "munich": {
+  "at": "2026-10-23T21:49:32.367Z",
+  "seconds": 326,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 275,
+   "shopping": 300,
+   "diet": 57,
+   "extra": 111,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 73,
+   "drink": 109,
+   "buy": 26,
+   "see": 126,
+   "sleep": 90,
+   "withCoords": 314,
+   "districts": 7
+  },
+  "wiki": {
+   "he": 43,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "Sendlinger Straße (49)",
+   "Maximilianstraße (43)",
+   "Theatinerstraße (36)",
+   "Hohenzollernstraße (40)",
+   "Kaufingerstraße (27)"
+  ],
+  "log": [
+   "overpass-api.de ok 260 28015ms",
+   "overpass-api.de ok 450 29570ms",
+   "overpass-api.de ok 300 26332ms",
+   "overpass-api.de ok 275 52828ms",
+   "overpass-api.de ok 300 30573ms",
+   "overpass-api.de ok 57 32180ms",
+   "overpass-api.de ok 111 25348ms",
+   "overpass-api.de ok 1166 36535ms",
+   "streets: 1166 shops"
+  ]
  }
 }
