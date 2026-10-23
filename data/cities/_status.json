@@ -489,7 +489,7 @@
  },
  "athens": {
   "at": "2026-10-23T18:14:43.491Z",
-  "seconds": 604,
+  "seconds": 656,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -513,28 +513,19 @@
    "he": 37,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
+   "Πατησίων (83)",
    "Ερμού (68)",
    "Αγίου Μάρκου (48)",
-   "Πανεπιστημίου (30)",
-   "Σταδίου (26)",
-   "Περικλέους (24)"
+   "Ελευθερίου Βενιζέλου (33)",
+   "Πανεπιστημίου (30)"
   ],
   "log": [
-   "overpass-api.de ok 260 34673ms",
-   "overpass-api.de ok 450 46515ms",
-   "overpass-api.de ok 300 32838ms",
-   "overpass-api.de ok 350 36070ms",
-   "overpass-api.de ok 300 36592ms",
-   "overpass-api.de HTTP 502 363ms",
+   "(updated: streets)",
    "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 620ms",
-   "overpass-api.de ok 56 36119ms",
-   "overpass-api.de ok 1169 34715ms",
-   "streets: 1169 shops"
+   "overpass-api.de ok 1467 33850ms",
+   "streets: 1467 shops"
   ]
  },
  "milan": {
