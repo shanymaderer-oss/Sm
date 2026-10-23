@@ -1609,5 +1609,52 @@
    "overpass-api.de ok 605 29640ms",
    "streets: 605 shops"
   ]
+ },
+ "copenhagen": {
+  "at": "2026-10-23T23:01:19.368Z",
+  "seconds": 569,
+  "osm": {
+   "sights": 193,
+   "restaurants": 422,
+   "cafes": 300,
+   "hotels": 130,
+   "shopping": 300,
+   "diet": 19,
+   "extra": 121,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 94,
+   "drink": 85,
+   "buy": 71,
+   "see": 77,
+   "sleep": 66,
+   "withCoords": 406,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 35,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 193 37131ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de ok 422 35447ms",
+   "overpass-api.de ok 300 29872ms",
+   "overpass-api.de ok 130 43351ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de ok 300 27293ms",
+   "overpass-api.de ok 19 28986ms",
+   "overpass-api.de ok 121 40898ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 504 47451ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems ok 0 11683ms",
+   "streets: 0 shops"
+  ]
  }
 }
