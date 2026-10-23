@@ -368,7 +368,7 @@
  },
  "lisbon": {
   "at": "2026-10-23T17:51:12.511Z",
-  "seconds": 395,
+  "seconds": 439,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -377,7 +377,7 @@
    "shopping": 300,
    "diet": 30,
    "extra": 110,
-   "streets": 12
+   "streets": 14
   },
   "voyage": {
    "eat": 62,
@@ -392,28 +392,18 @@
    "he": 8,
    "en": 100
   },
+  "streetsV": 2,
   "streets": [
    "Avenida da Liberdade (30)",
-   "Rua da Prata (16)",
+   "Rua Morais Soares (21)",
+   "Avenida Almirante Reis (19)",
    "Rua Garrett (15)",
-   "Rua do Carmo (14)",
-   "Rua Augusta (12)"
+   "Rua da Prata (16)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 374ms",
-   "overpass-api.de ok 260 25734ms",
-   "overpass-api.de ok 450 37708ms",
-   "overpass-api.de ok 300 44942ms",
-   "overpass-api.de ok 350 28361ms",
-   "overpass-api.de ok 300 23640ms",
-   "overpass-api.de HTTP 502 397ms",
-   "overpass-api.de HTTP 502 390ms",
-   "overpass-api.de ok 30 31659ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de ok 110 30469ms",
-   "overpass-api.de ok 347 36344ms",
-   "streets: 347 shops"
+   "(updated: streets)",
+   "overpass-api.de ok 519 35985ms",
+   "streets: 519 shops"
   ]
  },
  "porto": {
