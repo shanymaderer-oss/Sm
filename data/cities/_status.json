@@ -1000,5 +1000,48 @@
    "overpass-api.de ok 45 28981ms",
    "streets: 45 shops"
   ]
+ },
+ "paphos": {
+  "at": "2026-10-23T21:36:31.316Z",
+  "seconds": 604,
+  "osm": {
+   "sights": 42,
+   "restaurants": 90,
+   "cafes": 51,
+   "hotels": 99,
+   "shopping": 86,
+   "diet": 1,
+   "extra": 14
+  },
+  "voyage": {
+   "eat": 19,
+   "drink": 0,
+   "buy": 4,
+   "see": 3,
+   "sleep": 2,
+   "withCoords": 26,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 1,
+   "en": 11
+  },
+  "streetsV": 0,
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 42 43769ms",
+   "overpass-api.de ok 90 33323ms",
+   "overpass-api.de ok 51 28957ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de ok 99 35848ms",
+   "overpass-api.de ok 86 29691ms",
+   "overpass-api.de ok 1 47983ms",
+   "overpass-api.de ok 14 37787ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 1117ms",
+   "overpass-api.de HTTP 502 463ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms"
+  ]
  }
 }
