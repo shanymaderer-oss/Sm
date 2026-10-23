@@ -829,5 +829,46 @@
    "overpass-api.de ok 326 40035ms",
    "streets: 326 shops"
   ]
+ },
+ "tokyo": {
+  "at": "2026-10-23T18:55:59.638Z",
+  "seconds": 432,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 47,
+   "extra": 200,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 70,
+   "drink": 41,
+   "buy": 35,
+   "see": 58,
+   "sleep": 50,
+   "withCoords": 149,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 49,
+   "en": 100
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 260 42346ms",
+   "overpass-api.de ok 450 42127ms",
+   "overpass-api.de ok 300 43008ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 350 46749ms",
+   "overpass-api.de ok 300 44024ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 47 43625ms",
+   "overpass-api.de ok 200 52934ms",
+   "overpass-api.de ok 1 31878ms",
+   "streets: 1 shops"
+  ]
  }
 }
