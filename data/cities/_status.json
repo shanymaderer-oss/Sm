@@ -1656,5 +1656,55 @@
    "overpass.kumi.systems ok 0 11683ms",
    "streets: 0 shops"
   ]
+ },
+ "seville": {
+  "at": "2026-10-23T23:07:29.639Z",
+  "seconds": 365,
+  "osm": {
+   "sights": 147,
+   "restaurants": 450,
+   "cafes": 264,
+   "hotels": 282,
+   "shopping": 300,
+   "diet": 4,
+   "extra": 72,
+   "streets": 10
+  },
+  "voyage": {
+   "eat": 10,
+   "drink": 4,
+   "buy": 1,
+   "see": 18,
+   "sleep": 26,
+   "withCoords": 57,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 15,
+   "en": 90
+  },
+  "streetsV": 2,
+  "streets": [
+   "Calle Gonzalo Jiménez de Quesada (15)",
+   "Calle Pagés del Corro (13)",
+   "Calle Sierpes (11)",
+   "Avenida Santa Cecilia (12)",
+   "Calle Monte Carmelo (10)"
+  ],
+  "log": [
+   "overpass-api.de ok 147 31265ms",
+   "overpass-api.de ok 450 32064ms",
+   "overpass-api.de ok 264 39715ms",
+   "overpass-api.de ok 282 25321ms",
+   "overpass-api.de ok 300 39040ms",
+   "overpass-api.de HTTP 502 444ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de ok 4 29166ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 72 26882ms",
+   "overpass-api.de HTTP 502 452ms",
+   "overpass-api.de ok 284 25602ms",
+   "streets: 284 shops"
+  ]
  }
 }
