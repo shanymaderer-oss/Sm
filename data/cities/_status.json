@@ -236,5 +236,51 @@
    "overpass-api.de ok 828 32825ms",
    "streets: 828 shops"
   ]
+ },
+ "vienna": {
+  "at": "2026-10-23T17:26:47.825Z",
+  "seconds": 846,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 0,
+   "extra": 200
+  },
+  "voyage": {
+   "eat": 113,
+   "drink": 91,
+   "buy": 51,
+   "see": 110,
+   "sleep": 55,
+   "withCoords": 416,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 260 39194ms",
+   "overpass-api.de ok 450 31129ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass-api.de ok 300 35013ms",
+   "overpass-api.de ok 350 40521ms",
+   "overpass-api.de ok 300 47166ms",
+   "overpass-api.de HTTP 502 428ms",
+   "overpass-api.de HTTP 502 412ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 200 35576ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms"
+  ]
  }
 }
