@@ -170,10 +170,10 @@ Masa.planner = (() => {
         if (vk) match.kosher = true;
         if (vv) match.veg = true;
         match.website = match.website || v.url; match.phone = match.phone || v.phone; match.address = match.address || v.address;
-        if (v.wikidata && !match.wikidata) match.wikidata = v.wikidata;
+        if (v.wikidata && !match.wikidata && !["food", "night", "shopping", "sleep"].includes(match.cat)) match.wikidata = v.wikidata;
       } else {
         pool.push({ id: `wv/${normName(v.name)}`, src: "voyage", name: v.name, local: v.name, kind, cat: KIND[kind].cat, lat: v.lat, lng: v.lng,
-          wikidata: v.wikidata, website: v.url, phone: v.phone, hours: null, address: v.address, voyage: vo, kosher: vk, veg: vv });
+          wikidata: ["food", "night", "shopping", "sleep"].includes(KIND[kind].cat) ? null : v.wikidata, website: v.url, phone: v.phone, hours: null, address: v.address, voyage: vo, kosher: vk, veg: vv });
       }
     }
     // Wikipedia nearby articles: only fill in sights when the map data has few of them
@@ -722,9 +722,10 @@ Masa.planner = (() => {
     const ideas = [...stops.flatMap(s => s.nearby || []), ...["gems", "experiences", "free"].flatMap(k => trip.discover[k] || [])];
     const routes = Promise.all(trip.days.map(d => computeRoute(d))).then(() => onUpdate("routes"));
     const wd = await svc.wikidata([...stops.map(s => s.wikidata), ...ideas.map(i => i._wd)].filter(Boolean));
+    const SIGHT = ["history", "art", "view", "nature", "family", "religion"];
     const apply = (o, id, wikiTag) => {
       const e = id && wd[id];
-      if (e?.labelHe) o.name = e.labelHe;
+      if (e?.labelHe && SIGHT.includes(o.cat)) o.name = e.labelHe;
       o._he = e?.hewiki || o._he || null; o._en = e?.enwiki || o._en || null;
       const wt = (wikiTag || "").match(/^(he|en):(.+)$/);
       if (wt && !o["_" + wt[1]]) o["_" + wt[1]] = wt[2];

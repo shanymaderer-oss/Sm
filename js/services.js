@@ -93,9 +93,14 @@ Masa.svc = (() => {
   async function rateToILS(cur) {
     if (!cur || cur === "ILS") return 1;
     try {
-      const j = await getJSON(`https://api.frankfurter.app/latest?from=${cur}&to=ILS`, {}, 10000);
-      return j.rates?.ILS ? { rate: j.rates.ILS, date: j.date } : null;
-    } catch { return null; }
+      const j = await getJSON(`https://api.frankfurter.dev/v1/latest?base=${cur}&symbols=ILS`, {}, 10000);
+      if (j.rates?.ILS) return { rate: j.rates.ILS, date: j.date, src: "הבנק המרכזי האירופי" };
+    } catch {}
+    try {
+      const j = await getJSON(`https://open.er-api.com/v6/latest/${cur}`, {}, 10000);
+      if (j.rates?.ILS) return { rate: j.rates.ILS, date: (j.time_last_update_utc || "").slice(5, 16), src: "ExchangeRate-API" };
+    } catch {}
+    return null;
   }
 
   /* Wikivoyage recommendations for a city, including its district pages */
@@ -157,7 +162,7 @@ Masa.svc = (() => {
       return {
         extract: j.extract || "",
         url: j.content_urls?.desktop?.page || `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title)}`,
-        image: j.thumbnail?.source ? j.thumbnail.source.replace(/\/(\d+)px-/, "/640px-") : null,
+        image: j.thumbnail?.source || null,
         lang
       };
     } catch { return null; }

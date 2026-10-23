@@ -97,6 +97,10 @@ map.on("style.load", () => {
     map.addLayer({ id: "route-line", type: "line", source: "route", filter: ["!", ["get", "straight"]], layout: { "line-join": "round", "line-cap": "round" }, paint: { "line-color": ["get", "color"], "line-width": 5 } });
     map.addLayer({ id: "route-dash", type: "line", source: "route", filter: ["get", "straight"], layout: { "line-join": "round" }, paint: { "line-color": ["get", "color"], "line-width": 4, "line-dasharray": [2, 2] } });
   }
+  try {
+    const bg = map.getStyle().layers.find(l => l.type === "background");
+    if (bg) map.setPaintProperty(bg.id, "background-color", ["interpolate", ["linear"], ["zoom"], 0, "#123a63", 6, "#123a63", 8, map.getPaintProperty(bg.id, "background-color") || "#f2efe9"]);
+  } catch {}
   mapReady = true;
   renderMap();
 });
@@ -308,6 +312,7 @@ function runHydrate(t) {
       if (t.aiError && S.trip === t) toast(ai.errText(t.aiError));
     }
     if (S.trip === t) refreshSoon();
+    if (stage === "routes" && S.trip === t && S.screen === "plan") setTimeout(() => fitPoints(t.days[S.day].stops), 350);
   }).catch(() => { hydrating.delete(t); t.pending = false; if (S.trip === t) refreshSoon(); });
 }
 function loadSample() { openTrip(JSON.parse(JSON.stringify(SAMPLE))); }
@@ -810,7 +815,7 @@ const CUISINE_HE = { italian: "איטלקי", pizza: "פיצה", french: "צרפ
   hungarian: "הונגרי", british: "בריטי", dutch: "הולנדי", roman: "רומאי", tuscan: "טוסקני", catalan: "קטלאני", basque: "באסקי", international: "בינלאומי",
   sandwich: "כריכים", bistro: "ביסטרו", wine_bar: "בר יין", brunch: "בראנץ׳", crepe: "קרפים", noodle: "נודלס", dumpling: "כיסונים", bagel: "בייגל",
   georgian: "גאורגי", polish: "פולני", russian: "רוסי", african: "אפריקאי", ethiopian: "אתיופי", peruvian: "פרואני", argentinian: "ארגנטינאי", brazilian: "ברזילאי",
-  tea: "תה", pastry: "מאפים", bakery: "מאפייה", gelato: "ג׳לטו", local: "מקומי", fine_dining: "פיין דיינינג" };
+  tea: "תה", italian_pizza: "פיצה איטלקית", jewish: "יהודי", kosher: "כשר", coffee: "קפה", gelato_italian: "ג׳לטו", pasta: "פסטה", tapas_bar: "טאפאס", pastry: "מאפים", bakery: "מאפייה", gelato: "ג׳לטו", local: "מקומי", fine_dining: "פיין דיינינג" };
 const cuisineList = c => String(c || "").split(/[;,]/).map(x => x.trim().toLowerCase()).filter(Boolean);
 const cuisineHe = c => cuisineList(c).slice(0, 3).map(x => CUISINE_HE[x] || x.replace(/_/g, " ")).join(" · ");
 const HOTEL_KINDS = ["hotel", "hostel", "guesthouse", "apartment"];
@@ -1058,7 +1063,7 @@ function tripCenter(t = S.trip) {
 const dstr = d => isoDate(d);
 function bookingUrl(p) {
   const { start, end, people } = tripDates();
-  return `https://www.booking.com/searchresults.he.html?ss=${encodeURIComponent(`${p.local || p.name}, ${S.trip.cityEn || S.trip.cityLocal}`)}&checkin=${dstr(start)}&checkout=${dstr(end)}&group_adults=${people}&no_rooms=1&group_children=0`;
+  return `https://www.booking.com/searchresults.he.html?ss=${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}&latitude=${(+p.lat).toFixed(5)}&longitude=${(+p.lng).toFixed(5)}&radius=1&order=distance_from_search&checkin=${dstr(start)}&checkout=${dstr(end)}&group_adults=${people}&no_rooms=1&group_children=0`;
 }
 function hotelsComUrl(p) {
   const { start, end, people } = tripDates();
@@ -1072,7 +1077,8 @@ function airbnbAreaUrl() {
 }
 function bookingAreaUrl() {
   const { start, end, people } = tripDates();
-  return `https://www.booking.com/searchresults.he.html?ss=${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}&checkin=${dstr(start)}&checkout=${dstr(end)}&group_adults=${people}&no_rooms=1`;
+  const c = tripCenter();
+  return `https://www.booking.com/searchresults.he.html?ss=${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}&latitude=${c.lat.toFixed(5)}&longitude=${c.lng.toFixed(5)}&radius=2&order=distance_from_search&checkin=${dstr(start)}&checkout=${dstr(end)}&group_adults=${people}&no_rooms=1`;
 }
 function hotelIntro() {
   const { start, end, people } = tripDates();
@@ -1090,7 +1096,7 @@ function hotelBook(p) {
     <p>${mins <= 20 ? `${mins} דקות הליכה ממרכז המסלול שלכם. מיקום מצוין.` : `${mins} דקות הליכה ממרכז המסלול. יש מלונות קרובים יותר, אבל אולי זה שווה את זה.`}</p>
     <div class="linkrow">
       <a class="lnk primary" href="${bookingUrl(p)}" target="_blank" rel="noopener">${ic("ext")}Booking</a>
-      <a class="lnk" href="${hotelsComUrl(p)}" target="_blank" rel="noopener">${ic("ext")}Hotels.com</a>
+      <a class="lnk" href="${hotelsComUrl(p)}" target="_blank" rel="noopener">${ic("ext")}השוואה ב-Hotels.com</a>
       <a class="lnk" href="${googleHotelsUrl(p)}" target="_blank" rel="noopener">${ic("search")}השוואת מחירים בגוגל</a>
       ${p.website ? `<a class="lnk" href="${esc(p.website)}" target="_blank" rel="noopener">${ic("shield")}אתר המלון</a>` : `<a class="lnk" href="${reviewsUrl(p)}" target="_blank" rel="noopener">${ic("users")}ביקורות</a>`}
     </div>
@@ -1147,7 +1153,7 @@ SCREENS.info = {
       if (c.rate === undefined) money = `<div class="skeleton" style="height:40px"></div>`;
       else if (!c.rate) money = `<p class="lead">שער החליפין לא זמין כרגע.</p>`;
       else money = `<div class="conv"><label><input id="convLocal" type="number" inputmode="decimal" value="10" class="select" aria-label="סכום ב${esc(ci.curHe)}"><span>${esc(ci.cur)}</span></label><b>=</b><output id="convILS">${(10 * c.rate.rate).toFixed(1)} ₪</output></div>
-        <div class="source">1 ${esc(ci.cur)} = ${c.rate.rate.toFixed(3)} ₪, לפי הבנק המרכזי האירופי (${esc(c.rate.date)})</div>`;
+        <div class="source">1 ${esc(ci.cur)} = ${c.rate.rate.toFixed(3)} ₪, לפי ${esc(c.rate.src || "הבנק המרכזי האירופי")} (${esc(c.rate.date)})</div>`;
     }
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backInfo" aria-label="חזרה">${ic("back")}</button><span class="eyebrow">לפני שטסים</span><span style="width:38px"></span></div>
