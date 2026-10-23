@@ -17,16 +17,20 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: node tools/fetch-cities.mjs ${{ github.event.inputs.cities }}
-      - name: Commit data
-        run: |
+      - run: |
           git config user.name "masa-bot"
           git config user.email "actions@users.noreply.github.com"
+          node tools/fetch-cities.mjs ${{ github.event.inputs.cities }}
+        env:
+          COMMIT_EACH: "1"
+      - name: Commit data
+        if: always()
+        run: |
           git add data/cities
           git diff --cached --quiet || (git commit -m "עדכון נתוני ערים" && git push)

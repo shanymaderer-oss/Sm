@@ -18,6 +18,7 @@
       sights: H + `(nwr["tourism"~"^(attraction|museum|gallery|viewpoint|zoo|aquarium|theme_park)$"]["name"]${A()};nwr["historic"~"^(monument|castle|ruins|archaeological_site|fort|city_gate|palace|church|monastery|memorial|building|tower|aqueduct|bridge)$"]["name"]["wikidata"]${A()};);out center tags 260;`,
       restaurants: H + `nwr["amenity"="restaurant"]["name"]${A(R * 0.55)};out center tags 450;`,
       cafes: H + `(nwr["amenity"~"^(cafe|ice_cream|marketplace|food_court)$"]["name"]${A(R * 0.5)};nwr["shop"~"^(bakery|pastry|confectionery|deli|wine)$"]["name"]${A(R * 0.4)};);out center tags 300;`,
+      hotels: H + `nwr["tourism"~"^(hotel|hostel|guest_house|apartment|motel)$"]["name"]${A(R * 1.2)};out center tags 350;`,
       extra: H + `(nwr["shop"~"^(mall|department_store)$"]["name"]${A(R * 1.4)};nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"]${A(R * 0.5)};nwr["amenity"="place_of_worship"]["name"]["wikidata"]${A()};nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"]${A()};nwr["natural"="beach"]["name"]${A()};);out center tags 300;`
     };
   }
@@ -25,7 +26,7 @@
   /* keep only the tags the app uses, so cached data stays small */
   const KEEP = ["name", "name:he", "name:en", "tourism", "historic", "amenity", "leisure", "natural", "shop", "building", "wikidata", "wikipedia",
     "website", "contact:website", "url", "phone", "contact:phone", "opening_hours", "fee", "charge", "cuisine", "heritage", "wikimedia_commons", "image",
-    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "diet:halal", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation"];
+    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "diet:halal", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation", "rooms", "beds", "internet_access", "operator"];
   const slim = els => els.map(e => ({
     type: e.type, id: e.id, lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon,
     tags: Object.fromEntries(Object.entries(e.tags || {}).filter(([k]) => KEEP.includes(k)))
@@ -63,7 +64,7 @@
     out.push(cur);
     return out;
   }
-  const priceClass = h => /budget|cheap|inexpensive|under/i.test(h) ? "budget" : /mid/i.test(h) ? "mid" : /splurge|expensive|upscale|fine|high/i.test(h) ? "splurge" : null;
+  const priceClass = h => /budget|cheap|inexpensive|under|hostel/i.test(h) ? "budget" : /mid/i.test(h) ? "mid" : /splurge|expensive|upscale|fine|high/i.test(h) ? "splurge" : null;
   const TYPES = ["see", "do", "buy", "eat", "drink", "sleep", "listing", "marker", "go"];
 
   function parseVoyage(wikitext) {
@@ -95,7 +96,7 @@
       let type = TYPES.includes(tname) && tname !== "listing" && tname !== "marker" ? tname : (p.type || "").toLowerCase();
       if (!type) type = /eat/i.test(section) ? "eat" : /drink/i.test(section) ? "drink" : /buy|shop/i.test(section) ? "buy" : /see/i.test(section) ? "see" : /do/i.test(section) ? "do" : "";
       const name = cleanWiki(p.name);
-      if (!name || !["see", "do", "buy", "eat", "drink"].includes(type)) continue;
+      if (!name || !["see", "do", "buy", "eat", "drink", "sleep"].includes(type)) continue;
       const lat = parseFloat(p.lat), lng = parseFloat(p.long ?? p.lon ?? p.lng);
       out.push({
         type, name, alt: cleanWiki(p.alt) || null,

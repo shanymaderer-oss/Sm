@@ -500,19 +500,29 @@ Masa.planner = (() => {
     if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });
     const by = kinds => pool.filter(p => kinds.includes(p.kind)).sort((a, b) => (b.q - b.dist * 0.6) - (a.q - a.dist * 0.6));
 
-    // activity slots per day, shared between the chosen interests (food and night become meals and evenings)
+    /* The perfect mix: chosen interests get most of the day, the rest still appear a little,
+       and every day gets at least one of the city's must-see places. */
     const perDay = { "רגוע": 3, "מאוזן": 4, "אינטנסיבי": 5 }[pace] || 4;
     const wantFood = interests.includes("food"), wantNight = interests.includes("night");
-    let act = interests.filter(i => !["food", "night"].includes(i));
-    if (!act.length) act = wantFood ? ["food"] : ["view"];
-    const slots = days * (perDay - (wantFood && act[0] !== "food" ? 1 : 0));
-    const need = {};
-    act.forEach((c, i) => { need[c] = Math.floor(slots / act.length) + (i < slots % act.length ? 1 : 0); });
-    const chosen = [];
-    for (const c of act) chosen.push(...pickFor(by(SLOT_KINDS[c]), need[c], chosen, c === "shopping" ? 0.3 : 0.15));
-    // not enough places in a category: fill from the other chosen ones, then from the best overall
-    if (chosen.length < slots) chosen.push(...pickFor(by(act.flatMap(c => SLOT_KINDS[c])), slots - chosen.length, chosen));
-    if (chosen.length < Math.min(2, slots)) chosen.push(...pickFor(by(["attraction", "sight", "view", "museum", "park", "market"]), slots - chosen.length, chosen));
+    const W = {};
+    for (const c of ["history", "art", "view", "nature", "shopping", "family", "food"]) W[c] = interests.includes(c) ? 3 : ["history", "view", "art", "nature"].includes(c) ? 0.7 : 0;
+    if (interests.length === 1 && interests[0] === "food") W.food = 4;
+    const MUST = ["attraction", "sight", "museum", "view", "church", "park"];
+    const mustPool = by(MUST).filter(p => p.q >= 6);
+    const mustN = Math.min(days, mustPool.length);
+    const chosen = pickFor(mustPool, mustN, [], 0.4);
+    chosen.forEach(p => { p.must = true; });
+    const slots = Math.max(0, days * (perDay - (wantFood ? 1 : 0)) - chosen.length);
+    const totalW = Object.values(W).reduce((a, b) => a + b, 0) || 1;
+    const shares = Object.entries(W).filter(([, w]) => w > 0).map(([c, w]) => ({ c, exact: slots * w / totalW }));
+    shares.forEach(x => { x.n = Math.floor(x.exact); });
+    let left = slots - shares.reduce((a, x) => a + x.n, 0);
+    shares.sort((x, y) => (y.exact - y.n) - (x.exact - x.n)).forEach(x => { if (left > 0) { x.n++; left--; } });
+    const act = shares.filter(x => x.n > 0).map(x => x.c);
+    for (const { c, n } of shares.sort((x, y) => W[y.c] - W[x.c])) if (n) chosen.push(...pickFor(by(SLOT_KINDS[c]), n, chosen, c === "shopping" ? 0.3 : 0.15));
+    const target = slots + mustN;
+    if (chosen.length < target) chosen.push(...pickFor(by([...new Set(Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c]))]), target - chosen.length, chosen));
+    if (chosen.length < Math.min(2, target)) chosen.push(...pickFor(by(["attraction", "sight", "view", "museum", "park", "market"]), target - chosen.length, chosen));
     if (!chosen.length) throw { code: "too_few" };
     const used = new Set(chosen.map(p => p.id));
 
@@ -550,7 +560,7 @@ Masa.planner = (() => {
       const anchor = list[Math.max(0, at - 1)]?.p || first;
       const lunch = nearBest(restaurants, anchor, 0.8) || nearBest(restaurants, anchor, 2.5);
       if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
-      if (wantFood && act[0] !== "food" && g.length >= 2) {
+      if (wantFood && g.length >= 2) {
         const ti = Math.min(list.length, at + 2);
         const tr = nearBest(treats, list[ti - 1]?.p || anchor, 0.8);
         if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
@@ -565,7 +575,7 @@ Masa.planner = (() => {
     });
 
     // "also around here": two more places near each activity, matching the chosen interests
-    const interestKinds = new Set([...act.flatMap(c => SLOT_KINDS[c]), ...(wantFood ? ["restaurant", "cafe", "dessert", "market"] : [])]);
+    const interestKinds = new Set([...interests.filter(c => SLOT_KINDS[c]).flatMap(c => SLOT_KINDS[c]), ...MUST, ...(wantFood ? ["restaurant", "cafe", "dessert", "market"] : [])]);
     const nearbyOf = new Map();
     for (const { p } of dayPlans.flat()) {
       if (p.cat === "food" || p.cat === "night") continue;
@@ -590,7 +600,7 @@ Masa.planner = (() => {
       opts: { query, days, budget, pace, diet: opts.diet || "הכול", notes: opts.notes || "", interests },
       summary: "",
       days: dayPlans.map((list, i) => {
-        const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
+        const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); if (p.must && !meal) s.must = true; s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
         const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null };
         assignTimes(d);

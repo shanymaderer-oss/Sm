@@ -1,14 +1,17 @@
 // Fetches map data for the popular cities and saves it as data/cities/<slug>.json.
 // Runs on GitHub Actions (free). Usage: node tools/fetch-cities.mjs [slug ...]
+// Each city is committed as soon as it is ready, so a slow server never loses the work already done.
 import { createRequire } from "node:module";
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from "node:fs";
+import { execSync } from "node:child_process";
 const require = createRequire(import.meta.url);
 const S = require("../js/sources.js");
 const { CITIES } = require("../js/cities.js");
-const UA = { "User-Agent": "MasaTripPrototype/0.1 (github.com/shanymaderer-oss/Sm)" };
+const UA = { "User-Agent": "MasaTripPrototype/0.2 (github.com/shanymaderer-oss/Sm)" };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const COMMIT = process.env.COMMIT_EACH === "1";
 
-async function getJSON(url, opts = {}, ms = 60000) {
+async function getJSON(url, opts = {}, ms = 40000) {
   const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
   try {
     const r = await fetch(url, { ...opts, headers: { ...UA, ...(opts.headers || {}) }, signal: ctl.signal });
@@ -16,48 +19,62 @@ async function getJSON(url, opts = {}, ms = 60000) {
     return await r.json();
   } finally { clearTimeout(t); }
 }
-async function overpass(q) {
-  for (let round = 0; round < 2; round++) for (const ep of S.OVERPASS) {
+async function overpass(q, log) {
+  for (const ep of S.OVERPASS) {
+    const t0 = Date.now();
     try {
-      const j = await getJSON(ep, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q) }, 90000);
-      if (Array.isArray(j.elements) && (j.elements.length || !j.remark)) return j.elements;
-      console.log("  overpass remark", ep, j.remark);
-    } catch (e) { console.log("  overpass fail", ep, e.message); }
-    await sleep(3000);
+      const j = await getJSON(ep, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q) }, 45000);
+      if (Array.isArray(j.elements) && (j.elements.length || !j.remark)) { log.push(`${new URL(ep).host} ok ${j.elements.length} ${Date.now() - t0}ms`); return j.elements; }
+      log.push(`${new URL(ep).host} remark ${String(j.remark).slice(0, 80)}`);
+    } catch (e) { log.push(`${new URL(ep).host} ${e.name === "AbortError" ? "timeout" : e.message} ${Date.now() - t0}ms`); }
   }
   return [];
 }
 async function voyage(title) {
   const get = async t => {
-    try { const j = await getJSON(`https://en.wikivoyage.org/w/api.php?action=parse&page=${encodeURIComponent(t)}&prop=wikitext&formatversion=2&format=json&redirects=1`); return j.parse?.wikitext || ""; }
-    catch (e) { console.log("  voyage fail", t, e.message); return ""; }
+    try { const j = await getJSON(`https://en.wikivoyage.org/w/api.php?action=parse&page=${encodeURIComponent(t)}&prop=wikitext&formatversion=2&format=json&redirects=1`, {}, 20000); return j.parse?.wikitext || ""; }
+    catch { return ""; }
   };
   const main = await get(title);
   let list = S.parseVoyage(main);
-  const districts = S.voyageDistricts(main, title);
-  for (const d of districts) { list = list.concat(S.parseVoyage(await get(d)).map(x => ({ ...x, district: d.split("/").pop() }))); await sleep(300); }
+  const districts = S.voyageDistricts(main, title).slice(0, 8);
+  const parts = await Promise.all(districts.map(get));
+  parts.forEach((wt, i) => { list = list.concat(S.parseVoyage(wt).map(x => ({ ...x, district: districts[i].split("/").pop() }))); });
   return { list, districts };
 }
 async function wikiGeo(lang, lat, lng, r) {
   try {
-    const j = await getJSON(`https://${lang}.wikipedia.org/w/api.php?action=query&list=geosearch&format=json&gslimit=100&gsradius=${Math.min(10000, r)}&gscoord=${lat}|${lng}`);
+    const j = await getJSON(`https://${lang}.wikipedia.org/w/api.php?action=query&list=geosearch&format=json&gslimit=100&gsradius=${Math.min(10000, r)}&gscoord=${lat}|${lng}`, {}, 20000);
     return (j.query?.geosearch || []).map(g => ({ title: g.title, lat: g.lat, lng: g.lon, pageid: g.pageid, lang }));
   } catch { return []; }
+}
+function commit(msg) {
+  if (!COMMIT) return;
+  try {
+    execSync(`git add data/cities && (git diff --cached --quiet || (git commit -q -m "${msg}" && (git push -q || (git pull -q --rebase && git push -q))))`, { stdio: "inherit", shell: "/bin/bash" });
+  } catch (e) { console.log("commit failed", e.message); }
 }
 
 const only = process.argv.slice(2);
 mkdirSync("data/cities", { recursive: true });
-const summary = [];
-for (const c of CITIES.filter(c => !only.length || only.includes(c.slug))) {
-  console.log("==", c.slug);
+const statusPath = "data/cities/_status.json";
+const status = existsSync(statusPath) ? JSON.parse(readFileSync(statusPath, "utf8")) : {};
+async function doCity(c) {
+  const t0 = Date.now();
+  const log = [];
   const q = S.buildQueries(c.lat, c.lng, c.R);
-  const els = [];
-  for (const [k, v] of Object.entries(q)) { const e = await overpass(v); console.log("  ", k, e.length); els.push(...e); await sleep(2500); }
-  const v = await voyage(c.en);
-  const wiki = { he: await wikiGeo("he", c.lat, c.lng, c.R * 1.2), en: await wikiGeo("en", c.lat, c.lng, c.R * 1.2) };
-  const data = { city: c, fetchedAt: new Date().toISOString(), els: S.slim(els), voyage: v.list, wiki };
-  writeFileSync(`data/cities/${c.slug}.json`, JSON.stringify(data));
-  const eat = v.list.filter(x => x.type === "eat");
-  summary.push(`${c.slug}: osm ${data.els.length}, voyage ${v.list.length} (eat ${eat.length}, with coords ${eat.filter(x => x.lat).length}, districts ${v.districts.length}), wiki he ${wiki.he.length} en ${wiki.en.length}`);
+  const els = [], counts = {};
+  for (const [k, v] of Object.entries(q)) { const e = await overpass(v, log); counts[k] = e.length; els.push(...e); await sleep(1500); }
+  const [v, he, en] = await Promise.all([voyage(c.en), wikiGeo("he", c.lat, c.lng, c.R * 1.2), wikiGeo("en", c.lat, c.lng, c.R * 1.2)]);
+  const data = { city: c, fetchedAt: new Date().toISOString(), els: S.slim(els), voyage: v.list, wiki: { he, en } };
+  const by = t => v.list.filter(x => x.type === t).length;
+  status[c.slug] = { at: data.fetchedAt, seconds: Math.round((Date.now() - t0) / 1000), osm: counts, voyage: { eat: by("eat"), drink: by("drink"), buy: by("buy"), see: by("see"), sleep: by("sleep"), withCoords: v.list.filter(x => x.lat).length, districts: v.districts.length }, wiki: { he: he.length, en: en.length }, log };
+  if (data.els.length || v.list.length) writeFileSync(`data/cities/${c.slug}.json`, JSON.stringify(data));
+  writeFileSync(statusPath, JSON.stringify(status, null, 1));
+  console.log(c.slug, JSON.stringify(status[c.slug]));
 }
-console.log("\n" + summary.join("\n"));
+const list = CITIES.filter(c => !only.length || only.includes(c.slug));
+for (let i = 0; i < list.length; i += 2) {
+  await Promise.all(list.slice(i, i + 2).map(doCity));
+  commit(`נתוני ערים: ${list.slice(i, i + 2).map(c => c.slug).join(", ")}`);
+}

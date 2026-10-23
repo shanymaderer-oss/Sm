@@ -395,3 +395,4 @@ body{margin:0}
 .gpin.on .gpinbody{width:40px;height:40px}
 .gpin.on .gpinbody svg{width:19px;height:19px}
 .hide-labels .gpin:not(.on) .mk-label{display:none}
+.mealtag.must{color:var(--violet)}
