@@ -1417,5 +1417,53 @@
    "overpass-api.de ok 212 32021ms",
    "streets: 212 shops"
   ]
+ },
+ "naples": {
+  "at": "2026-10-23T22:30:45.619Z",
+  "seconds": 371,
+  "osm": {
+   "sights": 238,
+   "restaurants": 342,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 182,
+   "diet": 5,
+   "extra": 200,
+   "streets": 7
+  },
+  "voyage": {
+   "eat": 23,
+   "drink": 13,
+   "buy": 3,
+   "see": 43,
+   "sleep": 37,
+   "withCoords": 125,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 12,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "Via Toledo (76)",
+   "Via Santa Brigida (12)",
+   "Via San Sebastiano (11)",
+   "Corso Umberto Primo (9)",
+   "Via Luca Giordano (8)"
+  ],
+  "log": [
+   "overpass-api.de ok 238 31479ms",
+   "overpass-api.de HTTP 502 445ms",
+   "overpass-api.de ok 342 37699ms",
+   "overpass-api.de ok 300 44903ms",
+   "overpass-api.de ok 350 29235ms",
+   "overpass-api.de ok 182 28766ms",
+   "overpass-api.de ok 5 33000ms",
+   "overpass-api.de ok 200 40414ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 263 39914ms",
+   "streets: 263 shops"
+  ]
  }
 }
