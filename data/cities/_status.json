@@ -584,5 +584,53 @@
    "overpass-api.de ok 1169 34715ms",
    "streets: 1169 shops"
   ]
+ },
+ "milan": {
+  "at": "2026-10-23T18:21:32.968Z",
+  "seconds": 405,
+  "osm": {
+   "sights": 260,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 29,
+   "extra": 156,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 43,
+   "drink": 35,
+   "buy": 22,
+   "see": 86,
+   "sleep": 69,
+   "withCoords": 254,
+   "districts": 5
+  },
+  "wiki": {
+   "he": 38,
+   "en": 100
+  },
+  "streets": [
+   "Via Monte Napoleone (58)",
+   "Corso di Porta Ticinese (54)",
+   "Corso Genova (51)",
+   "Via Alessandro Manzoni (36)",
+   "Via della Spiga (36)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 260 36613ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de ok 450 33479ms",
+   "overpass-api.de ok 300 42726ms",
+   "overpass-api.de ok 350 40939ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 300 32352ms",
+   "overpass-api.de ok 29 42529ms",
+   "overpass-api.de ok 156 38148ms",
+   "overpass-api.de ok 1281 42319ms",
+   "streets: 1281 shops"
+  ]
  }
 }
