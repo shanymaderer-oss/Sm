@@ -1706,5 +1706,50 @@
    "overpass-api.de ok 284 25602ms",
    "streets: 284 shops"
   ]
+ },
+ "valencia": {
+  "at": "2026-10-23T23:13:41.069Z",
+  "seconds": 367,
+  "osm": {
+   "sights": 88,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 142,
+   "shopping": 300,
+   "diet": 18,
+   "extra": 43,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 42,
+   "drink": 34,
+   "buy": 26,
+   "see": 66,
+   "sleep": 28,
+   "withCoords": 185,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 12,
+   "en": 76
+  },
+  "streetsV": 2,
+  "streets": [
+   "Carrera de la Fonteta de Sant Lluís (9)",
+   "Carrer d'Alboraia (8)"
+  ],
+  "log": [
+   "overpass-api.de ok 88 29008ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de ok 450 36427ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de ok 300 35168ms",
+   "overpass-api.de ok 142 29762ms",
+   "overpass-api.de ok 300 30868ms",
+   "overpass-api.de ok 18 34090ms",
+   "overpass-api.de ok 43 45909ms",
+   "overpass-api.de ok 162 40186ms",
+   "streets: 162 shops"
+  ]
  }
 }
