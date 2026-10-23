@@ -199,7 +199,7 @@
  },
  "budapest": {
   "at": "2026-10-23T16:53:25.525Z",
-  "seconds": 574,
+  "seconds": 625,
   "osm": {
    "sights": 260,
    "restaurants": 450,
@@ -208,7 +208,7 @@
    "shopping": 300,
    "diet": 29,
    "extra": 105,
-   "streets": 0
+   "streets": 14
   },
   "voyage": {
    "eat": 75,
@@ -223,15 +223,18 @@
    "he": 100,
    "en": 100
   },
-  "streets": [],
+  "streets": [
+   "Váci utca (58)",
+   "Falk Miksa utca (25)",
+   "József körút (21)",
+   "Lövőház utca (21)",
+   "Károly körút (20)"
+  ],
   "log": [
    "(updated: streets)",
-   "overpass-api.de HTTP 502 383ms",
-   "overpass-api.de HTTP 502 381ms",
    "overpass-api.de HTTP 502 429ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "streets: 0 shops"
+   "overpass-api.de ok 828 32825ms",
+   "streets: 828 shops"
   ]
  }
 }
