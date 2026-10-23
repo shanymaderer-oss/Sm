@@ -42,7 +42,7 @@ const P = {
 };
 const CATS = {
   history:{he:"היסטוריה",c:"--coral"}, food:{he:"אוכל",c:"--sun"}, art:{he:"אמנות",c:"--violet"}, nature:{he:"טבע",c:"--teal"},
-  night:{he:"חיי לילה",c:"--primary"}, shopping:{he:"קניות",c:"--rose"}, view:{he:"צילום ונופים",c:"--sky"}, religion:{he:"מקומות קדושים",c:"--violet"}, family:{he:"משפחה",c:"--teal"}
+  night:{he:"חיי לילה",c:"--primary"}, shopping:{he:"קניות",c:"--rose"}, view:{he:"צילום ונופים",c:"--sky"}, religion:{he:"מקומות קדושים",c:"--violet"}, family:{he:"משפחה",c:"--teal"}, sleep:{he:"לינה",c:"--primary"}
 };
 const INTERESTS = ["history","food","art","nature","night","shopping","view","family"];
 const DAYC = ["--coral","--primary","--teal","--violet","--sun"];
@@ -211,6 +211,10 @@ Object.assign(P,{
   wiki:'<path d="M3 6h5M16 6h5M5 6l4 12 3-8 3 8 4-12"/>',
   home:'<path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-6h4v6"/>',
   save:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+  bed:'<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/>',
+  sleep:'<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  plug:'<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/>',
   cafe:'<path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/>'
 });
 const SAMPLE_WIKI={"Colosseo":"Colosseum","Foro Romano":"Roman Forum","Musei Vaticani":"Vatican Museums","Basilica di San Pietro":"St. Peter's Basilica","Pantheon":"Pantheon, Rome","Fontana di Trevi":"Trevi Fountain","Campo de' Fiori":"Campo de' Fiori","Galleria Borghese":"Galleria Borghese","Mercato di Testaccio":"Testaccio","Da Enzo al 29":"Trastevere"};
@@ -233,11 +237,30 @@ const PHRASES={
 };
 const COUNTRY_LANG={it:"it",sm:"it",va:"it",fr:"fr",mc:"fr",es:"es",mx:"es",ar:"es",co:"es",pe:"es",cl:"es",pt:"pt",br:"pt",de:"de",at:"de",ch:"de",gr:"el",cy:"el",cz:"cs",nl:"nl",gb:"en",us:"en",ie:"en",au:"en",ca:"en",nz:"en",th:"th",jp:"ja"};
 const ETIQUETTE_GENERIC=["שמרו צילום של הדרכון בטלפון ובענן.","באזורים צפופים ובתחבורה הציבורית שימו לב לכייסים.","בדקו אם נהוג להשאיר טיפ במדינה, ובאיזה גובה.","הורידו מפה אופליין של העיר לפני שיוצאים, למקרה שאין קליטה."];
+/* practical facts per country. Short, and checked at the time of writing; the screen asks travelers to confirm before they fly */
+const EU_DCC="במסופי אשראי ובכספומטים בחרו לשלם במטבע המקומי, לא בשקלים. ההמרה של המסוף יקרה יותר.";
+const COUNTRY_INFO={
+ it:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, F, L",volt:"230V",tip:"לא חובה. דמי שולחן (coperto) כבר בחשבון. מקובל לעגל כלפי מעלה.",water:"מי הברז ראויים לשתייה, וגם הברזיות ברחוב.",pay:EU_DCC,extra:"במקומות קדושים כתפיים וברכיים חייבות להיות מכוסות."},
+ fr:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, E",volt:"230V",tip:"השירות כלול בחשבון (service compris). אפשר להשאיר כמה יורו על שירות טוב.",water:"מי הברז ראויים לשתייה. במסעדה מבקשים carafe d'eau בחינם.",pay:EU_DCC},
+ es:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, F",volt:"230V",tip:"לא חובה. 5–10% על שירות טוב.",water:"מי הברז ראויים לשתייה.",pay:EU_DCC,extra:"ארוחת ערב מתחילה מאוחר, בדרך כלל אחרי 20:30."},
+ pt:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, F",volt:"230V",tip:"לא חובה. 5–10% על שירות טוב.",water:"מי הברז ראויים לשתייה.",pay:EU_DCC,extra:"הלחם והמנות הקטנות שמגישים בהתחלה (couvert) עולים כסף אם אוכלים מהם."},
+ de:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, F",volt:"230V",tip:"5–10%. אומרים למלצר את הסכום הכולל כשמשלמים.",water:"מי הברז ראויים לשתייה.",pay:"מזומן עדיין נפוץ, ולא כל מקום מקבל אשראי. "+EU_DCC},
+ at:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, F",volt:"230V",tip:"מקובל לעגל כלפי מעלה, בערך 5–10%.",water:"מי הברז מצוינים לשתייה.",pay:EU_DCC},
+ nl:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, F",volt:"230V",tip:"לא חובה. 5–10% על שירות טוב.",water:"מי הברז ראויים לשתייה.",pay:"הרבה מקומות מקבלים רק כרטיס ולא מזומן. "+EU_DCC},
+ gr:{cur:"EUR",curHe:"יורו",sos:"112",plug:"C, F",volt:"230V",tip:"5–10% על שירות טוב.",water:"באתונה מי הברז תקינים. באיים עדיף מים בבקבוק.",pay:EU_DCC},
+ cz:{cur:"CZK",curHe:"קורונה צ׳כית",sos:"112",plug:"C, E",volt:"230V",tip:"נהוג בערך 10%.",water:"מי הברז ראויים לשתייה.",pay:"לא מחליפים כסף בדוכני המרה ברחוב. "+EU_DCC},
+ hu:{cur:"HUF",curHe:"פורינט הונגרי",sos:"112",plug:"C, F",volt:"230V",tip:"10–15%. בדקו אם דמי שירות כבר כלולים בחשבון.",water:"מי הברז ראויים לשתייה.",pay:EU_DCC},
+ gb:{cur:"GBP",curHe:"לירה שטרלינג",sos:"999 או 112",plug:"G",volt:"230V",tip:"10–12.5% במסעדות. לפעמים כבר כלול כ-service charge.",water:"מי הברז ראויים לשתייה.",pay:"כמעט הכול בכרטיס, כולל התחבורה הציבורית בלונדון (contactless)."},
+ us:{cur:"USD",curHe:"דולר אמריקאי",sos:"911",plug:"A, B",volt:"120V",tip:"15–20% במסעדות. נחשב כמעט חובה.",water:"מי הברז ראויים לשתייה.",pay:"המחיר על המדף לא כולל מס מכירה, שמתווסף בקופה.",extra:"המתח 120V. בדקו שהמטען שלכם תומך ב-100–240V."},
+ th:{cur:"THB",curHe:"באט תאילנדי",sos:"191 (משטרה), 1155 (משטרת תיירים), 1669 (אמבולנס)",plug:"A, B, C, O",volt:"220V",tip:"לא חובה. מקובל לעגל כלפי מעלה או להשאיר מעט עודף.",water:"לא שותים מהברז. רק מים בבקבוק.",pay:"מזומן נפוץ מאוד בשווקים ובדוכנים.",extra:"במקדשים: כתפיים וברכיים מכוסות, ומורידים נעליים."},
+ jp:{cur:"JPY",curHe:"ין יפני",sos:"110 (משטרה), 119 (אמבולנס וכיבוי)",plug:"A, B",volt:"100V",tip:"לא נהוג להשאיר טיפ, ולפעמים זה אפילו לא נעים למארחים.",water:"מי הברז ראויים לשתייה.",pay:"מזומן עדיין נפוץ. כרטיס תחבורה נטען (Suica או Pasmo) עובד גם בחנויות נוחות.",extra:"המתח 100V. בדקו שהמטען שלכם תומך ב-100–240V."},
+ tr:{cur:"TRY",curHe:"לירה טורקית",sos:"112",plug:"C, F",volt:"230V",tip:"5–10% במסעדות.",water:"עדיף מים בבקבוק.",pay:"המחירים משתנים מהר בגלל האינפלציה. "+EU_DCC}
+};
 /* known destinations: skip the search step and go straight to the places */
 const DEST_GEO={
  "רומא":{local:"Roma",cc:"it",country:"איטליה",r:.06},"פריז":{local:"Paris",cc:"fr",country:"צרפת",r:.06},"ברצלונה":{local:"Barcelona",cc:"es",country:"ספרד",r:.05},
  "טוקיו":{local:"東京",cc:"jp",country:"יפן",r:.08},"ניו יורק":{local:"New York",cc:"us",country:"ארצות הברית",r:.06},"ליסבון":{local:"Lisboa",cc:"pt",country:"פורטוגל",r:.045},
  "בנגקוק":{local:"กรุงเทพมหานคร",cc:"th",country:"תאילנד",r:.06},"אתונה":{local:"Αθήνα",cc:"gr",country:"יוון",r:.04},"לונדון":{local:"London",cc:"gb",country:"בריטניה",r:.06},"פראג":{local:"Praha",cc:"cz",country:"צ׳כיה",r:.045}};
 DESTS.forEach(d=>{const m=DEST_GEO[d.he]; if(m) d.geo={lat:d.lat,lng:d.lng,name:d.he,local:m.local,cc:m.cc,country:m.country,bbox:{s:d.lat-m.r,n:d.lat+m.r,w:d.lng-m.r*1.3,e:d.lng+m.r*1.3}};});
-return {P,CATS,INTERESTS,DAYC,DESTS,HOURS,SAMPLE,PHRASES,COUNTRY_LANG,ETIQUETTE_GENERIC};
+return {COUNTRY_INFO,P,CATS,INTERESTS,DAYC,DESTS,HOURS,SAMPLE,PHRASES,COUNTRY_LANG,ETIQUETTE_GENERIC};
 })();

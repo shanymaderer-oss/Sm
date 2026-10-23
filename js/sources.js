@@ -10,16 +10,19 @@
     "https://overpass.kumi.systems/api/interpreter"
   ];
 
-  /* Four small queries. They do not depend on the traveler's interests, so one fetch serves every kind of trip. */
+  /* Small queries over a bounding box. Box queries are much faster on the public servers than "around" (radius) queries. */
+  function bbox(lat, lng, r) {
+    const dLat = r / 111320, dLng = r / (111320 * Math.cos(lat * Math.PI / 180));
+    return `${(lat - dLat).toFixed(5)},${(lng - dLng).toFixed(5)},${(lat + dLat).toFixed(5)},${(lng + dLng).toFixed(5)}`;
+  }
   function buildQueries(lat, lng, R) {
-    const A = (r = R) => `(around:${Math.round(r)},${lat.toFixed(5)},${lng.toFixed(5)})`;
-    const H = "[out:json][timeout:25];";
+    const H = (r, t = 25) => `[out:json][timeout:${t}][bbox:${bbox(lat, lng, r)}];`;
     return {
-      sights: H + `(nwr["tourism"~"^(attraction|museum|gallery|viewpoint|zoo|aquarium|theme_park)$"]["name"]${A()};nwr["historic"~"^(monument|castle|ruins|archaeological_site|fort|city_gate|palace|church|monastery|memorial|building|tower|aqueduct|bridge)$"]["name"]["wikidata"]${A()};);out center tags 260;`,
-      restaurants: H + `nwr["amenity"="restaurant"]["name"]${A(R * 0.55)};out center tags 450;`,
-      cafes: H + `(nwr["amenity"~"^(cafe|ice_cream|marketplace|food_court)$"]["name"]${A(R * 0.5)};nwr["shop"~"^(bakery|pastry|confectionery|deli|wine)$"]["name"]${A(R * 0.4)};);out center tags 300;`,
-      hotels: H + `nwr["tourism"~"^(hotel|hostel|guest_house|apartment|motel)$"]["name"]${A(R * 1.2)};out center tags 350;`,
-      extra: H + `(nwr["shop"~"^(mall|department_store)$"]["name"]${A(R * 1.4)};nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"]${A(R * 0.5)};nwr["amenity"="place_of_worship"]["name"]["wikidata"]${A()};nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"]${A()};nwr["natural"="beach"]["name"]${A()};);out center tags 300;`
+      sights: H(R) + `(nwr["tourism"~"^(attraction|museum|gallery|viewpoint|zoo|aquarium|theme_park)$"]["name"];nwr["historic"]["name"]["wikidata"];);out center tags 260;`,
+      restaurants: H(R * 0.5) + `nwr["amenity"="restaurant"]["name"];out center tags 450;`,
+      cafes: H(R * 0.45) + `(nwr["amenity"~"^(cafe|ice_cream|marketplace|food_court)$"]["name"];nwr["shop"~"^(bakery|pastry|confectionery|deli|wine)$"]["name"];);out center tags 300;`,
+      hotels: H(R * 1.1) + `nwr["tourism"~"^(hotel|hostel|guest_house|apartment|motel)$"]["name"];out center tags 350;`,
+      extra: H(R * 1.2) + `(nwr["shop"~"^(mall|department_store)$"]["name"];nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"];nwr["amenity"="place_of_worship"]["name"]["wikidata"];nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"];nwr["natural"="beach"]["name"];);out center tags 350;`
     };
   }
 
@@ -120,7 +123,7 @@
     return [...set].slice(0, 10);
   }
 
-  const api = { OVERPASS, buildQueries, slim, parseVoyage, voyageDistricts, cleanWiki };
+  const api = { OVERPASS, bbox, buildQueries, slim, parseVoyage, voyageDistricts, cleanWiki };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else { root.Masa = root.Masa || {}; root.Masa.sources = api; }
 })(typeof window !== "undefined" ? window : globalThis);

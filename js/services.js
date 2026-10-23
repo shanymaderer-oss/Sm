@@ -75,10 +75,27 @@ Masa.svc = (() => {
           .then(j => finish(true, j))
           .catch(() => { failed++; if (failed >= order.length) finish(false, new Error("overpass unavailable")); else launch(); });
       };
-      const timers = [setTimeout(launch, 6000), setTimeout(launch, 12000)];
+      const timers = [setTimeout(launch, 10000), setTimeout(launch, 18000)];
       signal?.addEventListener("abort", () => finish(false, new Error("aborted")));
       launch();
     });
+  }
+
+  /* Weather forecast for up to 16 days (Open-Meteo, free, no key) */
+  async function weather(lat, lng) {
+    try {
+      const j = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lng.toFixed(3)}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=auto&forecast_days=16`, {}, 12000);
+      const d = j.daily || {};
+      return (d.time || []).map((t, i) => ({ date: t, max: d.temperature_2m_max[i], min: d.temperature_2m_min[i], rain: d.precipitation_probability_max?.[i], code: d.weather_code?.[i] }));
+    } catch { return null; }
+  }
+  /* exchange rate to shekels, from the European Central Bank via Frankfurter (free, no key) */
+  async function rateToILS(cur) {
+    if (!cur || cur === "ILS") return 1;
+    try {
+      const j = await getJSON(`https://api.frankfurter.app/latest?from=${cur}&to=ILS`, {}, 10000);
+      return j.rates?.ILS ? { rate: j.rates.ILS, date: j.date } : null;
+    } catch { return null; }
   }
 
   /* Wikivoyage recommendations for a city, including its district pages */
@@ -158,5 +175,5 @@ Masa.svc = (() => {
     } catch { return null; }
   }
 
-  return { getJSON, mapLimit, geocode, overpass, voyage, wikiGeo, wikidata, wikiSummary, walkRoute };
+  return { getJSON, mapLimit, geocode, overpass, voyage, weather, rateToILS, wikiGeo, wikidata, wikiSummary, walkRoute };
 })();

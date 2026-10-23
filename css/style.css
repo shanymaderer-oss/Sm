@@ -396,3 +396,39 @@ body{margin:0}
 .gpin.on .gpinbody svg{width:19px;height:19px}
 .hide-labels .gpin:not(.on) .mk-label{display:none}
 .mealtag.must{color:var(--violet)}
+
+/* hotels and practical info */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.duocard{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:10px;text-align:start;cursor:pointer;color:var(--ink);min-width:0}
+.duocard .ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#fff;flex:none}
+.duocard .ic svg{width:18px;height:18px}
+.duocard small{display:block;color:var(--muted);font-weight:700;font-size:.72rem}
+.duocard b{display:block;font-size:.88rem;line-height:1.25}
+.hotelintro p{margin:0}
+.linkbtn{border:0;background:none;color:var(--primary);font-weight:800;cursor:pointer;padding:0;text-decoration:underline}
+.pmain .dist small{display:block;font-size:.66rem;font-weight:600}
+.centermk i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--sun);color:#fff;font-style:normal;font-size:17px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.btn.small.coral{background:var(--coral);color:#fff}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:12px}
+.stepper.small{padding:4px}
+.stepper.small output{min-width:30px;font-size:1.05rem}
+.section-label small.muted{color:var(--muted);font-weight:600}
+.wx{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+.wx div{background:var(--surface-2);border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center}
+.wx small{font-size:.72rem;color:var(--muted);font-weight:700}
+.wx b{font-family:var(--display);font-size:1.25rem}
+.wx span{font-size:.8rem;color:var(--muted)}
+.wx em{font-style:normal;font-size:.72rem;font-weight:700}
+.wx i{font-style:normal;font-size:.68rem;color:var(--sky);font-weight:700}
+.conv{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.conv label{display:flex;align-items:center;gap:6px}
+.conv input{width:110px}
+.conv output{font-family:var(--display);font-weight:700;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.factgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.factgrid div{background:var(--surface-2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.factgrid small{display:flex;gap:5px;align-items:center;color:var(--muted);font-weight:700;font-size:.74rem}
+.factgrid small svg{width:14px;height:14px}
+.factgrid b{font-size:.95rem}
+.factgrid b.sm{font-size:.84rem;font-weight:600}
+@media (max-width:420px){.duo,.twocol{grid-template-columns:1fr}}

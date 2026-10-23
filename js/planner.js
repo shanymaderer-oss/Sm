@@ -6,6 +6,7 @@ window.Masa = window.Masa || {};
 Masa.planner = (() => {
   const { CATS, PHRASES, COUNTRY_LANG, ETIQUETTE_GENERIC } = window.MASA_DATA;
   const svc = Masa.svc, SRC = Masa.sources, CITIES = Masa.cities;
+  const hasXY = p => p && p.lat != null && p.lng != null && isFinite(+p.lat) && isFinite(+p.lng);
 
   const km = (a, b) => {
     const R = 6371, r = Math.PI / 180, dl = (b.lat - a.lat) * r, dg = (b.lng - a.lng) * r;
@@ -24,10 +25,15 @@ Masa.planner = (() => {
     sight: { cat: "history", he: "אתר היסטורי", min: 70 }, church: { cat: "history", he: "מבנה דתי", min: 40 },
     view: { cat: "view", he: "תצפית", min: 35 }, attraction: { cat: "view", he: "אטרקציה", min: 60 },
     park: { cat: "nature", he: "פארק", min: 60 }, beach: { cat: "nature", he: "חוף", min: 120 },
-    zoo: { cat: "family", he: "גן חיות", min: 150 }, themepark: { cat: "family", he: "פארק שעשועים", min: 180 }
+    zoo: { cat: "family", he: "גן חיות", min: 150 }, themepark: { cat: "family", he: "פארק שעשועים", min: 180 },
+    hotel: { cat: "sleep", he: "מלון", min: 0 }, hostel: { cat: "sleep", he: "הוסטל", min: 0 }, guesthouse: { cat: "sleep", he: "בית הארחה", min: 0 }, apartment: { cat: "sleep", he: "דירה", min: 0 }
   };
   function kindFromTags(t) {
     const a = t.amenity, tu = t.tourism, sh = t.shop;
+    if (tu === "hotel" || tu === "motel") return "hotel";
+    if (tu === "hostel") return "hostel";
+    if (tu === "guest_house") return "guesthouse";
+    if (tu === "apartment") return "apartment";
     if (a === "restaurant") return "restaurant";
     if (a === "cafe") return "cafe";
     if (a === "ice_cream" || sh === "pastry" || sh === "confectionery") return "dessert";
@@ -113,11 +119,12 @@ Masa.planner = (() => {
       fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || ""),
       kosher: /yes|only/.test(t["diet:kosher"] || ""), michelin: +t["michelin:stars"] || 0, brand: !!t.brand, heritage: !!t.heritage, hasHe: !!t["name:he"],
       address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") || null, reservation: t.reservation || null,
-      tourism: t.tourism || null, historic: t.historic || null
+      tourism: t.tourism || null, historic: t.historic || null, stars: parseFloat(t.stars) || 0
     };
   }
   function voyageKind(v) {
     const txt = `${v.name} ${v.content || ""}`;
+    if (v.type === "sleep") return /hostel/i.test(txt) ? "hostel" : /apartment|flat|aparthotel/i.test(txt) ? "apartment" : /guest ?house|b&b|bed and breakfast|pension/i.test(txt) ? "guesthouse" : "hotel";
     if (v.type === "eat") return /caf[eé]|coffee|bakery|pastr|ice cream|gelat|dessert/i.test(txt) && !/restaurant/i.test(txt) ? (/ice cream|gelat|dessert|pastr/i.test(txt) ? "dessert" : "cafe") : /market|food hall/i.test(txt) ? "market" : "restaurant";
     if (v.type === "drink") return /caf[eé]|coffee|tea/i.test(txt) && !/bar|pub|beer|wine|cocktail/i.test(txt) ? "cafe" : /club/i.test(txt) ? "club" : "bar";
     if (v.type === "buy") return /mall|shopping cent|galer|department/i.test(txt) ? "mall" : /market/i.test(txt) ? "market" : "shop";
@@ -220,6 +227,13 @@ Masa.planner = (() => {
     }
     if (p.brand || CHAIN.test(p.local || "")) { q -= p.kind === "mall" || p.kind === "store" ? 0 : 6; }
     if (p.kind === "mall") q += 1.5;
+    if (p.cat === "sleep") {
+      if (p.brand) q += 6;
+      if (p.stars) { q += p.stars * 0.8; sig.push("★".repeat(Math.min(5, Math.round(p.stars)))); }
+      if (!p.priceClass) p.priceClass = p.voyage?.priceClass || (p.kind === "hostel" ? "budget" : p.stars >= 4.5 ? "splurge" : p.stars >= 3 ? "mid" : p.stars ? "budget" : null);
+      const want = BUDGET_CLASS[budget];
+      if (p.priceClass && want) q += p.priceClass === want ? 2 : (want === "budget" && p.priceClass === "splurge") || (want === "splurge" && p.priceClass === "budget") ? -3 : -0.5;
+    }
     p.q = Math.round(q * 10) / 10;
     p.signals = sig;
     return p;
@@ -261,10 +275,12 @@ Masa.planner = (() => {
     for (let d = 0; d < days; d++) out.push(rot.slice(Math.round(d * rot.length / days), Math.round((d + 1) * rot.length / days)));
     return out;
   }
-  function orderDay(pts) {
-    if (pts.length <= 2) return pts;
+  function orderDay(pts, start) {
+    if (!pts.length) return pts;
+    if (pts.length <= 2 && !start) return pts;
     if (pts.length > 7) {
-      const out = [pts[0]], rest = pts.slice(1);
+      const rest0 = [...pts].sort((a, b) => start ? km(start, a) - km(start, b) : 0);
+      const out = [rest0[0]], rest = rest0.slice(1);
       while (rest.length) { const last = out[out.length - 1]; rest.sort((a, b) => km(last, a) - km(last, b)); out.push(rest.shift()); }
       return out;
     }
@@ -275,7 +291,7 @@ Masa.planner = (() => {
       for (let i = 0; i < pts.length; i++) {
         if (used[i]) continue;
         used[i] = true; cur.push(pts[i]);
-        perm(used, cur, len + (cur.length > 1 ? km(cur[cur.length - 2], pts[i]) : 0));
+        perm(used, cur, len + (cur.length > 1 ? km(cur[cur.length - 2], pts[i]) : start ? km(start, pts[i]) : 0));
         cur.pop(); used[i] = false;
       }
     };
@@ -372,11 +388,12 @@ Masa.planner = (() => {
     };
     return { needed: false, query: q, url: p.website || null, steps: ["אין צורך בהזמנה מראש.", p.hours ? `שעות פתיחה: ${p.hours}` : "בדקו שעות פתיחה לפני שמגיעים."] };
   }
-  const MEAL = { breakfast: "ארוחת בוקר", lunch: "ארוחת צהריים", treat: "הפסקה מתוקה", dinner: "ארוחת ערב", drinks: "בילוי ערב" };
-  const MEAL_MIN = { breakfast: 45, lunch: 75, treat: 30, dinner: 90, drinks: 90 };
+  const MEAL = { hotel: "יוצאים מהמלון", breakfast: "ארוחת בוקר", lunch: "ארוחת צהריים", treat: "הפסקה מתוקה", dinner: "ארוחת ערב", drinks: "בילוי ערב" };
+  const MEAL_MIN = { hotel: 0, breakfast: 45, lunch: 75, treat: 30, dinner: 90, drinks: 90 };
   function toStop(p, budget, meal = null) {
     const busy = busyFor(p);
     const min = meal ? MEAL_MIN[meal] : (KIND[p.kind]?.min || 60);
+    if (meal === "hotel") return { name: p.name, local: p.local, cat: "sleep", kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: MEAL.hotel, lat: p.lat, lng: p.lng, time: "", duration: "", _min: 0, cost: "", why: "המלון שבחרתם. כל יום יוצא מכאן.", whyLang: "he", history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], booking: { needed: false, steps: [], query: p.local }, website: p.website || null, phone: p.phone || null, address: p.address || null, image: null, hours: null, signals: p.signals || [], q: p.q, priceClass: p.priceClass || null, osm: p.id, isHotel: true };
     const why = p.voyage?.text ? p.voyage.text : WHY[p.kind] || WHY.attraction;
     return {
       name: p.name, local: p.local, cat: p.cat, kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: meal ? MEAL[meal] : null,
@@ -392,13 +409,14 @@ Masa.planner = (() => {
   const toPlace = p => ({
     id: p.id, name: p.name, local: p.local, kind: p.kind, cat: p.cat, lat: +p.lat.toFixed(6), lng: +p.lng.toFixed(6), q: p.q, signals: p.signals,
     cuisine: p.cuisine || null, hours: p.hours || p.voyage?.hours || null, website: p.website || null, phone: p.phone || null, address: p.address || null,
-    price: p.voyage?.price || null, priceClass: p.voyage?.priceClass || null, vtext: p.voyage?.text || null, veg: p.veg || false, kosher: p.kosher || false,
+    price: p.voyage?.price || null, priceClass: p.priceClass || p.voyage?.priceClass || null, stars: p.stars || 0, vtext: p.voyage?.text || null, veg: p.veg || false, kosher: p.kosher || false,
     outdoor: p.outdoor || false, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null
   });
 
   function assignTimes(day) {
     let t = 9 * 60;
     day.stops.forEach((s, i) => {
+      if (s.meal === "hotel") t = 8.5 * 60;
       if (s.meal === "breakfast") t = Math.max(t, 8.75 * 60);
       if (s.meal === "lunch") t = Math.max(t, 12.75 * 60);
       if (s.meal === "dinner") t = Math.max(t, 19.5 * 60);
@@ -443,9 +461,20 @@ Masa.planner = (() => {
 
     const q = SRC.buildQueries(geo.lat, geo.lng, R);
     const data = { els: [], voyage: [], wiki: { he: [], en: [] } };
-    const done = { sights: false, restaurants: false, cafes: false, extra: false, voyage: false, wiki: false };
+    const done = { sights: false, restaurants: false, cafes: false, hotels: false, extra: false, voyage: false, wiki: false };
+    /* the main server allows about two queries at a time per visitor, so queue them: most important first */
+    const order = ["sights", "restaurants", "cafes", "hotels", "extra"].filter(k => q[k]);
+    let qi = 0;
+    const worker = async () => {
+      while (qi < order.length) {
+        const k = order[qi++];
+        try { const j = await svc.overpass(q[k], signal, 0); data.els.push(...SRC.slim(j.elements || [])); done[k] = true; onStep?.(k); }
+        catch { if (signal?.aborted) return; }
+      }
+    };
+    done.hotels = false;
     const jobs = [
-      ...Object.entries(q).map(([k, v], i) => svc.overpass(v, signal, i % 3).then(j => { data.els.push(...SRC.slim(j.elements || [])); done[k] = true; onStep?.(k); })),
+      worker(), worker(),
       svc.voyage(geo.en || geo.local, signal).then(v => { data.voyage = v; done.voyage = true; }),
       Promise.all([svc.wikiGeo("he", geo.lat, geo.lng, R * 1.2, signal), svc.wikiGeo("en", geo.lat, geo.lng, R * 1.2, signal)]).then(([he, en]) => { data.wiki = { he, en }; done.wiki = true; })
     ].map(p => p.catch(() => {}));
@@ -495,6 +524,8 @@ Masa.planner = (() => {
 
     step(2);
     const { pool, noGeo } = buildPool(data, geo);
+    const hotel = opts.hotel && hasXY(opts.hotel) ? opts.hotel : null;
+    if (hotel) pool.forEach(p => { p.dist = 0.5 * p.dist + 0.5 * km(hotel, p); });
     pool.forEach(p => rate(p, geo.cc, budget));
     if (opts.diet === "כשר") pool.forEach(p => { if (p.cat === "food") p.q += p.kosher ? 8 : -1; });
     if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });
@@ -546,13 +577,13 @@ Masa.planner = (() => {
     };
     const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) : 0) + (f.voyage ? 1 : 0);
 
-    const groups = splitDays(chosen, days).map(orderDay);
+    const groups = splitDays(chosen, days).map(g => orderDay(g, hotel));
     while (groups.length < days) groups.push([]);
     const dayPlans = groups.map(g => {
       const list = g.map(p => ({ p, meal: null }));
       const first = g[0] || geo, last = g[g.length - 1] || geo;
       if (wantFood) {
-        const b = nearBest(cafes, first, 0.8) || nearBest(cafes, first, 2);
+        const b = (hotel && nearBest(cafes, hotel, 0.5)) || nearBest(cafes, first, 0.8) || nearBest(cafes, first, 2);
         if (b) list.unshift({ p: b, meal: "breakfast" });
       }
       const li = list.findIndex((x, i) => i >= Math.ceil(g.length / 2) + (wantFood ? 1 : 0));
@@ -571,6 +602,7 @@ Masa.planner = (() => {
         const bar = nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
         if (bar) list.push({ p: bar, meal: "drinks" });
       }
+      if (hotel) list.unshift({ p: { ...hotel, id: hotel.id || "hotel" }, meal: "hotel" });
       return list;
     });
 
@@ -593,11 +625,13 @@ Masa.planner = (() => {
       free: take(p => ["view", "park", "church", "beach"].includes(p.kind) && p.fee !== "yes", 3)
     };
 
-    const placeList = pool.filter(p => p.q > -3).sort((a, b) => b.q - a.q).slice(0, 900).map(toPlace);
+    const ranked = pool.filter(p => p.q > -3).sort((a, b) => b.q - a.q);
+    const placeList = [...ranked.filter(p => p.cat !== "sleep").slice(0, 800), ...ranked.filter(p => p.cat === "sleep").slice(0, 250)].map(toPlace);
     const trip = {
       city: geo.name, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
       source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,
-      opts: { query, days, budget, pace, diet: opts.diet || "הכול", notes: opts.notes || "", interests },
+      opts: { query, days, budget, pace, diet: opts.diet || "הכול", notes: opts.notes || "", interests, start: opts.start || null, people: opts.people || 2 },
+      hotel: hotel ? { ...hotel } : null,
       summary: "",
       days: dayPlans.map((list, i) => {
         const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); if (p.must && !meal) s.must = true; s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });

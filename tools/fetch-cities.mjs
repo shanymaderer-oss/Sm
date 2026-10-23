@@ -20,13 +20,16 @@ async function getJSON(url, opts = {}, ms = 40000) {
   } finally { clearTimeout(t); }
 }
 async function overpass(q, log) {
-  for (const ep of S.OVERPASS) {
-    const t0 = Date.now();
+  // the main server answers best when asked one query at a time; on "busy" (429/502/504) wait and ask again
+  const order = [S.OVERPASS[0], S.OVERPASS[0], S.OVERPASS[0], S.OVERPASS[1], S.OVERPASS[2]];
+  for (let i = 0; i < order.length; i++) {
+    const ep = order[i], t0 = Date.now();
     try {
-      const j = await getJSON(ep, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q) }, 45000);
+      const j = await getJSON(ep, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q) }, 60000);
       if (Array.isArray(j.elements) && (j.elements.length || !j.remark)) { log.push(`${new URL(ep).host} ok ${j.elements.length} ${Date.now() - t0}ms`); return j.elements; }
       log.push(`${new URL(ep).host} remark ${String(j.remark).slice(0, 80)}`);
     } catch (e) { log.push(`${new URL(ep).host} ${e.name === "AbortError" ? "timeout" : e.message} ${Date.now() - t0}ms`); }
+    await sleep(6000 * (i + 1));
   }
   return [];
 }
@@ -64,7 +67,7 @@ async function doCity(c) {
   const log = [];
   const q = S.buildQueries(c.lat, c.lng, c.R);
   const els = [], counts = {};
-  for (const [k, v] of Object.entries(q)) { const e = await overpass(v, log); counts[k] = e.length; els.push(...e); await sleep(1500); }
+  for (const [k, v] of Object.entries(q)) { const e = await overpass(v, log); counts[k] = e.length; els.push(...e); await sleep(2500); }
   const [v, he, en] = await Promise.all([voyage(c.en), wikiGeo("he", c.lat, c.lng, c.R * 1.2), wikiGeo("en", c.lat, c.lng, c.R * 1.2)]);
   const data = { city: c, fetchedAt: new Date().toISOString(), els: S.slim(els), voyage: v.list, wiki: { he, en } };
   const by = t => v.list.filter(x => x.type === t).length;
@@ -74,7 +77,8 @@ async function doCity(c) {
   console.log(c.slug, JSON.stringify(status[c.slug]));
 }
 const list = CITIES.filter(c => !only.length || only.includes(c.slug));
-for (let i = 0; i < list.length; i += 2) {
-  await Promise.all(list.slice(i, i + 2).map(doCity));
-  commit(`נתוני ערים: ${list.slice(i, i + 2).map(c => c.slug).join(", ")}`);
+for (const c of list) {
+  await doCity(c);
+  commit(`נתוני עיר: ${c.slug}`);
+  await sleep(3000);
 }
