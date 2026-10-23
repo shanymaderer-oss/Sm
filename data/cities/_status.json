@@ -1181,5 +1181,51 @@
    "overpass-api.de ok 196 32444ms",
    "streets: 196 shops"
   ]
+ },
+ "krakow": {
+  "at": "2026-10-23T21:59:50.304Z",
+  "seconds": 299,
+  "osm": {
+   "sights": 260,
+   "restaurants": 386,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 269,
+   "diet": 37,
+   "extra": 94,
+   "streets": 7
+  },
+  "voyage": {
+   "eat": 0,
+   "drink": 0,
+   "buy": 0,
+   "see": 4,
+   "sleep": 0,
+   "withCoords": 3,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 34,
+   "en": 100
+  },
+  "streetsV": 2,
+  "streets": [
+   "Pawia (10)",
+   "Starowiślna (15)",
+   "Floriańska (11)",
+   "Grodzka (12)",
+   "Długa (13)"
+  ],
+  "log": [
+   "overpass-api.de ok 260 26300ms",
+   "overpass-api.de ok 386 31614ms",
+   "overpass-api.de ok 300 26948ms",
+   "overpass-api.de ok 350 33886ms",
+   "overpass-api.de ok 269 35569ms",
+   "overpass-api.de ok 37 28292ms",
+   "overpass-api.de ok 94 28628ms",
+   "overpass-api.de ok 187 22974ms",
+   "streets: 187 shops"
+  ]
  }
 }
