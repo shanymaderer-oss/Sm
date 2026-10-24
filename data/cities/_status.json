@@ -1225,7 +1225,7 @@
  },
  "paphos": {
   "at": "2026-10-23T21:36:31.316Z",
-  "seconds": 795,
+  "seconds": 839,
   "osm": {
    "sights": 18,
    "restaurants": 90,
@@ -1260,14 +1260,9 @@
   },
   "streets": [],
   "log": [
-   "(updated: sights, sights2, landmarks, streets)",
-   "overpass-api.de ok 18 37840ms",
-   "overpass-api.de ok 24 33465ms",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 2 35157ms",
-   "overpass-api.de ok 17 40538ms",
-   "streets: 17 shops",
-   "fame: 30 of 30"
+   "(updated: streets)",
+   "overpass-api.de ok 17 36416ms",
+   "streets: 17 shops"
   ]
  },
  "nice": {
