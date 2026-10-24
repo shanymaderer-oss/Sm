@@ -1878,16 +1878,18 @@
  },
  "copenhagen": {
   "at": "2026-10-23T23:01:19.368Z",
-  "seconds": 569,
+  "seconds": 764,
   "osm": {
-   "sights": 193,
+   "sights": 133,
    "restaurants": 422,
    "cafes": 300,
    "hotels": 130,
    "shopping": 300,
    "diet": 19,
    "extra": 121,
-   "streets": 0
+   "streets": 0,
+   "sights2": 58,
+   "landmarks": 98
   },
   "voyage": {
    "eat": 94,
@@ -1903,24 +1905,23 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [],
   "log": [
-   "overpass-api.de ok 193 37131ms",
-   "overpass-api.de HTTP 502 424ms",
-   "overpass-api.de HTTP 502 457ms",
-   "overpass-api.de ok 422 35447ms",
-   "overpass-api.de ok 300 29872ms",
-   "overpass-api.de ok 130 43351ms",
-   "overpass-api.de HTTP 502 457ms",
-   "overpass-api.de ok 300 27293ms",
-   "overpass-api.de ok 19 28986ms",
-   "overpass-api.de ok 121 40898ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 504 47451ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems ok 0 11683ms",
-   "streets: 0 shops"
+   "(updated: sights, sights2, landmarks, streets)",
+   "overpass-api.de ok 133 31534ms",
+   "overpass-api.de HTTP 502 303ms",
+   "overpass-api.de ok 58 30340ms",
+   "overpass-api.de ok 98 35625ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de ok 0 29279ms",
+   "streets: 0 shops",
+   "fame: 419 of 419"
   ]
  },
  "seville": {
