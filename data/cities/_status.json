@@ -1626,16 +1626,18 @@
  },
  "thessaloniki": {
   "at": "2026-10-23T22:24:30.383Z",
-  "seconds": 370,
+  "seconds": 484,
   "osm": {
-   "sights": 174,
+   "sights": 151,
    "restaurants": 232,
    "cafes": 300,
    "hotels": 100,
    "shopping": 166,
    "diet": 12,
    "extra": 60,
-   "streets": 8
+   "streets": 8,
+   "sights2": 22,
+   "landmarks": 12
   },
   "voyage": {
    "eat": 33,
@@ -1651,6 +1653,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Ιωάννη Τσιμισκή (30)",
    "Εγνατία (16)",
@@ -1659,18 +1667,11 @@
    "Φράγκων (7)"
   ],
   "log": [
-   "overpass-api.de ok 174 33583ms",
-   "overpass-api.de ok 232 34559ms",
-   "overpass-api.de ok 300 36795ms",
-   "overpass-api.de ok 100 26987ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 166 27353ms",
-   "overpass-api.de ok 12 39078ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 60 34049ms",
-   "overpass-api.de ok 212 32021ms",
-   "streets: 212 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 151 33938ms",
+   "overpass-api.de ok 22 20081ms",
+   "overpass-api.de ok 12 27649ms",
+   "fame: 245 of 245"
   ]
  },
  "naples": {
