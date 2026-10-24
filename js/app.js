@@ -944,22 +944,27 @@ function placeLine(p) {
 }
 const reviewsUrl = p => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.local || p.name} ${p.address || ""} ${cityQ()}`.trim())}`;
 /* what people film and post: TikTok and Instagram searches for a place or a city (opens in the app on a phone) */
+const ytUrl = q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+const taUrl = q => `https://www.tripadvisor.com/Search?q=${encodeURIComponent(q)}`;
+const redditUrl = q => `https://www.reddit.com/search/?q=${encodeURIComponent(q)}`;
+const fbGroupsUrl = q => `https://www.facebook.com/search/groups/?q=${encodeURIComponent(q)}`;
 const tiktokUrl = q => `https://www.tiktok.com/search?q=${encodeURIComponent(q)}`;
 const igTag = q => String(q || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
 const igUrl = q => igTag(q).length >= 3 ? `https://www.instagram.com/explore/tags/${igTag(q)}/` : gSearch(`site:instagram.com ${q}`);
 function socialRow(p) {
   const city = S.trip?.cityEn || S.trip?.city || "";
   const name = p.local || p.name;
-  return `<div class="chiprow social"><a class="chipbtn tt" href="${tiktokUrl(`${name} ${city}`)}" target="_blank" rel="noopener">${ic("play")}סרטונים בטיקטוק</a><a class="chipbtn ig" href="${igUrl(name)}" target="_blank" rel="noopener">${ic("camera")}תמונות באינסטגרם</a></div>`;
+  return `<div class="chiprow social"><a class="chipbtn tt" href="${tiktokUrl(`${name} ${city}`)}" target="_blank" rel="noopener">${ic("play")}טיקטוק</a><a class="chipbtn ig" href="${igUrl(name)}" target="_blank" rel="noopener">${ic("camera")}אינסטגרם</a><a class="chipbtn yt" href="${ytUrl(`${name} ${city}`)}" target="_blank" rel="noopener">${ic("play")}יוטיוב</a><a class="chipbtn ta" href="${taUrl(`${name} ${city}`)}" target="_blank" rel="noopener">${ic("users")}TripAdvisor</a></div>`;
 }
 function socialCityCard(t) {
   const he = t.city, en = t.cityEn || t.cityLocal || t.city;
   const q = [[`${he} מסעדות`, "מסעדות (יוצרים ישראלים)"], [`${he} המלצות`, "המלצות בעברית"], [`${en} hidden gems`, "פינות נסתרות"], [`${en} street food`, "אוכל רחוב"], [`${en} must eat`, "חובה לאכול"], [`${en} things to do`, "מה לעשות"]];
-  return `<div class="card socialcard"><h2>${ic("play")} מה ממליצים בטיקטוק ובאינסטגרם על ${esc(he)}</h2>
+  return `<div class="card socialcard"><h2>${ic("play")} מה ממליצים ברשתות על ${esc(he)}</h2>
     <p>שם רואים איך המקום נראה באמת ומה אנשים מזמינים. פותחים חיפוש מוכן, ואם מצאתם מקום שאהבתם, מחפשים אותו במסע לפי שם ומוסיפים למסלול.</p>
     <div class="chiprow">${q.map(([x, l]) => `<a class="chipbtn tt" href="${tiktokUrl(x)}" target="_blank" rel="noopener">${ic("play")}${esc(l)}</a>`).join("")}</div>
+    <div class="chiprow"><a class="chipbtn yt" href="${ytUrl(`${he} טיול וולוג`)}" target="_blank" rel="noopener">${ic("play")}וולוגים בעברית ביוטיוב</a><a class="chipbtn yt" href="${ytUrl(`${en} travel guide`)}" target="_blank" rel="noopener">${ic("play")}מדריכים ביוטיוב</a><a class="chipbtn" href="${fbGroupsUrl(`טיול ל${he}`)}" target="_blank" rel="noopener">${ic("users")}קבוצות פייסבוק של ישראלים</a><a class="chipbtn" href="${redditUrl(`${en} itinerary tips`)}" target="_blank" rel="noopener">${ic("speech")}Reddit: טיפים של מטיילים</a><a class="chipbtn ta" href="${taUrl(en)}" target="_blank" rel="noopener">${ic("users")}TripAdvisor</a></div>
     <div class="chiprow"><a class="chipbtn ig" href="${igUrl(en + "food")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "food"))}</a><a class="chipbtn ig" href="${igUrl(en + "travel")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "travel"))}</a><a class="chipbtn ig" href="${igUrl(en)}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en))}</a></div>
-    <div class="disclaim">${ic("info")}<span>טיקטוק ואינסטגרם לא מאפשרים לאתרים אחרים לקרוא את הפוסטים אוטומטית, אז אנחנו פותחים לכם את החיפוש אצלם.</span></div></div>`;
+    <div class="disclaim">${ic("info")}<span>הרשתות לא מאפשרות לאתרים אחרים לקרוא את הפוסטים אוטומטית, אז אנחנו פותחים לכם חיפוש מוכן אצלן.</span></div></div>`;
 }
 function contactRow(p) {
   const items = [];
