@@ -18,7 +18,10 @@
   function buildQueries(lat, lng, R) {
     const H = (r, t = 25) => `[out:json][timeout:${t}][bbox:${bbox(lat, lng, r)}];`;
     return {
-      sights: H(R) + `(nwr["tourism"~"^(attraction|museum|gallery|viewpoint|zoo|aquarium|theme_park)$"]["name"];nwr["historic"]["name"]["wikidata"];);out center tags 260;`,
+      /* sights in two parts: the ones with a Wikidata entry (almost every famous place) first, so a big city never cuts off
+         the Colosseum or the Louvre because of a limit; then smaller attractions without one */
+      sights: H(R) + `(nwr["tourism"~"^(attraction|museum|gallery|viewpoint|zoo|aquarium|theme_park)$"]["name"]["wikidata"];nwr["historic"]["name"]["wikidata"];nwr["amenity"="fountain"]["wikidata"];);out center tags 900;`,
+      sights2: H(R * 0.8) + `nwr["tourism"~"^(attraction|museum|gallery|viewpoint|zoo|aquarium|theme_park)$"]["name"][!"wikidata"];out center tags 250;`,
       restaurants: H(R * 0.5) + `nwr["amenity"="restaurant"]["name"];out center tags 450;`,
       cafes: H(R * 0.45) + `(nwr["amenity"~"^(cafe|ice_cream|marketplace|food_court)$"]["name"];nwr["shop"~"^(bakery|pastry|confectionery|deli|wine)$"]["name"];);out center tags 300;`,
       hotels: H(R * 1.1) + `nwr["tourism"~"^(hotel|hostel|guest_house|apartment|motel)$"]["name"];out center tags 350;`,
@@ -169,9 +172,10 @@
   /* How famous a place is: the number of Wikipedia languages that have an article about it (Wikidata sitelinks).
      The Eiffel Tower has over 150, a small local museum 2 or 3. Also keeps the Hebrew article title. */
   const SIGHTISH = t => t.tourism || t.historic || t.amenity === "place_of_worship" || t.leisure || t.natural || t.man_made || t.place === "square" || t.highway === "pedestrian" || t.amenity === "clock";
-  function fameIds(els, max = 450) {
+  function fameIds(els, max = 1200, voyage = []) {
     const ids = [];
     const seen = new Set();
+    for (const v of voyage || []) if (/^Q\d+$/.test(v.wikidata || "") && ["see", "do"].includes(v.type) && !seen.has(v.wikidata)) { seen.add(v.wikidata); ids.push(v.wikidata); }
     for (const e of els || []) {
       const t = e.tags || {}, id = t.wikidata;
       if (!/^Q\d+$/.test(id || "") || seen.has(id) || !SIGHTISH(t)) continue;
