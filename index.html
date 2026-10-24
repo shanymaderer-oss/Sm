@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>מסע · המדריך האישי שלך בחו״ל</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https:; worker-src 'self' blob:; child-src blob:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>מסע – מסלול טיול לפי מה שאתם אוהבים</title>
 <meta name="description" content="מסע בונה לכם טיול ממקומות אמיתיים: מסלול הליכה לכל יום, הסיפור של כל מקום, שעות עומס והזמנות דרך האתרים הרשמיים.">
-<meta name="theme-color" content="#1f5fd1">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231f5fd1'/%3E%3Cpath d='M16 26s-7-6.5-7-12.5a7 7 0 0 1 14 0C23 19.5 16 26 16 26z' fill='white'/%3E%3Ccircle cx='16' cy='13.5' r='2.6' fill='%231f5fd1'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800&family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
+<meta name="theme-color" content="#a3221b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23a3221b'/%3E%3Cpath d='M7 22c4-1 5-9 9-9s5 8 9 9' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-dasharray='0.1 4.2'/%3E%3Ccircle cx='7' cy='22' r='2.4' fill='white'/%3E%3Ccircle cx='25' cy='22' r='2.4' fill='white'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/ibm-plex-sans-hebrew-hebrew-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" integrity="sha384-uTttxo/aOKbdE5RlD/SPzSDoDmNvGlUYPjONi2MN/b7c9HPSvW07OIuyP7uL6jxK" crossorigin="anonymous">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -19,8 +20,8 @@
 
   <div class="topbar">
     <form class="gsearch" id="gsearch" role="search">
-      <span class="logo"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></svg></span></span>
-      <input id="gq" type="search" placeholder="חיפוש ב-מסע: יעד, מסעדה או מקום" aria-label="חיפוש" autocomplete="off">
+      <span class="logo" aria-hidden="true">מסע</span>
+      <input id="gq" type="search" placeholder="חיפוש יעד, מסעדה או מקום" aria-label="חיפוש" autocomplete="off">
       <button type="button" class="gear" id="gearBtn" aria-label="הגדרות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </form>
     <div class="gchips" id="gchips" hidden></div>
@@ -43,7 +44,7 @@
   <div class="toast" id="toast" role="status" hidden></div>
 </div>
 
-<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js" integrity="sha384-5+cfbwT0iiub6VsQAdn6yz16nr6sDiQoHx6tm4O8OVYXHYOxcffFmCJBL0dgdvGp" crossorigin="anonymous"></script>
 <script src="js/data.js"></script>
 <script src="js/sources.js"></script>
 <script src="js/cities.js"></script>
@@ -51,6 +52,7 @@
 <script src="js/cost.js"></script>
 <script src="js/transport.js"></script>
 <script src="js/ai.js"></script>
+<script src="js/intent.js"></script>
 <script src="js/planner.js"></script>
 <script src="js/app.js"></script>
 </body>

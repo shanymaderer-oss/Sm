@@ -120,7 +120,7 @@ Masa.planner = (() => {
     if (!name) return null;
     const kind = kindFromTags(t);
     return {
-      id: `${e.type}/${e.id}`, src: "osm", name, local: t.name || name, kind, cat: KIND[kind].cat, lat: e.lat, lng: e.lon,
+      id: `${e.type}/${e.id}`, src: "osm", name, local: t.name || name, en: t["name:en"] || null, kind, cat: KIND[kind].cat, lat: e.lat, lng: e.lon,
       wikidata: t.wikidata || null, wikiTag: t.wikipedia || null, website: t.website || t["contact:website"] || t.url || null,
       phone: t.phone || t["contact:phone"] || null, hours: t.opening_hours || null, cuisine: t.cuisine || null,
       fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || "") || /vegetarian|vegan/.test(t.cuisine || ""),
@@ -173,7 +173,13 @@ Masa.planner = (() => {
       const p = fromOSM(e, cc);
       if (!p) continue;
       const key = p.wikidata || `${p.kind}|${normName(p.local)}`;
-      if (seen.has(key)) continue;
+      const old = seen.get(key);
+      if (old) {
+        // two map objects with one Wikipedia id: keep the main one (the basilica, not the museum inside it that borrowed its id)
+        const pref = x => (x.hasHe ? 2 : 0) + (x.id.startsWith("node") ? 0 : 1) + (/\b(museu|museo|museum|musée|shop|store|ticket|entrance|vstup|eingang)\b/i.test(x.local) ? -3 : 0);
+        if (pref(p) > pref(old)) { pool[pool.indexOf(old)] = p; seen.set(key, p); }
+        continue;
+      }
       seen.set(key, p);
       pool.push(p);
     }
@@ -202,7 +208,10 @@ Masa.planner = (() => {
       if (km(geo, { lat: v.lat, lng: v.lng }) > 12) continue;
       // only match the same kind of place: a hotel listing must not become a restaurant's (or a square's) recommendation
       const fits = VOY_CATS[v.type] || [];
-      const match = pool.find(p => fits.includes(p.cat) && km(p, v) < 0.15 && (similar(p.local, v.name) || (v.alt && similar(p.local, v.alt))));
+      // the closest name wins: "Sagrada Família" is the basilica, not the "Museu de la Sagrada Família" next to it
+      const vn = normName(v.name);
+      const match = pool.filter(p => fits.includes(p.cat) && km(p, v) < 0.15 && (similar(p.local, v.name) || (v.alt && similar(p.local, v.alt))))
+        .sort((a, b) => ((v.wikidata && b.wikidata === v.wikidata) - (v.wikidata && a.wikidata === v.wikidata)) || Math.abs(normName(a.local).length - vn.length) - Math.abs(normName(b.local).length - vn.length))[0];
       const vo = { text: v.content, price: v.price, priceClass: v.priceClass, hours: v.hours, district: v.district || null };
       const vk = /kosher|cacher|glatt/i.test(`${v.name} ${v.content || ""}`), vv = /vegetarian|vegan/i.test(`${v.name} ${v.content || ""}`);
       if (match) {
@@ -506,7 +515,7 @@ Masa.planner = (() => {
     const busy = busyFor(p);
     const min = meal ? MEAL_MIN[meal] : (KIND[p.kind]?.min || 60);
     if (meal === "hotel") return { name: p.name, local: p.local, cat: "sleep", kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: MEAL.hotel, lat: p.lat, lng: p.lng, time: "", duration: "", _min: 0, cost: "", why: "המלון שבחרתם. כל יום יוצא מכאן.", whyLang: "he", history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], booking: { needed: false, steps: [], query: p.local }, website: p.website || null, phone: p.phone || null, address: p.address || null, image: null, hours: null, signals: p.signals || [], q: p.q, priceClass: p.priceClass || null, osm: p.id, isHotel: true };
-    const why = p.voyage?.text ? p.voyage.text : p.kind === "street" ? streetWhy(p) : WHY[p.kind] || WHY.attraction;
+    const why = p.voyage?.text ? p.voyage.text : p.kind === "street" ? streetWhy(p) : p.area ? "אזור שביקשתם לראות. הכי טוב לשוטט בו ברגל, בלי תוכנית מדויקת." : WHY[p.kind] || WHY.attraction;
     return {
       name: p.name, local: p.local, cat: p.cat, kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: meal ? MEAL[meal] : null,
       lat: p.lat, lng: p.lng, time: "", duration: fmtDur(min), _min: min, cost: costText(p, budget),
@@ -539,12 +548,14 @@ Masa.planner = (() => {
     return walk;
   }
   function assignTimes(day) {
-    let t = 9 * 60;
+    const start = day.startMin || 9 * 60;
+    let t = start;
     day.stops.forEach((s, i) => {
-      if (s.meal === "hotel") t = 8.5 * 60;
-      if (s.meal === "breakfast") t = Math.max(t, 8.75 * 60);
+      if (s.meal === "hotel") t = start - 30;
+      if (s.meal === "breakfast") t = Math.max(t, start - 15);
       if (s.meal === "lunch") t = Math.max(t, 12.75 * 60);
-      if (s.meal === "dinner") t = Math.max(t, 19.5 * 60);
+      if (s.sunset && day.sunsetMin) t = Math.max(t, day.sunsetMin - 35);
+      if (s.meal === "dinner") t = Math.max(t, 19.5 * 60, s.sunset ? 0 : 0);
       if (s.meal === "drinks") t = Math.max(t, 21.25 * 60);
       t = Math.round(t / 15) * 15;
       s.time = fmtTime(t);
@@ -667,6 +678,104 @@ Masa.planner = (() => {
   /* ---------- main entry ----------
      build() returns as soon as the places are chosen; hydrate() adds names, stories, photos, routes and AI later. */
   /* Tripadvisor ratings and prices for the popular hotels of each ready city (collected ahead of time, see data/ta) */
+  /* local sunset time in minutes after midnight (NOAA approximation), for a trip day */
+  function sunsetLocal(geo, start, dayIdx) {
+    try {
+      const d = start ? new Date(start + "T12:00:00Z") : new Date(Date.now() + 21 * 864e5);
+      d.setUTCDate(d.getUTCDate() + dayIdx);
+      const r = Math.PI / 180, N = Math.floor((d - Date.UTC(d.getUTCFullYear(), 0, 0)) / 864e5);
+      const g = 2 * Math.PI / 365 * (N - 1);
+      const eq = 229.18 * (0.000075 + 0.001868 * Math.cos(g) - 0.032077 * Math.sin(g) - 0.014615 * Math.cos(2 * g) - 0.040849 * Math.sin(2 * g));
+      const decl = 0.006918 - 0.399912 * Math.cos(g) + 0.070257 * Math.sin(g) - 0.006758 * Math.cos(2 * g) + 0.000907 * Math.sin(2 * g) - 0.002697 * Math.cos(3 * g) + 0.00148 * Math.sin(3 * g);
+      const ha = Math.acos(Math.cos(90.833 * r) / (Math.cos(geo.lat * r) * Math.cos(decl)) - Math.tan(geo.lat * r) * Math.tan(decl)) / r;
+      const utcMin = 720 - 4 * (geo.lng - ha) - eq;
+      // the city's clock: its time zone when known, otherwise by longitude
+      let off = Math.round(geo.lng / 15) * 60;
+      if (geo.tz) {
+        const parts = new Intl.DateTimeFormat("en-US", { timeZone: geo.tz, hour: "numeric", minute: "numeric", hourCycle: "h23" }).formatToParts(d);
+        const h = +parts.find(p => p.type === "hour").value, m = +parts.find(p => p.type === "minute").value;
+        off = h * 60 + m - (d.getUTCHours() * 60 + d.getUTCMinutes());
+        if (off > 840) off -= 1440; if (off < -720) off += 1440;
+      }
+      const v = Math.round(utcMin + off);
+      return isFinite(v) && v > 900 && v < 1320 ? v : null;
+    } catch { return null; }
+  }
+  /* the traveler's own words: lift what they asked for, push down what they did not want, and find the places they named */
+  const ROOFTOP = /rooftop|roof ?top|terrazz|terrace|terraza|azotea|sky ?bar|dachterr|teras/i;
+  const WINE = /wine|enotec|vinote|bodeg|wein|vino|cave à|bar à vin/i;
+  function applyWish(w, pool, geo, data) {
+    const lc = LOCAL_CUISINE[geo.cc] || [];
+    for (const p of pool) {
+      if (w.boost[p.kind]) p.q += w.boost[p.kind];
+      const cu = (p.cuisine || "").toLowerCase();
+      if (p.kind === "restaurant" || p.kind === "cafe") {
+        if (w.likeCuisine.some(c => cu.includes(c))) p.q += 4;
+        if (w.dislikeCuisine.some(c => cu.includes(c))) p.q -= 8;
+        if (w.local && lc.some(c => cu.includes(c))) p.q += 2;
+        if (w.cheapFood && /pizza|kebab|sandwich|street|noodle|falafel|crepe|taco|gyros|souvlaki/.test(cu)) p.q += 2;
+      }
+      if (w.rooftop && (p.cat === "night" || p.cat === "food" || p.kind === "view") && ROOFTOP.test(p.local || "")) p.q += 6;
+      if (w.wine && (p.cat === "night" || p.kind === "deli") && (WINE.test(p.local || "") || /wine/.test(cu))) p.q += 5;
+      if (w.jewish && p.jewish) p.q += 8;
+      if (w.free && p.fee === "yes") p.q -= 3;
+      if (w.kids) { if (["zoo", "themepark", "park", "beach"].includes(p.kind)) p.q += 2; if (p.kind === "bar" || p.kind === "club") p.q -= 6; }
+      if (w.offbeat && !["food", "night", "sleep"].includes(p.cat)) { p.q -= Math.min(8, (p.fame || 0) / 10); if (p.voyage) p.q += 2; }
+      if (w.famous && p.fame) p.q += Math.min(8, p.fame / 10);
+      if (w.avoid.includes(p.kind)) p.q -= 20;
+    }
+    // places they named, matched by Hebrew, local and English names
+    const cityNames = [geo.name, geo.local, geo.en];
+    const items = pool.filter(p => p.cat !== "sleep").map(p => ({ p, names: [p.name, p.local, p.en, p._he], fame: p.fame || 0 }));
+    const opt = { skip: w.ruleWords };
+    // a kind they said they do not want is not picked by its name alone ("Montmartre" is the hill, not the Montmartre Museum)
+    let found = Masa.intent.findPlaces(w.text, items.filter(i => !w.avoid.includes(i.p.kind)), cityNames, opt).map(o => o.it.p);
+    // not on the map under that name: a Hebrew Wikipedia article at that spot can stand in
+    const wikiItems = (data.wiki?.he || []).filter(x => !WIKI_SKIP.test(x.title) && km(geo, x) < 15).map(x => ({ x, names: [x.title], fame: 25 }));
+    for (const o of Masa.intent.findPlaces(w.text, wikiItems, cityNames, opt)) {
+      const x = o.it.x;
+      if (found.some(p => km(p, x) < 0.25)) continue;
+      const near = pool.find(p => !["food", "night", "sleep"].includes(p.cat) && km(p, x) < 0.12);
+      if (near) { found.push(near); continue; }
+      const kind = wikiKind(x.title), clean = x.title.replace(/\s*\([^)]*\)\s*$/, "");
+      const p = { id: `wiki/he/${x.pageid}`, src: "wiki", name: clean, local: clean, kind, cat: KIND[kind].cat, lat: x.lat, lng: x.lng, _he: x.title, dist: km(geo, x), q: 6, signals: [] };
+      pool.push(p); found.push(p);
+    }
+    found = found.filter((p, i) => found.findIndex(o => o.id === p.id) === i);
+    found.forEach(p => { p.userMust = true; p.q += 25; if (!p.signals?.includes("ביקשתם")) p.signals = ["ביקשתם", ...(p.signals || [])]; });
+    // phrases after "לראות", "לבקר ב" that matched nothing: said back to the traveler
+    const missed = (w.asks || []).filter(a => !Masa.intent.findPlaces(a, found.map(p => ({ names: [p.name, p.local, p.en, p._he], fame: 30 })), cityNames).length
+      && !Masa.intent.findPlaces(a, items.filter(i => !found.includes(i.p)).map(i => ({ ...i, fame: 0 })), cityNames).length);
+    // the hotel they already booked
+    let hotel = null, hotelMissed = null;
+    if (w.hotelName) {
+      const hs = pool.filter(p => p.cat === "sleep").map(p => ({ p, names: [p.name, p.local, p.en], fame: p.ta ? 30 : 0 }));
+      const h = Masa.intent.findPlaces(w.hotelName, hs, cityNames)[0];
+      if (h) { const p = h.it.p; hotel = { id: p.id, name: p.name, local: p.local, kind: p.kind, lat: p.lat, lng: p.lng, stars: p.stars, priceClass: p.priceClass, website: p.website, phone: p.phone, address: p.address, signals: p.signals, q: p.q }; }
+      else hotelMissed = w.hotelName;
+    }
+    return { places: found, missed, hotel, hotelMissed };
+  }
+  /* a light index of a ready city's named places, for showing which named places were recognized while the traveler types */
+  const wishIdx = {};
+  function wishIndex(slug) {
+    if (!slug) return Promise.resolve(null);
+    return wishIdx[slug] || (wishIdx[slug] = svc.getJSON(`data/cities/${slug}.json`, {}, 12000).then(d => {
+      const F = d.fame || {};
+      const out = [];
+      for (const e of d.els || []) {
+        const t = e.tags || {};
+        if (!t.name) continue;
+        const kind = kindFromTags(t);
+        if (KIND[kind].cat === "sleep") continue;
+        const fame = (t.wikidata && F.n?.[t.wikidata]) || 0;
+        if (!fame && !t["name:he"] && !t.tourism && !t.historic) continue;
+        out.push({ names: [t["name:he"], t.name, t["name:en"], t.wikidata && F.he?.[t.wikidata]], fame, he: t["name:he"] || (t.wikidata && F.he?.[t.wikidata]) || t.name });
+      }
+      for (const x of d.wiki?.he || []) if (!WIKI_SKIP.test(x.title)) out.push({ names: [x.title], fame: 25, he: x.title.replace(/\s*\([^)]*\)\s*$/, "") });
+      return out;
+    }).catch(() => null));
+  }
   let TA = null;
   const loadTA = () => TA || (TA = svc.getJSON("data/ta/hotels.json", {}, 8000).catch(() => ({})));
   async function build(opts, step, signal) {
@@ -694,7 +803,7 @@ Masa.planner = (() => {
     step(2);
     const ta = (await loadTA())[CITIES.findCity(geo.slug || geo.en || geo.name)?.slug] || null;
     const { pool, noGeo } = buildPool({ ...data, ta }, geo);
-    const hotel = opts.hotel && hasXY(opts.hotel) ? opts.hotel : null;
+    let hotel = opts.hotel && hasXY(opts.hotel) ? opts.hotel : null;
     if (hotel) pool.forEach(p => { p.dist = 0.3 * p.dist + 0.7 * km(hotel, p); });
     const mobility = opts.mobility || "";
     pool.forEach(p => rate(p, geo.cc, budget, mobility));
@@ -704,6 +813,34 @@ Masa.planner = (() => {
       pool.forEach(p => { if (V.has(String(p.id).toLowerCase()) || V.has(String(p.local || "").toLowerCase())) { p.q -= 6; p.seen = true; } });
     }
     if (opts.likeCuisines?.length) pool.forEach(p => { if (p.kind === "restaurant" && opts.likeCuisines.some(c => (p.cuisine || "").includes(c))) p.q += 1; });
+    /* what the traveler wrote in their own words */
+    const wish = Masa.intent ? Masa.intent.parse(opts.notes || "") : null;
+    const avoid = new Set(wish?.avoid || []);
+    const wishOut = wish && !wish.empty ? applyWish(wish, pool, geo, data) : null;
+    // their hotel is not on our list: look it up on the whole map (a few seconds at most)
+    if (wishOut?.hotelMissed && !hotel) {
+      try {
+        const r = await Promise.race([svc.searchNear(wishOut.hotelMissed, geo.lat, geo.lng, signal), new Promise(res => setTimeout(() => res([]), 5000))]);
+        const x = (r || []).find(x => x.category === "tourism" && /hotel|hostel|guest_house|apartment|motel/.test(x.type) && km(geo, x) < 25);
+        if (x) { wishOut.hotel = { id: `${x.osmType}/${x.osmId}`, name: x.name, local: x.local, kind: x.type === "hostel" ? "hostel" : "hotel", lat: x.lat, lng: x.lng, address: x.address, signals: [] }; wishOut.hotelMissed = null; }
+      } catch {}
+      chk();
+    }
+    // places they named that are not in our lists (a neighborhood like Montmartre): look them up on the whole map
+    if (wishOut?.missed?.length) {
+      const look = wishOut.missed.slice(0, 3).map(a => svc.searchNear(a, geo.lat, geo.lng, signal).then(r => ({ a, r })).catch(() => ({ a, r: [] })));
+      const res = await Promise.race([Promise.all(look), new Promise(res => setTimeout(() => res([]), 6000))]);
+      chk();
+      for (const { a, r } of res) {
+        const x = (r || []).find(x => km(geo, x) < 20 && !["highway", "railway", "shop", "amenity", "office", "building"].includes(x.category) && !/hotel|hostel|apartment|guest_house/.test(x.type));
+        if (!x) continue;
+        const area = x.category === "place" || x.category === "boundary";
+        const kind = area ? "sight" : x.type === "museum" ? "museum" : x.type === "viewpoint" ? "view" : /park|garden/.test(x.type) ? "park" : x.type === "beach" ? "beach" : "attraction";
+        const p = { id: `${x.osmType}/${x.osmId}`, src: "search", name: x.name, local: x.local, kind, cat: KIND[kind].cat, lat: x.lat, lng: x.lng, dist: km(geo, x), q: 30, userMust: true, area, signals: ["ביקשתם"] };
+        pool.push(p); wishOut.places.push(p); wishOut.missed = wishOut.missed.filter(m => m !== a);
+      }
+    }
+    if (wishOut?.hotel && !hotel) { hotel = wishOut.hotel; pool.forEach(p => { p.dist = 0.3 * p.dist + 0.7 * km(hotel, p); }); }
     // less walking: places close to each other and to the center matter twice as much
     if (mobility) pool.forEach(p => { p.dist *= 2; });
     /* stay in the heart of the city: inside the core a place costs little for its distance; beyond it, each km costs more.
@@ -715,7 +852,7 @@ Masa.planner = (() => {
     pool.forEach(p => { p.out = Math.max(0, p.dist - core); p.cpen = p.dist * (move === "car" ? 0.15 : 0.6) + M.out * p.out; });
     if (opts.diet === "כשר") pool.forEach(p => { if (p.cat === "food") p.q += p.kosher ? 8 : -1; });
     if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });
-    const by = kinds => pool.filter(p => kinds.includes(p.kind)).sort((a, b) => (b.q - b.cpen) - (a.q - a.cpen));
+    const by = kinds => pool.filter(p => kinds.includes(p.kind) && (!avoid.has(p.kind) || p.userMust)).sort((a, b) => (b.q - b.cpen) - (a.q - a.cpen));
 
     /* The perfect mix: chosen interests get most of the day, the rest still appear a little,
        and every day gets at least one of the city's must-see places. */
@@ -731,7 +868,11 @@ Masa.planner = (() => {
     const MUST = ["attraction", "sight", "museum", "view", "church", "park", "square", "bridge"];
     /* 1. one anchor per day: the city's must-see places, spread apart so each day covers its own area */
     const mustPool = by(MUST).filter(p => p.q >= 6);
-    const anchors = pickFor(mustPool, days, [], M.gap);
+    // the places the traveler named come first: each one opens a day, and ones close to each other share a day
+    const userMusts = (wishOut?.places || []).filter(p => !["food", "night", "sleep"].includes(p.cat));
+    const anchors = pickFor(userMusts, Math.min(days, userMusts.length), [], Math.max(0.6, M.gap * 0.7));
+    anchors.push(...pickFor(mustPool, days - anchors.length, anchors, M.gap));
+    const extraMusts = userMusts.filter(p => !anchors.includes(p));
     if (anchors.length < days) anchors.push(...pickFor(by([...MUST, ...Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c])]), days - anchors.length, anchors, M.gap * 0.7));
     anchors.forEach(p => { if (p.q >= 6) p.must = true; });
     if (!anchors.length) throw { code: "too_few" };
@@ -742,7 +883,7 @@ Masa.planner = (() => {
     const markTwins = x => {
       if (!SIGHTY.has(x.kind)) return;
       for (const p of pool) {
-        if (used.has(p.id) || !SIGHTY.has(p.kind)) continue;
+        if (used.has(p.id) || !SIGHTY.has(p.kind) || (p.userMust && !(x.userMust && similar(p.local, x.local)))) continue;
         const d = km(x, p);
         if (d < 0.12 || (d < 0.45 && (p.fame || 0) >= 25 && (x.fame || 0) >= 25) || (d < 1 && similar(p.local, x.local))) used.add(p.id);
       }
@@ -773,8 +914,17 @@ Masa.planner = (() => {
       }
       return nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra);
     };
+    // named places that did not get a day of their own join the day whose main place is nearest
+    const extraOf = anchors.map(() => []);
+    extraMusts.forEach(p => {
+      if (anchors.includes(p) || extraOf.some(g => g.includes(p))) return;
+      let bi = 0;
+      anchors.forEach((a, i) => { if (km(a, p) < km(anchors[bi], p)) bi = i; });
+      extraOf[bi].push(p); used.add(p.id); markTwins(p);
+    });
+    const satDay = d => { if (!wish?.shabbat || !opts.start) return false; const x = new Date(opts.start + "T12:00:00"); x.setDate(x.getDate() + d); return x.getDay() === 6; };
     const groups = anchors.map((anchor, d) => {
-      const dayPick = [anchor];
+      const dayPick = [anchor, ...extraOf[d]];
       kindCount[anchor.kind] = (kindCount[anchor.kind] || 0) + 1;
       /* a day out at a far landmark stays out there: everything is chosen around it, not on the way back to the center */
       // the same rule for every way of moving: a day in the center stays in the center, a day out stays out
@@ -782,8 +932,8 @@ Masa.planner = (() => {
       const reachToday = farDay ? Math.min(maxReach, move === "car" ? 3 : 2) : maxReach;
       const outCost = p => farDay ? 0 : (move === "car" ? 0.6 : move === "transit" ? 1.2 : 2.5) * Math.max(0, p.dist - centralR);
       const tooFar = p => farDay ? km(anchor, p) > reachToday : p.dist > centralR + 0.8 && (p.fame || 0) < 40;
-      const quota = quotaFor(d);
-      let budget = perDayActs;
+      const quota = quotaFor(d).filter(x => !(satDay(d) && x.c === "shopping"));
+      let budget = Math.max(extraOf[d].length ? 1 : 0, perDayActs - extraOf[d].length);
       for (const { c, n } of quota.sort((x, y) => W[y.c] - W[x.c])) {
         for (let k = 0; k < n && budget > 0; k++) {
           const kinds = c === "food" && chosenActs.length ? ["market", "deli", "bakery"] : SLOT_KINDS[c];
@@ -803,7 +953,7 @@ Masa.planner = (() => {
         }
       }
       // fill any empty slots with the best nearby place from the chosen interests
-      const fillKinds = [...new Set(Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c]))];
+      const fillKinds = [...new Set(Object.keys(W).filter(c => W[c] > 0 && !(satDay(d) && c === "shopping")).flatMap(c => SLOT_KINDS[c]))];
       while (budget > 0) {
         let best = null, bv = -Infinity;
         for (const p of by(fillKinds)) {
@@ -814,8 +964,40 @@ Masa.planner = (() => {
         if (!best) break;
         used.add(best.id); markTwins(best); dayPick.push(best); budget--;
       }
-      return orderDay(dayPick, hotel);
+      const ordered = orderDay(dayPick, hotel);
+      // a sunset: end the day's sights at a viewpoint
+      if (wish?.sunset) {
+        const vi = ordered.findIndex(p => p.kind === "view" || p.kind === "bridge");
+        const last = ordered[ordered.length - 1];
+        if (vi >= 0 && vi < ordered.length - 1 && km(ordered[vi], last) < 1.5) ordered.push(ordered.splice(vi, 1)[0]);
+        else if (vi < 0) {
+          const v = by(["view", "bridge"]).find(p => !used.has(p.id) && km(last, p) < 1.2);
+          if (v) { used.add(v.id); markTwins(v); ordered.push(v); }
+        }
+        const end = ordered[ordered.length - 1];
+        if (end.kind === "view" || end.kind === "bridge") end._sunset = true;
+      }
+      return ordered;
     });
+    /* a place kind they asked for by name (a beach, a zoo, a market) is in the trip at least once */
+    for (const [k, v] of Object.entries(wish?.boost || {})) {
+      if (v < 5 || groups.some(g => g.some(p => p.kind === k))) continue;
+      let best = null, bv = -Infinity, bd = 0;
+      for (const p of by([k])) {
+        if (used.has(p.id)) continue;
+        groups.forEach((g, i) => {
+          const d = Math.min(...g.map(x => km(x, p)));
+          const v2 = p.q - d * (move === "car" ? 0.5 : 1.5);
+          if (d < Math.max(3, maxReach * 2) && v2 > bv) { bv = v2; best = p; bd = i; }
+        });
+      }
+      if (best) {
+        used.add(best.id); markTwins(best);
+        const g = orderDay([...groups[bd], best], hotel), si = g.findIndex(p => p._sunset);
+        if (si >= 0) g.push(g.splice(si, 1)[0]);
+        groups[bd] = g;
+      }
+    }
     const act = Object.keys(W).filter(c => W[c] > 0);
 
     const restaurants = by(["restaurant"]);
@@ -840,7 +1022,18 @@ Masa.planner = (() => {
     const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) : 0) + (f.voyage ? 1 : 0);
 
 
-    const dayPlans = groups.map(g => {
+    // a restaurant or bar the traveler named becomes a meal on the nearest day
+    const namedMeals = anchors.map(() => ({}));
+    (wishOut?.places || []).filter(p => p.cat === "food" || p.cat === "night").forEach(p => {
+      if (used.has(p.id)) return;
+      let bi = 0;
+      groups.forEach((g, i) => { if (Math.min(...g.map(x => km(x, p))) < Math.min(...groups[bi].map(x => km(x, p)))) bi = i; });
+      const slot = p.cat === "night" ? "drinks" : p.kind === "restaurant" ? (namedMeals[bi].dinner ? "lunch" : "dinner") : "treat";
+      if (namedMeals[bi][slot]) return;
+      namedMeals[bi][slot] = p; used.add(p.id); usedNames.add(normName(p.local));
+    });
+    const dayPlans = groups.map((g, gi) => {
+      const named = namedMeals[gi] || {};
       const list = g.map(p => ({ p, meal: null }));
       const first = g[0] || geo, last = g[g.length - 1] || geo;
       if (wantFood) {
@@ -850,20 +1043,20 @@ Masa.planner = (() => {
       const li = list.findIndex((x, i) => i >= Math.ceil(g.length / 2) + (wantFood ? 1 : 0));
       const at = li < 0 ? list.length : li;
       const anchor = list[Math.max(0, at - 1)]?.p || first;
-      const lunch = mealPick(anchor, M.lunch[0], M.lunch[1]);
+      const lunch = named.lunch || mealPick(anchor, M.lunch[0], M.lunch[1]);
       if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
       if (wantFood && g.length >= 2) {
         const ti = Math.min(list.length, at + 2);
         const dayKinds = new Set(list.map(x => x.p.kind));
-        const tr = nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 0.8) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 1.5);
+        const tr = named.treat || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 0.8) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 1.5);
         if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
       }
-      const dinner = mealPick(last, M.dinner[0], M.dinner[1], dinnerBoost);
+      const dinner = named.dinner || mealPick(last, M.dinner[0], M.dinner[1], dinnerBoost);
       if (dinner) list.push({ p: dinner, meal: "dinner" });
       if (wantNight) {
-        const bar = nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
+        const bar = named.drinks || nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
         if (bar) list.push({ p: bar, meal: "drinks" });
-      }
+      } else if (named.drinks) list.push({ p: named.drinks, meal: "drinks" });
       if (hotel) list.unshift({ p: { ...hotel, id: hotel.id || "hotel" }, meal: "hotel" });
       return list;
     });
@@ -873,7 +1066,7 @@ Masa.planner = (() => {
     const nearbyOf = new Map();
     for (const { p } of dayPlans.flat()) {
       if (p.cat === "food" || p.cat === "night") continue;
-      const cands = pool.filter(x => !used.has(x.id) && interestKinds.has(x.kind) && km(p, x) < 0.9)
+      const cands = pool.filter(x => !used.has(x.id) && interestKinds.has(x.kind) && !avoid.has(x.kind) && km(p, x) < 0.9)
         .sort((a, b) => (b.q - 2 * km(p, b)) - (a.q - 2 * km(p, a))).slice(0, 2);
       cands.forEach(c => used.add(c.id));
       nearbyOf.set(p.id, cands);
@@ -897,10 +1090,15 @@ Masa.planner = (() => {
       summary: "",
       days: dayPlans.map((list, i) => {
         const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); if (p.must && !meal) s.must = true;
+          if (p.userMust) { s.asked = true; s.must = true; }
+          if (p._sunset) { s.tip = "הגיעו בערך 20 דקות לפני השקיעה. זה המקום לסיים בו את היום."; s.sunset = true; }
           if (p._dietMiss && (meal === "lunch" || meal === "dinner")) s.tip = opts.diet === "כשר" ? kosherMissTip(p) : "לא מצאנו מסעדה צמחונית מסומנת קרוב למסלול. רוב המסעדות מציעות מנות צמחוניות, כדאי לשאול.";
           s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
         const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null, move };
+        if (wish?.start) d.startMin = wish.start;
+        if (wish?.sunset) d.sunsetMin = sunsetLocal(geo, opts.start, i);
+        if (satDay(i)) { d.shabbat = true; d.theme = "שבת · " + d.theme; }
         assignTimes(d);
         return d;
       }).filter(d => d.stops.length),
@@ -917,7 +1115,13 @@ Masa.planner = (() => {
     }
     const n = trip.days.reduce((a, d) => a + d.stops.length, 0);
     const meals = trip.days.reduce((a, d) => a + d.stops.filter(s => s.meal).length, 0);
-    trip.summary = `${n} תחנות אמיתיות, מתוכן ${meals} ארוחות ובילויים, מסודרות למסלולי הליכה לפי ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;
+    if (wishOut) trip.wish = {
+      labels: wish.labels,
+      places: trip.days.flatMap((d, di) => d.stops.filter(s => s.asked || (s.meal && wishOut.places.some(p => p.id === s.osm))).map(s => ({ name: s.name, day: di }))),
+      missed: wishOut.missed, hotel: wishOut.hotel ? wishOut.hotel.name : null, hotelMissed: wishOut.hotelMissed || null
+    };
+    const moveWord = { walk: "מסלול הליכה", transit: "מסלול עם תחבורה ציבורית", car: "מסלול ברכב" }[move] || "מסלול";
+    trip.summary = `${moveWord} לכל יום, ${meals ? "עם ארוחות בדרך, " : ""}לפי מה שבחרתם: ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;
     return trip;
   }
 
@@ -1005,5 +1209,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
+  return { wishIndex, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

@@ -54,7 +54,7 @@ const CATS = {
   night:{he:"חיי לילה",c:"--primary"}, shopping:{he:"קניות",c:"--rose"}, view:{he:"צילום ונופים",c:"--sky"}, religion:{he:"מקומות קדושים",c:"--violet"}, family:{he:"משפחה",c:"--teal"}, sleep:{he:"לינה",c:"--primary"}
 };
 const INTERESTS = ["history","food","art","nature","night","shopping","view","family"];
-const DAYC = ["--coral","--primary","--teal","--violet","--sun"];
+const DAYC = ["--coral","--sky","--teal","--violet","--sun"];
 const DESTS = [
   {he:"רומא",country:"איטליה",q:"רומא, איטליה",lat:41.9028,lng:12.4964,days:"3–4 ימים",grad:["--coral","--sun"]},
   {he:"פריז",country:"צרפת",q:"פריז, צרפת",lat:48.8566,lng:2.3522,days:"4 ימים",grad:["--primary","--violet"]},

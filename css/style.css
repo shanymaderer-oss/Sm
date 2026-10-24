@@ -1,27 +1,33 @@
 
 /* Layout: full-bleed world→city map canvas; floating brand bar; app screens in a docked panel (right on desktop, bottom sheet on phones) with a 5-tab bottom nav */
+/* Masa design tokens. Direction: a printed field guide over a live map.
+   Cool map-paper neutrals, slate ink, one guidebook red for the route and the main action.
+   Serif (Frank Ruhl Libre) only for names of places and screens; everything else IBM Plex Sans Hebrew. */
 :root{
-  --bg:#f4f7fb; --surface:#ffffff; --surface-2:#eef3f9; --ink:#14213d; --muted:#5d6b85; --line:#dde5f0;
-  --primary:#1f5fd1; --primary-ink:#ffffff; --coral:#ff6b4a; --sun:#f5b72e; --teal:#12a37f; --violet:#7a5af5; --sky:#2aa4e0; --rose:#e2477a;
+  --bg:#f3f4f1; --surface:#ffffff; --surface-2:#eff1ed; --ink:#1c2830; --muted:#5a6670; --line:#dde1dc;
+  --primary:#a3221b; --primary-ink:#ffffff; --link:#1f4f8a;
+  --coral:#b3261e; --sun:#a86b12; --teal:#1d6b5f; --violet:#5b4a86; --sky:#2a6496; --rose:#9b2f58;
   --ocean:#bfe0f2; --ocean-line:#a6d2ea; --river:#7cc0e6; --land1:#f6ebcf; --land2:#e1efd2; --land3:#f7dccb; --land4:#e5def5; --land5:#d3ece4; --land6:#f8e6ae; --border:#ffffff;
   --cityland:#f3efe6; --urban:#ece3d3; --road:#ffffff; --road-case:#d9cfbd; --hwy:#f7c76a; --hwy-case:#d9a441; --park:#cfe8c4;
-  --shadow:0 10px 30px rgba(20,33,61,.14),0 2px 6px rgba(20,33,61,.08);
-  --display:"Rubik","Assistant",system-ui,sans-serif;
-  --body:"Assistant","Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --shadow:0 1px 2px rgba(28,40,48,.10),0 6px 18px rgba(28,40,48,.10);
+  --display:"Frank Ruhl Libre","David Libre",Georgia,serif;
+  --body:"IBM Plex Sans Hebrew",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Sans Hebrew",system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0b1322; --surface:#121d31; --surface-2:#1a2740; --ink:#e8eefb; --muted:#9aa9c4; --line:#26354f;
-  --primary:#5b93ff; --primary-ink:#071226; --coral:#ff8466; --sun:#f7c552; --teal:#3cc79f; --violet:#9d85ff; --sky:#5cc2f2; --rose:#f2709b;
+  --bg:#141a1e; --surface:#1b2328; --surface-2:#232d33; --ink:#e7ebe8; --muted:#9fa9a6; --line:#2f3a40;
+  --primary:#e0574d; --primary-ink:#1b0d0b; --link:#8db7e8;
+  --coral:#e0574d; --sun:#d9a14a; --teal:#4fb39f; --violet:#a596d6; --sky:#79acd9; --rose:#d97aa0;
   --ocean:#0d2740; --ocean-line:#16385a; --river:#2b6c9c; --land1:#2c3a4a; --land2:#26402f; --land3:#43342e; --land4:#342f4c; --land5:#22403b; --land6:#40391f; --border:#0d2740;
   --cityland:#1b2433; --urban:#232d3f; --road:#334360; --road-case:#1b2433; --hwy:#8a6a2c; --hwy-case:#5e4818; --park:#1f3b2c;
-  --shadow:0 10px 30px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3); color-scheme:dark}}
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0b1322; --surface:#121d31; --surface-2:#1a2740; --ink:#e8eefb; --muted:#9aa9c4; --line:#26354f;
-  --primary:#5b93ff; --primary-ink:#071226; --coral:#ff8466; --sun:#f7c552; --teal:#3cc79f; --violet:#9d85ff; --sky:#5cc2f2; --rose:#f2709b;
+  --bg:#141a1e; --surface:#1b2328; --surface-2:#232d33; --ink:#e7ebe8; --muted:#9fa9a6; --line:#2f3a40;
+  --primary:#e0574d; --primary-ink:#1b0d0b; --link:#8db7e8;
+  --coral:#e0574d; --sun:#d9a14a; --teal:#4fb39f; --violet:#a596d6; --sky:#79acd9; --rose:#d97aa0;
   --ocean:#0d2740; --ocean-line:#16385a; --river:#2b6c9c; --land1:#2c3a4a; --land2:#26402f; --land3:#43342e; --land4:#342f4c; --land5:#22403b; --land6:#40391f; --border:#0d2740;
   --cityland:#1b2433; --urban:#232d3f; --road:#334360; --road-case:#1b2433; --hwy:#8a6a2c; --hwy-case:#5e4818; --park:#1f3b2c;
-  --shadow:0 10px 30px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3); color-scheme:dark}
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.5;overflow:hidden;
@@ -497,7 +503,7 @@ b.price{color:var(--teal);font-weight:700}
 .switchrow input{width:20px;height:20px;accent-color:var(--primary)}
 .acc{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;vertical-align:middle}
 .acc svg{width:13px;height:13px}
-html.hc{--muted:#2c3a55;--line:#7d8aa3}
+html.hc{--muted:#2f3a42;--line:#7c8780}
 @media (prefers-color-scheme:dark){html.hc:not([data-theme="light"]){--muted:#d3dcee;--line:#8796b3}}
 html.hc .card,html.hc .pcard,html.hc .duocard,html.hc .stop{border-width:2px}
 html.hc :focus-visible{outline-width:3.5px}
@@ -533,3 +539,149 @@ html.ul a{text-decoration:underline}
 .taline a svg{width:13px;height:13px}
 .tarate{color:#00aa6c;letter-spacing:-1px;display:inline-flex;align-items:center;gap:4px}
 .tarate small{color:var(--ink);letter-spacing:0;font-weight:800}
+
+/* the traveler's own words */
+.wishbox{display:flex;flex-direction:column;gap:10px}
+.wishbox textarea{min-height:88px;font-size:1rem;line-height:1.45}
+.wishhints{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.wishhints::-webkit-scrollbar{display:none}
+.wishhints button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:.84rem;font-weight:600;color:var(--ink);cursor:pointer}
+.wishout:empty{display:none}
+.wishout ul,.wishcard ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.wishout li,.wishcard li{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}
+.wishout li svg,.wishcard li svg{width:15px;height:15px;flex:none;color:var(--teal);margin-top:4px}
+.wishout p{font-size:.88rem;margin-top:6px}
+.wishout .muted,.wishcard small{color:var(--muted)}
+.tile.fromtext,.seg.fromtext button[aria-pressed="true"]{box-shadow:0 0 0 2px color-mix(in srgb,var(--teal) 55%,transparent)}
+.wishcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.wishcard summary{cursor:pointer;display:flex;flex-direction:column;gap:1px;list-style:none}
+.wishcard summary::-webkit-details-marker{display:none}
+.wishcard summary span{font-weight:700}
+.wishcard summary small{font-size:.8rem}
+.wishcard[open] summary{margin-bottom:10px}
+.wishcard .miss{display:flex;gap:8px;font-size:.86rem;margin-top:8px;color:var(--ink)}
+.wishcard .miss svg{width:15px;height:15px;flex:none;color:var(--coral);margin-top:3px}
+
+/* ===== design layer: field guide over a live map =====
+   Rules: color carries meaning (route, day, warning, open now), never decoration.
+   Icons are ink, not colored tiles. Serif only for names of places and screen titles. */
+body{font-feature-settings:"kern";-webkit-font-smoothing:antialiased}
+h1{font-family:var(--display);font-weight:700;font-size:1.85rem;line-height:1.12;letter-spacing:-.01em}
+h2{font-family:var(--body);font-weight:600;font-size:1.02rem}
+h3{font-family:var(--body);font-weight:600}
+.lead{font-size:.98rem}
+.eyebrow,.stepof{font-size:.82rem;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted)}
+.section-label{font-weight:600;font-size:.9rem;margin-bottom:-8px}
+.gsearch{border-radius:12px;padding:5px 6px 5px 6px;box-shadow:var(--shadow)}
+.gsearch .logo,.logo{width:auto;height:auto;background:none;border-radius:0;font-family:var(--display);font-weight:700;font-size:1.4rem;line-height:1;color:var(--primary);padding:0 8px 3px 10px;border-inline-end:1px solid var(--line);flex:none}
+.gchips button{border-radius:8px;box-shadow:0 1px 2px rgba(28,40,48,.18);font-weight:600}
+.gchips button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.gchips button[aria-pressed="true"] svg{color:var(--surface)}
+.mapctl button{border-radius:10px}
+.panel{border-radius:14px}
+@media (max-width:760px){.panel{border-radius:14px 14px 0 0}}
+.btn{border-radius:10px;font-weight:600}
+.btn.coral,.btn.small.coral{background:var(--primary);color:var(--primary-ink)}
+.btn.soft{background:var(--surface-2);color:var(--ink)}
+.btn.block{padding:13px;font-size:1rem}
+.iconbtn{border-radius:10px}
+.search{border-radius:10px;border-width:1px}
+/* home */
+.dests{gap:0;border-top:1px solid var(--line);grid-template-columns:1fr 1fr}
+.dest{background:none;color:var(--ink);border:0;border-bottom:1px solid var(--line);border-radius:0;min-height:0;padding:12px 4px;gap:2px;justify-content:flex-start}
+.dest:nth-child(odd){border-inline-end:1px solid var(--line);padding-inline-end:12px}
+.dest:nth-child(even){padding-inline-start:14px}
+.dest::after{display:none}
+.dest b{font-size:1.2rem}
+.dest small{opacity:1;color:var(--muted);font-weight:400}
+.dest:hover b{color:var(--primary)}
+.aboutnote{font-size:.86rem;color:var(--muted);line-height:1.55}
+/* category and card icons are ink, never colored tiles */
+.tile .ic,.stop .ic,.duocard .ic,.savedtrip .ic,.catgrid .ic,.pmain .ic,.bookhead .ic,.mvrow .ic,.idea .ic,.dsec>h2 .chipic{background:var(--surface-2)!important;color:var(--ink)}
+.tile{border-width:1px;border-radius:10px;font-weight:600}
+.tile .ic{background:none!important;width:28px;height:28px}
+.tile[aria-pressed="true"]{border-color:var(--ink);background:var(--surface-2)}
+.tile[aria-pressed="true"] .ic{color:var(--primary)}
+.seg{border-radius:10px}
+.seg button{border-radius:8px;font-weight:600}
+textarea{border-width:1px;border-radius:10px;background:var(--surface)}
+textarea:focus{border-color:var(--ink);outline:none}
+/* loading: one moving thing, a route being drawn */
+.routeload{display:flex;align-items:center;gap:0;width:180px;height:24px;margin:8px auto 0;background:radial-gradient(circle,var(--line) 1.6px,transparent 2px) 0 50%/10px 10px repeat-x}
+.routeload i{flex:1;display:grid;place-items:center}
+.routeload i::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--surface);border:3px solid var(--line);box-sizing:border-box}
+@media (prefers-reduced-motion:no-preference){.routeload i::before{animation:stopon 2.4s infinite}.routeload i:nth-child(2)::before{animation-delay:.6s}.routeload i:nth-child(3)::before{animation-delay:1.2s}.routeload i:nth-child(4)::before{animation-delay:1.8s}}
+@keyframes stopon{0%,15%{border-color:var(--line)}25%,85%{border-color:var(--primary);background:var(--primary)}100%{border-color:var(--line)}}
+.lsteps div.on i{background:var(--ink);border-color:var(--ink)}
+.lsteps div.now i{border-color:var(--primary);border-top-color:transparent}
+/* trip header: the title of a chapter, not a banner */
+.triphero{background:none;color:var(--ink);padding:0;border-radius:0}
+.triphero h1{color:var(--ink);margin-top:2px}
+.triphero p{color:var(--muted);opacity:1;font-size:.94rem}
+.stats{display:flex;flex-wrap:wrap;gap:10px 0;margin-top:12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0}
+.stats div,.stats button{all:unset;flex:1 1 auto;min-width:62px;padding:0 12px;border-inline-start:1px solid var(--line);display:flex;flex-direction:column}
+.stats>:first-child{border-inline-start:0;padding-inline-start:0}
+.stats b{font-family:var(--body);font-weight:600;font-size:1.15rem;line-height:1.2}
+.stats small{font-size:.76rem;font-weight:400;color:var(--muted)}
+.stats button{cursor:pointer}
+.stats button b{color:var(--primary);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.pending{background:var(--surface-2);color:var(--muted);font-weight:500}
+.pending i{border-color:var(--muted);border-top-color:transparent}
+.duocard{border-width:1px;border-radius:10px}
+.daytab{border-width:1px;font-weight:600;border-radius:8px}
+.daytheme{font-weight:500;font-size:.9rem}
+/* the day is a sequence: numbers stay, colored tiles go */
+.stop{grid-template-columns:40px 1fr auto;border-radius:10px;padding:9px 6px}
+.stop .ic{width:40px;height:40px;border-radius:50%}
+.stop .ic svg{width:18px;height:18px}
+.stop .thumb{width:40px;height:40px;border-radius:50%}
+.stop .n{font-family:var(--body);font-weight:700;font-size:.72rem;width:19px;height:19px}
+.stop .t,.pmain .t,.savedtrip b{font-family:var(--display);font-weight:600;font-size:1.06rem;line-height:1.25}
+.mealtag{color:var(--muted);font-weight:600;letter-spacing:0}
+.mealtag.must{color:var(--primary)}
+.tag{font-weight:600;border-radius:5px}
+.tag.book{background:none;color:var(--coral);border:1px solid color-mix(in srgb,var(--coral) 40%,transparent)}
+.ideas{background:none;border:0;border-top:1px solid var(--line);border-radius:0;padding:14px 0 0}
+.ideas h2{font-size:1rem}
+/* place screen */
+.placehero:not(.photo){background:none;color:var(--ink);padding:4px 0 0;min-height:0}
+.placehero:not(.photo)::after,.placehero:not(.photo) .bigic{display:none}
+.placehero:not(.photo) h1{color:var(--ink);text-shadow:none}
+.placehero:not(.photo) .local{text-shadow:none;color:var(--muted)}
+.placehero.photo{border-radius:12px}
+.placehero h1{font-size:1.75rem}
+.placehero .local{font-family:var(--body)}
+.facts div,.factgrid div,.costtop>div,.esimcmp>div,.wx div{border-radius:8px}
+.card,.pcard,.bookcard,.mvrow,.wishcard{border-width:1px;border-radius:12px}
+.storycard{background:var(--surface);border-color:var(--line)}
+.storycard h2 svg{color:var(--ink)}
+.story{font-family:var(--display);font-size:1.08rem;line-height:1.7}
+.didyou{background:var(--surface-2);border:0}
+.didyou b{color:var(--ink)}
+.tipbox{background:var(--surface-2)}
+.tipbox svg{color:var(--muted)}
+.sigs{gap:4px 12px}
+.sigs span{background:none;padding:0;font-weight:500;color:var(--teal)}
+.chipbtn,.filters button{border-width:1px;border-radius:8px;font-weight:600}
+.chipbtn{color:var(--link)}
+.lnk{border-radius:10px;font-weight:600}
+.dish{background:var(--surface-2)!important;color:var(--ink)}
+.dish small{opacity:1;color:var(--muted);font-family:var(--body)}
+.guidehead{background:var(--surface-2);color:var(--ink)}
+.guidehead .av{background:var(--surface)}
+.upsell{background:var(--surface-2)}
+.upsell>svg{color:var(--muted)}
+.ditem .sub,.phrase small,.checks .stepn,.busy small{font-family:var(--body)}
+.nav button{font-weight:600}
+.nav button[aria-current="true"]{color:var(--ink)}
+.nav button[aria-current="true"] svg{color:var(--primary)}
+.nav button[aria-current="true"]::before{background:var(--primary);left:34%;right:34%}
+.msg.me{background:var(--ink);color:var(--surface)}
+.leg a{color:var(--link)}
+.howto a,.etiq a,.linkbtn,.source a,.vrow a{color:var(--link)}
+.toast{border-radius:10px;font-weight:600}
+.crow .bar i,.progress i{background:var(--ink)}
+.mk-label{font:600 12.5px var(--body);border-radius:6px}
+.pin>span{font:700 12px var(--body)}
+.kindtag{position:relative;z-index:1;align-self:flex-start;font-size:.82rem;font-weight:500;color:var(--muted)}
+.placehero.photo .kindtag{color:#fff;opacity:.92;text-shadow:0 1px 6px rgba(0,0,0,.4)}
