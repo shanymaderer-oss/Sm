@@ -312,6 +312,8 @@ function saveTrip(t) {
   t.id = t.id || `t${Date.now()}`;
   list.unshift(t);
   store.set("masa-trips", list.slice(0, 8));
+  // ask the browser to keep this site's storage, so saved trips are not cleared when the phone runs low on space
+  try { navigator.storage?.persist?.(); } catch {}
 }
 function openTrip(t) {
   S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = [];
