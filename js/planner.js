@@ -612,9 +612,10 @@ Masa.planner = (() => {
     const city = CITIES.findCity(geo.slug || geo.en || geo.local || geo.name);
     if (city && km(city, geo) < 15) {
       try {
-        const d = await svc.getJSON(`data/cities/${city.slug}.json`, {}, 12000, signal);
-        if (d?.els?.length) return { ...d, source: "ready" };
-      } catch {}
+        const d = await readyCity(city.slug);
+        if (signal?.aborted) throw { code: "cancelled" };
+        if (d?.els?.length) return { ...d, els: [...d.els], source: "ready" };
+      } catch (e) { if (e?.code === "cancelled") throw e; }
     }
     const key = `${geo.lat.toFixed(2)},${geo.lng.toFixed(2)}`;
     const q = SRC.buildQueries(geo.lat, geo.lng, R);
@@ -757,10 +758,15 @@ Masa.planner = (() => {
     return { places: found, missed, hotel, hotelMissed };
   }
   /* a light index of a ready city's named places, for showing which named places were recognized while the traveler types */
+  /* a ready city's file is fetched once per visit and shared: the wishes preview, the build and a rebuild all use it */
+  const READY = {};
+  const readyCity = slug => READY[slug] || (READY[slug] = svc.getJSON(`data/cities/${slug}.json`, {}, 15000).then(d => { if (!d?.els?.length) throw new Error("empty"); return d; }).catch(e => { delete READY[slug]; throw e; }));
+  /* start loading while the traveler is still choosing (called when a destination is picked) */
+  const prefetch = q => { const c = CITIES.findCity(q || ""); if (c) readyCity(c.slug).catch(() => {}); loadTA(); };
   const wishIdx = {};
   function wishIndex(slug) {
     if (!slug) return Promise.resolve(null);
-    return wishIdx[slug] || (wishIdx[slug] = svc.getJSON(`data/cities/${slug}.json`, {}, 12000).then(d => {
+    return wishIdx[slug] || (wishIdx[slug] = readyCity(slug).then(d => {
       const F = d.fame || {};
       const out = [];
       for (const e of d.els || []) {
@@ -828,8 +834,15 @@ Masa.planner = (() => {
     }
     // places they named that are not in our lists (a neighborhood like Montmartre): look them up on the whole map
     if (wishOut?.missed?.length) {
-      const look = wishOut.missed.slice(0, 3).map(a => svc.searchNear(a, geo.lat, geo.lng, signal).then(r => ({ a, r })).catch(() => ({ a, r: [] })));
-      const res = await Promise.race([Promise.all(look), new Promise(res => setTimeout(() => res([]), 6000))]);
+      // Nominatim allows one request a second: ask one at a time, and give up after 6 seconds in total
+      const res = [], t0 = Date.now();
+      for (const [i, a] of wishOut.missed.slice(0, 3).entries()) {
+        if (Date.now() - t0 > 4500) break;
+        if (i) await new Promise(ok => setTimeout(ok, 1100));
+        const r = await Promise.race([svc.searchNear(a, geo.lat, geo.lng, signal).catch(() => []), new Promise(ok => setTimeout(() => ok([]), 6000 - (Date.now() - t0)))]);
+        res.push({ a, r });
+        if (signal?.aborted) break;
+      }
       chk();
       for (const { a, r } of res) {
         const x = (r || []).find(x => km(geo, x) < 20 && !["highway", "railway", "shop", "amenity", "office", "building"].includes(x.category) && !/hotel|hostel|apartment|guest_house/.test(x.type));
@@ -1209,5 +1222,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { wishIndex, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
+  return { prefetch, wishIndex, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

@@ -1,7 +1,7 @@
 import asyncio, sys
 from playwright.async_api import async_playwright
 import os; HERE=os.path.dirname(os.path.abspath(__file__)); SP=os.environ.get("QA_OUT", "/tmp/masa-qa/"); os.makedirs(SP, exist_ok=True)
-ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "node_modules/maplibre-gl/dist/"))
+ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "../../vendor/maplibre-gl-5.24.0/"))
 TAG=sys.argv[1] if len(sys.argv)>1 else "d"
 W=int(sys.argv[2]) if len(sys.argv)>2 else 400
 H=int(sys.argv[3]) if len(sys.argv)>3 else 860

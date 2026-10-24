@@ -19,16 +19,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
       - run: |
           git config user.name "masa-bot"
           git config user.email "actions@users.noreply.github.com"
-          node tools/fetch-cities.mjs ${{ github.event.inputs.cities }}
+          # the city list comes from a form field: pass it as data, never paste it into the shell
+          CITIES=$(printf '%s' "$INPUT_CITIES" | tr -cd 'a-z -')
+          node tools/fetch-cities.mjs $CITIES
         env:
           COMMIT_EACH: "1"
+          INPUT_CITIES: ${{ github.event.inputs.cities }}
       - name: Commit data
         if: always()
         run: |

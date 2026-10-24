@@ -1,7 +1,7 @@
 import asyncio, json, base64, zlib
 from playwright.async_api import async_playwright
 import os; HERE=os.path.dirname(os.path.abspath(__file__)); SP=os.environ.get("QA_OUT", "/tmp/masa-qa/"); os.makedirs(SP, exist_ok=True)
-ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "node_modules/maplibre-gl/dist/"))
+ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "../../vendor/maplibre-gl-5.24.0/"))
 evil = "<img src=x onerror=window.__pwn=1>"
 stop = lambda n,lat,lng: {"name":evil+n,"local":"x\"'><svg onload=window.__pwn=2>","cat":"history","kind":"sight","lat":lat,"lng":lng,"time":"10:00\"><img src=x onerror=window.__pwn=3>",
   "website":"javascript:window.__pwn=4","signals":[evil],"booking":{"needed":True,"steps":[evil],"url":"javascript:window.__pwn=5"},"_min":"<b>","q":"<i>","why":evil}

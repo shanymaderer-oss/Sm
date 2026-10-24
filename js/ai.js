@@ -85,7 +85,10 @@ Masa.ai = (() => {
   }
 
   async function saveKey(k) {
-    set(KEY, (k || "").trim());
+    k = (k || "").trim();
+    // a Gemini key is letters, digits, "-" and "_" only: anything else is not a key (and is never stored)
+    if (k && !/^[A-Za-z0-9_-]{20,80}$/.test(k)) throw Object.assign(new Error("bad key"), { code: "bad_key" });
+    set(KEY, k);
     set(MODEL, "");
     if (!k) return null;
     try { return await pickModel(true); }

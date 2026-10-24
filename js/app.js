@@ -278,7 +278,7 @@ function go(screen, opts = {}) {
   if (screen === "poi" && S.poi) flyCenter(S.poi, 16.5);
   if (isMobile()) $("panel").classList.remove("collapsed");
 }
-function pickDest(d) { S.dest = d; const inp = $("destInput"); if (inp) inp.value = d.q; flyCenter(d, 11); renderMap(); }
+function pickDest(d) { S.dest = d; planner.prefetch(d.q); const inp = $("destInput"); if (inp) inp.value = d.q; flyCenter(d, 11); renderMap(); }
 function setNav() {
   const nav = $("nav");
   const show = !!S.trip && TRIP_SCREENS.includes(S.screen);
@@ -386,6 +386,7 @@ SCREENS.home = {
       const known = DESTS.find(d => v.includes(d.he));
       S.dest = known || { q: v, he: v.split(",")[0].trim() };
       if (known) flyCenter(known, 11);
+      planner.prefetch(S.dest.q);
       go("goals");
     };
     $("sampleBtn").onclick = loadSample;
@@ -910,6 +911,7 @@ SCREENS.settings = {
         <li>נכנסים ל-<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> עם חשבון גוגל.</li>
         <li>לוחצים על Create API key ומעתיקים את המפתח.</li>
         <li>מדביקים אותו כאן ולוחצים על שמירה.</li>
+        <li>מומלץ: בהגדרות המפתח ב-Google Cloud מגבילים אותו לאתר הזה (Website restrictions), כדי שגם מי שישיג אותו לא יוכל להשתמש בו.</li>
       </ol>
       <form id="keyForm" class="keyrow"><input id="keyInput" type="password" placeholder="${on ? "מפתח חדש" : "AIza..."}" aria-label="מפתח Gemini" autocomplete="off" dir="ltr"><button class="btn" type="submit">שמירה</button></form>
       <div class="status ok" id="keyStatus">${on && ai.model() ? `מחובר. המודל: ${esc(ai.model())}` : ""}</div>
@@ -1820,6 +1822,17 @@ async function importShared() {
   return true;
 }
 
+/* ---------- offline support and updates ---------- */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController) return;
+    // a new version arrived: reload now only if nothing is in progress, otherwise next time the site opens
+    if (S.screen === "home" && !S.dest) location.reload();
+    else toast("יש גרסה חדשה של האתר. היא תיטען בפעם הבאה שתפתחו אותו.");
+  });
+}
 /* ---------- boot ---------- */
 applyA11y();
 if (me.form) S.form = { ...S.form, ...me.form };

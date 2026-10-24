@@ -61,6 +61,7 @@ async function wikiGeo(lang, lat, lng, r) {
 }
 function commit(msg) {
   if (!COMMIT) return;
+  msg = String(msg).replace(/[^\p{L}\p{N} :._-]/gu, "");
   try {
     execSync(`git add data/cities && (git diff --cached --quiet || (git commit -q -m "${msg}" && (git push -q || (git pull -q --rebase && git push -q))))`, { stdio: "inherit", shell: "/bin/bash" });
   } catch (e) { console.log("commit failed", e.message); }

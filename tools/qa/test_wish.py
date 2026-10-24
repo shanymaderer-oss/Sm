@@ -1,7 +1,7 @@
 import asyncio, sys, json
 from playwright.async_api import async_playwright
 import os; HERE=os.path.dirname(os.path.abspath(__file__)); SP=os.environ.get("QA_OUT", "/tmp/masa-qa/"); os.makedirs(SP, exist_ok=True)
-ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "node_modules/maplibre-gl/dist/"))
+ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "../../vendor/maplibre-gl-5.24.0/"))
 CASES=[("רומא","אנחנו זוג עם ילד בן 6, לא אוכלים בשר, חייבים לראות את הקולוסיאום ואת מזרקת טרווי, ובערב שקיעה יפה"),
        ("פריז","בלי מוזיאונים, רוצים לראות את מגדל אייפל ואת מונמארטר, קמים מאוחר, אוהבים קינוחים"),
        ("ברצלונה","קצב רגוע, סבתא מתקשה בהליכה, חייבים את סגרדה פמיליה ופארק גואל, חוף ים"),
