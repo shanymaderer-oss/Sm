@@ -1530,16 +1530,18 @@
  },
  "sofia": {
   "at": "2026-10-23T22:12:48.306Z",
-  "seconds": 348,
+  "seconds": 490,
   "osm": {
-   "sights": 260,
+   "sights": 334,
    "restaurants": 323,
    "cafes": 300,
    "hotels": 146,
    "shopping": 247,
    "diet": 11,
    "extra": 31,
-   "streets": 1
+   "streets": 1,
+   "sights2": 110,
+   "landmarks": 44
   },
   "voyage": {
    "eat": 12,
@@ -1555,23 +1557,21 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Георги С. Раковски (7)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 443ms",
-   "overpass-api.de ok 260 29543ms",
-   "overpass-api.de ok 323 25896ms",
-   "overpass-api.de ok 300 30417ms",
-   "overpass-api.de HTTP 502 441ms",
-   "overpass-api.de ok 146 24070ms",
-   "overpass-api.de ok 247 35816ms",
-   "overpass-api.de ok 11 35706ms",
-   "overpass-api.de HTTP 502 1273ms",
-   "overpass-api.de ok 31 28373ms",
-   "overpass-api.de HTTP 502 466ms",
-   "overpass-api.de ok 95 31111ms",
-   "streets: 95 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 334 33404ms",
+   "overpass-api.de ok 110 32208ms",
+   "overpass-api.de ok 44 37090ms",
+   "fame: 435 of 435"
   ]
  },
  "bucharest": {
