@@ -104,7 +104,7 @@
  },
  "barcelona": {
   "at": "2026-10-23T16:37:49.867Z",
-  "seconds": 550,
+  "seconds": 603,
   "osm": {
    "sights": 336,
    "restaurants": 450,
@@ -131,7 +131,7 @@
    "en": 100
   },
   "streetsV": 2,
-  "fameV": 2,
+  "fameV": 3,
   "qv": {
    "sights": 2,
    "sights2": 1
@@ -144,13 +144,11 @@
    "Rambla de Catalunya (18)"
   ],
   "log": [
-   "(updated: sights, sights2)",
-   "overpass-api.de ok 336 32233ms",
-   "overpass-api.de ok 100 27601ms",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 500 of 641"
+   "fame: 641 of 641"
   ]
  },
  "london": {
