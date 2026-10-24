@@ -1229,15 +1229,18 @@
  },
  "paphos": {
   "at": "2026-10-23T21:36:31.316Z",
-  "seconds": 604,
+  "seconds": 795,
   "osm": {
-   "sights": 42,
+   "sights": 18,
    "restaurants": 90,
    "cafes": 51,
    "hotels": 99,
    "shopping": 86,
    "diet": 1,
-   "extra": 14
+   "extra": 14,
+   "sights2": 24,
+   "landmarks": 2,
+   "streets": 0
   },
   "voyage": {
    "eat": 19,
@@ -1252,22 +1255,23 @@
    "he": 1,
    "en": 11
   },
-  "streetsV": 0,
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [],
   "log": [
-   "overpass-api.de ok 42 43769ms",
-   "overpass-api.de ok 90 33323ms",
-   "overpass-api.de ok 51 28957ms",
-   "overpass-api.de HTTP 502 420ms",
-   "overpass-api.de ok 99 35848ms",
-   "overpass-api.de ok 86 29691ms",
-   "overpass-api.de ok 1 47983ms",
-   "overpass-api.de ok 14 37787ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 502 1117ms",
-   "overpass-api.de HTTP 502 463ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms"
+   "(updated: sights, sights2, landmarks, streets)",
+   "overpass-api.de ok 18 37840ms",
+   "overpass-api.de ok 24 33465ms",
+   "overpass-api.de HTTP 502 293ms",
+   "overpass-api.de ok 2 35157ms",
+   "overpass-api.de ok 17 40538ms",
+   "streets: 17 shops",
+   "fame: 30 of 30"
   ]
  },
  "nice": {
