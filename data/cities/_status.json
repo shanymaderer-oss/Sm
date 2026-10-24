@@ -525,16 +525,18 @@
  },
  "porto": {
   "at": "2026-10-23T17:57:36.930Z",
-  "seconds": 429,
+  "seconds": 569,
   "osm": {
-   "sights": 260,
+   "sights": 141,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 238,
    "diet": 14,
    "extra": 78,
-   "streets": 13
+   "streets": 13,
+   "sights2": 165,
+   "landmarks": 43
   },
   "voyage": {
    "eat": 21,
@@ -550,6 +552,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Rua de Santa Catarina (69)",
    "Rua 31 de Janeiro (22)",
@@ -558,10 +566,11 @@
    "Rua Formosa (15)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 423ms",
-   "overpass-api.de ok 347 30801ms",
-   "streets: 347 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 141 28814ms",
+   "overpass-api.de ok 165 36519ms",
+   "overpass-api.de ok 43 42214ms",
+   "fame: 214 of 214"
   ]
  },
  "madrid": {
