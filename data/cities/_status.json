@@ -832,16 +832,18 @@
  },
  "new-york": {
   "at": "2026-10-23T18:42:13.154Z",
-  "seconds": 420,
+  "seconds": 550,
   "osm": {
-   "sights": 260,
+   "sights": 214,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
    "diet": 156,
    "extra": 200,
-   "streets": 14
+   "streets": 14,
+   "sights2": 187,
+   "landmarks": 25
   },
   "voyage": {
    "eat": 0,
@@ -857,6 +859,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Broadway (40)",
    "5th Avenue (30)",
@@ -865,9 +873,11 @@
    "Prince Street (28)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de ok 1266 38088ms",
-   "streets: 1266 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 214 21387ms",
+   "overpass-api.de ok 187 30194ms",
+   "overpass-api.de ok 25 36611ms",
+   "fame: 472 of 472"
   ]
  },
  "bangkok": {
