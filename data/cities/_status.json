@@ -1676,16 +1676,18 @@
  },
  "naples": {
   "at": "2026-10-23T22:30:45.619Z",
-  "seconds": 371,
+  "seconds": 520,
   "osm": {
-   "sights": 238,
+   "sights": 220,
    "restaurants": 342,
    "cafes": 300,
    "hotels": 350,
    "shopping": 182,
    "diet": 5,
    "extra": 200,
-   "streets": 7
+   "streets": 7,
+   "sights2": 41,
+   "landmarks": 34
   },
   "voyage": {
    "eat": 23,
@@ -1701,6 +1703,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Via Toledo (76)",
    "Via Santa Brigida (12)",
@@ -1709,17 +1717,11 @@
    "Via Luca Giordano (8)"
   ],
   "log": [
-   "overpass-api.de ok 238 31479ms",
-   "overpass-api.de HTTP 502 445ms",
-   "overpass-api.de ok 342 37699ms",
-   "overpass-api.de ok 300 44903ms",
-   "overpass-api.de ok 350 29235ms",
-   "overpass-api.de ok 182 28766ms",
-   "overpass-api.de ok 5 33000ms",
-   "overpass-api.de ok 200 40414ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de ok 263 39914ms",
-   "streets: 263 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 220 32816ms",
+   "overpass-api.de ok 41 38475ms",
+   "overpass-api.de ok 34 37893ms",
+   "fame: 430 of 430"
   ]
  },
  "belgrade": {
