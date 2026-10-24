@@ -172,6 +172,29 @@ Masa.svc = (() => {
     return out;
   }
 
+  /* search a place by name or address near the trip (Nominatim), for "my hotel" and restaurants not on our lists */
+  async function searchNear(q, lat, lng, signal) {
+    const d = 0.25;
+    const u = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=8&addressdetails=1&namedetails=1&accept-language=he,en&viewbox=${lng - d},${lat + d},${lng + d},${lat - d}&bounded=1&q=${encodeURIComponent(q)}`;
+    const r = await getJSON(u, {}, 15000, signal);
+    return (r || []).map(x => {
+      const a = x.address || {}, nd = x.namedetails || {};
+      const street = [a.road, a.house_number].filter(Boolean).join(" ");
+      return { osmType: x.osm_type, osmId: x.osm_id, category: x.category, type: x.type, lat: +x.lat, lng: +x.lon,
+        name: nd["name:he"] || nd.name || x.name || x.display_name.split(",")[0], local: nd.name || x.name || x.display_name.split(",")[0],
+        address: street || x.display_name.split(",").slice(0, 3).join(","), display: x.display_name };
+    });
+  }
+
+  /* how famous each sight is (number of Wikipedia languages), see sources.js */
+  async function fame(els, signal, voyage) {
+    const S = Masa.sources, ids = S.fameIds(els, 600, voyage), out = { n: {}, he: {} };
+    const chunks = [];
+    for (let i = 0; i < ids.length; i += 50) chunks.push(ids.slice(i, i + 50));
+    await mapLimit(chunks, 3, async c => { try { S.fameParse(await getJSON(S.fameUrl(c), {}, 12000, signal), out); } catch {} });
+    return out;
+  }
+
   /* First paragraph + photo of a Wikipedia article. */
   async function wikiSummary(lang, title, signal) {
     if (!title) return null;
@@ -199,5 +222,5 @@ Masa.svc = (() => {
     } catch { return null; }
   }
 
-  return { getJSON, mapLimit, geocode, overpass, voyage, weather, rateToILS, wikiGeo, wikidata, wikiSummary, walkRoute };
+  return { searchNear, fame, getJSON, mapLimit, geocode, overpass, voyage, weather, rateToILS, wikiGeo, wikidata, wikiSummary, walkRoute };
 })();

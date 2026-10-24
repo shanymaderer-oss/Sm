@@ -506,3 +506,16 @@ html.ul a{text-decoration:underline}
 .visitrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .famnotes .note{display:flex;flex-direction:column;background:var(--surface-2);border-radius:10px;padding:8px 10px}
 .famnotes .note b{font-size:.8rem;color:var(--primary)}
+
+/* my hotel, search by name, swapping a meal */
+.hres{display:flex;flex-direction:column;gap:8px}
+.hrow{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px}
+.hrow span{display:flex;flex-direction:column;min-width:0}
+.hrow small{color:var(--muted);font-size:.78rem;overflow:hidden;text-overflow:ellipsis}
+.hrow .btn{flex:none}
+.myhotel{border-color:var(--primary)}
+.search.small{padding:4px 4px 4px 10px}
+.search.small input{font-size:.95rem}
+.swapbar{align-items:center}
+.swapbar .btn{margin-inline-start:auto;flex:none}
+.filters button svg{width:15px;height:15px;vertical-align:-3px;margin-inline-end:3px}

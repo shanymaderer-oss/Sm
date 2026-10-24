@@ -240,6 +240,7 @@ new MutationObserver(rethemed).observe(document.documentElement, { attributes: t
 
 /* ---------- navigation ---------- */
 function go(screen, opts = {}) {
+  if (!["list", "poi"].includes(screen)) S.replace = null;
   if (screen !== "place" && screen !== "discover") stopSpeak();
   S.screen = screen;
   renderPanel();
@@ -474,7 +475,7 @@ SCREENS.plan = {
       <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${t.cc || t.slug ? `<button type="button" id="costStat"><b>${money(COST.ils(COST.trip(t).total))}</b><small>עלות משוערת</small></button>` : ""}</div></div>
     <div class="duo">
       ${t.source === "sample" ? "" : t.hotel ? `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>המלון שלכם</small><b>${esc(t.hotel.name)}</b></span></button>`
-        : `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>איפה לישון?</small><b>מלונות שמתאימים למסלול</b></span></button>`}
+        : `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>איפה לישון?</small><b>המלון שלכם, או מלונות שמתאימים למסלול</b></span></button>`}
       <button type="button" class="duocard" id="infoCard"><span class="ic" style="background:var(--teal)">${ic("info")}</span><span><small>לפני שטסים</small><b>מזג אוויר, כסף, eSIM</b></span></button>
       <button type="button" class="duocard" id="moveCard"><span class="ic" style="background:var(--violet)">${ic("bus")}</span><span><small>תחבורה</small><b>מהשדה לעיר ובתוך העיר</b></span></button>
     </div>
@@ -570,6 +571,7 @@ SCREENS.place = {
     ${(s.time || s.duration || s.cost) ? `<div class="facts"><div><small>${ic("clock")}שעה</small><b>${esc(s.time || "—")}</b></div><div><small>${ic("hourglass")}משך</small><b>${esc(s.duration || "—")}</b></div><div><small>${ic("coin")}עלות</small><b>${money(esc(stopCost(s) || "—"))}</b></div></div>` : ""}
     ${placeLine(s) ? `<div class="pline big">${placeLine(s)}</div>` : ""}
     ${s.isHotel ? "" : visitedRow(s)}
+    ${s.meal && s.meal !== "hotel" ? `<button type="button" class="btn small soft" id="swapMeal">${ic("search")}להחליף ב${s.kind === "bar" || s.kind === "club" ? "מקום" : "מסעדה"} אחר${s.kind === "bar" || s.kind === "club" ? "" : "ת"}, או לחפש לפי שם</button>` : ""}
     ${(s.signals || []).length ? `<div class="sigs">${s.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
     ${s.whyLang === "en" ? `<div class="vquote"><p dir="ltr" lang="en">${esc(s.why)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : `<p>${esc(s.why)}</p>`}
     ${contactRow(s)}
@@ -608,6 +610,11 @@ SCREENS.place = {
     $("nextStop").onclick = () => { if (S.stop < S.trip.days[S.day].stops.length - 1) { S.stop++; go("place"); } };
     $("toBook") && ($("toBook").onclick = () => { S.openBook = s.name; go("book"); });
     bindVisited(s); bindNotes(s);
+    $("swapMeal") && ($("swapMeal").onclick = () => {
+      const chip = s.kind === "cafe" || s.kind === "bakery" ? "cafe" : s.kind === "dessert" ? "dessert" : s.kind === "bar" || s.kind === "club" ? "bar" : s.kind === "market" || s.kind === "deli" ? "market" : "food";
+      S.replace = { day: S.day, stop: S.stop, name: s.name, mealHe: s.mealHe };
+      openList(chip); S.list.sort = "near"; rerenderKeepScroll();
+    });
     $("genHist") && ($("genHist").onclick = () => s.history && s.histLang === "he"
       ? (go("guide"), ask(`ספר לי עוד על ${s.name}, כאילו אתה מדריך שעומד איתי שם. מה לחפש בעיניים כשאני מגיע?`))
       : genHistory(s));
@@ -992,7 +999,8 @@ function placeCard(p, i) {
       <a class="btn small coral" href="${bookingUrl(p)}" target="_blank" rel="noopener" style="text-decoration:none">${ic("ext")}Booking</a>
       <a class="btn small soft" href="${reviewsUrl(p)}" target="_blank" rel="noopener" style="text-decoration:none">${ic("users")}ביקורות</a>
     </div>` : `<div class="pact">
-      ${inTrip ? `<span class="tag new">במסלול</span>` : `<button type="button" class="btn small" data-addp="${i}">${ic("plus")}למסלול</button>`}
+      ${S.replace && !inTrip ? `<button type="button" class="btn small coral" data-repl="${i}">${ic("check")}לבחור במקום ${esc(S.replace.name.slice(0, 18))}</button>`
+        : inTrip ? `<span class="tag new">${S.replace && S.replace.name === p.name ? "זה המקום שמחליפים" : "במסלול"}</span>` : `<button type="button" class="btn small" data-addp="${i}">${ic("plus")}למסלול</button>`}
       <a class="btn small soft" href="${gmDir(S.me || S.trip.days[S.day]?.stops?.[S.stop] || S.trip, p)}" target="_blank" rel="noopener" style="text-decoration:none">${ic("nav")}ניווט</a>
       <a class="btn small soft" href="${reviewsUrl(p)}" target="_blank" rel="noopener" style="text-decoration:none">${ic("users")}ביקורות</a>
     </div>`}
@@ -1012,6 +1020,9 @@ SCREENS.list = {
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backList" aria-label="חזרה">${ic("back")}</button><span class="eyebrow">${all.length} מקומות</span><span style="width:38px"></span></div>
     <h1 style="font-size:1.5rem">${title}</h1>
+    ${L2.chip === "hotel" && !L2.q ? myHotelCard() : ""}
+    ${S.replace ? `<div class="tipbox swapbar">${ic("search")}<span>בוחרים מקום במקום <b>${esc(S.replace.name)}</b> (${esc(S.replace.mealHe || "")}). לוחצים על "לבחור" ליד המקום שרוצים.</span><button type="button" class="btn small soft" id="cancelSwap">ביטול</button></div>` : ""}
+    ${L2.chip !== "hotel" ? `<form id="nameSearch" class="search small">${ic("search")}<input id="nameIn" type="search" value="${esc(L2.q || "")}" placeholder="חיפוש לפי שם, למשל ${L2.chip === "food" ? "U Fleků" : "שם המקום"}" aria-label="חיפוש לפי שם" autocomplete="off"><button class="btn small" type="submit">חיפוש</button></form>` : ""}
     <div class="filters">
       ${L2.chip === "hotel" ? `<button type="button" data-sort="fit" aria-pressed="${L2.sort === "fit"}">הכי מתאים למסלול</button>` : ""}
       <button type="button" data-sort="best" aria-pressed="${L2.sort === "best"}">הכי מומלץ</button>
@@ -1026,6 +1037,7 @@ SCREENS.list = {
     ${L2.chip === "hotel" ? `<div class="disclaim">${ic("info")}<span>הדירוג לפי כוכבים, המלצות Wikivoyage, המרחק ממרכז המסלול והתקציב שבחרתם. מחירים וזמינות רואים באתרי ההזמנה.</span></div>` : `<div class="disclaim">${ic("info")}<span>הדירוג לפי סימני איכות פתוחים: המלצות Wikivoyage, כוכבי מישלן, מקום מוכר, מטבח מקומי ואתר פעיל. לדירוג כוכבים ולביקורות לחצו על "ביקורות".${now && !S.me ? ` "פתוח עכשיו" לפי השעה ב${esc(S.trip.city)}.` : ""}</span></div>`}
     ${L2.chip === "hotel" && !L2.q ? hotelIntro() : ""}
     <div class="plist">${shown.map(placeCard).join("") || `<p class="lead">${L2.q ? `לא מצאנו את "${esc(L2.q)}" ב${esc(S.trip.city)}.` : "לא נמצאו מקומות. נסו להוריד סינון."}</p>`}</div>
+    ${L2.q ? cityWideResults(L2) : ""}
     ${L2.q ? `<button type="button" class="btn soft block" id="asDest">${ic("search")} לחפש את "${esc(L2.q)}" כיעד חדש</button>` : ""}
     ${all.length > shown.length ? `<button type="button" class="btn soft block" id="more">עוד ${Math.min(25, all.length - shown.length)} מקומות</button>` : ""}
     ${!L2.q && ["food", "bar", "mall"].includes(L2.chip) && (S.trip.voyageNoGeo || []).some(v => (CHIPS.find(c => c[0] === L2.chip)?.[2] || []).includes(v.kind)) ? `<div class="card"><h2>${ic("book")} עוד המלצות מ-Wikivoyage, בלי מיקום על המפה</h2>${S.trip.voyageNoGeo.filter(v => (CHIPS.find(c => c[0] === L2.chip)?.[2] || []).includes(v.kind)).slice(0, 12).map(v => `<div class="vrow"><b>${esc(v.name)}</b>${v.price ? ` <small>${esc(v.price)}</small>` : ""}${v.vtext ? `<p dir="ltr" lang="en">${esc(v.vtext.slice(0, 160))}</p>` : ""}<a href="${reviewsUrl(v)}" target="_blank" rel="noopener">חיפוש בגוגל מפות</a></div>`).join("")}</div>` : ""}
@@ -1040,6 +1052,7 @@ SCREENS.list = {
     $("fAcc") && ($("fAcc").onclick = () => { L2.acc = !L2.acc; refresh(true); });
     document.querySelectorAll("[data-price]").forEach(b => b.onclick = () => { L2.price = L2.price === b.dataset.price ? null : b.dataset.price; refresh(true); });
     $("editDates") && ($("editDates").onclick = () => { L2.editDates = true; rerenderKeepScroll(); });
+    bindMyHotel();
     $("hSave") && ($("hSave").onclick = () => { S.trip.opts.start = $("hStart").value || S.trip.opts.start; S.trip.opts.people = Math.min(8, Math.max(1, +$("hPeople").value || 2)); L2.editDates = false; saveTrip(S.trip); rerenderKeepScroll(); toast("התאריכים עודכנו בקישורים להזמנה"); });
     document.querySelectorAll("[data-stars]").forEach(b => b.onclick = () => { L2.stars = L2.stars === +b.dataset.stars ? 0 : +b.dataset.stars; refresh(true); });
     document.querySelectorAll("[data-ht]").forEach(b => b.onclick = () => { L2.htype = L2.htype === b.dataset.ht ? null : b.dataset.ht; refresh(true); });
@@ -1051,8 +1064,52 @@ SCREENS.list = {
     const items = listItems();
     document.querySelectorAll("[data-open]").forEach(b => b.onclick = () => { S.poi = items[+b.dataset.open]; go("poi"); });
     document.querySelectorAll("[data-addp]").forEach(b => b.onclick = () => { addPlace(items[+b.dataset.addp]); rerenderKeepScroll(); });
+    document.querySelectorAll("[data-repl]").forEach(b => b.onclick = () => replaceStop(items[+b.dataset.repl]));
+    $("cancelSwap") && ($("cancelSwap").onclick = () => { S.replace = null; go("place"); });
+    $("nameSearch") && ($("nameSearch").onsubmit = e => { e.preventDefault(); const v = $("nameIn").value.trim(); L2.q = v; L2.wide = null; L2.page = 1; rerenderKeepScroll(); renderMap(); });
+    $("wideBtn") && ($("wideBtn").onclick = () => searchCityWide(L2));
+    document.querySelectorAll("[data-wide]").forEach(b => b.onclick = () => {
+      const p = L2.wide.results[+b.dataset.wide];
+      if (S.replace) replaceStop(p); else { addPlace(p); rerenderKeepScroll(); }
+    });
   }
 };
+/* a name that is not on our lists: search the whole city map */
+const WIDE_KIND = { restaurant: "restaurant", fast_food: "restaurant", cafe: "cafe", bar: "bar", pub: "bar", nightclub: "club", ice_cream: "dessert", bakery: "bakery", museum: "museum", attraction: "attraction", gallery: "gallery", hotel: "hotel", hostel: "hostel", mall: "mall", department_store: "store", marketplace: "market" };
+function cityWideResults(L2) {
+  const W = L2.wide;
+  if (!W) return `<button type="button" class="btn soft block" id="wideBtn">${ic("search")} לא מצאתם? חיפוש "${esc(L2.q)}" בכל המפה של ${esc(S.trip.city)}</button>`;
+  if (W.loading) return `<div class="skeleton" style="height:60px"></div>`;
+  if (!W.results.length) return `<p class="lead">גם במפה לא מצאנו את "${esc(L2.q)}". נסו כתיב אחר, באנגלית או בשפה המקומית.</p>`;
+  return `<div class="card"><h2>${ic("pin")} נמצא במפה</h2>${W.results.map((p, i) => `<div class="hrow"><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")}${p.address ? " · " + esc(p.address) : ""} · ${fmtDist(km(S.trip, p))} מהמרכז</small></span><button type="button" class="btn small ${S.replace ? "coral" : ""}" data-wide="${i}">${S.replace ? "לבחור" : `${ic("plus")}למסלול`}</button></div>`).join("")}</div>`;
+}
+async function searchCityWide(L2) {
+  const t = S.trip;
+  L2.wide = { loading: true, results: [] }; rerenderKeepScroll();
+  try {
+    const r = await svc.searchNear(L2.q, +t.lat, +t.lng);
+    L2.wide = { results: r.filter(x => km(t, x) < 40).map(x => { const kind = WIDE_KIND[x.type] || "restaurant"; return { id: `${x.osmType}/${x.osmId}`, name: x.name, local: x.local, kind, cat: planner.KIND[kind]?.cat || "food", lat: x.lat, lng: x.lng, address: x.address }; }) };
+  } catch { L2.wide = { results: [] }; toast("החיפוש לא הצליח כרגע. נסו שוב בעוד רגע."); }
+  if (S.screen === "list") rerenderKeepScroll();
+}
+/* swap a suggested meal for a place the traveler picked, keeping its time slot */
+function replaceStop(p) {
+  const R2 = S.replace, d = S.trip.days[R2.day], old = d?.stops[R2.stop];
+  if (!old) { S.replace = null; return; }
+  const ns = { ...old, name: p.name, local: p.local || p.name, kind: p.kind, kindHe: planner.KIND[p.kind]?.he, cat: p.cat || "food", lat: +p.lat, lng: +p.lng, osm: p.id,
+    cuisine: p.cuisine || null, priceClass: p.priceClass || null, price: p.price || null, mich: p.mich || 0, wheel: p.wheel || null, signals: p.signals || [], hours: p.hours || null, phone: p.phone || null,
+    address: p.address || null, website: p.website || null, why: p.vtext || planner.KIND[p.kind]?.he || "", whyLang: p.vtext ? "en" : "he", history: "", image: null, wikidata: null, nearby: [], tip: "", _added: true,
+    booking: { needed: false, steps: [p.hours ? `שעות פתיחה: ${p.hours}` : "בודקים שעות פתיחה בגוגל מפות.", p.website ? "אפשר לבדוק באתר אם יש הזמנת שולחן." : "בערב במקומות מבוקשים כדאי להתקשר ולהזמין."], query: `${p.local || p.name} reservation`, url: p.website || null } };
+  d.stops[R2.stop] = ns;
+  d.route = null; d.legs = null;
+  planner.assignTimes(d);
+  S.replace = null;
+  if (S.trip.source !== "sample") saveTrip(S.trip);
+  S.day = R2.day; S.stop = R2.stop;
+  toast(`${p.name} נכנס/ה במקום ${old.name}`);
+  go("place");
+  planner.computeRoute(d).then(() => { if (S.trip?.days.includes(d)) { renderMap(); if (["plan", "place"].includes(S.screen)) rerenderKeepScroll(); } });
+}
 function addPlace(p, dayIdx = S.day) {
   addToDay({ ...p, why: p.vtext || planner.KIND[p.kind]?.he || "", osm: p.id }, dayIdx);
   const d = S.trip.days[dayIdx], st = d.stops.find(s => s.name === p.name);
@@ -1077,6 +1134,7 @@ SCREENS.poi = {
     ${contactRow(p)}
     ${HOTEL_KINDS.includes(p.kind) ? "" : brokerRow(p)}
     ${p.hours ? `<div class="hoursrow">${ic("clock")}<span>שעות פתיחה: <bdi dir="ltr" class="nowrap">${esc(p.hours)}</bdi></span></div>` : ""}
+    ${S.replace && !HOTEL_KINDS.includes(p.kind) ? `<button type="button" class="btn coral block" id="poiRepl">${ic("check")} לבחור במקום ${esc(S.replace.name)}</button>` : ""}
     ${HOTEL_KINDS.includes(p.kind) ? hotelBook(p) : `<div class="card"><h2>${ic("plus")} הוספה למסלול</h2>
       <div class="keyrow"><select id="poiDay" class="select" style="flex:1">${dayOpts}</select><button type="button" class="btn" id="poiAdd">הוספה</button></div></div>`}
     <div class="linkrow">
@@ -1091,6 +1149,7 @@ SCREENS.poi = {
     $("pickHotel") && ($("pickHotel").onclick = () => chooseHotel(S.poi));
     $("dropHotel") && ($("dropHotel").onclick = clearHotel);
     $("otherHotels") && ($("otherHotels").onclick = () => openList("hotel"));
+    $("poiRepl") && ($("poiRepl").onclick = () => replaceStop(S.poi));
     $("poiAdd") && ($("poiAdd").onclick = () => { const di = +$("poiDay").value; addPlace(S.poi, di); toast(`${S.poi.name} נוסף ל${S.trip.days[di].label}`); });
   }
 };
@@ -1162,6 +1221,50 @@ function bookingAreaUrl() {
   const c = tripCenter();
   return `https://www.booking.com/searchresults.he.html?ss=${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}&latitude=${c.lat.toFixed(5)}&longitude=${c.lng.toFixed(5)}&radius=2&order=distance_from_search&checkin=${dstr(start)}&checkout=${dstr(end)}&group_adults=${people}&no_rooms=1`;
 }
+/* "my hotel": the traveler already booked somewhere; find it by name or address, even if it is not on our list */
+function myHotelCard() {
+  const H = S.hotelSearch || {};
+  const res = H.results || [];
+  return `<div class="card myhotel"><h2>${ic("bed")} כבר הזמנתם מלון?</h2>
+    <p>חפשו אותו לפי שם או כתובת, והמסלול ייבנה סביבו: כל יום יתחיל ויסתיים קרוב אליו.</p>
+    <form id="myHotelForm" class="keyrow"><input id="myHotelIn" class="select" value="${esc(H.q || "")}" placeholder="שם המלון או הכתובת, למשל Hotel Paris Prague" aria-label="שם המלון או כתובת" autocomplete="off"><button class="btn small" type="submit">${ic("search")}חיפוש</button></form>
+    ${H.loading ? `<div class="skeleton" style="height:44px"></div>` : ""}
+    ${H.error ? `<div class="status">${esc(H.error)}</div>` : ""}
+    ${res.length ? `<div class="hres">${res.map((r, i) => `<div class="hrow"><span><b>${esc(r.name)}</b><small>${esc(r.address || "")}${r.src === "list" ? " · מהרשימה שלנו" : ""} · ${fmtDist(km(S.trip, r))} מהמרכז</small></span><button type="button" class="btn small" data-myhotel="${i}">זה המלון שלי</button></div>`).join("")}</div>` : ""}
+  </div>`;
+}
+async function searchMyHotel(q) {
+  const t = S.trip, H = S.hotelSearch = { q, loading: true, results: [] };
+  rerenderKeepScroll();
+  const n = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const qn = n(q);
+  // 1. our own list of hotels in this city
+  const local = (t.places || []).filter(p => HOTEL_KINDS.includes(p.kind) && (n(p.name).includes(qn) || n(p.local).includes(qn) || (qn.length > 3 && qn.includes(n(p.local)))))
+    .slice(0, 4).map(p => ({ ...p, src: "list" }));
+  // 2. the whole map (any hotel, apartment or address)
+  let far = [];
+  try {
+    const r = await svc.searchNear(q, +t.lat, +t.lng);
+    // places to sleep, or a plain address (some booked apartments have no name on the map); not restaurants or shops
+    far = r.filter(x => km(t, x) < 40 && !local.some(l => km(l, x) < 0.05) && (x.category === "tourism" ? /hotel|hostel|guest_house|apartment|motel|chalet/.test(x.type) : ["building", "place", "highway", "boundary"].includes(x.category)))
+      .map(x => ({ id: `${x.osmType}/${x.osmId}`, name: x.name, local: x.local, kind: x.type === "hostel" ? "hostel" : x.type === "apartment" ? "apartment" : x.type === "guest_house" ? "guesthouse" : "hotel", cat: "sleep", lat: x.lat, lng: x.lng, address: x.address, src: "map", isAddress: x.category !== "tourism" }));
+  } catch { if (!local.length) H.error = "החיפוש לא הצליח כרגע. נסו שוב בעוד רגע, או כתבו את הכתובת המלאה."; }
+  H.loading = false;
+  H.results = [...local, ...far].slice(0, 6);
+  if (!H.results.length && !H.error) H.error = "לא מצאנו. נסו את השם כמו שהוא מופיע באישור ההזמנה, או את הכתובת (רחוב ומספר).";
+  if (S.screen === "list") rerenderKeepScroll();
+}
+function bindMyHotel() {
+  const f = $("myHotelForm");
+  if (!f) return;
+  f.onsubmit = e => { e.preventDefault(); const v = $("myHotelIn").value.trim(); if (v.length >= 2) searchMyHotel(v); };
+  document.querySelectorAll("[data-myhotel]").forEach(b => b.onclick = () => {
+    const r = S.hotelSearch.results[+b.dataset.myhotel];
+    if (r.isAddress && !/hotel|hostel|apart|inn|suite|מלון/i.test(r.name)) r.name = `המלון שלי (${r.address || r.name})`;
+    S.hotelSearch = null;
+    chooseHotel(r);
+  });
+}
 function hotelIntro() {
   const { start, end, people } = tripDates();
   return `<div class="card hotelintro"><h2>${ic("pin")} איפה הכי כדאי לישון?</h2>
@@ -1191,7 +1294,7 @@ async function chooseHotel(p) {
   toast("מסדרים את המסלול מחדש סביב המלון…");
   try {
     const nt = await planner.build({ ...t.opts, hotel: p ? { id: p.id, name: p.name, local: p.local, kind: p.kind, lat: p.lat, lng: p.lng, stars: p.stars, priceClass: p.priceClass, website: p.website, phone: p.phone, address: p.address, signals: p.signals, q: p.q } : null }, () => {}, null);
-    nt.id = t.id;
+    nt.id = t.id; nt.fam = t.fam || null;
     saveTrip(nt);
     openTrip(nt);
     toast(`כל יום יוצא עכשיו מ${p.name}`);
@@ -1201,7 +1304,7 @@ async function clearHotel() {
   const t = S.trip;
   if (!t?.opts) return;
   const nt = await planner.build({ ...t.opts, hotel: null }, () => {}, null);
-  nt.id = t.id; saveTrip(nt); openTrip(nt); toast("המלון הוסר מהמסלול");
+  nt.id = t.id; nt.fam = t.fam || null; saveTrip(nt); openTrip(nt); toast("המלון הוסר מהמסלול");
 }
 
 /* ================= practical info for abroad ================= */

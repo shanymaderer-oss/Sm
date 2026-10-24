@@ -22,7 +22,7 @@ Masa.planner = (() => {
     bar: { cat: "night", he: "בר", min: 90 }, club: { cat: "night", he: "מועדון", min: 120 },
     street: { cat: "shopping", he: "רחוב קניות", min: 75 }, mall: { cat: "shopping", he: "קניון", min: 90 }, shop: { cat: "shopping", he: "חנות", min: 40 }, store: { cat: "shopping", he: "כלבו", min: 60 },
     museum: { cat: "art", he: "מוזיאון", min: 110 }, gallery: { cat: "art", he: "גלריה", min: 60 },
-    sight: { cat: "history", he: "אתר היסטורי", min: 70 }, church: { cat: "history", he: "מבנה דתי", min: 40 },
+    sight: { cat: "history", he: "אתר היסטורי", min: 70 }, square: { cat: "history", he: "כיכר", min: 35 }, bridge: { cat: "view", he: "גשר", min: 30 }, church: { cat: "history", he: "מבנה דתי", min: 40 },
     view: { cat: "view", he: "תצפית", min: 35 }, attraction: { cat: "view", he: "אטרקציה", min: 60 },
     park: { cat: "nature", he: "פארק", min: 60 }, beach: { cat: "nature", he: "חוף", min: 120 },
     zoo: { cat: "family", he: "גן חיות", min: 150 }, themepark: { cat: "family", he: "פארק שעשועים", min: 180 },
@@ -33,6 +33,10 @@ Masa.planner = (() => {
     // a place tagged both as a hotel and as a food place is usually the food place, unless its name says hotel
     if (/^(hotel|motel|hostel|guest_house|apartment)$/.test(tu || "") && /^(restaurant|cafe|fast_food|bar|pub|ice_cream)$/.test(a || "") && !/hotel|hostel|inn\b|suite|resid|albergo|hôtel|b&b|apart/i.test(t.name || ""))
       return a === "cafe" ? "cafe" : a === "ice_cream" ? "dessert" : a === "bar" || a === "pub" ? "bar" : "restaurant";
+    if (t.man_made === "bridge") return "bridge";
+    if (t.place === "square" || (t.highway === "pedestrian" && t.area === "yes")) return "square";
+    if (t.amenity === "clock") return "attraction";
+    if (t.man_made === "tower" && !tu) return "view";
     if (tu === "hotel" || tu === "motel") return "hotel";
     if (tu === "hostel") return "hostel";
     if (tu === "guest_house") return "guesthouse";
@@ -62,7 +66,7 @@ Masa.planner = (() => {
   }
   /* which kinds can fill an activity slot for each interest */
   const SLOT_KINDS = {
-    history: ["sight", "church", "attraction"], art: ["museum", "gallery"], view: ["view", "attraction", "sight"],
+    history: ["sight", "square", "church", "attraction"], art: ["museum", "gallery"], view: ["view", "bridge", "square", "attraction", "sight"],
     nature: ["park", "beach", "view"], shopping: ["street", "mall", "store", "market", "shop"], family: ["zoo", "themepark", "park", "museum"],
     food: ["market", "deli", "bakery", "dessert", "cafe"], night: ["bar"]
   };
@@ -216,7 +220,13 @@ Masa.planner = (() => {
       }
       pool.push(...added);
     }
-    pool.forEach(p => { p.dist = km(geo, p); });
+    // how famous: Wikipedia languages with an article about the place, and its Hebrew article when there is one
+    const F = data.fame || {};
+    pool.forEach(p => {
+      p.dist = km(geo, p);
+      if (p.wikidata && F.n?.[p.wikidata] != null) p.fame = F.n[p.wikidata];
+      if (p.wikidata && F.he?.[p.wikidata] && !p._he) p._he = F.he[p.wikidata];
+    });
     return { pool, noGeo };
   }
 
@@ -238,6 +248,10 @@ Masa.planner = (() => {
     if (p.wikiTag || p._he || p._en) q += 2;
     if (p.hasHe) q += 2.5;
     if (p.wikiBonus) q += p.wikiBonus;
+    // a plaque or a statue of a famous person borrows that person's fame: it is not a sight to plan a day around
+    const minor = /^(memorial|wayside_shrine|wayside_cross|boundary_stone|milestone|stone|marker)$/.test(p.historic || "");
+    if (minor) q -= 4;
+    if (p.fame && !minor) { q += Math.min(12, p.fame / 6); if (p.fame >= 50 && !["food", "night", "shopping", "sleep"].includes(p.cat)) sig.push("מהמקומות המפורסמים בעיר"); }
     if (p.heritage) q += 1;
     if (p.tourism === "attraction") q += 1.5;
     if (p.kind === "museum") q += 1;
@@ -267,7 +281,7 @@ Masa.planner = (() => {
       if (p.kosher) sig.push("כשר");
     }
     if (p.brand || CHAIN.test(p.local || "")) { q -= p.kind === "mall" || p.kind === "store" ? 0 : 6; }
-    if (p.kind === "mall") q += 1.5;
+    if (p.kind === "mall") q += /carrefour|monoprix|franprix|lidl|aldi|tesco|sainsbury|spar\b|billa|albert|coop|conad|mercadona|dia\b|rewe|edeka|penny|kaufland|auchan|intermarch/i.test(p.local || "") ? -8 : 1.5;
     if (p.kind === "street") {
       q += 2 + Math.min(9, SRC.streetScore({ n: p.shops, topShare: p.topShare, brands: p.brands, mentions: p.mentions }) / 8);
       if (p.voyage) q -= 2.5; // a Wikivoyage listing counts once, like a mention
@@ -299,7 +313,7 @@ Masa.planner = (() => {
       let bi = -1, bv = -Infinity;
       rest.forEach((p, i) => {
         if ([...chosen, ...out].some(o => o.id === p.id || km(o, p) < minGapKm)) return;
-        const v = p.q - p.dist * 0.6 - (p.kind === "church" || p.kind === "cafe" ? 3 : 2) * (cnt[p.kind] || 0);
+        const v = p.q - (p.cpen ?? p.dist * 0.6) - (p.kind === "church" || p.kind === "cafe" ? 3 : 2) * (cnt[p.kind] || 0);
         if (v > bv) { bv = v; bi = i; }
       });
       if (bi < 0) break;
@@ -463,7 +477,7 @@ Masa.planner = (() => {
     cuisine: p.cuisine || null, hours: p.hours || p.voyage?.hours || null, website: p.website || null, phone: p.phone || null, address: p.address || null,
     price: p.voyage?.price || null, priceClass: p.priceClass || p.voyage?.priceClass || null, stars: p.stars || 0, vtext: p.voyage?.text || null, veg: p.veg || false, kosher: p.kosher || false,
     outdoor: p.outdoor || false, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null,
-    fee: p.fee || null, mich: p.michelin || 0, wheel: p.wheel || null, shops: p.shops || 0, shopKinds: p.shopKinds || null, streetLen: p.streetLen || 0, ends: p.ends || null,
+    fame: p.fame || 0, fee: p.fee || null, mich: p.michelin || 0, wheel: p.wheel || null, shops: p.shops || 0, shopKinds: p.shopKinds || null, streetLen: p.streetLen || 0, ends: p.ends || null,
     vtext2: p.kind === "street" && !p.voyage?.text ? streetWhy(p) : null
   });
 
@@ -505,7 +519,7 @@ Masa.planner = (() => {
       try { localStorage.setItem(POOL_KEY, JSON.stringify({ [key]: entry })); } catch {}
     }
   }
-  const LIVE_ORDER = ["restaurants", "sights", "cafes", "hotels", "shopping", "streets", "diet", "extra"];
+  const LIVE_ORDER = ["restaurants", "sights", "landmarks", "sights2", "cafes", "hotels", "shopping", "streets", "diet", "extra"];
   /* finish what a previous visit could not get (busy servers), quietly, for next time */
   const filling = new Map();
   function fillLater(key, base, q, geo, R) {
@@ -525,6 +539,7 @@ Masa.planner = (() => {
         } catch {}
       }
       if (!data.done.voyage) { try { data.voyage = await svc.voyage(geo.en || geo.local); data.done.voyage = true; cacheData(key, data); } catch {} }
+      if (data.els.length && Object.keys(data.fame?.n || {}).length < SRC.fameIds(data.els).length * 0.8) { try { data.fame = await svc.fame(data.els, null, data.voyage); cacheData(key, data); } catch {} }
     }
   }
   async function loadData(geo, R, signal, onStep) {
@@ -584,6 +599,8 @@ Masa.planner = (() => {
       all.then(() => clearInterval(tick));
     });
     if (signal?.aborted) throw { code: "cancelled" };
+    // which sights are famous: a few quick Wikidata calls, never more than 4 seconds
+    if (data.els.length) data.fame = await Promise.race([svc.fame(data.els, signal, data.voyage).catch(() => null), new Promise(r => setTimeout(() => r(null), 4000))]) || { n: {}, he: {} };
     const complete = LIVE_ORDER.every(k => done[k] || !q[k]) && done.voyage;
     const save = () => { if (data.els.length || data.voyage.length) cacheData(key, { ...data, done: { ...done } }); };
     save();
@@ -630,14 +647,18 @@ Masa.planner = (() => {
     if (opts.likeCuisines?.length) pool.forEach(p => { if (p.kind === "restaurant" && opts.likeCuisines.some(c => (p.cuisine || "").includes(c))) p.q += 1; });
     // less walking: places close to each other and to the center matter twice as much
     if (mobility) pool.forEach(p => { p.dist *= 2; });
+    /* stay in the heart of the city: inside the core a place costs little for its distance; beyond it, each km costs more.
+       A truly famous place far out (Sagrada Família, the Eiffel Tower) still makes it thanks to its fame. */
+    const core = Math.max(0.9, (geo.R || R || 3000) / 1000 * 0.4);
+    pool.forEach(p => { p.out = Math.max(0, p.dist - core); p.cpen = p.dist * 0.6 + 1.6 * p.out; });
     if (opts.diet === "כשר") pool.forEach(p => { if (p.cat === "food") p.q += p.kosher ? 8 : -1; });
     if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });
-    const by = kinds => pool.filter(p => kinds.includes(p.kind)).sort((a, b) => (b.q - b.dist * 0.6) - (a.q - a.dist * 0.6));
+    const by = kinds => pool.filter(p => kinds.includes(p.kind)).sort((a, b) => (b.q - b.cpen) - (a.q - a.cpen));
 
     /* The perfect mix: chosen interests get most of the day, the rest still appear a little,
        and every day gets at least one of the city's must-see places. */
     const perDay = Math.max(3, ({ "רגוע": 3, "מאוזן": 4, "אינטנסיבי": 5 }[pace] || 4) - (["wheelchair", "walking"].includes(opts.mobility) ? 1 : 0));
-    const maxReach = opts.mobility ? 1.5 : 2.5; // how far from the day's main place
+    const maxReach = opts.mobility ? 1.5 : 2.0; // how far from the day's main place
     const wantFood = interests.includes("food"), wantNight = interests.includes("night");
     const W = {};
     const chosenActs = interests.filter(c => !["food", "night"].includes(c));
@@ -645,7 +666,7 @@ Masa.planner = (() => {
     for (const c of ["history", "art", "view", "nature", "shopping", "family", "food"]) W[c] = interests.includes(c) ? 3 : ["history", "view", "art", "nature"].includes(c) ? sprinkle : 0;
     // food lives mostly in the meals; as an activity it only leads when it is the main thing chosen
     if (wantFood) W.food = chosenActs.length ? 0.8 : 4;
-    const MUST = ["attraction", "sight", "museum", "view", "church", "park"];
+    const MUST = ["attraction", "sight", "museum", "view", "church", "park", "square", "bridge"];
     /* 1. one anchor per day: the city's must-see places, spread apart so each day covers its own area */
     const mustPool = by(MUST).filter(p => p.q >= 6);
     const anchors = pickFor(mustPool, days, [], 1.0);
@@ -653,6 +674,18 @@ Masa.planner = (() => {
     anchors.forEach(p => { if (p.q >= 6) p.must = true; });
     if (!anchors.length) throw { code: "too_few" };
     const used = new Set(anchors.map(p => p.id));
+    /* the same landmark often appears twice (the Colosseum as a building and as a site, "Prague Castle" and "Pražský hrad"):
+       once one is in the trip, its twins are out */
+    const SIGHTY = new Set(["sight", "church", "attraction", "museum", "view", "square", "bridge", "park", "gallery"]);
+    const markTwins = x => {
+      if (!SIGHTY.has(x.kind)) return;
+      for (const p of pool) {
+        if (used.has(p.id) || !SIGHTY.has(p.kind)) continue;
+        const d = km(x, p);
+        if (d < 0.12 || (d < 0.45 && (p.fame || 0) >= 25 && (x.fame || 0) >= 25) || (d < 1 && similar(p.local, x.local))) used.add(p.id);
+      }
+    };
+    anchors.forEach(markTwins);
     /* 2. activity mix per day, by the weights */
     const perDayActs = Math.max(1, perDay - (wantFood ? 1 : 0) - 1);
     const totalW = Object.values(W).reduce((a, b) => a + b, 0) || 1;
@@ -690,13 +723,14 @@ Masa.planner = (() => {
           let best = null, bv = -Infinity;
           for (const p of cands) {
             const dk = km(anchor, p);
+            if ((p.out || 0) > 0.8 && (p.fame || 0) < 40) continue; // far from the center and not famous enough to be worth the trip
             if (dk > maxReach || dayPick.some(o => km(o, p) < (c === "shopping" ? 0.25 : 0.12))) continue;
             const sameDay = dayPick.filter(o => o.kind === p.kind).length;
-            const v = p.q - 1.4 * dk - 3 * sameDay - 0.6 * (kindCount[p.kind] || 0);
+            const v = p.q - 1.4 * dk - 2.5 * (p.out || 0) - 3 * sameDay - 0.6 * (kindCount[p.kind] || 0);
             if (v > bv) { bv = v; best = p; }
           }
           if (!best) break;
-          used.add(best.id); dayPick.push(best); budget--;
+          used.add(best.id); markTwins(best); dayPick.push(best); budget--;
           kindCount[best.kind] = (kindCount[best.kind] || 0) + 1;
         }
       }
@@ -705,12 +739,12 @@ Masa.planner = (() => {
       while (budget > 0) {
         let best = null, bv = -Infinity;
         for (const p of by(fillKinds)) {
-          if (used.has(p.id) || km(anchor, p) > maxReach + 0.5 || dayPick.some(o => km(o, p) < 0.12)) continue;
-          const v = p.q - 1.4 * km(anchor, p) - 3 * dayPick.filter(o => o.kind === p.kind).length;
+          if (used.has(p.id) || ((p.out || 0) > 0.8 && (p.fame || 0) < 40) || km(anchor, p) > maxReach + 0.5 || dayPick.some(o => km(o, p) < 0.12)) continue;
+          const v = p.q - 1.4 * km(anchor, p) - 2.5 * (p.out || 0) - 3 * dayPick.filter(o => o.kind === p.kind).length;
           if (v > bv) { bv = v; best = p; }
         }
         if (!best) break;
-        used.add(best.id); dayPick.push(best); budget--;
+        used.add(best.id); markTwins(best); dayPick.push(best); budget--;
       }
       return orderDay(dayPick, hotel);
     });
