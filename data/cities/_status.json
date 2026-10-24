@@ -679,16 +679,18 @@
  },
  "milan": {
   "at": "2026-10-23T18:21:32.968Z",
-  "seconds": 454,
+  "seconds": 630,
   "osm": {
-   "sights": 260,
+   "sights": 364,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
    "diet": 29,
    "extra": 156,
-   "streets": 14
+   "streets": 14,
+   "sights2": 62,
+   "landmarks": 84
   },
   "voyage": {
    "eat": 43,
@@ -704,6 +706,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Via Monte Napoleone (58)",
    "Corso Genova (51)",
@@ -712,9 +720,14 @@
    "Via Dante (31)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de ok 1492 41164ms",
-   "streets: 1492 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 364 42389ms",
+   "overpass-api.de ok 62 26865ms",
+   "overpass-api.de ok 84 29379ms",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 627 of 627"
   ]
  },
  "florence": {
