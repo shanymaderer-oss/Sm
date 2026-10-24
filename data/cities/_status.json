@@ -732,16 +732,18 @@
  },
  "florence": {
   "at": "2026-10-23T18:29:04.299Z",
-  "seconds": 529,
+  "seconds": 675,
   "osm": {
-   "sights": 260,
+   "sights": 297,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 213,
    "diet": 12,
    "extra": 128,
-   "streets": 5
+   "streets": 5,
+   "sights2": 43,
+   "landmarks": 64
   },
   "voyage": {
    "eat": 20,
@@ -757,6 +759,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Ponte Vecchio (46)",
    "Via dei Ginori (14)",
@@ -765,11 +773,11 @@
    "Via dei Pecori (6)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 469ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 259 43113ms",
-   "streets: 259 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 297 36624ms",
+   "overpass-api.de ok 43 36494ms",
+   "overpass-api.de ok 64 30456ms",
+   "fame: 495 of 495"
   ]
  },
  "venice": {
