@@ -575,16 +575,18 @@
  },
  "madrid": {
   "at": "2026-10-23T18:04:35.196Z",
-  "seconds": 454,
+  "seconds": 629,
   "osm": {
-   "sights": 260,
+   "sights": 405,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
    "diet": 60,
    "extra": 106,
-   "streets": 14
+   "streets": 14,
+   "sights2": 87,
+   "landmarks": 76
   },
   "voyage": {
    "eat": 44,
@@ -600,6 +602,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Calle de Fuencarral (79)",
    "Gran Vía (44)",
@@ -608,9 +616,14 @@
    "Calle de Goya (20)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de ok 1259 32597ms",
-   "streets: 1259 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 405 42201ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 87 40493ms",
+   "overpass-api.de ok 76 19877ms",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 611 of 611"
   ]
  },
  "athens": {
