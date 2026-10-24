@@ -25,6 +25,8 @@
       shopping: H(R * 0.9) + `(nwr["shop"~"^(mall|department_store)$"]["name"];nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"];);out center tags 300;`,
       diet: H(R * 2) + `(nwr["diet:kosher"~"^(yes|only)$"]["name"];nwr["cuisine"~"kosher|jewish"]["name"];nwr["diet:vegan"="only"]["name"];nwr["diet:vegetarian"="only"]["name"];nwr["amenity"="place_of_worship"]["religion"="jewish"]["name"];);out center tags 250;`,
       extra: H(R * 1.1) + `(nwr["amenity"="place_of_worship"]["name"]["wikidata"];nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"];nwr["natural"="beach"]["name"];);out center tags 200;`,
+      /* famous bridges, squares and castles: often not tagged as tourist sights at all */
+      landmarks: H(R) + `(nwr["man_made"="bridge"]["wikidata"]["name"];nwr["place"="square"]["wikidata"]["name"];nwr["highway"="pedestrian"]["area"="yes"]["wikidata"]["name"];nwr["historic"="castle"]["wikidata"]["name"];nwr["amenity"="clock"]["wikidata"];nwr["man_made"="tower"]["wikidata"]["name"];);out center tags 150;`,
       /* every fashion, shoe, gift… shop with a street address. Counted per street to find the main shopping streets. */
       streets: H(R, 50) + `nwr["shop"~"^(${STREET_SHOPS})$"]["addr:street"];out center tags 5000;`
     };
@@ -70,7 +72,7 @@
   /* keep only the tags the app uses, so cached data stays small */
   const KEEP = ["name", "name:he", "name:en", "tourism", "historic", "amenity", "leisure", "natural", "shop", "building", "wikidata", "wikipedia",
     "website", "contact:website", "url", "phone", "contact:phone", "opening_hours", "fee", "charge", "cuisine", "heritage", "wikimedia_commons", "image",
-    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "diet:halal", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation", "rooms", "beds", "internet_access", "operator", "religion", "denomination"];
+    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "diet:halal", "wheelchair", "brand", "description", "michelin:stars", "stars", "addr:street", "addr:housenumber", "takeaway", "reservation", "rooms", "beds", "internet_access", "operator", "religion", "denomination", "man_made", "place", "highway", "area"];
   const slim = els => els.map(e => ({
     type: e.type, id: e.id, lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon,
     tags: Object.fromEntries(Object.entries(e.tags || {}).filter(([k]) => KEEP.includes(k)))
@@ -164,7 +166,30 @@
     return [...set].slice(0, 10);
   }
 
-  const api = { OVERPASS, bbox, buildQueries, slim, shopStreets, streetScore, SHOP_HE, parseVoyage, voyageDistricts, cleanWiki };
+  /* How famous a place is: the number of Wikipedia languages that have an article about it (Wikidata sitelinks).
+     The Eiffel Tower has over 150, a small local museum 2 or 3. Also keeps the Hebrew article title. */
+  const SIGHTISH = t => t.tourism || t.historic || t.amenity === "place_of_worship" || t.leisure || t.natural || t.man_made || t.place === "square" || t.highway === "pedestrian" || t.amenity === "clock";
+  function fameIds(els, max = 450) {
+    const ids = [];
+    const seen = new Set();
+    for (const e of els || []) {
+      const t = e.tags || {}, id = t.wikidata;
+      if (!/^Q\d+$/.test(id || "") || seen.has(id) || !SIGHTISH(t)) continue;
+      seen.add(id); ids.push(id);
+    }
+    return ids.slice(0, max);
+  }
+  const fameUrl = ids => `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&origin=*&props=sitelinks&ids=${ids.join("|")}`;
+  function fameParse(j, out = { n: {}, he: {} }) {
+    for (const [id, e] of Object.entries(j?.entities || {})) {
+      const links = Object.keys(e.sitelinks || {}).filter(k => /wiki$/.test(k) && !/(commons|species|wikiquote|wikisource|wikivoyage|wikinews|wikibooks)wiki$/.test(k));
+      out.n[id] = links.length;
+      if (e.sitelinks?.hewiki?.title) out.he[id] = e.sitelinks.hewiki.title;
+    }
+    return out;
+  }
+
+  const api = { fameIds, fameUrl, fameParse, OVERPASS, bbox, buildQueries, slim, shopStreets, streetScore, SHOP_HE, parseVoyage, voyageDistricts, cleanWiki };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else { root.Masa = root.Masa || {}; root.Masa.sources = api; }
 })(typeof window !== "undefined" ? window : globalThis);

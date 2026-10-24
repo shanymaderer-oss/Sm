@@ -70,6 +70,18 @@ const only = process.argv.slice(2);
 mkdirSync("data/cities", { recursive: true });
 const statusPath = "data/cities/_status.json";
 const status = existsSync(statusPath) ? JSON.parse(readFileSync(statusPath, "utf8")) : {};
+const FAME_V = 1; // bump to fetch how famous each sight is again
+async function getFame(els, log) {
+  const ids = S.fameIds(els);
+  const out = { n: {}, he: {} };
+  for (let i = 0; i < ids.length; i += 50) {
+    try { S.fameParse(await getJSON(S.fameUrl(ids.slice(i, i + 50)), {}, 30000), out); }
+    catch (e) { log.push(`wikidata ${e.message}`); }
+    await sleep(400);
+  }
+  log.push(`fame: ${Object.keys(out.n).length} of ${ids.length}`);
+  return out;
+}
 const STREETS_V = 2; // bump to fetch the shopping streets again everywhere (bigger area, better ranking)
 const OPTIONAL = ["diet"]; // there can honestly be no kosher places; streets are asked again until found (cheap, one query)
 async function doCity(c) {
@@ -92,11 +104,13 @@ async function doCity(c) {
   let v, he, en;
   if (prev) { v = { list: prev.voyage, districts: [] }; ({ he, en } = prev.wiki); }
   else [v, he, en] = await Promise.all([voyage(c.en), wikiGeo("he", c.lat, c.lng, c.R * 1.2), wikiGeo("en", c.lat, c.lng, c.R * 1.2)]);
-  const data = { city: c, fetchedAt: prev ? prev.fetchedAt : new Date().toISOString(), els: [...(prev?.els || []), ...S.slim(els)], streets, voyage: v.list, wiki: { he, en } };
+  const allEls = [...(prev?.els || []), ...S.slim(els)];
+  const fame = prev?.fame && st0?.fameV === FAME_V && !els.length ? prev.fame : await getFame(allEls, log);
+  const data = { city: c, fetchedAt: prev ? prev.fetchedAt : new Date().toISOString(), els: allEls, streets, fame, voyage: v.list, wiki: { he, en } };
   const by = t => v.list.filter(x => x.type === t).length;
   status[c.slug] = { at: data.fetchedAt, seconds: Math.round((Date.now() - t0) / 1000) + (prev ? st0.seconds || 0 : 0), osm: counts,
     voyage: prev ? st0.voyage : { eat: by("eat"), drink: by("drink"), buy: by("buy"), see: by("see"), sleep: by("sleep"), withCoords: v.list.filter(x => x.lat).length, districts: v.districts.length },
-    wiki: { he: he.length, en: en.length }, streetsV: "streets" in counts ? STREETS_V : (st0?.streetsV || 0), streets: streets.slice(0, 5).map(x => `${x.name} (${x.n})`), log: [...(prev ? ["(updated: " + need.join(", ") + ")"] : []), ...log] };
+    wiki: { he: he.length, en: en.length }, streetsV: "streets" in counts ? STREETS_V : (st0?.streetsV || 0), fameV: Object.keys(fame.n).length ? FAME_V : 0, streets: streets.slice(0, 5).map(x => `${x.name} (${x.n})`), log: [...(prev ? ["(updated: " + need.join(", ") + ")"] : []), ...log] };
   if (data.els.length || v.list.length) writeFileSync(path, JSON.stringify(data));
   writeFileSync(statusPath, JSON.stringify(status, null, 1));
   console.log(c.slug, JSON.stringify(status[c.slug]));
@@ -108,7 +122,7 @@ const fresh = c => {
   if (!st || !existsSync(`data/cities/${c.slug}.json`)) return false;
   const ageDays = (Date.now() - Date.parse(st.at)) / 864e5;
   const keys = Object.keys(S.buildQueries(c.lat, c.lng, c.R));
-  return ageDays < 6 && st.streetsV === STREETS_V && keys.every(k => OPTIONAL.includes(k) ? k in (st.osm || {}) : (st.osm || {})[k] > 0);
+  return ageDays < 6 && st.streetsV === STREETS_V && st.fameV === FAME_V && keys.every(k => OPTIONAL.includes(k) ? k in (st.osm || {}) : (st.osm || {})[k] > 0);
 };
 for (const c of list) {
   if (!FORCE && fresh(c)) { console.log(c.slug, "fresh, skipped"); continue; }
