@@ -527,3 +527,9 @@ html.ul a{text-decoration:underline}
 .social{margin-top:-4px}
 .chipbtn.yt svg{color:#ff0000}
 .chipbtn.ta svg{color:#00aa6c}
+.taline{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.8rem;color:var(--muted);font-weight:600}
+.taline.big{font-size:.9rem}
+.taline a{display:inline-flex;align-items:center;gap:4px}
+.taline a svg{width:13px;height:13px}
+.tarate{color:#00aa6c;letter-spacing:-1px;display:inline-flex;align-items:center;gap:4px}
+.tarate small{color:var(--ink);letter-spacing:0;font-weight:800}

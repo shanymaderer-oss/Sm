@@ -151,6 +151,13 @@ Masa.planner = (() => {
 
   const VOY_CATS = { sleep: ["sleep"], eat: ["food", "night"], drink: ["food", "night"], buy: ["shopping", "food"],
     see: ["history", "art", "view", "nature", "family"], do: ["history", "art", "view", "nature", "family", "night"] };
+  const HOTEL_WORDS = new Set(["hotel", "hotels", "hostel", "hôtel", "residence", "residences", "apartments", "apartment", "aparthotel", "suites", "suite", "boutique", "design", "house", "inn", "the", "and", "spa", "by", "de", "la", "le", "du", "di", "del", "city", "old", "town", "centre", "center", "grand", "luxury", "collection", "small", "world", "leading", "hotels", "astotel", "albergo", "pension", "guest", "b&b", "bed", "breakfast"]);
+  function sameHotel(a, b) {
+    const w = s => normName(s).split(" ").filter(x => x.length > 2 && !HOTEL_WORDS.has(x));
+    const A = w(a), B = new Set(w(b));
+    if (!A.length || !B.size) return false;
+    return A.filter(x => B.has(x)).length >= Math.min(A.length, B.size, 2) * 0.5 + 0.01 && A.some(x => B.has(x));
+  }
   function buildPool(data, geo) {
     const cc = geo.cc;
     const pool = [];
@@ -220,6 +227,19 @@ Masa.planner = (() => {
       }
       pool.push(...added);
     }
+    // Tripadvisor: attach the rating and price to the same hotel from the map, or add the hotel if the map does not have it
+    if (data.ta?.h) {
+      for (const [id, name, lat, lng, r, c, price, styles] of data.ta.h) {
+        const t = { lat, lng };
+        const info = { r, c, p: price, st: styles, url: `https://www.tripadvisor.com/Hotel_Review-g${data.ta.geo}-d${id}-Reviews.html` };
+        // match by the distinctive words of the name ("Hotel" or the city name are not enough: two neighbors share them)
+        const match = pool.find(p => p.cat === "sleep" && !p.ta && km(p, t) < 0.3 && sameHotel(p.local, name));
+        if (match) { match.ta = info; continue; }
+        // not on the map under this name (often a local-language name): add it, and drop an unrated map hotel in the very same spot
+        pool.forEach(p => { if (p.cat === "sleep" && !p.ta && km(p, t) < 0.025) p.hide = true; });
+        pool.push({ id: `ta/${id}`, src: "ta", name, local: name, kind: /hostel/i.test(name) ? "hostel" : /apart|residence|suites/i.test(name) ? "apartment" : "hotel", cat: "sleep", lat, lng, ta: info, website: null, wikidata: null });
+      }
+    }
     // how famous: Wikipedia languages with an article about the place, and its Hebrew article when there is one
     const F = data.fame || {};
     pool.forEach(p => {
@@ -227,7 +247,7 @@ Masa.planner = (() => {
       if (p.wikidata && F.n?.[p.wikidata] != null) p.fame = F.n[p.wikidata];
       if (p.wikidata && F.he?.[p.wikidata] && !p._he) p._he = F.he[p.wikidata];
     });
-    return { pool, noGeo };
+    return { pool: pool.filter(p => !p.hide), noGeo };
   }
 
   /* ---------- how the traveler moves: on foot, by public transport or by car ----------
@@ -299,6 +319,11 @@ Masa.planner = (() => {
       sig.push(`${p.shops} חנויות ברחוב`);
       if (p.shopKinds?.length) sig.push(p.shopKinds.join(", "));
       if (p.mentions && !p.voyage) sig.push("מוזכר ב-Wikivoyage");
+    }
+    if (p.cat === "sleep" && p.ta) {
+      // what thousands of guests say counts more than stars on a map
+      q += (p.ta.r - 4) * 5 + Math.min(4, Math.log10(Math.max(10, p.ta.c)) * 1.2);
+      sig.push(`Tripadvisor ${p.ta.r} (${p.ta.c.toLocaleString("en-US")} ביקורות)`);
     }
     if (p.cat === "sleep") {
       if (p.brand) q += 6;
@@ -487,7 +512,7 @@ Masa.planner = (() => {
     cuisine: p.cuisine || null, hours: p.hours || p.voyage?.hours || null, website: p.website || null, phone: p.phone || null, address: p.address || null,
     price: p.voyage?.price || null, priceClass: p.priceClass || p.voyage?.priceClass || null, stars: p.stars || 0, vtext: p.voyage?.text || null, veg: p.veg || false, kosher: p.kosher || false,
     outdoor: p.outdoor || false, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null,
-    fame: p.fame || 0, fee: p.fee || null, mich: p.michelin || 0, wheel: p.wheel || null, shops: p.shops || 0, shopKinds: p.shopKinds || null, streetLen: p.streetLen || 0, ends: p.ends || null,
+    ta: p.ta || null, fame: p.fame || 0, fee: p.fee || null, mich: p.michelin || 0, wheel: p.wheel || null, shops: p.shops || 0, shopKinds: p.shopKinds || null, streetLen: p.streetLen || 0, ends: p.ends || null,
     vtext2: p.kind === "street" && !p.voyage?.text ? streetWhy(p) : null
   });
 
@@ -629,6 +654,9 @@ Masa.planner = (() => {
 
   /* ---------- main entry ----------
      build() returns as soon as the places are chosen; hydrate() adds names, stories, photos, routes and AI later. */
+  /* Tripadvisor ratings and prices for the popular hotels of each ready city (collected ahead of time, see data/ta) */
+  let TA = null;
+  const loadTA = () => TA || (TA = svc.getJSON("data/ta/hotels.json", {}, 8000).catch(() => ({})));
   async function build(opts, step, signal) {
     const { query, days, budget, pace } = opts;
     const interests = opts.interests.length ? opts.interests : ["food", "history", "view"];
@@ -652,7 +680,8 @@ Masa.planner = (() => {
     if (!data.els.length && !data.voyage.length && !(data.wiki?.he?.length || data.wiki?.en?.length)) throw { code: "network" };
 
     step(2);
-    const { pool, noGeo } = buildPool(data, geo);
+    const ta = (await loadTA())[CITIES.findCity(geo.slug || geo.en || geo.name)?.slug] || null;
+    const { pool, noGeo } = buildPool({ ...data, ta }, geo);
     const hotel = opts.hotel && hasXY(opts.hotel) ? opts.hotel : null;
     if (hotel) pool.forEach(p => { p.dist = 0.3 * p.dist + 0.7 * km(hotel, p); });
     const mobility = opts.mobility || "";

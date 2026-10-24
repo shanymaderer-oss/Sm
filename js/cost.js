@@ -143,6 +143,8 @@ Masa.cost = (() => {
   /* one room (or one hostel bed) per night */
   function night(p, cc, slug, budget) {
     const b = base(cc, slug);
+    // a real price from Tripadvisor (one night, two adults, with taxes, in dollars): the best estimate there is
+    if (p?.ta?.p) { const eur = p.ta.p * 0.87; return { eur, lo: r5(eur * 0.85), hi: r5(eur * 1.3), src: "ta" }; }
     const parsed = p && parsePrice(p.price, cc, p.kind === "hostel" ? "bed" : "room");
     if (parsed && parsed.eur >= 12 && parsed.eur <= b.hotel * 6) return { eur: parsed.eur, lo: r5(parsed.lo), hi: r5(parsed.hi), src: "wv", perBed: p.kind === "hostel" };
     let f;

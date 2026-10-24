@@ -887,7 +887,7 @@ function priceInfo(p) {
 function priceLabel(p, long = false) {
   const i = priceInfo(p);
   if (!i) return "";
-  return `<b class="price">${money(COST.ilsRange(i.lo, i.hi))} ${i.unit}</b>${long ? ` <small class="pricesub">(${money(COST.localRange(i.lo, i.hi, tripCur()))}${i.src === "wv" ? ", לפי המחירים ב-Wikivoyage" : ", הערכה"})</small>` : ""}`;
+  return `<b class="price">${money(COST.ilsRange(i.lo, i.hi))} ${i.unit}</b>${long ? ` <small class="pricesub">(${money(COST.localRange(i.lo, i.hi, tripCur()))}${i.src === "wv" ? ", לפי המחירים ב-Wikivoyage" : i.src === "ta" ? ", לפי Tripadvisor, המחיר משתנה לפי התאריכים" : ", הערכה"})</small>` : ""}`;
 }
 /* entry fee for a stop, only when it is likely to cost money */
 function ticketLabel(s) {
@@ -966,6 +966,11 @@ function socialCityCard(t) {
     <div class="chiprow"><a class="chipbtn ig" href="${igUrl(en + "food")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "food"))}</a><a class="chipbtn ig" href="${igUrl(en + "travel")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "travel"))}</a><a class="chipbtn ig" href="${igUrl(en)}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en))}</a></div>
     <div class="disclaim">${ic("info")}<span>הרשתות לא מאפשרות לאתרים אחרים לקרוא את הפוסטים אוטומטית, אז אנחנו פותחים לכם חיפוש מוכן אצלן.</span></div></div>`;
 }
+const TA_STYLE = { "Centrally Located": "מיקום מרכזי", "Boutique": "בוטיק", "Romantic": "רומנטי", "Family": "למשפחות", "Modern": "מודרני", "Historic Hotel": "היסטורי", "Quiet": "שקט", "Mid-range": "מחיר בינוני", "Hidden Gem": "פנינה נסתרת", "Value": "תמורה טובה", "City View": "נוף לעיר", "Trendy": "טרנדי", "Quaint": "מקסים", "Classic": "קלאסי", "Green": "ירוק", "Luxury": "יוקרה", "Business": "עסקים", "Great View": "נוף מרהיב", "Bay View": "נוף למפרץ", "Harbor View": "נוף לנמל", "Charming": "מקסים", "Residential Neighborhood": "שכונת מגורים", "Quirky Hotels": "מיוחד", "Budget": "זול", "Beach": "חוף", "Ocean View": "נוף לים", "Sea View": "נוף לים" };
+function taLine(p) {
+  const st = (p.ta.st || []).map(x => TA_STYLE[x]).filter(Boolean).slice(0, 2);
+  return `<span class="taline"><b class="tarate">${"●".repeat(Math.round(p.ta.r))}<small>${p.ta.r}</small></b> Tripadvisor · ${p.ta.c.toLocaleString("en-US")} ביקורות${st.length ? ` · ${esc(st.join(", "))}` : ""}</span>`;
+}
 function contactRow(p) {
   const items = [];
   items.push(`<a class="chipbtn" href="${reviewsUrl(p)}" target="_blank" rel="noopener">${ic("users")}ביקורות ותמונות בגוגל</a>`);
@@ -1020,6 +1025,7 @@ function placeCard(p, i) {
       <span class="ic" style="background:${cv(CATS[catOf(p)].c)}">${ic(CHIP_ICON[p.kind] || catOf(p))}</span>
       <span style="min-width:0">
         <span class="t">${esc(p.name)}${isVisited(p) ? ` <span class="tag new">הייתם כאן</span>` : ""}${p.wheel === "yes" ? ` <span class="acc" title="נגיש לכיסא גלגלים" aria-label="נגיש לכיסא גלגלים">${ic("access")}</span>` : ""}</span>
+        ${p.ta ? taLine(p) : ""}
         <span class="pline">${[planner.KIND[p.kind]?.he, p.stars ? "★".repeat(Math.min(5, Math.round(p.stars))) : "", cuisineHe(p.cuisine), p.kind === "street" ? `${p.shops} חנויות` : ""].filter(Boolean).map(esc).join(" · ")}${priceLabel(p) ? ` · ${priceLabel(p)}` : p.priceClass ? ` · ${PRICE[p.priceClass]}` : ""}${o === true ? ` · <b class="open">פתוח עכשיו</b>` : o === false ? ` · <b class="closed">סגור</b>` : ""}</span>
         ${p.signals?.length ? `<span class="sigs small">${p.signals.slice(0, 3).map(x => `<span>${esc(x)}</span>`).join("")}</span>` : ""}
         ${p.vtext ? `<span class="vtext" dir="ltr" lang="en">${esc(p.vtext.slice(0, 140))}${p.vtext.length > 140 ? "…" : ""}</span>` : p.vtext2 ? `<span class="vtext">${esc(p.vtext2)}</span>` : ""}
@@ -1066,7 +1072,7 @@ SCREENS.list = {
       ${showFood ? `<button type="button" data-diet="veg" aria-pressed="${L2.diet === "veg"}">צמחוני</button><button type="button" data-diet="kosher" aria-pressed="${L2.diet === "kosher"}">כשר</button>` : ""}
     </div>
     ${cuisines.length > 1 && showFood ? `<div class="filters scroll-x">${cuisines.map(([c, n]) => `<button type="button" data-cu="${esc(c)}" aria-pressed="${L2.cuisine === c}">${esc(CUISINE_HE[c] || c.replace(/_/g, " "))} <small>${n}</small></button>`).join("")}</div>` : ""}
-    ${L2.chip === "hotel" ? `<div class="disclaim">${ic("info")}<span>הדירוג לפי כוכבים, המלצות Wikivoyage, המרחק ממרכז המסלול והתקציב שבחרתם. מחירים וזמינות רואים באתרי ההזמנה.</span></div>` : `<div class="disclaim">${ic("info")}<span>הדירוג לפי סימני איכות פתוחים: המלצות Wikivoyage, כוכבי מישלן, מקום מוכר, מטבח מקומי ואתר פעיל. לדירוג כוכבים ולביקורות לחצו על "ביקורות".${now && !S.me ? ` "פתוח עכשיו" לפי השעה ב${esc(S.trip.city)}.` : ""}</span></div>`}
+    ${L2.chip === "hotel" ? `<div class="disclaim">${ic("info")}<span>הדירוג לפי ביקורות Tripadvisor (כשיש), כוכבים, המלצות Wikivoyage, המרחק ממרכז המסלול והתקציב שבחרתם. המחיר המדויק לתאריכים שלכם מופיע באתרי ההזמנה.</span></div>` : `<div class="disclaim">${ic("info")}<span>הדירוג לפי סימני איכות פתוחים: המלצות Wikivoyage, כוכבי מישלן, מקום מוכר, מטבח מקומי ואתר פעיל. לדירוג כוכבים ולביקורות לחצו על "ביקורות".${now && !S.me ? ` "פתוח עכשיו" לפי השעה ב${esc(S.trip.city)}.` : ""}</span></div>`}
     ${L2.chip === "hotel" && !L2.q ? hotelIntro() : ""}
     <div class="plist">${shown.map(placeCard).join("") || `<p class="lead">${L2.q ? `לא מצאנו את "${esc(L2.q)}" ב${esc(S.trip.city)}.` : "לא נמצאו מקומות. נסו להוריד סינון."}</p>`}</div>
     ${L2.q ? cityWideResults(L2) : ""}
@@ -1159,6 +1165,7 @@ SCREENS.poi = {
     <div class="placehero" style="background:linear-gradient(140deg,${cv(CATS[catOf(p)].c)},${cv("--violet")})"><span class="bigic">${ic(CHIP_ICON[p.kind] || catOf(p), 1.8)}</span>
       <h1>${esc(p.name)}</h1>${p.local && p.local !== p.name ? `<div class="local">${esc(p.local)}</div>` : ""}</div>
     <div class="pline big">${[...[p.stars ? "★".repeat(Math.min(5, Math.round(p.stars))) : "", cuisineHe(p.cuisine), p.priceClass ? PRICE[p.priceClass] : "", p.price || ""].filter(Boolean).map(esc), o === true ? `<b class="open">פתוח עכשיו</b>` : o === false ? `<b class="closed">סגור עכשיו</b>` : "", `${fmtDist(km(ref, p))} ממך`.replace(" ממך", S.me && km(S.me, S.trip) < 50 ? " ממך" : " מהמסלול")].filter(Boolean).join(" · ")}</div>
+    ${p.ta ? `<div class="taline big">${taLine(p)}<a href="${esc(p.ta.url)}" target="_blank" rel="noopener">${ic("ext")}כל הביקורות ב-Tripadvisor</a></div>` : ""}
     ${p.signals?.length ? `<div class="sigs">${p.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
     ${priceInfo(p) ? `<div class="pricebox">${ic("coin")}<span>${HOTEL_KINDS.includes(p.kind) ? "מחיר משוער" : "כמה זה יעלה"}: ${priceLabel(p, true)}</span></div>` : ""}
     ${p.kind === "street" ? `<p>${esc(p.vtext2 || "")}</p><div class="linkrow">${p.ends ? `<a class="lnk primary" href="https://www.google.com/maps/dir/?api=1&origin=${p.ends[0][0]},${p.ends[0][1]}&destination=${p.ends[1][0]},${p.ends[1][1]}&travelmode=walking" target="_blank" rel="noopener">${ic("nav")}מסלול הליכה לאורך הרחוב</a>` : ""}</div>` : ""}
