@@ -1869,7 +1869,7 @@
  },
  "copenhagen": {
   "at": "2026-10-23T23:01:19.368Z",
-  "seconds": 764,
+  "seconds": 811,
   "osm": {
    "sights": 133,
    "restaurants": 422,
@@ -1904,15 +1904,9 @@
   },
   "streets": [],
   "log": [
-   "(updated: sights, sights2, landmarks, streets)",
-   "overpass-api.de ok 133 31534ms",
-   "overpass-api.de HTTP 502 303ms",
-   "overpass-api.de ok 58 30340ms",
-   "overpass-api.de ok 98 35625ms",
-   "overpass-api.de HTTP 502 348ms",
-   "overpass-api.de ok 0 29279ms",
-   "streets: 0 shops",
-   "fame: 419 of 419"
+   "(updated: streets)",
+   "overpass-api.de ok 0 38616ms",
+   "streets: 0 shops"
   ]
  },
  "seville": {
