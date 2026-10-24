@@ -204,7 +204,10 @@ Masa.cost = (() => {
     }
     const h = t.hotel ? night(t.hotel, cc, slug, o.budget) : night(null, cc, slug, o.budget);
     const sleepTotal = h.perBed ? h.eur * people * nights : h.eur * rooms * nights;
-    const move = b.move * days * people;
+    // by car: rental, fuel and parking for each car (5 people a car); otherwise public transport for each traveler
+    const cars = Math.ceil(people / 5);
+    const byCar = o.move === "car";
+    const move = byCar ? (b.hotel * 0.35 + b.meal * 0.9) * days * cars : b.move * days * people * (o.move === "walk" ? 0.6 : 1);
     const foodAll = food * people, ticketsAll = tickets * people;
     const sub = sleepTotal + foodAll + ticketsAll + move;
     const extra = sub * 0.08;
@@ -215,7 +218,7 @@ Masa.cost = (() => {
         { k: "sleep", he: "לינה", eur: sleepTotal, note: `${nights} ${nights === 1 ? "לילה" : "לילות"} · ${h.perBed ? `${people} מיטות` : `${rooms} ${rooms === 1 ? "חדר" : "חדרים"}`}${t.hotel ? ` · ${t.hotel.name}` : ` · ${{ "חסכוני": "מלון פשוט", "בינוני": "מלון 3–4 כוכבים", "מפנק": "מלון יוקרה" }[o.budget] || "מלון 3–4 כוכבים"}`}` },
         { k: "food", he: "אוכל ושתייה", eur: foodAll, note: `כל הארוחות במסלול, לפי המחיר של כל מקום` },
         { k: "tickets", he: "כניסות לאתרים", eur: ticketsAll, note: ticketCount ? `${ticketCount} מקומות בתשלום במסלול` : "רוב המקומות במסלול בחינם" },
-        { k: "move", he: "תחבורה בעיר", eur: move, note: "תחבורה ציבורית, בערך כרטיס יומי" },
+        { k: "move", he: byCar ? "רכב" : "תחבורה בעיר", eur: move, note: byCar ? `השכרה, דלק וחניה ל-${cars === 1 ? "רכב אחד" : cars + " רכבים"}` : o.move === "walk" ? "רוב הדרך ברגל, ולפעמים נסיעה" : "תחבורה ציבורית, בערך כרטיס יומי" },
         { k: "extra", he: "שונות", eur: extra, note: "טיפים, מים, הפתעות" }
       ]
     };

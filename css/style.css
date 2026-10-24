@@ -519,3 +519,9 @@ html.ul a{text-decoration:underline}
 .swapbar{align-items:center}
 .swapbar .btn{margin-inline-start:auto;flex:none}
 .filters button svg{width:15px;height:15px;vertical-align:-3px;margin-inline-end:3px}
+.movebar{display:flex;flex-direction:column;gap:6px}
+.movebar>span{font-weight:700;font-size:.85rem;color:var(--muted)}
+.movebar .seg button svg,#moveForm button svg{width:15px;height:15px;vertical-align:-3px;margin-inline-end:4px}
+.chipbtn.tt svg{color:#ff0050}
+.chipbtn.ig svg{color:#c13584}
+.social{margin-top:-4px}

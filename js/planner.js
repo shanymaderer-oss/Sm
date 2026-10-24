@@ -230,6 +230,16 @@ Masa.planner = (() => {
     return { pool, noGeo };
   }
 
+  /* ---------- how the traveler moves: on foot, by public transport or by car ----------
+     core: the "heart" radius as a share of the city radius; reach: how far from the day's main place (km);
+     dk: cost of each km from the day's main place; out: cost of each km beyond the heart; gap: minimum km between days' main places;
+     meal: cost of each km to a restaurant; bfast/lunch/dinner: how far to look for meals (near, far) */
+  const MOVE = {
+    walk: { core: 0.4, reach: 1.5, dk: 2.2, out: 1.6, gap: 1.0, meal: 2.6, bfast: [0.6, 1.2], lunch: [0.6, 1.5], dinner: [0.8, 1.8] },
+    transit: { core: 0.65, reach: 3, dk: 1.0, out: 0.7, gap: 1.6, meal: 1.6, bfast: [0.8, 2], lunch: [1, 3], dinner: [1.2, 3.5] },
+    car: { core: 1.0, reach: 7, dk: 0.35, out: 0.2, gap: 2.5, meal: 0.7, bfast: [1.5, 4], lunch: [2, 6], dinner: [2.5, 7] }
+  };
+
   /* ---------- quality ---------- */
   const BUDGET_CLASS = { "חסכוני": "budget", "בינוני": "mid", "מפנק": "splurge" };
   /* "signals" are shown to the traveler, so the ranking is never a black box */
@@ -481,6 +491,16 @@ Masa.planner = (() => {
     vtext2: p.kind === "street" && !p.voyage?.text ? streetWhy(p) : null
   });
 
+  /* minutes from stop i to stop i+1: walking, a ride on public transport when it is far, or a drive plus parking */
+  function legMinutes(day, i) {
+    const a = day.stops[i], b = day.stops[i + 1];
+    if (!b) return 0;
+    const leg = day.legs?.[i], d = km(a, b);
+    if (day.move === "car") return d < 0.6 ? d * 1.25 / 4.6 * 60 : (leg ? leg.s / 60 : d * 1.35 / 22 * 60) + 8;
+    const walk = leg && day.move !== "car" ? leg.s / 60 : d * 1.25 / 4.6 * 60;
+    if (day.move === "transit" && d > 1.2) return Math.min(walk, 10 + d * 3.5);
+    return walk;
+  }
   function assignTimes(day) {
     let t = 9 * 60;
     day.stops.forEach((s, i) => {
@@ -491,13 +511,11 @@ Masa.planner = (() => {
       if (s.meal === "drinks") t = Math.max(t, 21.25 * 60);
       t = Math.round(t / 15) * 15;
       s.time = fmtTime(t);
-      const leg = day.legs?.[i];
-      const walk = leg ? leg.s / 60 : (day.stops[i + 1] ? km(s, day.stops[i + 1]) * 1.25 / 4.6 * 60 : 0);
-      t += (s._min || 60) + Math.min(walk, 40) + 10;
+      t += (s._min || 60) + Math.min(legMinutes(day, i), day.move === "car" ? 60 : 45) + 10;
     });
   }
   async function computeRoute(day, signal) {
-    const r = await svc.walkRoute(day.stops, signal);
+    const r = await svc.walkRoute(day.stops, signal, day.move === "car" ? "car" : "foot");
     day.route = r?.line || null;
     day.legs = r?.legs || null;
     assignTimes(day);
@@ -649,8 +667,11 @@ Masa.planner = (() => {
     if (mobility) pool.forEach(p => { p.dist *= 2; });
     /* stay in the heart of the city: inside the core a place costs little for its distance; beyond it, each km costs more.
        A truly famous place far out (Sagrada Família, the Eiffel Tower) still makes it thanks to its fame. */
-    const core = Math.max(0.9, (geo.R || R || 3000) / 1000 * 0.4);
-    pool.forEach(p => { p.out = Math.max(0, p.dist - core); p.cpen = p.dist * 0.6 + 1.6 * p.out; });
+    const move = MOVE[opts.move] ? opts.move : "walk";
+    const M = MOVE[move];
+    const core = Math.max(0.9, (geo.R || R || 3000) / 1000 * M.core);
+    const centralR = Math.max(0.9, (geo.R || R || 3000) / 1000 * 0.4); // the walkable heart of the city
+    pool.forEach(p => { p.out = Math.max(0, p.dist - core); p.cpen = p.dist * (move === "car" ? 0.15 : 0.6) + M.out * p.out; });
     if (opts.diet === "כשר") pool.forEach(p => { if (p.cat === "food") p.q += p.kosher ? 8 : -1; });
     if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });
     const by = kinds => pool.filter(p => kinds.includes(p.kind)).sort((a, b) => (b.q - b.cpen) - (a.q - a.cpen));
@@ -658,7 +679,7 @@ Masa.planner = (() => {
     /* The perfect mix: chosen interests get most of the day, the rest still appear a little,
        and every day gets at least one of the city's must-see places. */
     const perDay = Math.max(3, ({ "רגוע": 3, "מאוזן": 4, "אינטנסיבי": 5 }[pace] || 4) - (["wheelchair", "walking"].includes(opts.mobility) ? 1 : 0));
-    const maxReach = opts.mobility ? 1.5 : 2.0; // how far from the day's main place
+    const maxReach = opts.mobility && move === "walk" ? 1.2 : M.reach; // how far from the day's main place
     const wantFood = interests.includes("food"), wantNight = interests.includes("night");
     const W = {};
     const chosenActs = interests.filter(c => !["food", "night"].includes(c));
@@ -669,8 +690,8 @@ Masa.planner = (() => {
     const MUST = ["attraction", "sight", "museum", "view", "church", "park", "square", "bridge"];
     /* 1. one anchor per day: the city's must-see places, spread apart so each day covers its own area */
     const mustPool = by(MUST).filter(p => p.q >= 6);
-    const anchors = pickFor(mustPool, days, [], 1.0);
-    if (anchors.length < days) anchors.push(...pickFor(by([...MUST, ...Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c])]), days - anchors.length, anchors, 1.0));
+    const anchors = pickFor(mustPool, days, [], M.gap);
+    if (anchors.length < days) anchors.push(...pickFor(by([...MUST, ...Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c])]), days - anchors.length, anchors, M.gap * 0.7));
     anchors.forEach(p => { if (p.q >= 6) p.must = true; });
     if (!anchors.length) throw { code: "too_few" };
     const used = new Set(anchors.map(p => p.id));
@@ -714,6 +735,12 @@ Masa.planner = (() => {
     const groups = anchors.map((anchor, d) => {
       const dayPick = [anchor];
       kindCount[anchor.kind] = (kindCount[anchor.kind] || 0) + 1;
+      /* a day out at a far landmark stays out there: everything is chosen around it, not on the way back to the center */
+      // the same rule for every way of moving: a day in the center stays in the center, a day out stays out
+      const farDay = anchor.dist > centralR + 0.8;
+      const reachToday = farDay ? Math.min(maxReach, move === "car" ? 3 : 2) : maxReach;
+      const outCost = p => farDay ? 0 : (move === "car" ? 0.6 : move === "transit" ? 1.2 : 2.5) * Math.max(0, p.dist - centralR);
+      const tooFar = p => farDay ? km(anchor, p) > reachToday : p.dist > centralR + 0.8 && (p.fame || 0) < 40;
       const quota = quotaFor(d);
       let budget = perDayActs;
       for (const { c, n } of quota.sort((x, y) => W[y.c] - W[x.c])) {
@@ -723,10 +750,10 @@ Masa.planner = (() => {
           let best = null, bv = -Infinity;
           for (const p of cands) {
             const dk = km(anchor, p);
-            if ((p.out || 0) > 0.8 && (p.fame || 0) < 40) continue; // far from the center and not famous enough to be worth the trip
-            if (dk > maxReach || dayPick.some(o => km(o, p) < (c === "shopping" ? 0.25 : 0.12))) continue;
+            if (tooFar(p)) continue; // far from the center and not famous enough to be worth the trip
+            if (dk > reachToday || dayPick.some(o => km(o, p) < (c === "shopping" ? 0.25 : 0.12))) continue;
             const sameDay = dayPick.filter(o => o.kind === p.kind).length;
-            const v = p.q - 1.4 * dk - 2.5 * (p.out || 0) - 3 * sameDay - 0.6 * (kindCount[p.kind] || 0);
+            const v = p.q - M.dk * dk - outCost(p) - 3 * sameDay - 0.6 * (kindCount[p.kind] || 0);
             if (v > bv) { bv = v; best = p; }
           }
           if (!best) break;
@@ -739,8 +766,8 @@ Masa.planner = (() => {
       while (budget > 0) {
         let best = null, bv = -Infinity;
         for (const p of by(fillKinds)) {
-          if (used.has(p.id) || ((p.out || 0) > 0.8 && (p.fame || 0) < 40) || km(anchor, p) > maxReach + 0.5 || dayPick.some(o => km(o, p) < 0.12)) continue;
-          const v = p.q - 1.4 * km(anchor, p) - 2.5 * (p.out || 0) - 3 * dayPick.filter(o => o.kind === p.kind).length;
+          if (used.has(p.id) || tooFar(p) || km(anchor, p) > reachToday + 0.5 || dayPick.some(o => km(o, p) < 0.12)) continue;
+          const v = p.q - M.dk * km(anchor, p) - outCost(p) - 3 * dayPick.filter(o => o.kind === p.kind).length;
           if (v > bv) { bv = v; best = p; }
         }
         if (!best) break;
@@ -762,7 +789,7 @@ Masa.planner = (() => {
         const d = km(anchor, f);
         if (d > maxKm) continue;
         const cu = (f.cuisine || "").split(";")[0];
-        const v = f.q - 2.6 * d - (cu ? 1.4 * (cuisinesUsed[cu] || 0) : 0) + extra(f);
+        const v = f.q - M.meal * d - (cu ? 1.4 * (cuisinesUsed[cu] || 0) : 0) + extra(f);
         if (v > bv) { bv = v; best = f; }
       }
       if (best) { used.add(best.id); const cu = (best.cuisine || "").split(";")[0]; if (cu) cuisinesUsed[cu] = (cuisinesUsed[cu] || 0) + 1; }
@@ -775,13 +802,13 @@ Masa.planner = (() => {
       const list = g.map(p => ({ p, meal: null }));
       const first = g[0] || geo, last = g[g.length - 1] || geo;
       if (wantFood) {
-        const b = (hotel && nearBest(cafes, hotel, 0.5)) || nearBest(cafes, first, 0.8) || nearBest(cafes, first, 2);
+        const b = (hotel && nearBest(cafes, hotel, 0.5)) || nearBest(cafes, first, M.bfast[0]) || nearBest(cafes, first, M.bfast[1]);
         if (b) list.unshift({ p: b, meal: "breakfast" });
       }
       const li = list.findIndex((x, i) => i >= Math.ceil(g.length / 2) + (wantFood ? 1 : 0));
       const at = li < 0 ? list.length : li;
       const anchor = list[Math.max(0, at - 1)]?.p || first;
-      const lunch = mealPick(anchor, 0.8, 2.5);
+      const lunch = mealPick(anchor, M.lunch[0], M.lunch[1]);
       if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
       if (wantFood && g.length >= 2) {
         const ti = Math.min(list.length, at + 2);
@@ -789,7 +816,7 @@ Masa.planner = (() => {
         const tr = nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 0.8) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 1.5);
         if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
       }
-      const dinner = mealPick(last, 1.2, 3, dinnerBoost);
+      const dinner = mealPick(last, M.dinner[0], M.dinner[1], dinnerBoost);
       if (dinner) list.push({ p: dinner, meal: "dinner" });
       if (wantNight) {
         const bar = nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
@@ -823,7 +850,7 @@ Masa.planner = (() => {
     const trip = {
       city: geo.name, slug: geo.slug || null, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
       source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,
-      opts: { query, days, budget, pace, diet: opts.diet || "הכול", mobility: opts.mobility || "", notes: opts.notes || "", interests, start: opts.start || null, people: opts.people || 2 },
+      opts: { query, days, budget, pace, diet: opts.diet || "הכול", mobility: opts.mobility || "", move, notes: opts.notes || "", interests, start: opts.start || null, people: opts.people || 2 },
       hotel: hotel ? { ...hotel } : null,
       summary: "",
       days: dayPlans.map((list, i) => {
@@ -831,7 +858,7 @@ Masa.planner = (() => {
           if (p._dietMiss && (meal === "lunch" || meal === "dinner")) s.tip = opts.diet === "כשר" ? kosherMissTip(p) : "לא מצאנו מסעדה צמחונית מסומנת קרוב למסלול. רוב המסעדות מציעות מנות צמחוניות, כדאי לשאול.";
           s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
-        const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null };
+        const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null, move };
         assignTimes(d);
         return d;
       }).filter(d => d.stops.length),
@@ -936,5 +963,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
+  return { legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

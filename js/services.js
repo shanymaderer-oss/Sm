@@ -211,11 +211,11 @@ Masa.svc = (() => {
   }
 
   /* Real walking route through all stops of a day. */
-  async function walkRoute(stops, signal) {
+  async function walkRoute(stops, signal, profile = "foot") {
     if (!stops || stops.length < 2) return null;
     const coords = stops.map(s => `${(+s.lng).toFixed(6)},${(+s.lat).toFixed(6)}`).join(";");
     try {
-      const j = await getJSON(`https://routing.openstreetmap.de/routed-foot/route/v1/driving/${coords}?overview=full&geometries=geojson`, {}, 20000, signal);
+      const j = await getJSON(`https://routing.openstreetmap.de/routed-${profile === "car" ? "car" : "foot"}/route/v1/driving/${coords}?overview=full&geometries=geojson`, {}, 20000, signal);
       const r = j.routes?.[0];
       if (!r) return null;
       return { line: r.geometry.coordinates.map(([x, y]) => [y, x]), legs: r.legs.map(l => ({ m: l.distance, s: l.duration })) };

@@ -38,7 +38,7 @@ const fmtDay = d => d.toLocaleDateString("he-IL", { weekday: "short", day: "nume
 /* ---------- state ---------- */
 const S = {
   screen: "home", prev: "home", dest: null,
-  form: { days: 3, interests: ["food", "history", "view"], budget: "בינוני", pace: "מאוזן", diet: "הכול", mobility: "", notes: "", start: isoDate(addDays(new Date(), 21)), people: 2 },
+  form: { days: 3, interests: ["food", "history", "view"], budget: "בינוני", pace: "מאוזן", diet: "הכול", mobility: "", move: "walk", notes: "", start: isoDate(addDays(new Date(), 21)), people: 2 },
   list: { chip: "food", sort: "best", open: false, cuisine: null, price: null, diet: null, q: "", page: 1 }, poi: null,
   trip: null, day: 0, stop: 0, openBook: null, chat: [], chatLog: [], busy: false, me: null
 };
@@ -389,6 +389,8 @@ SCREENS.goals = {
     <div class="seg" id="budget">${["חסכוני", "בינוני", "מפנק"].map(v => `<button type="button" aria-pressed="${f.budget === v}">${v}</button>`).join("")}</div>
     <div class="section-label">אוכל</div>
     <div class="seg" id="diet">${["הכול", "צמחוני", "כשר"].map(v => `<button type="button" aria-pressed="${f.diet === v}">${v}</button>`).join("")}</div>
+    <div class="section-label">איך מתניידים? <small class="muted">ברגל כל יום נשאר באזור אחד, ברכב אפשר להגיע רחוק יותר</small></div>
+    <div class="seg" id="moveForm">${MOVES.map(([v, l, i]) => `<button type="button" data-v="${v}" aria-pressed="${(f.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div>
     <div class="section-label">נגישות <small class="muted">נעדיף מקומות נגישים, פחות הליכה והצעות למונית</small></div>
     <div class="seg wrap" id="mobility">${MOBILITY.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(f.mobility || "") === v}">${l}</button>`).join("")}</div>
     <div class="section-label">קצב</div>
@@ -408,6 +410,7 @@ SCREENS.goals = {
     $("dplus").onclick = () => setD(f.days + 1);
     document.querySelectorAll(".tile").forEach(t => t.onclick = () => { const k = t.dataset.k, on = f.interests.includes(k); f.interests = on ? f.interests.filter(x => x !== k) : [...f.interests, k]; t.setAttribute("aria-pressed", !on); });
     ["budget", "pace", "diet"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.onclick = () => { f[id] = b.textContent; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); }));
+    $("moveForm").querySelectorAll("button").forEach(b => b.onclick = () => { f.move = b.dataset.v; $("moveForm").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
     $("mobility").querySelectorAll("button").forEach(b => b.onclick = () => { f.mobility = b.dataset.v; $("mobility").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
     $("notes").oninput = e => f.notes = e.target.value;
     $("startDate").onchange = e => { f.start = e.target.value; };
@@ -455,14 +458,17 @@ async function build() {
 
 /* ---------- plan ---------- */
 function peakWord(s) { if (!s.busy) return ""; const open = s.busy.filter(v => v > 0); const avg = open.length ? open.reduce((a, b) => a + b, 0) / open.length : 0; return avg > 75 ? "עמוס מאוד" : avg > 55 ? "עמוס בצהריים" : "בדרך כלל רגוע"; }
+const MOVES = [["walk", "ברגל", "nav"], ["transit", "תחבורה ציבורית", "bus"], ["car", "רכב", "car"]];
 function legInfo(d, i) {
   const a = d.stops[i - 1], b = d.stops[i];
   const leg = d.legs?.[i - 1];
-  const kmv = leg ? leg.m / 1000 : km(a, b) * 1.25;
-  const min = leg ? Math.round(leg.s / 60) : Math.round(kmv / 4.6 * 60);
-  return { kmv, min, transit: min > 35 };
+  const kmv = leg ? leg.m / 1000 : km(a, b) * (d.move === "car" ? 1.35 : 1.25);
+  const min = Math.max(1, Math.round(planner.legMinutes(d, i - 1)));
+  const mode = d.move === "car" && km(a, b) >= 0.6 ? "car" : d.move === "transit" && km(a, b) > 1.2 ? "transit" : "walk";
+  return { kmv, min, mode, transit: mode === "walk" && min > 35 };
 }
-function totalWalk(t) { let w = 0; t.days.forEach(d => d.stops.forEach((s, i) => { if (i) w += legInfo(d, i).kmv; })); return w; }
+function totalWalk(t) { let w = 0; t.days.forEach(d => d.stops.forEach((s, i) => { if (i) { const L = legInfo(d, i); if (L.mode === "walk") w += L.kmv; } })); return w; }
+function totalDrive(t) { let w = 0; t.days.forEach(d => d.stops.forEach((s, i) => { if (i) { const L = legInfo(d, i); if (L.mode !== "walk") w += L.kmv; } })); return w; }
 SCREENS.plan = {
   view() {
     const t = S.trip, all = t.days.flatMap(d => d.stops);
@@ -472,7 +478,8 @@ SCREENS.plan = {
     return `<div class="screen">
     <div class="triphero"><div class="eyebrow" style="color:#fff;opacity:.9">${tag} · ${esc(t.country || "")}</div>
       <h1>${esc(t.city)} · ${t.days.length} ${t.days.length === 1 ? "יום" : "ימים"}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
-      <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${t.cc || t.slug ? `<button type="button" id="costStat"><b>${money(COST.ils(COST.trip(t).total))}</b><small>עלות משוערת</small></button>` : ""}</div></div>
+      <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}${t.cc || t.slug ? `<button type="button" id="costStat"><b>${money(COST.ils(COST.trip(t).total))}</b><small>עלות משוערת</small></button>` : ""}</div></div>
+    ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
     <div class="duo">
       ${t.source === "sample" ? "" : t.hotel ? `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>המלון שלכם</small><b>${esc(t.hotel.name)}</b></span></button>`
         : `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>איפה לישון?</small><b>המלון שלכם, או מלונות שמתאימים למסלול</b></span></button>`}
@@ -512,6 +519,7 @@ SCREENS.plan = {
     $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
     $("infoCard").onclick = () => go("info");
     $("moveCard").onclick = () => go("move");
+    document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
     bindFamily();
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
   }
@@ -666,6 +674,7 @@ SCREENS.discover = {
     const etiq = D.etiquette?.length ? D.etiquette : ETIQUETTE_GENERIC;
     return `<div class="screen">
     <div><div class="eyebrow">גלו עוד ב${esc(t.city)}</div><h1 style="margin-top:4px">מה עוד אפשר לעשות?</h1><p class="lead" style="margin-top:6px">רעיונות מעבר למסלול. רעיון עם מיקום אפשר להוסיף ליום שתבחרו, והוא מסומן גם על המפה.</p></div>
+    ${socialCityCard(t)}
     <div class="catgrid">${CHIPS.filter(([k, , kinds]) => (t.places || []).some(p => kinds.includes(p.kind))).map(([k, label, kinds, icon]) => `<button type="button" data-chip="${k}"><span class="ic" style="background:${cv(CATS[catOf({ cat: planner.KIND[kinds[0]]?.cat })].c)}">${ic(icon)}</span>${label}<small>${(t.places || []).filter(p => kinds.includes(p.kind)).length}</small></button>`).join("")}</div>
     <label class="section-label" for="addDay">להוסיף רעיונות אל</label>
     <select id="addDay" class="select">${dayOpts}</select>
@@ -934,12 +943,30 @@ function placeLine(p) {
   return bits.map(b => b.startsWith("<b") ? b : esc(b)).join(" · ");
 }
 const reviewsUrl = p => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.local || p.name} ${p.address || ""} ${cityQ()}`.trim())}`;
+/* what people film and post: TikTok and Instagram searches for a place or a city (opens in the app on a phone) */
+const tiktokUrl = q => `https://www.tiktok.com/search?q=${encodeURIComponent(q)}`;
+const igTag = q => String(q || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+const igUrl = q => igTag(q).length >= 3 ? `https://www.instagram.com/explore/tags/${igTag(q)}/` : gSearch(`site:instagram.com ${q}`);
+function socialRow(p) {
+  const city = S.trip?.cityEn || S.trip?.city || "";
+  const name = p.local || p.name;
+  return `<div class="chiprow social"><a class="chipbtn tt" href="${tiktokUrl(`${name} ${city}`)}" target="_blank" rel="noopener">${ic("play")}סרטונים בטיקטוק</a><a class="chipbtn ig" href="${igUrl(name)}" target="_blank" rel="noopener">${ic("camera")}תמונות באינסטגרם</a></div>`;
+}
+function socialCityCard(t) {
+  const he = t.city, en = t.cityEn || t.cityLocal || t.city;
+  const q = [[`${he} מסעדות`, "מסעדות (יוצרים ישראלים)"], [`${he} המלצות`, "המלצות בעברית"], [`${en} hidden gems`, "פינות נסתרות"], [`${en} street food`, "אוכל רחוב"], [`${en} must eat`, "חובה לאכול"], [`${en} things to do`, "מה לעשות"]];
+  return `<div class="card socialcard"><h2>${ic("play")} מה ממליצים בטיקטוק ובאינסטגרם על ${esc(he)}</h2>
+    <p>שם רואים איך המקום נראה באמת ומה אנשים מזמינים. פותחים חיפוש מוכן, ואם מצאתם מקום שאהבתם, מחפשים אותו במסע לפי שם ומוסיפים למסלול.</p>
+    <div class="chiprow">${q.map(([x, l]) => `<a class="chipbtn tt" href="${tiktokUrl(x)}" target="_blank" rel="noopener">${ic("play")}${esc(l)}</a>`).join("")}</div>
+    <div class="chiprow"><a class="chipbtn ig" href="${igUrl(en + "food")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "food"))}</a><a class="chipbtn ig" href="${igUrl(en + "travel")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "travel"))}</a><a class="chipbtn ig" href="${igUrl(en)}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en))}</a></div>
+    <div class="disclaim">${ic("info")}<span>טיקטוק ואינסטגרם לא מאפשרים לאתרים אחרים לקרוא את הפוסטים אוטומטית, אז אנחנו פותחים לכם את החיפוש אצלם.</span></div></div>`;
+}
 function contactRow(p) {
   const items = [];
   items.push(`<a class="chipbtn" href="${reviewsUrl(p)}" target="_blank" rel="noopener">${ic("users")}ביקורות ותמונות בגוגל</a>`);
   if (p.website) items.push(`<a class="chipbtn" href="${esc(p.website)}" target="_blank" rel="noopener">${ic("ext")}אתר</a>`);
   if (p.phone) items.push(`<a class="chipbtn" href="tel:${esc(p.phone.replace(/[^\d+]/g, ""))}">${ic("speech")}<bdi dir="ltr">${esc(p.phone)}</bdi></a>`);
-  return `<div class="chiprow">${items.join("")}</div>${p.address ? `<div class="hoursrow">${ic("pin")}<span><bdi dir="ltr">${esc(p.address)}</bdi></span></div>` : ""}`;
+  return `<div class="chiprow">${items.join("")}</div>${p.isHotel ? "" : socialRow(p)}${p.address ? `<div class="hoursrow">${ic("pin")}<span><bdi dir="ltr">${esc(p.address)}</bdi></span></div>` : ""}`;
 }
 function renderChips() {
   const el = $("gchips");
@@ -1288,6 +1315,18 @@ function hotelBook(p) {
     ${S.trip.hotel?.id === p.id ? `<div class="keyrow"><span class="tag new">זה המלון שלכם</span><button type="button" class="btn small soft" id="dropHotel">הסרת המלון מהמסלול</button><button type="button" class="btn small soft" id="otherHotels">מלונות אחרים</button></div>` : `<button type="button" class="btn block" id="pickHotel">${ic("bed")} בחירה כמלון שלי ובניית המסלול סביבו</button>`}
   </div>`;
 }
+/* build the trip again with one setting changed, keeping the hotel, the family notes and the trip id */
+async function rebuildWith(change, msg) {
+  const t = S.trip;
+  if (!t?.opts) return;
+  toast("מסדרים את המסלול מחדש…");
+  try {
+    const nt = await planner.build({ ...t.opts, ...memoryOpts(), hotel: t.hotel || null, ...change }, () => {}, null);
+    nt.id = t.id; nt.fam = t.fam || null;
+    saveTrip(nt); openTrip(nt);
+    if (msg) toast(msg);
+  } catch { toast("לא הצלחנו לסדר מחדש. נסו שוב."); }
+}
 async function chooseHotel(p) {
   const t = S.trip;
   if (!p || !t?.opts) return;
@@ -1376,6 +1415,8 @@ SCREENS.info = {
 /* ================= getting there and around ================= */
 const TR = Masa.transport;
 function legRow(t, a, b, L2) {
+  if (L2.mode === "car") return `<div class="leg">${ic("car")} ${L2.kmv.toFixed(1)} ק״מ · כ-${L2.min} דק׳ נסיעה וחניה · <a href="${gmDir(a, b, "driving")}" target="_blank" rel="noopener">ניווט ברכב</a></div>`;
+  if (L2.mode === "transit") return `<div class="leg">${ic("bus")} ${L2.kmv.toFixed(1)} ק״מ · כ-${L2.min} דק׳ בתחבורה ציבורית · <a href="${gmDir(a, b, "transit")}" target="_blank" rel="noopener">איזה קו לוקחים</a></div>`;
   const nav = `<a href="${gmDir(a, b, L2.transit ? "transit" : "walking")}" target="_blank" rel="noopener">ניווט</a>`;
   const mob = t.opts?.mobility;
   const far = L2.min > (mob ? 12 : 25);
@@ -1476,7 +1517,7 @@ function memoryOpts() {
   v.forEach(([, x]) => (x.cuisine || "").split(";").filter(Boolean).forEach(c => { cu[c] = (cu[c] || 0) + 1; }));
   return { visited: v.map(([k, x]) => [k, x.local || x.name]).flat(), likeCuisines: Object.entries(cu).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]) };
 }
-function rememberForm(f) { me.form = { interests: f.interests, budget: f.budget, diet: f.diet, pace: f.pace, mobility: f.mobility || "", people: f.people }; saveMe(); }
+function rememberForm(f) { me.form = { interests: f.interests, budget: f.budget, diet: f.diet, pace: f.pace, mobility: f.mobility || "", move: f.move || "walk", people: f.people }; saveMe(); }
 function markVisited(s, on) {
   const k = placeKey(s);
   if (on) me.visited[k] = { name: s.name, local: s.local, kind: s.kind, cuisine: s.cuisine || null, lat: +s.lat, lng: +s.lng, city: S.trip?.city || "", at: Date.now() };
