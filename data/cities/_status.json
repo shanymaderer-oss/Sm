@@ -1131,16 +1131,18 @@
  },
  "larnaca": {
   "at": "2026-10-23T21:19:23.819Z",
-  "seconds": 393,
+  "seconds": 589,
   "osm": {
-   "sights": 23,
+   "sights": 11,
    "restaurants": 73,
    "cafes": 85,
    "hotels": 61,
    "shopping": 27,
    "diet": 1,
    "extra": 9,
-   "streets": 5
+   "streets": 5,
+   "sights2": 13,
+   "landmarks": 2
   },
   "voyage": {
    "eat": 10,
@@ -1156,6 +1158,12 @@
    "en": 15
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Ermou (48)",
    "Zinonos Kitieos (33)",
@@ -1164,17 +1172,12 @@
    "Archiepiskopou Kyprianou Avenue (6)"
   ],
   "log": [
-   "overpass-api.de ok 23 38295ms",
-   "overpass-api.de ok 73 39400ms",
-   "overpass-api.de HTTP 502 449ms",
-   "overpass-api.de ok 85 37403ms",
-   "overpass-api.de ok 61 42148ms",
-   "overpass-api.de ok 27 41746ms",
-   "overpass-api.de HTTP 502 460ms",
-   "overpass-api.de ok 1 36167ms",
-   "overpass-api.de ok 9 37342ms",
-   "overpass-api.de ok 172 35513ms",
-   "streets: 172 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 11 29903ms",
+   "overpass-api.de ok 13 40848ms",
+   "overpass-api.de HTTP 504 52770ms",
+   "overpass-api.de ok 2 36648ms",
+   "fame: 25 of 25"
   ]
  },
  "limassol": {
