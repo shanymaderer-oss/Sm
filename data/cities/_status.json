@@ -628,16 +628,18 @@
  },
  "athens": {
   "at": "2026-10-23T18:14:43.491Z",
-  "seconds": 656,
+  "seconds": 829,
   "osm": {
-   "sights": 260,
+   "sights": 187,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
    "diet": 0,
    "extra": 56,
-   "streets": 14
+   "streets": 14,
+   "sights2": 101,
+   "landmarks": 14
   },
   "voyage": {
    "eat": 24,
@@ -653,6 +655,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Πατησίων (83)",
    "Ερμού (68)",
@@ -661,10 +669,12 @@
    "Πανεπιστημίου (30)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 1467 33850ms",
-   "streets: 1467 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de HTTP 504 34428ms",
+   "overpass-api.de ok 187 30595ms",
+   "overpass-api.de ok 101 26502ms",
+   "overpass-api.de ok 14 33325ms",
+   "fame: 363 of 363"
   ]
  },
  "milan": {
