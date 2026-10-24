@@ -1726,16 +1726,18 @@
  },
  "belgrade": {
   "at": "2026-10-23T22:37:23.210Z",
-  "seconds": 393,
+  "seconds": 535,
   "osm": {
-   "sights": 256,
+   "sights": 214,
    "restaurants": 285,
    "cafes": 300,
    "hotels": 176,
    "shopping": 292,
    "diet": 11,
    "extra": 55,
-   "streets": 9
+   "streets": 9,
+   "sights2": 44,
+   "landmarks": 16
   },
   "voyage": {
    "eat": 24,
@@ -1751,6 +1753,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Булевар краља Александра (29)",
    "Кнеза Михаила (22)",
@@ -1759,15 +1767,13 @@
    "Синђелићева (8)"
   ],
   "log": [
-   "overpass-api.de ok 256 46123ms",
-   "overpass-api.de ok 285 25849ms",
-   "overpass-api.de ok 300 36909ms",
-   "overpass-api.de ok 176 38445ms",
-   "overpass-api.de ok 292 58286ms",
-   "overpass-api.de ok 11 48772ms",
-   "overpass-api.de ok 55 45295ms",
-   "overpass-api.de ok 281 28917ms",
-   "streets: 281 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de HTTP 502 350ms",
+   "overpass-api.de HTTP 502 350ms",
+   "overpass-api.de ok 214 29958ms",
+   "overpass-api.de ok 44 22048ms",
+   "overpass-api.de ok 16 24538ms",
+   "fame: 297 of 297"
   ]
  },
  "dublin": {
