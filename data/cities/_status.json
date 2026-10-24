@@ -1,9 +1,9 @@
 {
  "paris": {
   "at": "2026-10-23T16:32:39.468Z",
-  "seconds": 568,
+  "seconds": 707,
   "osm": {
-   "sights": 260,
+   "sights": 739,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
@@ -11,7 +11,8 @@
    "diet": 200,
    "extra": 200,
    "streets": 14,
-   "landmarks": 150
+   "landmarks": 150,
+   "sights2": 250
   },
   "voyage": {
    "eat": 69,
@@ -27,7 +28,11 @@
    "en": 100
   },
   "streetsV": 2,
-  "fameV": 1,
+  "fameV": 2,
+  "qv": {
+   "sights": 2,
+   "sights2": 1
+  },
   "streets": [
    "Rue du Faubourg Saint-Antoine (47)",
    "Rue Saint-Antoine (29)",
@@ -36,9 +41,19 @@
    "Rue de Rivoli (20)"
   ],
   "log": [
-   "(updated: landmarks)",
-   "overpass-api.de ok 150 39133ms",
-   "fame: 450 of 450"
+   "(updated: sights, sights2)",
+   "overpass-api.de ok 739 26786ms",
+   "overpass-api.de HTTP 504 40398ms",
+   "overpass-api.de ok 250 32288ms",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 724 of 1124"
   ]
  },
  "rome": {
