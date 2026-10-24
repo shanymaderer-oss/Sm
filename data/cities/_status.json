@@ -932,16 +932,18 @@
  },
  "tokyo": {
   "at": "2026-10-23T18:55:59.638Z",
-  "seconds": 486,
+  "seconds": 683,
   "osm": {
-   "sights": 260,
+   "sights": 155,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
    "diet": 47,
    "extra": 200,
-   "streets": 0
+   "streets": 0,
+   "sights2": 148,
+   "landmarks": 66
   },
   "voyage": {
    "eat": 70,
@@ -957,12 +959,21 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 424ms",
-   "overpass-api.de ok 1 35585ms",
-   "streets: 1 shops"
+   "(updated: sights, sights2, landmarks, streets)",
+   "overpass-api.de ok 155 33730ms",
+   "overpass-api.de ok 148 35565ms",
+   "overpass-api.de ok 66 30403ms",
+   "overpass-api.de ok 1 45902ms",
+   "streets: 1 shops",
+   "fame: 523 of 523"
   ]
  },
  "istanbul": {
