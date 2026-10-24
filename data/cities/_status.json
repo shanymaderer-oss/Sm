@@ -1182,16 +1182,18 @@
  },
  "limassol": {
   "at": "2026-10-23T21:26:22.311Z",
-  "seconds": 414,
+  "seconds": 549,
   "osm": {
-   "sights": 23,
+   "sights": 2,
    "restaurants": 97,
    "cafes": 136,
    "hotels": 36,
    "shopping": 52,
    "diet": 1,
    "extra": 5,
-   "streets": 1
+   "streets": 1,
+   "sights2": 21,
+   "landmarks": 1
   },
   "voyage": {
    "eat": 18,
@@ -1207,23 +1209,22 @@
    "en": 22
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Anexartisias (8)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 23 32411ms",
-   "overpass-api.de ok 97 39777ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 136 40933ms",
-   "overpass-api.de HTTP 502 448ms",
-   "overpass-api.de ok 36 36631ms",
-   "overpass-api.de ok 52 44144ms",
-   "overpass-api.de ok 1 44885ms",
-   "overpass-api.de ok 5 40034ms",
-   "overpass-api.de HTTP 502 443ms",
-   "overpass-api.de ok 45 28981ms",
-   "streets: 45 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 2 29715ms",
+   "overpass-api.de HTTP 502 346ms",
+   "overpass-api.de ok 21 33085ms",
+   "overpass-api.de ok 1 36485ms",
+   "fame: 10 of 10"
   ]
  },
  "paphos": {
