@@ -1427,16 +1427,18 @@
  },
  "krakow": {
   "at": "2026-10-23T21:59:50.304Z",
-  "seconds": 299,
+  "seconds": 435,
   "osm": {
-   "sights": 260,
+   "sights": 264,
    "restaurants": 386,
    "cafes": 300,
    "hotels": 350,
    "shopping": 269,
    "diet": 37,
    "extra": 94,
-   "streets": 7
+   "streets": 7,
+   "sights2": 88,
+   "landmarks": 44
   },
   "voyage": {
    "eat": 0,
@@ -1452,6 +1454,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Pawia (10)",
    "Starowiślna (15)",
@@ -1460,15 +1468,11 @@
    "Długa (13)"
   ],
   "log": [
-   "overpass-api.de ok 260 26300ms",
-   "overpass-api.de ok 386 31614ms",
-   "overpass-api.de ok 300 26948ms",
-   "overpass-api.de ok 350 33886ms",
-   "overpass-api.de ok 269 35569ms",
-   "overpass-api.de ok 37 28292ms",
-   "overpass-api.de ok 94 28628ms",
-   "overpass-api.de ok 187 22974ms",
-   "streets: 187 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 264 39315ms",
+   "overpass-api.de ok 88 33679ms",
+   "overpass-api.de ok 44 23604ms",
+   "fame: 423 of 423"
   ]
  },
  "warsaw": {
