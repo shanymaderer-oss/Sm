@@ -1032,16 +1032,18 @@
  },
  "batumi": {
   "at": "2026-10-23T21:05:03.630Z",
-  "seconds": 401,
+  "seconds": 612,
   "osm": {
-   "sights": 23,
+   "sights": 11,
    "restaurants": 124,
    "cafes": 173,
    "hotels": 227,
    "shopping": 85,
    "diet": 3,
    "extra": 8,
-   "streets": 6
+   "streets": 6,
+   "sights2": 12,
+   "landmarks": 2
   },
   "voyage": {
    "eat": 11,
@@ -1057,6 +1059,12 @@
    "en": 30
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "ზურაბ გორგილაძის ქუჩა (22)",
    "ილია ჭავჭავაძის ქუჩა (15)",
@@ -1065,19 +1073,13 @@
    "ნიკოლოზ ბარათაშვილის ქუჩა (9)"
   ],
   "log": [
-   "overpass-api.de ok 23 38478ms",
-   "overpass-api.de ok 124 46129ms",
-   "overpass-api.de ok 173 31885ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 227 34267ms",
-   "overpass-api.de HTTP 502 740ms",
-   "overpass-api.de ok 85 35155ms",
-   "overpass-api.de ok 3 36192ms",
-   "overpass-api.de ok 8 32486ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de ok 187 29483ms",
-   "streets: 187 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de HTTP 504 50153ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass-api.de ok 11 34242ms",
+   "overpass-api.de ok 12 36795ms",
+   "overpass-api.de ok 2 33771ms",
+   "fame: 33 of 33"
   ]
  },
  "tbilisi": {
