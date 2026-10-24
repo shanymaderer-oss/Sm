@@ -312,16 +312,18 @@
  },
  "vienna": {
   "at": "2026-10-23T17:26:47.825Z",
-  "seconds": 925,
+  "seconds": 1104,
   "osm": {
-   "sights": 260,
+   "sights": 658,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
    "diet": 0,
    "extra": 200,
-   "streets": 14
+   "streets": 14,
+   "sights2": 158,
+   "landmarks": 150
   },
   "voyage": {
    "eat": 113,
@@ -337,6 +339,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Mariahilfer Straße (66)",
    "Neubaugasse (46)",
@@ -345,11 +353,15 @@
    "Kärntner Straße (25)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 1216 40452ms",
-   "streets: 1216 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 658 6235ms",
+   "overpass-api.de ok 158 30425ms",
+   "overpass-api.de ok 150 34205ms",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 933 of 933"
   ]
  },
  "berlin": {
