@@ -1477,16 +1477,18 @@
  },
  "warsaw": {
   "at": "2026-10-23T22:06:55.612Z",
-  "seconds": 421,
+  "seconds": 596,
   "osm": {
-   "sights": 260,
+   "sights": 464,
    "restaurants": 398,
    "cafes": 300,
    "hotels": 138,
    "shopping": 300,
    "diet": 59,
    "extra": 95,
-   "streets": 14
+   "streets": 14,
+   "sights2": 182,
+   "landmarks": 81
   },
   "voyage": {
    "eat": 53,
@@ -1502,6 +1504,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Mokotowska (64)",
    "Chmielna (28)",
@@ -1510,18 +1518,14 @@
    "Koszykowa (19)"
   ],
   "log": [
-   "overpass-api.de HTTP 504 40989ms",
-   "overpass-api.de ok 260 39431ms",
-   "overpass-api.de HTTP 502 448ms",
-   "overpass-api.de ok 398 43198ms",
-   "overpass-api.de ok 300 45173ms",
-   "overpass-api.de HTTP 502 429ms",
-   "overpass-api.de ok 138 27180ms",
-   "overpass-api.de ok 300 27424ms",
-   "overpass-api.de ok 59 36563ms",
-   "overpass-api.de ok 95 32779ms",
-   "overpass-api.de ok 1010 32206ms",
-   "streets: 1010 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de HTTP 502 293ms",
+   "overpass-api.de ok 464 33660ms",
+   "overpass-api.de ok 182 30976ms",
+   "overpass-api.de ok 81 38996ms",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 583 of 583"
   ]
  },
  "sofia": {
