@@ -782,17 +782,18 @@ Masa.planner = (() => {
     const treats = by(["dessert", "market", "deli", "bakery"]);
     const bars = by(["bar", "club"]);
     const cuisinesUsed = {};
+    const usedNames = new Set(groups.flat().map(p => normName(p.local)));
     const nearBest = (list, anchor, maxKm, extra = () => 0) => {
       let best = null, bv = -Infinity;
       for (const f of list) {
-        if (used.has(f.id)) continue;
+        if (used.has(f.id) || usedNames.has(normName(f.local))) continue; // two branches of the same chain in one trip is one too many
         const d = km(anchor, f);
         if (d > maxKm) continue;
         const cu = (f.cuisine || "").split(";")[0];
         const v = f.q - M.meal * d - (cu ? 1.4 * (cuisinesUsed[cu] || 0) : 0) + extra(f);
         if (v > bv) { bv = v; best = f; }
       }
-      if (best) { used.add(best.id); const cu = (best.cuisine || "").split(";")[0]; if (cu) cuisinesUsed[cu] = (cuisinesUsed[cu] || 0) + 1; }
+      if (best) { used.add(best.id); usedNames.add(normName(best.local)); const cu = (best.cuisine || "").split(";")[0]; if (cu) cuisinesUsed[cu] = (cuisinesUsed[cu] || 0) + 1; }
       return best;
     };
     const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) : 0) + (f.voyage ? 1 : 0);
