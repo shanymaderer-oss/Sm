@@ -153,7 +153,7 @@
  },
  "london": {
   "at": "2026-10-23T16:43:17.509Z",
-  "seconds": 903,
+  "seconds": 1017,
   "osm": {
    "sights": 593,
    "restaurants": 450,
@@ -180,7 +180,7 @@
    "en": 100
   },
   "streetsV": 2,
-  "fameV": 2,
+  "fameV": 3,
   "qv": {
    "sights": 2,
    "sights2": 1,
@@ -194,10 +194,7 @@
    "Marylebone High Street (56)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 593 39405ms",
-   "overpass-api.de ok 221 35694ms",
-   "overpass-api.de ok 80 34620ms",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -205,7 +202,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 589 of 939"
+   "fame: 939 of 939"
   ]
  },
  "prague": {
