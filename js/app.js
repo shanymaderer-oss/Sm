@@ -966,9 +966,13 @@ function socialCityCard(t) {
     <div class="chiprow"><a class="chipbtn ig" href="${igUrl(en + "food")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "food"))}</a><a class="chipbtn ig" href="${igUrl(en + "travel")}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en + "travel"))}</a><a class="chipbtn ig" href="${igUrl(en)}" target="_blank" rel="noopener">${ic("camera")}#${esc(igTag(en))}</a></div>
     <div class="disclaim">${ic("info")}<span>הרשתות לא מאפשרות לאתרים אחרים לקרוא את הפוסטים אוטומטית, אז אנחנו פותחים לכם חיפוש מוכן אצלן.</span></div></div>`;
 }
-const TA_STYLE = { "Centrally Located": "מיקום מרכזי", "Boutique": "בוטיק", "Romantic": "רומנטי", "Family": "למשפחות", "Modern": "מודרני", "Historic Hotel": "היסטורי", "Quiet": "שקט", "Mid-range": "מחיר בינוני", "Hidden Gem": "פנינה נסתרת", "Value": "תמורה טובה", "City View": "נוף לעיר", "Trendy": "טרנדי", "Quaint": "מקסים", "Classic": "קלאסי", "Green": "ירוק", "Luxury": "יוקרה", "Business": "עסקים", "Great View": "נוף מרהיב", "Bay View": "נוף למפרץ", "Harbor View": "נוף לנמל", "Charming": "מקסים", "Residential Neighborhood": "שכונת מגורים", "Quirky Hotels": "מיוחד", "Budget": "זול", "Beach": "חוף", "Ocean View": "נוף לים", "Sea View": "נוף לים" };
+const TA_STYLE = { "Centrally Located": "מיקום מרכזי", "Boutique": "בוטיק", "Romantic": "רומנטי", "Family": "למשפחות", "Modern": "מודרני", "Historic Hotel": "היסטורי", "Quiet": "שקט", "Mid-range": "מחיר בינוני", "Hidden Gem": "פנינה נסתרת", "Value": "תמורה טובה", "City View": "נוף לעיר", "Trendy": "טרנדי", "Quaint": "מקסים", "Classic": "קלאסי", "Green": "ירוק", "Luxury": "יוקרה", "Business": "עסקים", "Great View": "נוף מרהיב", "Bay View": "נוף למפרץ", "Harbor View": "נוף לנמל", "Charming": "מקסים", "Residential Neighborhood": "שכונת מגורים", "Quirky Hotels": "מיוחד", "Budget": "זול", "Beach": "חוף", "Ocean View": "נוף לים", "Sea View": "נוף לים", "River View": "נוף לנהר", "Park View": "נוף לפארק", "Marina View": "נוף למרינה", "Mountain View": "נוף להרים", "Family Resort": "ריזורט למשפחות" };
+// the generic labels (business, modern...) say little; show the telling ones first
+const TA_DULL = new Set(["Business", "Mid-range", "Modern", "Charming", "Quaint", "Classic", "Green"]);
 function taLine(p) {
-  const st = (p.ta.st || []).map(x => TA_STYLE[x]).filter(Boolean).slice(0, 2);
+  const raw = p.ta.st || [];
+  const order = [...raw.filter(x => !TA_DULL.has(x)), ...raw.filter(x => TA_DULL.has(x))];
+  const st = [...new Set(order.map(x => TA_STYLE[x]).filter(Boolean))].slice(0, 2);
   return `<span class="taline"><b class="tarate">${"●".repeat(Math.round(p.ta.r))}<small>${p.ta.r}</small></b> Tripadvisor · ${p.ta.c.toLocaleString("en-US")} ביקורות${st.length ? ` · ${esc(st.join(", "))}` : ""}</span>`;
 }
 function contactRow(p) {

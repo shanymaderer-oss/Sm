@@ -58,6 +58,9 @@
   function findCity(q) {
     const t = String(q || "").toLowerCase().trim();
     if (!t) return null;
+    // an exact id first ("new-york" has a dash, so the name patterns below would miss it)
+    const exact = CITIES.find(c => c.slug === t);
+    if (exact) return exact;
     return CITIES.find(c => [c.he, c.en.toLowerCase(), c.local.toLowerCase(), c.slug.replace("-", " ")].some(n => rx(n).test(t))) || null;
   }
   const api = { CITIES, findCity };

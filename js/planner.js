@@ -152,11 +152,18 @@ Masa.planner = (() => {
   const VOY_CATS = { sleep: ["sleep"], eat: ["food", "night"], drink: ["food", "night"], buy: ["shopping", "food"],
     see: ["history", "art", "view", "nature", "family"], do: ["history", "art", "view", "nature", "family", "night"] };
   const HOTEL_WORDS = new Set(["hotel", "hotels", "hostel", "hôtel", "residence", "residences", "apartments", "apartment", "aparthotel", "suites", "suite", "boutique", "design", "house", "inn", "the", "and", "spa", "by", "de", "la", "le", "du", "di", "del", "city", "old", "town", "centre", "center", "grand", "luxury", "collection", "small", "world", "leading", "hotels", "astotel", "albergo", "pension", "guest", "b&b", "bed", "breakfast"]);
-  function sameHotel(a, b) {
-    const w = s => normName(s).split(" ").filter(x => x.length > 2 && !HOTEL_WORDS.has(x));
-    const A = w(a), B = new Set(w(b));
-    if (!A.length || !B.size) return false;
-    return A.filter(x => B.has(x)).length >= Math.min(A.length, B.size, 2) * 0.5 + 0.01 && A.some(x => B.has(x));
+  const hotelWords = s => [...new Set(normName(s).split(" ").filter(x => x.length > 2 && !HOTEL_WORDS.has(x)))];
+  /* the same hotel if they share a telling word: words that many hotels in the city use ("Times Square", "Old Town", the city name) do not count */
+  function sameHotel(a, b, common, d) {
+    const A = hotelWords(a), B = new Set(hotelWords(b));
+    if (!A.length || !B.size) return d < 0.06 && normName(a) === normName(b);
+    const shared = A.filter(x => B.has(x));
+    if (!shared.length) return false;
+    const telling = shared.filter(x => !common.has(x));
+    // two telling words in common, or one when they stand in the very same spot (a hotel and its neighbour often share one word)
+    if (telling.length >= 2 || (telling.length && d < 0.07)) return true;
+    // only common words in common: accept just when the names are made of nothing else, in the same spot
+    return d < 0.05 && shared.length === A.length && shared.length === B.size;
   }
   function buildPool(data, geo) {
     const cc = geo.cc;
@@ -229,11 +236,16 @@ Masa.planner = (() => {
     }
     // Tripadvisor: attach the rating and price to the same hotel from the map, or add the hotel if the map does not have it
     if (data.ta?.h) {
+      const freq = new Map();
+      [...pool.filter(p => p.cat === "sleep").map(p => p.local), ...data.ta.h.map(h => h[1])].forEach(n => hotelWords(n).forEach(w => freq.set(w, (freq.get(w) || 0) + 1)));
+      const common = new Set([...freq].filter(([, n]) => n >= 3).map(([w]) => w));
       for (const [id, name, lat, lng, r, c, price, styles] of data.ta.h) {
         const t = { lat, lng };
+        // only hotels in the city itself and with a decent rating
+        if (r < 4 || km(geo, t) > 15) continue;
         const info = { r, c, p: price, st: styles, url: `https://www.tripadvisor.com/Hotel_Review-g${data.ta.geo}-d${id}-Reviews.html` };
         // match by the distinctive words of the name ("Hotel" or the city name are not enough: two neighbors share them)
-        const match = pool.find(p => p.cat === "sleep" && !p.ta && km(p, t) < 0.3 && sameHotel(p.local, name));
+        const match = pool.find(p => p.cat === "sleep" && !p.ta && km(p, t) < 0.3 && sameHotel(p.local, name, common, km(p, t)));
         if (match) { match.ta = info; continue; }
         // not on the map under this name (often a local-language name): add it, and drop an unrated map hotel in the very same spot
         pool.forEach(p => { if (p.cat === "sleep" && !p.ta && km(p, t) < 0.025) p.hide = true; });
