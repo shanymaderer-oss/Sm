@@ -1276,16 +1276,18 @@
  },
  "nice": {
   "at": "2026-10-23T21:44:01.667Z",
-  "seconds": 446,
+  "seconds": 617,
   "osm": {
-   "sights": 70,
+   "sights": 50,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 178,
    "shopping": 168,
    "diet": 11,
    "extra": 71,
-   "streets": 2
+   "streets": 2,
+   "sights2": 19,
+   "landmarks": 5
   },
   "voyage": {
    "eat": 41,
@@ -1301,24 +1303,23 @@
    "en": 70
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Avenue Jean Médecin (17)",
    "Avenue Notre-Dame (7)"
   ],
   "log": [
-   "overpass-api.de ok 70 46827ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass-api.de HTTP 504 42126ms",
-   "overpass-api.de ok 450 32580ms",
-   "overpass-api.de ok 300 30499ms",
-   "overpass-api.de ok 178 30707ms",
-   "overpass-api.de ok 168 34905ms",
-   "overpass-api.de HTTP 502 437ms",
-   "overpass-api.de ok 11 30762ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 71 49318ms",
-   "overpass-api.de ok 130 32062ms",
-   "streets: 130 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de HTTP 504 46895ms",
+   "overpass-api.de ok 50 33978ms",
+   "overpass-api.de ok 19 27499ms",
+   "overpass-api.de ok 5 22870ms",
+   "fame: 145 of 145"
   ]
  },
  "munich": {
