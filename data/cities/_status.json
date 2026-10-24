@@ -882,16 +882,18 @@
  },
  "bangkok": {
   "at": "2026-10-23T18:48:43.207Z",
-  "seconds": 465,
+  "seconds": 611,
   "osm": {
-   "sights": 228,
+   "sights": 129,
    "restaurants": 450,
    "cafes": 286,
    "hotels": 350,
    "shopping": 226,
    "diet": 26,
    "extra": 200,
-   "streets": 12
+   "streets": 12,
+   "sights2": 81,
+   "landmarks": 73
   },
   "voyage": {
    "eat": 113,
@@ -907,6 +909,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "ถนนเจริญกรุง (50)",
    "ถนนมหาราช (19)",
@@ -915,11 +923,11 @@
    "ถนนสีลม (14)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 452ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 373 40144ms",
-   "streets: 373 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 129 40431ms",
+   "overpass-api.de ok 81 36546ms",
+   "overpass-api.de ok 73 31460ms",
+   "fame: 351 of 351"
   ]
  },
  "tokyo": {
