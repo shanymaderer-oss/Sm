@@ -1324,16 +1324,18 @@
  },
  "munich": {
   "at": "2026-10-23T21:49:32.367Z",
-  "seconds": 326,
+  "seconds": 485,
   "osm": {
-   "sights": 260,
+   "sights": 604,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 275,
    "shopping": 300,
    "diet": 57,
    "extra": 111,
-   "streets": 14
+   "streets": 14,
+   "sights2": 167,
+   "landmarks": 124
   },
   "voyage": {
    "eat": 73,
@@ -1349,6 +1351,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "Sendlinger Straße (49)",
    "Maximilianstraße (43)",
@@ -1357,15 +1365,13 @@
    "Kaufingerstraße (27)"
   ],
   "log": [
-   "overpass-api.de ok 260 28015ms",
-   "overpass-api.de ok 450 29570ms",
-   "overpass-api.de ok 300 26332ms",
-   "overpass-api.de ok 275 52828ms",
-   "overpass-api.de ok 300 30573ms",
-   "overpass-api.de ok 57 32180ms",
-   "overpass-api.de ok 111 25348ms",
-   "overpass-api.de ok 1166 36535ms",
-   "streets: 1166 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 604 27613ms",
+   "overpass-api.de ok 167 32732ms",
+   "overpass-api.de ok 124 29779ms",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 840 of 840"
   ]
  },
  "dubai": {
