@@ -28,5 +28,8 @@ async def main():
     print("offline trip:", (await pg.evaluate("document.querySelector('.triphero h1')?.innerText")), "| stops:", await pg.evaluate("document.querySelectorAll('button.stop').length"))
     await pg.fill("#gq", "וינה"); await pg.press("#gq", "Enter")
     print("errors:", errs)
+    global OK; OK = not errs and saved >= 1
     await b.close()
+OK = False
 asyncio.run(main())
+import sys; sys.exit(0 if OK else 1)

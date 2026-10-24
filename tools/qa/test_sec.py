@@ -21,7 +21,7 @@ async def main():
     pg.on("dialog",lambda dlg: logs.append("DIALOG "+dlg.message))
     async def r(route):
       u=route.request.url
-      if "localhost" in u: return await route.continue_()
+      if u.startswith(os.environ.get("QA_URL", "http://localhost:8790")): return await route.continue_()
       if "maplibre-gl.js" in u: return await route.fulfill(path=ML+"maplibre-gl.js",content_type="text/javascript",headers={"access-control-allow-origin":"*"})
       if "maplibre-gl.css" in u: return await route.fulfill(path=ML+"maplibre-gl.css",content_type="text/css",headers={"access-control-allow-origin":"*"})
       if "openfreemap.org/styles" in u: return await route.fulfill(json={"version":8,"sources":{},"layers":[{"id":"bg","type":"background","paint":{"background-color":"#ece6da"}}]})
@@ -35,7 +35,10 @@ async def main():
     bad=await pg.evaluate("[...document.querySelectorAll('a[href]')].map(a=>a.getAttribute('href')).filter(h=>!/^(https?:|tel:|mailto:|#)/.test(h))")
     onattrs=await pg.evaluate("[...document.querySelectorAll('*')].filter(e=>[...e.attributes].some(a=>/^on/.test(a.name))).length")
     print("PWN:",pwn,"| bad hrefs:",bad,"| on* attrs:",onattrs)
+    global FAIL; FAIL = bool(pwn or bad or onattrs or any(l.startswith("PAGEERR") or l.startswith("DIALOG") for l in logs))
     print("screen text:",(await pg.inner_text("#screen"))[:300].replace("\n"," / "))
     print("\n".join(l for l in logs if "Failed to load" not in l)[:2000])
     await b.close()
+FAIL = True
 asyncio.run(main())
+import sys; sys.exit(1 if FAIL else 0)

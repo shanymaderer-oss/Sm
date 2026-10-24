@@ -17,3 +17,8 @@ python3 -m http.server 8790 &   # from the repo root
 Environment: `QA_URL` (default `http://localhost:8790`), `QA_OUT`, `MAPLIBRE_DIST`.
 
 Before a release also run `python3 tools/stamp-sw.py` so visitors get the new version.
+
+## Daily checks
+
+- `.github/workflows/health.yml` runs every night on GitHub against the live site (all scripts above). If something breaks it opens an issue labelled `site-check` (GitHub emails the owner) and closes it once it passes again. Screenshots are kept for 7 days as a run artifact.
+- A scheduled Claude run every morning follows the `masa-daily-checkup` skill: checks, at most one small safe improvement, and a line in `tools/qa/daily-log.md`.

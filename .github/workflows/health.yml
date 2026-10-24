@@ -1,0 +1,71 @@
+name: Daily site check
+# Every day: open the live site in a real browser and run the QA checks.
+# If something is broken, open an issue (GitHub emails the owner). When it works again, close it.
+on:
+  schedule:
+    - cron: "23 2 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: health
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      QA_URL: https://shanymaderer-oss.github.io/Sm
+      QA_OUT: qa-out/
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Install browser
+        run: |
+          pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Live site answers
+        run: |
+          for p in "" index.html sw.js js/tt.js data/cities/rome.json data/ta/hotels.json; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$QA_URL/$p")
+            echo "$p $code"; test "$code" = "200"
+          done
+          curl -s "$QA_URL/index.html" | grep -q "require-trusted-types-for" || (echo "CSP missing on the live site" && exit 1)
+      - name: Security test
+        run: python tools/qa/test_sec.py
+      - name: Wishes test
+        run: python tools/qa/test_wish.py 0 2 4
+      - name: Offline test
+        run: python tools/qa/test_offline.py
+      - name: Screenshots
+        run: python tools/qa/shots.py daily
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: screenshots
+          path: qa-out/
+          retention-days: 7
+      - name: Report a failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          open=$(gh issue list --label site-check --state open --json number --jq '.[0].number')
+          if [ -z "$open" ]; then
+            gh label create site-check --color B3261E --description "Daily site check" 2>/dev/null || true
+            gh issue create --label site-check --title "הבדיקה היומית של האתר נכשלה" --body "משהו באתר לא עובד. פרטים: $RUN"
+          else
+            gh issue comment "$open" --body "עדיין נכשל: $RUN"
+          fi
+      - name: Close the report when fixed
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --label site-check --state open --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "הבדיקה היומית עוברת שוב."
+          done

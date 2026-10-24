@@ -17,7 +17,7 @@ async def main():
       pg.on("pageerror",lambda e: errs.append(str(e)))
       async def r(route):
         u=route.request.url
-        if "localhost" in u: return await route.continue_()
+        if u.startswith(os.environ.get("QA_URL", "http://localhost:8790")): return await route.continue_()
         if "maplibre-gl.js" in u: return await route.fulfill(path=ML+"maplibre-gl.js",content_type="text/javascript")
         if "openfreemap.org/styles" in u: return await route.fulfill(json={"version":8,"sources":{},"layers":[{"id":"bg","type":"background","paint":{"background-color":"#ece6da"}}]})
         return await route.abort()
@@ -37,7 +37,9 @@ async def main():
         print(f" day{d+1}:", " | ".join(await pg.evaluate("[...document.querySelectorAll('button.stop')].map(b=>(b.querySelector('.mealtag')?.innerText||'')+':'+b.querySelector('.t').innerText+' '+(b.querySelector('.meta')?.innerText.split('\\n')[0]||''))")))
       await pg.click(".daytab >> nth=0"); await pg.wait_for_timeout(300)
       await pg.screenshot(path=SP+f"w{i}_plan.png")
-      if errs: print("ERRORS",errs)
+      if errs: print("ERRORS",errs); FAILS.append(city)
       await pg.close()
     await b.close()
+FAILS = []
 asyncio.run(main())
+import sys; sys.exit(1 if FAILS else 0)

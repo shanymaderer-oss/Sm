@@ -12,7 +12,7 @@ async def main():
     pg.on("console",lambda m: logs.append(m.text) if m.type in("error","warning") and "Failed to load" not in m.text else None); pg.on("pageerror",lambda e: logs.append("PAGEERR "+str(e)))
     async def r(route):
       u=route.request.url
-      if "localhost" in u: return await route.continue_()
+      if u.startswith(os.environ.get("QA_URL", "http://localhost:8790")): return await route.continue_()
       if "maplibre-gl.js" in u: return await route.fulfill(path=ML+"maplibre-gl.js",content_type="text/javascript",headers={"access-control-allow-origin":"*"})
       if "maplibre-gl.css" in u: return await route.fulfill(path=ML+"maplibre-gl.css",content_type="text/css",headers={"access-control-allow-origin":"*"})
       if "openfreemap.org/styles" in u: return await route.fulfill(json={"version":8,"sources":{},"layers":[{"id":"bg","type":"background","paint":{"background-color":"#ece6da"}}]})
@@ -38,5 +38,8 @@ async def main():
     await pg.click("#nav button[data-k=guide]"); await pg.wait_for_timeout(800)
     await pg.screenshot(path=SP+f"{TAG}_9guide.png")
     print("\n".join(logs))
+    global FAIL; FAIL = any(l.startswith("PAGEERR") for l in logs)
     await b.close()
+FAIL = True
 asyncio.run(main())
+import sys; sys.exit(1 if FAIL else 0)
