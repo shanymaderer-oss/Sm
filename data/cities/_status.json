@@ -782,16 +782,18 @@
  },
  "venice": {
   "at": "2026-10-23T18:35:54.355Z",
-  "seconds": 456,
+  "seconds": 589,
   "osm": {
-   "sights": 176,
+   "sights": 92,
    "restaurants": 450,
    "cafes": 179,
    "hotels": 350,
    "shopping": 145,
    "diet": 5,
    "extra": 116,
-   "streets": 5
+   "streets": 5,
+   "sights2": 75,
+   "landmarks": 150
   },
   "voyage": {
    "eat": 69,
@@ -807,6 +809,12 @@
    "en": 100
   },
   "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "landmarks": 1
+  },
   "streets": [
    "San Marco (52)",
    "Calle dei Fabbri (28)",
@@ -815,10 +823,11 @@
    "Cannaregio (15)"
   ],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 205 32932ms",
-   "streets: 205 shops"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 92 27674ms",
+   "overpass-api.de ok 75 42804ms",
+   "overpass-api.de ok 150 22812ms",
+   "fame: 408 of 408"
   ]
  },
  "new-york": {
