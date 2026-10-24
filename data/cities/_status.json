@@ -932,7 +932,7 @@
  },
  "tokyo": {
   "at": "2026-10-23T18:55:59.638Z",
-  "seconds": 683,
+  "seconds": 722,
   "osm": {
    "sights": 155,
    "restaurants": 450,
@@ -967,13 +967,9 @@
   },
   "streets": [],
   "log": [
-   "(updated: sights, sights2, landmarks, streets)",
-   "overpass-api.de ok 155 33730ms",
-   "overpass-api.de ok 148 35565ms",
-   "overpass-api.de ok 66 30403ms",
-   "overpass-api.de ok 1 45902ms",
-   "streets: 1 shops",
-   "fame: 523 of 523"
+   "(updated: streets)",
+   "overpass-api.de ok 1 31046ms",
+   "streets: 1 shops"
   ]
  },
  "istanbul": {
