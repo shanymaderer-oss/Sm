@@ -176,11 +176,10 @@
     const ids = [];
     const seen = new Set();
     for (const v of voyage || []) if (/^Q\d+$/.test(v.wikidata || "") && ["see", "do"].includes(v.type) && !seen.has(v.wikidata)) { seen.add(v.wikidata); ids.push(v.wikidata); }
-    for (const e of els || []) {
-      const t = e.tags || {}, id = t.wikidata;
-      if (!/^Q\d+$/.test(id || "") || seen.has(id) || !SIGHTISH(t)) continue;
-      seen.add(id); ids.push(id);
-    }
+    // the most likely sights first: tourist attractions and museums, then historic places, then the rest
+    const rank = t => /^(attraction|museum|gallery|viewpoint)$/.test(t.tourism || "") ? 0 : t.historic || t.place === "square" || t.man_made === "bridge" ? 1 : 2;
+    const cand = (els || []).filter(e => /^Q\d+$/.test(e.tags?.wikidata || "") && SIGHTISH(e.tags)).sort((a, b) => rank(a.tags) - rank(b.tags));
+    for (const e of cand) { const id = e.tags.wikidata; if (!seen.has(id)) { seen.add(id); ids.push(id); } }
     return ids.slice(0, max);
   }
   const fameUrl = ids => `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&origin=*&props=sitelinks&ids=${ids.join("|")}`;

@@ -70,16 +70,19 @@ const only = process.argv.slice(2);
 mkdirSync("data/cities", { recursive: true });
 const statusPath = "data/cities/_status.json";
 const status = existsSync(statusPath) ? JSON.parse(readFileSync(statusPath, "utf8")) : {};
-const FAME_V = 2;
+const FAME_V = 3;
 // a query whose text changed gets fetched again: raise its number here
 const QUERY_V = { sights: 2 }; // bump to fetch how famous each sight is again
 async function getFame(els, log, voyage) {
   const ids = S.fameIds(els, 1200, voyage);
   const out = { n: {}, he: {} };
   for (let i = 0; i < ids.length; i += 50) {
-    try { S.fameParse(await getJSON(S.fameUrl(ids.slice(i, i + 50)), {}, 30000), out); }
-    catch (e) { log.push(`wikidata ${e.message}`); }
-    await sleep(400);
+    // Wikidata answers 429 when asked too fast: wait longer and ask again
+    for (let k = 0; k < 5; k++) {
+      try { S.fameParse(await getJSON(S.fameUrl(ids.slice(i, i + 50)), {}, 30000), out); break; }
+      catch (e) { log.push(`wikidata ${e.message}`); await sleep(5000 * (k + 1)); }
+    }
+    await sleep(1500);
   }
   log.push(`fame: ${Object.keys(out.n).length} of ${ids.length}`);
   return out;
