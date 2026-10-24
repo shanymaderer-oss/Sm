@@ -43,9 +43,9 @@
  },
  "rome": {
   "at": "2026-10-23T16:27:13.159Z",
-  "seconds": 497,
+  "seconds": 589,
   "osm": {
-   "sights": 260,
+   "sights": 499,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
@@ -53,7 +53,8 @@
    "diet": 26,
    "extra": 200,
    "streets": 14,
-   "landmarks": 92
+   "landmarks": 92,
+   "sights2": 116
   },
   "voyage": {
    "eat": 58,
@@ -69,7 +70,11 @@
    "en": 100
   },
   "streetsV": 2,
-  "fameV": 1,
+  "fameV": 2,
+  "qv": {
+   "sights": 2,
+   "sights2": 1
+  },
   "streets": [
    "Via Nazionale (71)",
    "Via del Corso (53)",
@@ -78,9 +83,15 @@
    "Via del Tritone (18)"
   ],
   "log": [
-   "(updated: landmarks)",
-   "overpass-api.de ok 92 29689ms",
-   "fame: 419 of 419"
+   "(updated: sights, sights2)",
+   "overpass-api.de ok 499 30479ms",
+   "overpass-api.de ok 116 35987ms",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 500 of 750"
   ]
  },
  "barcelona": {
