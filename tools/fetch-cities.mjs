@@ -26,7 +26,9 @@ async function overpass(q, log) {
     const ep = order[i], t0 = Date.now();
     try {
       const j = await getJSON(ep, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q) }, 60000);
-      if (Array.isArray(j.elements) && (j.elements.length || !j.remark)) { log.push(`${new URL(ep).host} ok ${j.elements.length} ${Date.now() - t0}ms`); return j.elements; }
+      // a "runtime error" remark (timeout, out of memory) means the answer was cut off: ask again rather than keep a partial list
+      const cut = /runtime error|timed out|out of memory/i.test(j.remark || "");
+      if (Array.isArray(j.elements) && !cut && (j.elements.length || !j.remark)) { log.push(`${new URL(ep).host} ok ${j.elements.length} ${Date.now() - t0}ms`); return j.elements; }
       log.push(`${new URL(ep).host} remark ${String(j.remark).slice(0, 80)}`);
     } catch (e) { log.push(`${new URL(ep).host} ${e.name === "AbortError" ? "timeout" : e.message} ${Date.now() - t0}ms`); }
     await sleep(10000 * (i + 1));
