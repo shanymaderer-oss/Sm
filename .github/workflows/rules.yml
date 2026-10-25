@@ -19,7 +19,16 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
-      - run: npm run test:rules
+      - name: Rules tests
+        run: |
+          set +e
+          npm run test:rules > out.txt 2>&1
+          code=$?
+          cat out.txt
+          # show the important lines as an annotation (readable from the API without the log)
+          msg=$(grep -E "^not ok|^# (pass|fail)|Error|FAILED|failed|assert|PERMISSION|expected" out.txt | head -40 | sed 's/%/%25/g' | tr '\n' '~' | sed 's/~/%0A/g')
+          echo "::notice title=rules-tests::${msg:-no summary lines}"
+          exit $code
       - name: The committed bundle matches the build
         run: |
           npm run build
