@@ -932,7 +932,7 @@
  },
  "tokyo": {
   "at": "2026-10-23T18:55:59.638Z",
-  "seconds": 758,
+  "seconds": 818,
   "osm": {
    "sights": 155,
    "restaurants": 450,
@@ -968,7 +968,7 @@
   "streets": [],
   "log": [
    "(updated: streets)",
-   "overpass-api.de ok 1 27647ms",
+   "overpass-api.de ok 1 51685ms",
    "streets: 1 shops"
   ]
  },
