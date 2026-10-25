@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "esbuild entry.js --bundle --minify --format=iife --target=es2020 --legal-comments=external --outfile=../../vendor/firebase/masa-firebase.js",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-masa \"node --test rules.test.mjs\""
+    "test:rules": "cd ../.. && tools/firebase/node_modules/.bin/firebase emulators:exec --only firestore --project demo-masa \"node --test tools/firebase/rules.test.mjs\""
   },
   "devDependencies": {
     "firebase": "13.1.0",

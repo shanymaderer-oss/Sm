@@ -61,10 +61,8 @@ jobs:
         run: |
           set +e
           python -m http.server 8790 > /dev/null 2>&1 &
-          cd tools/firebase
-          npx firebase emulators:exec --only auth,firestore --project demo-masa "python ../qa/test_cloud.py" > ../../out.txt 2>&1
+          tools/firebase/node_modules/.bin/firebase emulators:exec --only auth,firestore --project demo-masa "python tools/qa/test_cloud.py" > out.txt 2>&1
           code=$?
-          cd ../..
           cat out.txt
           msg=$(grep -E "^(PASS|FAIL)|ALL PASSED|FAILED|Error|error" out.txt | head -60 | sed 's/%/%25/g' | tr '\n' '~' | sed 's/~/%0A/g')
           echo "::notice title=cloud-test::${msg}"

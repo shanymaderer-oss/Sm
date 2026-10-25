@@ -2,7 +2,7 @@ name: Security rules test
 # Runs the Firestore security rules against attacks (tools/firebase/rules.test.mjs) in the official emulator.
 on:
   push:
-    paths: ["firestore.rules", "tools/firebase/**", ".github/workflows/rules.yml"]
+    paths: ["firestore.rules", "firebase.json", "tools/firebase/**", ".github/workflows/rules.yml"]
   workflow_dispatch:
 permissions:
   contents: read
