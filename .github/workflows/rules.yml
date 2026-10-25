@@ -1,0 +1,26 @@
+name: Security rules test
+# Runs the Firestore security rules against attacks (tools/firebase/rules.test.mjs) in the official emulator.
+on:
+  push:
+    paths: ["firestore.rules", "tools/firebase/**", ".github/workflows/rules.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: tools/firebase
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run test:rules
+      - name: The committed bundle matches the build
+        run: |
+          npm run build
+          git diff --exit-code -- ../../vendor/firebase/masa-firebase.js || (echo "vendor/firebase/masa-firebase.js is not the output of tools/firebase/entry.js" && exit 1)
