@@ -11,6 +11,8 @@ permissions:
 jobs:
   live:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     timeout-minutes: 30
     env:
       QA_URL: https://shanymaderer-oss.github.io/Sm
@@ -32,14 +34,20 @@ jobs:
           msg=$(tail -c 60000 out.txt | sed 's/%/%25/g' | tr '\n' '~' | sed 's/~/%0A/g')
           echo "::notice title=live-check::${msg}"
           exit $code
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - name: Save the report to the qa-report-live branch
         if: always()
-        with:
-          name: live-check
-          path: qa-out/
-          retention-days: 14
+        run: |
+          mkdir -p /tmp/rep && cp -r out.txt qa-out /tmp/rep/ 2>/dev/null || true
+          git config user.name "masa-bot"; git config user.email "actions@users.noreply.github.com"
+          git switch --orphan report-tmp
+          git rm -rqf --cached . 2>/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r /tmp/rep/. .
+          git add -A && git commit -qm "report $(date -u +%F-%H%M)" && git push -qf origin HEAD:refs/heads/qa-report-live
   cloud:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -67,3 +75,13 @@ jobs:
           msg=$(grep -E "^(PASS|FAIL)|ALL PASSED|FAILED|Error|error" out.txt | head -60 | sed 's/%/%25/g' | tr '\n' '~' | sed 's/~/%0A/g')
           echo "::notice title=cloud-test::${msg}"
           exit $code
+      - name: Save the report to the qa-report-cloud branch
+        if: always()
+        run: |
+          mkdir -p /tmp/rep && cp -r out.txt qa-out /tmp/rep/ 2>/dev/null || true
+          git config user.name "masa-bot"; git config user.email "actions@users.noreply.github.com"
+          git switch --orphan report-tmp
+          git rm -rqf --cached . 2>/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r /tmp/rep/. .
+          git add -A && git commit -qm "report $(date -u +%F-%H%M)" && git push -qf origin HEAD:refs/heads/qa-report-cloud
