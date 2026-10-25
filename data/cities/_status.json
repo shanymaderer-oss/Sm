@@ -1869,7 +1869,7 @@
  },
  "copenhagen": {
   "at": "2026-10-23T23:01:19.368Z",
-  "seconds": 854,
+  "seconds": 885,
   "osm": {
    "sights": 133,
    "restaurants": 422,
@@ -1905,7 +1905,7 @@
   "streets": [],
   "log": [
    "(updated: streets)",
-   "overpass-api.de ok 1 34816ms",
+   "overpass-api.de ok 1 22814ms",
    "streets: 1 shops"
   ]
  },
