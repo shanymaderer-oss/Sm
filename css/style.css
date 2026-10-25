@@ -685,3 +685,9 @@ textarea:focus{border-color:var(--ink);outline:none}
 .pin>span{font:700 12px var(--body)}
 .kindtag{position:relative;z-index:1;align-self:flex-start;font-size:.82rem;font-weight:500;color:var(--muted)}
 .placehero.photo .kindtag{color:#fff;opacity:.92;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+/* the account */
+.avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;display:block}
+.card.account h2 .avatar{width:28px;height:28px}
+.account .muted{color:var(--muted)}
+.livebox{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px}
+.invitecard{border-color:var(--primary)}

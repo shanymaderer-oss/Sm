@@ -314,6 +314,14 @@ function saveTrip(t) {
   store.set("masa-trips", list.slice(0, 8));
   // ask the browser to keep this site's storage, so saved trips are not cleared when the phone runs low on space
   try { navigator.storage?.persist?.(); } catch {}
+  Masa.cloud?.pushTrip(t);
+}
+/* store a trip without sending it to the account (used for changes that came from the account) */
+function storeTripLocal(t, keepPlace) {
+  const list = savedTrips();
+  const i = list.findIndex(x => x.id === t.id);
+  if (i >= 0 && keepPlace) list[i] = t; else { if (i >= 0) list.splice(i, 1); list.unshift(t); }
+  store.set("masa-trips", list.slice(0, 8));
 }
 function openTrip(t) {
   S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = [];
@@ -371,10 +379,12 @@ SCREENS.home = {
     <div><h1>לאן נוסעים?</h1><p class="lead" style="margin-top:6px">כתבו עיר, או לחצו על אחת מהנקודות במפה.</p></div>
     <form class="search" id="destForm">${ic("search")}<input id="destInput" type="text" placeholder="עיר ומדינה, למשל ליסבון, פורטוגל" value="${esc(S.dest?.q || "")}" aria-label="יעד" autocomplete="off"><button class="btn" type="submit">המשך</button></form>
     <div class="status" id="destStatus"></div>
-    ${saved.length ? `<div class="section-label">הטיולים שלי</div><div class="saved">${saved.map((t, i) => `<button type="button" class="savedtrip" data-i="${i}"><span class="ic" style="background:${cv(DAYC[i % 5])}">${ic("save")}</span><span><b>${esc(t.city)}</b><small>${t.days.length} ימים · ${t.days.reduce((a, d) => a + d.stops.length, 0)} תחנות</small></span>${ic("fwd")}</button>`).join("")}</div>` : ""}
+    ${cloud.configured() && cloud.pendingInvite() && cloud.state.status !== "in" ? `<div class="card invitecard"><h2>${ic("users")} הוזמנתם לטיול משותף</h2><p>כדי לראות את הטיול ולתכנן אותו יחד, מתחברים עם Google.</p><button type="button" class="btn block" id="inviteIn">התחברות עם Google</button></div>` : ""}
+    ${saved.length ? `<div class="section-label">הטיולים שלי</div><div class="saved">${saved.map((t, i) => `<button type="button" class="savedtrip" data-i="${i}"><span class="ic" style="background:${cv(DAYC[i % 5])}">${ic("save")}</span><span><b>${esc(t.city)}</b><small>${t.days.length} ימים, ${t.days.reduce((a, d) => a + d.stops.length, 0)} תחנות${t.cloud?.members > 1 ? ", משותף" : ""}</small></span>${ic("fwd")}</button>`).join("")}</div>` : ""}
     <div class="section-label">יעדים פופולריים</div>
     <div class="dests">${DESTS.slice(0, 8).map((d, i) => `<button type="button" class="dest" data-i="${i}"><b>${esc(d.he)}</b><small>${esc(d.country)}, ${esc(d.days)}</small></button>`).join("")}</div>
     <button type="button" class="btn soft block" id="sampleBtn">לראות טיול לדוגמה: 3 ימים ברומא</button>
+    ${cloud.configured() && cloud.state.status === "off" && !cloud.pendingInvite() ? `<p class="aboutnote"><button type="button" class="linkbtn" id="homeIn">התחברו עם Google</button> כדי לשמור את הטיולים בכל המכשירים ולתכנן יחד עם המשפחה.</p>` : ""}
     <p class="aboutnote">המקומות במסלול אמיתיים: מסעדות, אתרים ורחובות מ-OpenStreetMap, ההמלצות מ-Wikivoyage והסיפורים מוויקיפדיה. אין כאן מקומות ממומנים, וההזמנות נעשות באתר של המקום עצמו.</p>
   </div></div>`;
   },
@@ -392,6 +402,8 @@ SCREENS.home = {
       go("goals");
     };
     $("sampleBtn").onclick = loadSample;
+    $("inviteIn") && ($("inviteIn").onclick = () => cloud.signIn());
+    $("homeIn") && ($("homeIn").onclick = () => cloud.signIn());
   }
 };
 
@@ -900,6 +912,7 @@ SCREENS.settings = {
     const on = ai.enabled();
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backPrev" aria-label="חזרה">${ic("back")}</button><h1 style="font-size:1.5rem">הגדרות</h1><span style="width:38px"></span></div>
+    ${accountCard()}
     <div class="card"><h2>${ic("access")} נגישות ותצוגה</h2>
       <div class="section-label">גודל טקסט</div>
       <div class="seg" id="a11ySize">${[["100", "רגיל"], ["115", "גדול"], ["130", "גדול מאוד"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${A11Y.size === v}">${l}</button>`).join("")}</div>
@@ -952,6 +965,7 @@ SCREENS.settings = {
     $("keyDel") && ($("keyDel").onclick = async () => { await ai.saveKey(""); rerenderKeepScroll(); toast("המפתח נמחק"); });
     $("clearData").onclick = () => { $("confirmClear").hidden = false; };
     $("clearNo").onclick = () => { $("confirmClear").hidden = true; };
+    bindAccount();
     $("clearYes").onclick = () => { store.set("masa-trips", []); store.set("masa-checks", {}); checks = {}; rerenderKeepScroll(); toast("הנתונים נמחקו"); };
   }
 };
@@ -1442,7 +1456,7 @@ async function rebuildWith(change, msg) {
   toast("מסדרים את המסלול מחדש…");
   try {
     const nt = await planner.build({ ...t.opts, ...memoryOpts(), hotel: t.hotel || null, ...change }, () => {}, null);
-    nt.id = t.id; nt.fam = t.fam || null;
+    nt.id = t.id; nt.fam = t.fam || null; nt.cloudId = t.cloudId; nt.cloud = t.cloud;
     saveTrip(nt); openTrip(nt);
     if (msg) toast(msg);
   } catch { toast("לא הצלחנו לסדר מחדש. נסו שוב."); }
@@ -1453,7 +1467,7 @@ async function chooseHotel(p) {
   toast("מסדרים את המסלול מחדש סביב המלון…");
   try {
     const nt = await planner.build({ ...t.opts, hotel: p ? { id: p.id, name: p.name, local: p.local, kind: p.kind, lat: p.lat, lng: p.lng, stars: p.stars, priceClass: p.priceClass, website: p.website, phone: p.phone, address: p.address, signals: p.signals, q: p.q } : null }, () => {}, null);
-    nt.id = t.id; nt.fam = t.fam || null;
+    nt.id = t.id; nt.fam = t.fam || null; nt.cloudId = t.cloudId; nt.cloud = t.cloud;
     saveTrip(nt);
     openTrip(nt);
     toast(`כל יום יוצא עכשיו מ${p.name}`);
@@ -1463,7 +1477,7 @@ async function clearHotel() {
   const t = S.trip;
   if (!t?.opts) return;
   const nt = await planner.build({ ...t.opts, hotel: null }, () => {}, null);
-  nt.id = t.id; nt.fam = t.fam || null; saveTrip(nt); openTrip(nt); toast("המלון הוסר מהמסלול");
+  nt.id = t.id; nt.fam = t.fam || null; nt.cloudId = t.cloudId; nt.cloud = t.cloud; saveTrip(nt); openTrip(nt); toast("המלון הוסר מהמסלול");
 }
 
 /* ================= practical info for abroad ================= */
@@ -1637,7 +1651,7 @@ function memoryOpts() {
   v.forEach(([, x]) => (x.cuisine || "").split(";").filter(Boolean).forEach(c => { cu[c] = (cu[c] || 0) + 1; }));
   return { visited: v.map(([k, x]) => [k, x.local || x.name]).flat(), likeCuisines: Object.entries(cu).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]) };
 }
-function rememberForm(f) { me.form = { interests: f.interests, budget: f.budget, diet: f.diet, pace: f.pace, mobility: f.mobility || "", move: f.move || "walk", people: f.people }; saveMe(); }
+function rememberForm(f) { me.form = { interests: f.interests, budget: f.budget, diet: f.diet, pace: f.pace, mobility: f.mobility || "", move: f.move || "walk", people: f.people }; saveMe(); Masa.cloud?.saveProfile().catch(() => {}); }
 function markVisited(s, on) {
   const k = placeKey(s);
   if (on) me.visited[k] = { name: s.name, local: s.local, kind: s.kind, cuisine: s.cuisine || null, lat: +s.lat, lng: +s.lng, city: S.trip?.city || "", at: Date.now() };
@@ -1697,11 +1711,13 @@ function familyCard(t) {
     ${me.name ? `<div class="pline">שמך בהערות: <b>${esc(me.name)}</b> · <button type="button" class="linkbtn" id="famRename">שינוי</button></div>`
       : `<form class="keyrow" id="famNameForm"><input id="famName" class="select" maxlength="30" placeholder="איך קוראים לך? (יופיע ליד ההערות)" aria-label="השם שלך"><button type="submit" class="btn small">שמירה</button></form>`}
     ${notes || people.length ? `<div class="pline">${notes} הערות${people.length ? ` · משתתפים: ${esc(people.join(", "))}` : ""}</div>` : ""}
+    ${liveShareCard(t)}
     <div class="chiprow"><button type="button" class="chipbtn" id="famWa">${ic("speech")}שליחה בוואטסאפ</button><button type="button" class="chipbtn" id="famShare">${ic("share")}שיתוף</button><button type="button" class="chipbtn" id="famCopy">${ic("save")}העתקת קישור</button></div>
     <div class="disclaim">${ic("shield")}<span>הטיול נשמר בתוך הקישור עצמו ולא בשרת. מי שמקבל את הקישור רואה את המסלול וההערות.</span></div></div>`;
 }
 function bindFamily() {
   const t = S.trip;
+  bindLiveShare(t);
   $("famNameForm") && ($("famNameForm").onsubmit = e => {
     e.preventDefault(); const v = $("famName").value.trim(); if (!v) return;
     const old = me.name || "אני";
@@ -1740,13 +1756,14 @@ async function unzip(s) {
   return await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).text();
 }
 const SHARE_KEYS = ["name", "local", "cat", "kind", "kindHe", "meal", "mealHe", "lat", "lng", "time", "duration", "_min", "osm", "wikidata", "cuisine", "priceClass", "price", "fee", "mich", "wheel", "website", "phone", "address", "hours", "must", "signals", "cost", "isHotel", "q", "_wikiTag", "_he", "_en", "shops", "whyLang", "voyage"];
-async function shareLink(t) {
+function tripData(t) {
   t.id = t.id || `t${Date.now()}`;
   const slim = s => { const o = {}; SHARE_KEYS.forEach(k => { if (s[k] != null && s[k] !== "" && !(Array.isArray(s[k]) && !s[k].length)) o[k] = s[k]; }); o.why = String(s.why || "").slice(0, 300); if (s.booking) o.booking = { needed: s.booking.needed, steps: s.booking.steps, query: s.booking.query, url: s.booking.url || null }; return o; };
   const data = { v: 1, id: t.id, from: me.name || "", city: t.city, slug: t.slug, cityLocal: t.cityLocal, cityEn: t.cityEn, country: t.country, cc: t.cc, tz: t.tz, lat: t.lat, lng: t.lng,
     opts: t.opts, hotel: t.hotel, summary: t.summary, days: t.days.map(d => ({ label: d.label, theme: d.theme, stops: d.stops.map(slim) })), fam: t.fam || null };
-  return `${location.origin}${location.pathname}#t=${await zip(JSON.stringify(data))}`;
+  return data;
 }
+async function shareLink(t) { return `${location.origin}${location.pathname}#t=${await zip(JSON.stringify(tripData(t)))}`; }
 function mergeFam(a, b) {
   const out = { visited: { ...(a?.visited || {}) }, notes: { ...(a?.notes || {}) } };
   for (const [k, list] of Object.entries(b?.visited || {})) out.visited[k] = [...new Set([...(out.visited[k] || []), ...list])];
@@ -1824,6 +1841,127 @@ async function importShared() {
   return true;
 }
 
+/* ================= the account: trips on every device, backup, profile, live shared trips (js/cloud.js) ================= */
+const cloud = Masa.cloud;
+const myName = () => me.name || cloud.state.user?.name || "אני";
+/* only my own marks and notes go up under my name; everyone else's come from their own copies */
+function ownFam(fam) {
+  const n = myName(), out = { visited: {}, notes: {} };
+  for (const [k, l] of Object.entries(fam?.visited || {})) if (l.includes(n) || l.includes("אני")) out.visited[k] = [n];
+  for (const [k, l] of Object.entries(fam?.notes || {})) { const mine = l.filter(x => x.by === n || x.by === "אני"); if (mine.length) out.notes[k] = mine.map(x => ({ ...x, by: n })); }
+  return out;
+}
+const cleanFam = f => cleanShared({ id: "t1000000", city: "x", lat: 0, lng: 0, days: [{ stops: [{ name: "x", lat: 0, lng: 0 }] }], fam: f }).fam;
+let openWhenArrives = null;
+cloud.init({
+  pack: t => { const d = tripData(t); delete d.fam; delete d.from; return { data: JSON.stringify(d), fam: ownFam(t.fam) }; },
+  localTrips: () => savedTrips().filter(t => t.source !== "sample"),
+  joinLink: code => joinFromLink(code),
+  saved: t => { storeTripLocal(t, true); if (S.trip && S.trip.id === t.id) S.trip.cloudId = t.cloudId; },
+  myProfile: () => ({ name: me.name || cloud.state.user?.name || "", prefs: me.form }),
+  profile: ({ name, prefs }) => {
+    if (!me.name && (name || cloud.state.user?.name)) me.name = (name || cloud.state.user.name).slice(0, 30);
+    if (!me.form && prefs && typeof prefs === "object") { me.form = prefs; S.form = { ...S.form, ...prefs }; }
+    saveMe();
+  },
+  remote: r => {
+    let d;
+    try { d = cleanShared({ ...r.trip, fam: null }); } catch { return; } // written by members of the trip: clean it like a shared link
+    const fam = r.othersFam.reduce((acc, f) => { try { return mergeFam(acc, cleanFam(f)).fam; } catch { return acc; } }, { visited: {}, notes: {} });
+    const names = Object.fromEntries(Object.entries(r.names).slice(0, 20).map(([k, v]) => [String(k).slice(0, 64), String(v).slice(0, 40)]));
+    const live = S.trip && S.trip.cloudId === r.id ? S.trip : null;
+    let t = live || savedTrips().find(x => x.cloudId === r.id);
+    const meta = { mine: r.mine, names, members: r.members.length };
+    if (t) {
+      const changed = JSON.stringify(tripData(t).days) !== JSON.stringify(tripData({ ...t, days: d.days }).days) || JSON.stringify(t.opts) !== JSON.stringify(d.opts);
+      if (changed) { Object.assign(t, { days: d.days.map(x => ({ ...x, route: null, legs: null, stops: x.stops.map(s => ({ history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], image: null, booking: { needed: false, steps: [] }, ...s })) })), opts: d.opts, hotel: d.hotel, summary: d.summary }); t.pending = true; }
+      t.fam = mergeFam(ownFam(t.fam), fam).fam;
+      t.cloud = meta;
+      storeTripLocal(t, true);
+      if (live) { if (changed) { if (S.day >= t.days.length) S.day = 0; runHydrate(t); } refreshSoon(); }
+    } else {
+      t = { ...d, cloudId: r.id, cloud: meta, source: "shared", pending: true, createdAt: Date.now(), places: [], voyageNoGeo: [], fam: mergeFam({}, fam).fam,
+        discover: { gems: [], experiences: [], free: [], daytrips: [], dishes: [], phrases: PHRASES[MASA_DATA.COUNTRY_LANG?.[d.cc] || "en"] || PHRASES.en, etiquette: ETIQUETTE_GENERIC },
+        days: d.days.map(x => ({ ...x, route: null, legs: null, stops: x.stops.map(s => ({ history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], image: null, booking: { needed: false, steps: [] }, ...s })) })) };
+      delete t.from;
+      storeTripLocal(t);
+      if (openWhenArrives === r.id) { openWhenArrives = null; openTrip(t); toast(`הצטרפתם לטיול ל${t.city}`); }
+      else if (S.screen === "home") rerenderKeepScroll();
+      // bring back the lists of restaurants, hotels and ideas for this city
+      planner.build({ ...t.opts, query: t.opts?.query || t.city, hotel: t.hotel || null }, () => {}, null).then(full => {
+        const cur = S.trip?.cloudId === r.id ? S.trip : savedTrips().find(x => x.cloudId === r.id);
+        if (!cur) return;
+        cur.places = full.places; cur.voyageNoGeo = full.voyageNoGeo; cur.discover = { ...full.discover, phrases: cur.discover.phrases };
+        storeTripLocal(cur, true); if (S.trip === cur) refreshSoon();
+      }).catch(() => {});
+    }
+  },
+  removed: id => {
+    // removed from a shared trip, or the owner deleted it: keep a personal copy on this device
+    const t = S.trip?.cloudId === id ? S.trip : savedTrips().find(x => x.cloudId === id);
+    if (!t) return;
+    delete t.cloudId; delete t.cloud; storeTripLocal(t, true);
+    if (S.trip === t) { toast("הטיול כבר לא משותף. העותק שלכם נשאר במכשיר."); refreshSoon(); }
+  }
+});
+cloud.on(st => {
+  // the avatar in the search bar
+  const g = $("gearBtn");
+  if (g) g.innerHTML = st.status === "in" && st.user?.photo ? `<img class="avatar" src="${esc(safeUrl(st.user.photo))}" alt="" referrerpolicy="no-referrer">` : GEAR_SVG;
+  if (["settings", "home"].includes(S.screen) || (S.screen === "plan" && S.trip)) rerenderKeepScroll();
+  if (st.error === "token" || st.error === "state") { toast("ההתחברות לא הושלמה. נסו שוב."); st.error = null; }
+});
+const GEAR_SVG = $("gearBtn")?.innerHTML || "";
+async function joinFromLink(code) {
+  try { const id = await cloud.join(code); openWhenArrives = id; toast("מצטרפים לטיול…"); }
+  catch (e) { if (e.message === "gone") toast("ההזמנה הזאת כבר לא בתוקף. בקשו קישור חדש."); else if (e.message !== "signin") toast("לא הצלחנו להצטרף לטיול. נסו שוב."); }
+}
+function accountCard() {
+  if (!cloud.configured()) return "";
+  const st = cloud.state, u = st.user;
+  if (st.status === "in") return `<div class="card account"><h2>${u.photo ? `<img class="avatar" src="${esc(safeUrl(u.photo))}" alt="" referrerpolicy="no-referrer">` : ic("users")} ${esc(u.fullName || u.name || "החשבון שלי")}</h2>
+      <p>הטיולים שלכם נשמרים בחשבון ומופיעים בכל מכשיר שמתחברים ממנו. ${u.email ? `<span class="muted">(${esc(u.email)})</span>` : ""}</p>
+      <div class="chiprow"><button type="button" class="chipbtn" id="accOut">התנתקות</button><button type="button" class="chipbtn" id="accDel">${ic("trash")}מחיקת החשבון והמידע</button></div>
+      <div class="confirm" id="accDelAsk" hidden><span>למחוק את החשבון, את הטיולים שבחשבון ואת ההשתתפות בטיולים משותפים? בטיולים במכשיר הזה לא נוגעים.</span><button type="button" class="btn small coral" id="accDelYes">מחיקה</button><button type="button" class="btn small soft" id="accDelNo">ביטול</button></div></div>`;
+  return `<div class="card account"><h2>${ic("users")} החשבון שלי</h2>
+      <p>מתחברים עם Google כדי שהטיולים יישמרו גם אם מחליפים טלפון, יופיעו בכל מכשיר, ואפשר יהיה לתכנן טיול יחד עם המשפחה בזמן אמת.</p>
+      <button type="button" class="btn block" id="accIn" ${st.status === "loading" ? "disabled" : ""}>${st.status === "loading" ? "מתחברים…" : "התחברות עם Google"}</button>
+      <div class="disclaim">${ic("shield")}<span>נשמרים רק השם, התמונה והטיולים שלכם. אפשר למחוק הכול בכל רגע.</span></div></div>`;
+}
+function bindAccount() {
+  $("accIn") && ($("accIn").onclick = () => cloud.signIn());
+  $("accOut") && ($("accOut").onclick = async () => { await cloud.signOut(); toast("התנתקתם. הטיולים נשארו במכשיר."); rerenderKeepScroll(); });
+  $("accDel") && ($("accDel").onclick = () => { $("accDelAsk").hidden = false; });
+  $("accDelNo") && ($("accDelNo").onclick = () => { $("accDelAsk").hidden = true; });
+  $("accDelYes") && ($("accDelYes").onclick = async () => {
+    try { await cloud.deleteAccount(); toast("החשבון והמידע שבו נמחקו"); }
+    catch (e) { toast(e.message === "relogin" ? "המידע נמחק. כדי למחוק גם את החשבון עצמו, התחברו שוב ולחצו על מחיקה." : "המחיקה לא הצליחה. נסו שוב."); }
+    rerenderKeepScroll();
+  });
+}
+function liveShareCard(t) {
+  if (!cloud.configured() || t.source === "sample") return "";
+  const st = cloud.state;
+  if (st.status !== "in") return `<div class="pline">רוצים לתכנן יחד בזמן אמת? <button type="button" class="linkbtn" id="liveIn">התחברו עם Google</button></div>`;
+  const names = Object.entries(t.cloud?.names || {});
+  const mine = !t.cloud || t.cloud.mine;
+  return `<div class="livebox"><b>טיול משותף בזמן אמת</b>
+    ${names.length > 1 ? `<div class="pline">בטיול: ${names.map(([uid, n]) => `${esc(n)}${mine && uid !== st.user.uid ? ` <button type="button" class="linkbtn" data-rm="${esc(uid)}">הסרה</button>` : ""}`).join(", ")}</div>` : `<p class="pline">מי שתזמינו יראה את המסלול, יוכל לשנות אותו ולהוסיף הערות, וכל שינוי מגיע לכולם מיד.</p>`}
+    <div class="chiprow"><button type="button" class="chipbtn" id="liveInvite">${ic("users")}הזמנה לטיול</button>${!mine ? `<button type="button" class="chipbtn" id="liveLeave">יציאה מהטיול</button>` : ""}</div></div>`;
+}
+function bindLiveShare(t) {
+  $("liveIn") && ($("liveIn").onclick = () => cloud.signIn());
+  $("liveInvite") && ($("liveInvite").onclick = async () => {
+    try {
+      const u = await cloud.invite(t);
+      const text = `${myName()} מזמין/ה אותך לתכנן יחד טיול ל${t.city} במסע: ${u}`;
+      if (navigator.share) { try { await navigator.share({ title: `טיול ל${t.city}`, text }); return; } catch {} }
+      try { await navigator.clipboard.writeText(u); toast("קישור ההזמנה הועתק. שלחו אותו למי שמצטרף."); } catch { toast("לא הצלחנו להעתיק את הקישור"); }
+    } catch { toast("לא הצלחנו ליצור הזמנה. בדקו את החיבור לאינטרנט."); }
+  });
+  $("liveLeave") && ($("liveLeave").onclick = async () => { try { await cloud.leave(t); toast("יצאתם מהטיול. העותק שלכם נשאר במכשיר."); } catch { toast("לא הצלחנו. נסו שוב."); } });
+  document.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => { try { await cloud.removeMember(t, b.dataset.rm); toast("הוסר מהטיול"); } catch { toast("לא הצלחנו. נסו שוב."); } });
+}
 /* ---------- offline support and updates ---------- */
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
   const hadController = !!navigator.serviceWorker.controller;
