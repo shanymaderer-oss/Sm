@@ -39,7 +39,7 @@ function harden(root) {
   });
   root.querySelectorAll("a[href]").forEach(a => {
     const h = a.getAttribute("href");
-    if (h.startsWith("#")) return;
+    if (h.startsWith("#") || /^(\.\/)?(privacy|accessibility)\.html$/.test(h)) return; // our own pages
     const u = safeUrl(h);
     if (!u) { a.removeAttribute("href"); return; }
     a.target = "_blank"; a.rel = "noopener noreferrer";
@@ -388,6 +388,7 @@ SCREENS.home = {
     <button type="button" class="btn soft block" id="sampleBtn">לראות טיול לדוגמה: 3 ימים ברומא</button>
     ${cloud.configured() && cloud.state.status === "off" && !cloud.pendingInvite() ? `<p class="aboutnote"><button type="button" class="linkbtn" id="homeIn">התחברו עם Google</button> כדי לשמור את הטיולים בכל המכשירים ולתכנן יחד עם המשפחה.</p>` : ""}
     <p class="aboutnote">המקומות במסלול אמיתיים: מסעדות, אתרים ורחובות מ-OpenStreetMap, ההמלצות מ-Wikivoyage והסיפורים מוויקיפדיה. אין כאן מקומות ממומנים, וההזמנות נעשות באתר של המקום עצמו.</p>
+    <p class="legal"><a href="privacy.html">מדיניות פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
   </div></div>`;
   },
   bind() {
@@ -2002,7 +2003,7 @@ function accountCard() {
   return `<div class="card account"><h2>${ic("users")} החשבון שלי</h2>
       <p>מתחברים עם Google כדי שהטיולים יישמרו גם אם מחליפים טלפון, יופיעו בכל מכשיר, ואפשר יהיה לתכנן טיול יחד עם המשפחה בזמן אמת.</p>
       <button type="button" class="btn block" id="accIn" ${st.status === "loading" ? "disabled" : ""}>${st.status === "loading" ? "מתחברים…" : "התחברות עם Google"}</button>
-      <div class="disclaim">${ic("shield")}<span>נשמרים רק השם, התמונה והטיולים שלכם. אפשר למחוק הכול בכל רגע.</span></div></div>`;
+      <div class="disclaim">${ic("shield")}<span>נשמרים רק השם, התמונה והטיולים שלכם. אפשר למחוק הכול בכל רגע. <a href="privacy.html">מדיניות הפרטיות</a></span></div></div>`;
 }
 function bindAccount() {
   $("accIn") && ($("accIn").onclick = () => cloud.signIn());
