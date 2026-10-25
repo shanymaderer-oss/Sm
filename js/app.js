@@ -245,6 +245,7 @@ function locate() {
     S.me = { lat: p.coords.latitude, lng: p.coords.longitude };
     autoVisited();
     renderMap();
+    refreshNow();
     flyCenter(S.me, 16);
   }, () => toast("לא הצלחנו לקבל מיקום. בדקו שהרשאת המיקום פתוחה בדפדפן."), { enableHighAccuracy: true, timeout: 12000 });
 }
@@ -325,6 +326,7 @@ function storeTripLocal(t, keepPlace) {
 }
 function openTrip(t) {
   S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = [];
+  const live = liveDay(t); if (live > 0) S.day = live; // traveling now: open on today
   COST.loadFX(COUNTRY_INFO[t.cc]?.cur || "EUR").then(() => { if (S.trip === t && TRIP_SCREENS.includes(S.screen) && S.screen !== "guide") rerenderKeepScroll(); }).catch(() => {});
   go("plan");
   if (t.source === "sample") hydrateSample(t);
@@ -589,7 +591,7 @@ SCREENS.plan = {
     const t = S.trip, all = t.days.flatMap(d => d.stops);
     const d = t.days[S.day], col = cv(DAYC[S.day % 5]);
     const ideas = d.stops.flatMap(s => (s.nearby || []).map(n => ({ ...n, _near: s.name }))).filter(n => !d.stops.some(s => s.name === n.name)).slice(0, 3);
-    return `<div class="screen">
+    return `<div class="screen">${nowCard(t)}
     <div class="triphero"><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
       <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
       <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}${t.cc || t.slug ? `<button type="button" id="costStat"><b>${money(COST.ils(COST.trip(t).total))}</b><small>עלות משוערת</small></button>` : ""}</div></div>
@@ -636,6 +638,7 @@ SCREENS.plan = {
     $("moveCard").onclick = () => go("move");
     document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
     bindFamily();
+    bindNow();
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
   }
 };
@@ -1048,6 +1051,79 @@ function openState(p) {
   if (!now || !p.hours) return null;
   return planner.isOpen(p.hours, now);
 }
+/* ================= "now": during the trip, what is next, is it open, how far to walk ================= */
+const hm = s => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); return m ? +m[1] * 60 + +m[2] : null; };
+const hhmm = m => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}:${String(Math.round(m % 60)).padStart(2, "0")}`;
+/* the day of the trip that is today in the trip's city (-1 when not traveling now) */
+function liveDay(t = S.trip) {
+  if (!t || t.source === "sample" || !t.days?.length) return -1;
+  const now = cityNow();
+  if (!now) return -1;
+  if (t.opts?.start) {
+    const i = Math.round((Date.parse(isoDate(now)) - Date.parse(t.opts.start)) / 864e5);
+    if (i >= 0 && i < t.days.length) return i;
+  }
+  return S.me && km(S.me, t) < 50 ? S.day : -1; // there, on other dates than planned
+}
+/* done today: tapped "done"/"skip", or marked as visited since this morning (also when standing there) */
+function isDone(t, s, now) {
+  const k = placeKey(s), v = me.visited[k];
+  return !!(t.done?.[k] || (v && Date.now() - v.at < (now.getHours() * 60 + now.getMinutes() + 1) * 6e4));
+}
+function nowInfo(t = S.trip) {
+  const di = liveDay(t);
+  if (di < 0) return null;
+  const now = cityNow(), N = now.getHours() * 60 + now.getMinutes(), d = t.days[di];
+  const todo = d.stops.map((s, i) => ({ s, i })).filter(({ s }) => !s.isHotel && !isDone(t, s, now));
+  // the next stop: the first one not done whose planned time has not fully passed
+  const next = todo.find(({ s }) => { const a = hm(s.time); return a == null || a + (s._min || 60) > N; });
+  if (!next) return { di, now, N, end: true, tomorrow: t.days[di + 1]?.stops.find(s => !s.isHotel) };
+  const s = next.s, near = S.me && km(S.me, s) < 50 ? km(S.me, s) : null;
+  const walk = near == null ? null : Math.max(1, Math.round(near * 1.25 / 4.8 * 60));
+  const at = Math.max(N + (walk || 0), hm(s.time) ?? N), late = hm(s.time) != null && N + (walk || 0) > hm(s.time) + 20 ? N + (walk || 0) - hm(s.time) : 0;
+  const arrive = new Date(now.getTime() + (at - N) * 6e4);
+  return { di, now, N, s, i: next.i, near, walk, at, late, openNow: s.hours ? planner.isOpen(s.hours, now) : null, openAt: s.hours ? planner.isOpen(s.hours, arrive) : null, left: todo.length };
+}
+function nowCard(t) {
+  const x = nowInfo(t);
+  if (!x) return "";
+  const head = `<div class="nowhead"><span class="livedot"></span><b>עכשיו בטיול</b><small>${esc(t.days[x.di].label)} · <bdi dir="ltr">${hhmm(x.N)}</bdi> ב${esc(t.city)}</small></div>`;
+  if (x.end) return `<section class="nowcard" id="nowCard">${head}<p class="nowdone">${ic("check", 2.6)}<span>סיימתם את המסלול של היום.${x.tomorrow ? ` מחר מתחילים ב${/^[\u0590-\u05ff]/.test(x.tomorrow.name) ? "" : "-"}<bdi>${esc(x.tomorrow.name)}</bdi>${x.tomorrow.time ? `, בשעה <bdi dir="ltr">${esc(x.tomorrow.time)}</bdi>` : ""}.` : ""}</span></p></section>`;
+  const s = x.s, bits = [];
+  if (x.walk != null) bits.push(x.near > 3 ? `${x.near.toFixed(1)} ק״מ מכם, כדאי תחבורה` : `${x.walk} דק׳ הליכה מכם`);
+  if (s.time) bits.push(hm(s.time) > x.N + (x.walk || 0) ? `מתוכנן ל-<bdi dir="ltr">${esc(s.time)}</bdi>` : x.late ? `באיחור של ${x.late >= 60 ? `${Math.floor(x.late / 60)} שע׳ ` : ""}${x.late % 60 ? `${x.late % 60} דק׳` : ""} לפי התוכנית` : "בדיוק בזמן");
+  const warn = x.openNow === false && x.openAt !== true ? "סגור עכשיו. אפשר לדלג ולחזור אליו אחר כך."
+    : x.openNow === true && x.openAt === false ? "פתוח עכשיו, אבל ייסגר לפני שתגיעו." : x.openAt === false ? "יהיה סגור כשתגיעו." : "";
+  const nav = S.me && x.near != null ? gmDir(S.me, s, x.near > 3 ? "transit" : "walking") : `https://www.google.com/maps/dir/?api=1&destination=${+s.lat},${+s.lng}&travelmode=walking`;
+  return `<section class="nowcard" id="nowCard">${head}
+    <button type="button" class="nownext" id="nowOpen"><small>${hm(s.time) == null || hm(s.time) > x.N ? "התחנה הבאה" : "התחנה עכשיו"}</small><b>${esc(s.name)}</b>
+      <span class="pline">${[...bits, x.openNow === true && !warn ? `<b class="open">פתוח עכשיו</b>` : ""].filter(Boolean).join(" · ")}</span></button>
+    ${warn ? `<p class="nowwarn">${ic("info")}<span>${warn}</span></p>` : ""}
+    <div class="nowbtns"><a class="btn small" href="${esc(nav)}" target="_blank" rel="noopener">${ic("nav")}ניווט</a>
+      <button type="button" class="btn small soft" id="nowDone">${ic("check")}סיימנו כאן</button>
+      <button type="button" class="btn small soft" id="nowSkip">${ic("fwd")}דילוג</button>
+      ${x.near == null ? `<button type="button" class="btn small soft" id="nowWhere">${ic("pin")}כמה ללכת?</button>` : ""}</div>
+    <small class="nowleft">${x.left === 1 ? "התחנה האחרונה להיום" : `עוד ${x.left} תחנות היום`}</small></section>`;
+}
+function bindNow() {
+  const x = S.trip && nowInfo(S.trip);
+  if (!x || x.end) return;
+  const t = S.trip, mark = visited => { t.done = t.done || {}; t.done[placeKey(x.s)] = 1; if (visited) markVisited(x.s, true); saveTrip(t); refreshNow(); };
+  $("nowOpen").onclick = () => { S.day = x.di; S.stop = x.i; go("place"); };
+  $("nowDone").onclick = () => mark(true);
+  $("nowSkip").onclick = () => mark(false);
+  $("nowWhere") && ($("nowWhere").onclick = locate);
+}
+/* only the card is redrawn, so open details and scroll stay as they are */
+function refreshNow() {
+  const el = $("nowCard");
+  if (!el || S.screen !== "plan") return;
+  const h = nowCard(S.trip);
+  if (!h) { el.remove(); return; }
+  el.outerHTML = h; harden($("nowCard")); bindNow();
+}
+setInterval(refreshNow, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshNow(); });
 function placeLine(p) {
   const bits = [];
   if (p.kindHe && !p.mealHe) bits.push(p.kindHe);

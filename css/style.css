@@ -691,3 +691,19 @@ textarea:focus{border-color:var(--ink);outline:none}
 .account .muted{color:var(--muted)}
 .livebox{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px}
 .invitecard{border-color:var(--primary)}
+/* "now" during the trip */
+.nowcard{border:1.5px solid var(--primary);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:grid;gap:8px;background:color-mix(in srgb,var(--primary) 5%,var(--surface))}
+.nowhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nowhead b{font-size:.95rem}
+.nowhead small{color:var(--muted);font-size:.8rem;font-weight:600}
+.livedot{width:9px;height:9px;border-radius:50%;background:var(--primary);flex:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 22%,transparent)}
+.nownext{all:unset;cursor:pointer;display:grid;gap:1px}
+.nownext:focus-visible{outline:2.5px solid var(--primary);outline-offset:2px;border-radius:8px}
+.nownext small{color:var(--muted);font-size:.78rem;font-weight:700}
+.nownext b{font-family:var(--display);font-size:1.25rem;line-height:1.25}
+.nowwarn,.nowdone{display:flex;gap:8px;margin:0;font-size:.88rem}
+.nowwarn svg{width:15px;height:15px;flex:none;color:var(--coral);margin-top:3px}
+.nowdone svg{width:16px;height:16px;flex:none;color:var(--teal);margin-top:3px}
+.nowbtns{display:flex;flex-wrap:wrap;gap:6px}
+.nowbtns a.btn{text-decoration:none}
+.nowleft{color:var(--muted);font-size:.78rem}
