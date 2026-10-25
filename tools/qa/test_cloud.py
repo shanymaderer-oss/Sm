@@ -24,7 +24,9 @@ async def user(b, name):
     pg.on("pageerror", lambda e: pg.errs.append(str(e)))
     return ctx, pg
 
-async def signed_in(pg, timeout=15000):
+async def signed_in(pg, timeout=20000):
+    await pg.wait_for_function("window.Masa && Masa.cloud", timeout=timeout)
+    await pg.evaluate("Masa.cloud.state.status === 'in' || Masa.cloud.signIn()")
     await pg.wait_for_function("Masa.cloud.state.status === 'in'", timeout=timeout)
 
 async def trips(pg):

@@ -72,7 +72,7 @@ async def browse():
     return links
 
 def fetch(u, method="GET", headers=None, data=None, timeout=20):
-    req = urllib.request.Request(u, method=method, data=data, headers={"User-Agent": UA, "Accept-Language": "he,en", **(headers or {})})
+    req = urllib.request.Request(u, method=method, data=data, headers={"User-Agent": UA, "Accept": "*/*", "Accept-Language": "he,en", **(headers or {})})
     try:
         with urllib.request.urlopen(req, timeout=timeout, context=ssl.create_default_context()) as r:
             return r.status, r.read(400000)
@@ -111,6 +111,7 @@ OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private
 def check_services():
     for name, u, _ in SERVICES:
         t0 = time.time(); code, body = fetch(u)
+        if code == 0: time.sleep(3); code, body = fetch(u)  # one retry for a slow answer
         R["services"][name] = {"status": code, "ms": int((time.time() - t0) * 1000), "bytes": len(body)}
         time.sleep(1.1)
     q = '[out:json][timeout:20];node["amenity"="restaurant"](40.62,22.93,40.64,22.95);out 5;'
@@ -125,7 +126,9 @@ def main():
     R["failed"] = {h: v[:6] for h, v in R["failed"].items()}
     json.dump(R, open(os.path.join(OUT, "live.json"), "w"), ensure_ascii=False, indent=1)
     bad = []
+    live_build_ok = isinstance(R["screens"].get("build סלוניקי, יוון seconds"), (int, float))
     for name, s in R["services"].items():
+        if name.startswith("Overpass") and live_build_ok: continue  # mirrors vary; the site's own fallback order worked
         ok = s["status"] in (400, 403) if "Gemini" in name else 200 <= s["status"] < 400
         if not ok: bad.append(f"service {name}: {s['status']}")
     for k, v in R["screens"].items():
