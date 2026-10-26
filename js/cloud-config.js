@@ -6,3 +6,8 @@ window.MASA_CLOUD = null;
   apiKey: "...", authDomain: "....firebaseapp.com", projectId: "...", appId: "...",
   googleClientId: "....apps.googleusercontent.com"
 }; */
+
+/* Tripadvisor Content API (restaurant ratings, 4.5 and up for meals). The key is limited on Tripadvisor's side
+   to this site's address and to a daily budget. null = ratings are off. */
+window.MASA_TA = null;
+/* window.MASA_TA = { key: "..." }; or, through a small proxy that keeps the key: { proxy: "https://.../ta" } */

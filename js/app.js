@@ -179,6 +179,17 @@ function renderMap() {
   markers = [];
   const C = n => css(n);
   const inTrip = S.trip && TRIP_SCREENS.includes(S.screen);
+  if (S.screen === "pick" && S.pick?.status === "ready") {
+    setRoute([]);
+    const shown = S.pick.groups.flatMap(g => g.items.slice(0, 6)).concat([...S.pick.sel].map(pickById).filter(Boolean));
+    [...new Map(shown.map(p => [p.id, p])).values()].filter(hasXY).forEach(p => {
+      const on = S.pick.sel.has(p.id);
+      addMarker(p, on ? node("mk gpin on", `<span class="mk-label">${esc(p.name)}</span><span class="gpinbody" style="--c:${C("--coral")}">${ic("check", 2.4)}</span>`) : dotNode(C("--muted"), "", "pickdot"), { z: on ? 5 : 2, ...(on ? {} : { anchor: "center" }) },
+        () => { on ? S.pick.sel.delete(p.id) : S.pick.sel.add(p.id); rerenderKeepScroll(); renderMap(); });
+    });
+    syncLabels();
+    return;
+  }
   if (!inTrip) {
     setRoute([]);
     DESTS.forEach(d => addMarker(d, dotNode(C("--coral"), d.he, "destmk" + (S.dest?.q === d.q ? " sel" : "")), { offset: [0, 7] }, () => pickDest(d)));
@@ -331,6 +342,18 @@ function openTrip(t) {
   go("plan");
   if (t.source === "sample") hydrateSample(t);
   else if (t.pending) runHydrate(t);
+  if (t.source !== "sample") checkRatings(t);
+}
+/* lunch and dinner: restaurants rated 4.5 and up on Tripadvisor (when the ratings are switched on) */
+function checkRatings(t) {
+  const R3 = Masa.ratings;
+  if (!R3?.enabled() || !t.days.some(d => d.stops.some(s => ["lunch", "dinner"].includes(s.meal) && !s._ratingChecked))) return;
+  const touched = new Set();
+  R3.checkMeals(t, (di, si, p) => { replaceAt(di, si, p); touched.add(di); }, () => { if (S.trip === t) refreshSoon(); }).then(r => {
+    touched.forEach(di => { const d = t.days[di]; if (!d.manualOrder) planner.optimizeDay(d); planner.assignTimes(d); d.route = null; d.legs = null; planner.computeRoute(d).then(() => { if (S.trip === t) refreshSoon(); }).catch(() => {}); });
+    saveTrip(t);
+    if (r.replaced && S.trip === t) toast(r.replaced === 1 ? "החלפנו מסעדה אחת במסעדה עם דירוג 4.5 ומעלה" : `החלפנו ${r.replaced} מסעדות במסעדות עם דירוג 4.5 ומעלה`);
+  }).catch(() => {});
 }
 let refreshT = null;
 function refreshSoon() {
@@ -416,6 +439,10 @@ SCREENS.goals = {
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 2 מתוך 3</span><span style="width:38px"></span></div>
     <div><h1>מה בא לכם לעשות ב${esc(S.dest?.he || "יעד")}?</h1></div>
+    <div class="modechoice" role="radiogroup" aria-label="איך לבנות את המסלול">
+      <button type="button" role="radio" data-mode="auto" aria-checked="${(f.mode || "auto") === "auto"}"><b>תבנו לי מסלול</b><small>המקומות נבחרים לפי מה שאתם אוהבים</small></button>
+      <button type="button" role="radio" data-mode="pick" aria-checked="${f.mode === "pick"}"><b>אני רוצה לבחור</b><small>רואים את המקומות הכי טובים בעיר ומסמנים</small></button>
+    </div>
     <div class="wishbox">
       <label class="section-label" for="notes">ספרו במילים שלכם</label>
       <textarea id="notes" rows="3" placeholder="למשל: אנחנו זוג עם ילד בן 6, לא אוכלים בשר, חייבים לראות את הקולוסיאום, ובערב משהו עם נוף">${esc(f.notes)}</textarea>
@@ -440,7 +467,7 @@ SCREENS.goals = {
     <div class="seg wrap" id="mobility">${MOBILITY.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(f.mobility || "") === v}">${l}</button>`).join("")}</div>
     <div class="section-label">קצב</div>
     <div class="seg" id="pace">${["רגוע", "מאוזן", "אינטנסיבי"].map(v => `<button type="button" aria-pressed="${f.pace === v}">${v}</button>`).join("")}</div>
-    <button class="btn coral block" id="buildBtn" type="button">בנו לי טיול</button>
+    <button class="btn coral block" id="buildBtn" type="button">${f.mode === "pick" ? "המשך לבחירת מקומות" : "בנו לי טיול"}</button>
     <div class="status" id="buildStatus"></div>
   </div>`;
   },
@@ -468,7 +495,12 @@ SCREENS.goals = {
     const setP = v => { f.people = Math.min(8, Math.max(1, v)); $("pval").textContent = f.people; };
     $("pminus").onclick = () => { touched.add("people"); setP(f.people - 1); };
     $("pplus").onclick = () => { touched.add("people"); setP(f.people + 1); };
-    $("buildBtn").onclick = build;
+    $("buildBtn").onclick = () => f.mode === "pick" ? startPick() : build();
+    document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
+      f.mode = b.dataset.mode;
+      document.querySelectorAll("[data-mode]").forEach(x => x.setAttribute("aria-checked", x === b));
+      $("buildBtn").textContent = f.mode === "pick" ? "המשך לבחירת מקומות" : "בנו לי טיול";
+    });
   }
 };
 
@@ -550,7 +582,8 @@ async function build() {
   const step = i => document.querySelectorAll("#lsteps div").forEach((d, k) => d.className = k < i ? "on" : k === i ? "now" : "");
   const onGeo = g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.3, reduced ? 0 : 5200); };
   try {
-    const trip = await planner.build({ query: S.dest.q, ...S.form, ...memoryOpts(), onGeo }, step, buildCtl.signal);
+    const P2 = S.form.mode === "pick" && S.pick?.sel?.size ? { picks: [...S.pick.sel], pickObjs: S.pick.all.filter(x => S.pick.sel.has(x.id)), onlyPicks: !S.pick.fill } : {};
+    const trip = await planner.build({ query: S.dest.q, ...S.form, ...memoryOpts(), ...P2, onGeo }, step, buildCtl.signal);
     rememberForm(S.form);
     saveTrip(trip);
     openTrip(trip);
@@ -561,6 +594,66 @@ async function build() {
     if (e?.code !== "cancelled") $("buildStatus").textContent = buildErr(e?.code);
   }
 }
+
+/* ================= "I'll choose": the city's best places, the traveler marks what they want ================= */
+async function startPick() {
+  const q = S.dest.q;
+  if (S.pick?.q !== q) S.pick = { q, status: "loading", groups: [], all: [], sel: new Set(), fill: true };
+  go("pick");
+  if (S.pick.status === "ready") return;
+  try {
+    const r = await planner.candidates({ query: q, ...S.form, onGeo: g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.6, reduced ? 0 : 3200); } }, null);
+    if (S.pick?.q !== q) return;
+    // what was named in the wishes box is already marked
+    const w = Masa.intent.parse(S.form.notes || "");
+    const all = r.groups.flatMap(g => g.items);
+    if (!w.empty) Masa.intent.findPlaces(S.form.notes || "", all.map(it => ({ it, names: [it.name, it.local, it._he], fame: it.fame })), [S.dest.he], { skip: w.ruleWords }).forEach(o => S.pick.sel.add(o.it.id));
+    // the groups the traveler said they like come first
+    const order = { must: 0, art: S.form.interests.includes("art") ? 1 : 5, view: S.form.interests.includes("view") ? 1 : 5, history: S.form.interests.includes("history") ? 1 : 5, nature: S.form.interests.includes("nature") ? 1 : 5,
+      taste: S.form.interests.includes("food") ? 2 : 6, food: S.form.interests.includes("food") ? 2 : 6, shop: S.form.interests.includes("shopping") ? 2 : 6, night: S.form.interests.includes("night") ? 2 : 7 };
+    Object.assign(S.pick, { status: "ready", groups: r.groups.sort((a, b) => (order[a.key] ?? 5) - (order[b.key] ?? 5)), all });
+  } catch (e) {
+    if (S.pick?.q === q) { S.pick.status = "error"; S.pick.err = buildErr(e?.code); }
+  }
+  if (S.screen === "pick") { rerenderKeepScroll(); renderMap(); }
+}
+const pickById = id => S.pick?.all.find(x => x.id === id);
+/* unmarked places close to the ones marked: "while you are there" */
+function nearPicks(p) {
+  return S.pick.all.filter(x => !S.pick.sel.has(x.id) && x.id !== p.id && km(x, p) < 0.6).sort((a, b) => (b.q - km(b, p) * 4) - (a.q - km(a, p) * 4)).slice(0, 3);
+}
+function pickRow(p, small) {
+  const on = S.pick.sel.has(p.id);
+  return `<button type="button" class="pickrow${small ? " small" : ""}" data-pick="${esc(p.id)}" aria-pressed="${on}"><span class="ic">${ic(on ? "check" : "plus", 2.4)}</span><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")}${p.signals?.[0] ? `, ${esc(p.signals[0])}` : ""}</small></span></button>`;
+}
+SCREENS.pick = {
+  view() {
+    const P3 = S.pick;
+    const head = `<div class="topnav"><button class="iconbtn" id="backGoals" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 3 מתוך 3</span><span style="width:38px"></span></div>
+      <div><h1>מה בא לכם לראות ב${esc(S.dest?.he || "")}?</h1><p class="lead" style="margin-top:6px">מסמנים את מה שרוצים. ליד כל מקום שמסמנים מופיעים דברים טובים שקרובים אליו.</p></div>`;
+    if (!P3 || P3.status === "loading") return `<div class="screen">${head}<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>`;
+    if (P3.status === "error") return `<div class="screen">${head}<div class="status">${esc(P3.err)}</div><button type="button" class="btn soft" id="pickRetry">לנסות שוב</button></div>`;
+    const sel = [...P3.sel].map(pickById).filter(Boolean);
+    return `<div class="screen">${head}
+      ${sel.length ? `<div class="picked"><div class="section-label">בחרתם ${sel.length === 1 ? "מקום אחד" : sel.length + " מקומות"}</div>
+        ${sel.map(p => { const nb = nearPicks(p); return pickRow(p) + (nb.length ? `<div class="nearpicks"><small>קרוב לזה:</small>${nb.map(x => pickRow(x, true)).join("")}</div>` : ""); }).join("")}</div>` : ""}
+      ${P3.groups.map(g => `<details class="pickgroup" ${g.key === "must" ? "open" : ""}><summary>${esc(g.he)} <small>${g.items.length}</small></summary>${g.items.filter(p => !P3.sel.has(p.id)).map(p => pickRow(p)).join("")}</details>`).join("")}
+      <label class="switchrow"><input type="checkbox" id="pickFill" ${P3.fill ? "checked" : ""}><span>להשלים את הימים בהמלצות שלנו (ארוחות תמיד נכנסות)</span></label>
+      <button class="btn coral block" id="pickBuild" type="button">${sel.length ? `בנו לי טיול עם ${sel.length === 1 ? "המקום שבחרתי" : "ה-" + sel.length + " שבחרתי"}` : "בנו לי טיול בלי לבחור"}</button>
+      <div class="status" id="buildStatus"></div></div>`;
+  },
+  bind() {
+    $("backGoals").onclick = () => go("goals");
+    $("pickRetry") && ($("pickRetry").onclick = () => { S.pick = null; startPick(); });
+    document.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => {
+      const id = b.dataset.pick;
+      S.pick.sel.has(id) ? S.pick.sel.delete(id) : S.pick.sel.add(id);
+      rerenderKeepScroll(); renderMap();
+    });
+    $("pickFill") && ($("pickFill").onchange = e => { S.pick.fill = e.target.checked; });
+    $("pickBuild") && ($("pickBuild").onclick = build);
+  }
+};
 
 /* ---------- plan ---------- */
 function peakWord(s) { if (!s.busy) return ""; const open = s.busy.filter(v => v > 0); const avg = open.length ? open.reduce((a, b) => a + b, 0) / open.length : 0; return avg > 75 ? "עמוס מאוד" : avg > 55 ? "עמוס בצהריים" : "בדרך כלל רגוע"; }
@@ -587,6 +680,94 @@ function wishCard(t) {
   return `<details class="wishcard"${miss.length ? " open" : ""}><summary><span>מה שביקשתם</span><small>${rows.length} דברים נכנסו למסלול${miss.length ? ` · ${miss.length} לא נמצאו` : ""}</small></summary>
     <ul>${rows.join("")}</ul>${miss.map(m => `<p class="miss">${ic("info")}<span>${m}</span></p>`).join("")}</details>`;
 }
+/* ================= changing the day on the spot ================= */
+/* after a change: put the day back in the shortest sensible order (unless the traveler set the order by hand), new times, new route */
+function afterEdit(d, reorder = true) {
+  if (reorder && !d.manualOrder) planner.optimizeDay(d);
+  planner.assignTimes(d);
+  d.route = null; d.legs = null;
+  if (S.trip.source !== "sample") saveTrip(S.trip);
+  renderMap(); rerenderKeepScroll();
+  planner.computeRoute(d).then(() => { if (S.trip?.days.includes(d)) { renderMap(); if (["plan", "place"].includes(S.screen)) rerenderKeepScroll(); } });
+}
+const MEAL_KINDS = { breakfast: ["cafe", "bakery"], lunch: ["restaurant"], dinner: ["restaurant"], treat: ["dessert", "bakery", "market", "deli", "cafe"], drinks: ["bar", "club"] };
+/* other good places close to this stop, of the same kind (for a meal: other restaurants) */
+function alternativesFor(t, d, s) {
+  const kinds = s.meal ? MEAL_KINDS[s.meal] || ["restaurant"] : null;
+  const inTrip = new Set(t.days.flatMap(x => x.stops.map(y => y.name)));
+  const near = (t.places || []).filter(p => hasXY(p) && !inTrip.has(p.name) && !HOTEL_KINDS.includes(p.kind) && (kinds ? kinds.includes(p.kind) : p.cat === s.cat || (CATS[p.cat] && !["food", "night", "sleep"].includes(p.cat) && !["food", "night"].includes(s.cat))))
+    .map(p => ({ p, k: km(s, p) })).filter(x => x.k < (d.move === "car" ? 4 : 1.3));
+  return near.sort((a, b) => (b.p.q - b.k * 3) - (a.p.q - a.k * 3)).slice(0, 4);
+}
+function editBar(t, d, s, i) {
+  const first = i === 0 || d.stops[i - 1]?.meal === "hotel", last = i === d.stops.length - 1;
+  const open = S.repl && S.repl.day === S.day && S.repl.i === i;
+  const dayOpts = t.days.map((x, j) => j === S.day ? "" : `<option value="${j}">${esc(x.label)}</option>`).join("");
+  let alts = "";
+  if (open) {
+    const list = alternativesFor(t, d, s);
+    alts = `<div class="altlist">${list.length ? list.map(({ p, k }, j) => `<div class="hrow"><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")}, ${Math.max(1, Math.round(k * 1.25 / 4.6 * 60))} דק׳ הליכה מכאן${p.signals?.[0] ? `, ${esc(p.signals[0])}` : ""}</small></span><button type="button" class="btn small" data-alt="${j}">לבחור</button></div>`).join("")
+      : `<p class="pline">לא מצאנו מקום דומה קרוב.</p>`}<button type="button" class="linkbtn" id="altSearch">חיפוש מקום אחר</button></div>`;
+  }
+  if (s.meal === "hotel") return "";
+  return `<div class="editbar" data-i="${i}">
+    <button type="button" class="iconbtn" data-up="${i}" aria-label="להקדים" ${first ? "disabled" : ""}>${ic("up")}</button>
+    <button type="button" class="iconbtn" data-down="${i}" aria-label="לאחר" ${last ? "disabled" : ""}>${ic("down")}</button>
+    <button type="button" class="chipbtn" data-repl="${i}" aria-expanded="${open}">${ic("search")}להחליף</button>
+    <button type="button" class="chipbtn" data-del="${i}">${ic("trash")}להוריד</button>
+    ${t.days.length > 1 ? `<select class="select small" data-mv="${i}" aria-label="להעביר ליום אחר"><option value="">ליום אחר…</option>${dayOpts}</select>` : ""}
+  </div>${alts}`;
+}
+/* put a place in the spot of a stop, keeping its time slot (and its meal, if it was one) */
+function replaceAt(dayIdx, i, p) {
+  const d = S.trip.days[dayIdx], old = d?.stops[i];
+  if (!old) return null;
+  const ns = { ...old, name: p.name, local: p.local || p.name, kind: p.kind, kindHe: planner.KIND[p.kind]?.he, cat: p.cat || old.cat, lat: +p.lat, lng: +p.lng, osm: p.id,
+    cuisine: p.cuisine || null, priceClass: p.priceClass || null, price: p.price || null, mich: p.mich || 0, wheel: p.wheel || null, signals: p.signals || [], hours: p.hours || null, phone: p.phone || null,
+    address: p.address || null, website: p.website || null, why: p.vtext || planner.KIND[p.kind]?.he || "", whyLang: p.vtext ? "en" : "he", history: "", image: null, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null, nearby: [], tip: "", _added: true, must: false, asked: false, sunset: false,
+    booking: old.meal ? { needed: false, steps: [p.hours ? `שעות פתיחה: ${p.hours}` : "בודקים שעות פתיחה בגוגל מפות.", p.website ? "אפשר לבדוק באתר אם יש הזמנת שולחן." : "בערב במקומות מבוקשים כדאי להתקשר ולהזמין."], query: `${p.local || p.name} reservation`, url: p.website || null }
+      : { needed: false, steps: ["בדקו בגוגל מפות את שעות הפתיחה לפני שמגיעים."], query: p.local || p.name, url: p.website || null } };
+  d.stops[i] = ns;
+  return { d, old, ns };
+}
+function bindEdit() {
+  const t = S.trip, d = t.days[S.day];
+  $("editDay") && ($("editDay").onclick = () => { S.edit = !S.edit; S.repl = null; rerenderKeepScroll(); });
+  $("orderDay") && ($("orderDay").onclick = () => { d.manualOrder = false; afterEdit(d); toast("היום סודר מחדש לפי המרחק הקצר"); });
+  $("addStop") && ($("addStop").onclick = () => openList("sights"));
+  const swap = (i, j) => { [d.stops[i], d.stops[j]] = [d.stops[j], d.stops[i]]; d.manualOrder = true; afterEdit(d, false); };
+  document.querySelectorAll("[data-up]").forEach(b => b.onclick = () => { const i = +b.dataset.up; if (i > 0) swap(i, i - 1); });
+  document.querySelectorAll("[data-down]").forEach(b => b.onclick = () => { const i = +b.dataset.down; if (i < d.stops.length - 1) swap(i, i + 1); });
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    const i = +b.dataset.del, gone = d.stops.splice(i, 1)[0];
+    S.repl = null; afterEdit(d); toast(`${gone.name} ירד/ה מ${d.label}`);
+  });
+  document.querySelectorAll("[data-mv]").forEach(sel => sel.onchange = () => {
+    if (sel.value === "") return;
+    const i = +sel.dataset.mv, to = t.days[+sel.value], st = d.stops.splice(i, 1)[0];
+    // a meal moves as a plain stop only if the other day has none of that meal
+    if (st.meal && to.stops.some(x => x.meal === st.meal)) { delete st.meal; delete st.mealHe; }
+    to.stops.push(st);
+    to.manualOrder = false; planner.optimizeDay(to); planner.assignTimes(to); to.route = null; to.legs = null;
+    planner.computeRoute(to).catch(() => {});
+    afterEdit(d); toast(`${st.name} עבר/ה ל${to.label}`);
+  });
+  document.querySelectorAll("[data-repl]").forEach(b => b.onclick = () => { const i = +b.dataset.repl; S.repl = S.repl?.i === i && S.repl.day === S.day ? null : { day: S.day, i }; rerenderKeepScroll(); });
+  document.querySelectorAll("[data-alt]").forEach(b => b.onclick = () => {
+    const s0 = d.stops[S.repl.i], pick = alternativesFor(t, d, s0)[+b.dataset.alt];
+    if (!pick) return;
+    const r = replaceAt(S.day, S.repl.i, pick.p);
+    S.repl = null;
+    if (r) { afterEdit(d); toast(`${r.ns.name} במקום ${r.old.name}`); }
+  });
+  $("altSearch") && ($("altSearch").onclick = () => {
+    const s0 = d.stops[S.repl.i];
+    S.replace = { day: S.day, stop: S.repl.i, name: s0.name, mealHe: s0.mealHe || s0.kindHe || "" };
+    S.repl = null;
+    const chip = s0.meal ? ({ breakfast: "cafe", treat: "dessert", drinks: "bar" }[s0.meal] || "food") : s0.cat === "art" ? "museum" : s0.cat === "nature" ? "park" : s0.cat === "shopping" ? "street" : "sights";
+    openList(chip); S.list.sort = "near"; rerenderKeepScroll();
+  });
+}
 SCREENS.plan = {
   view() {
     const t = S.trip, all = t.days.flatMap(d => d.stops);
@@ -606,13 +787,16 @@ SCREENS.plan = {
     </div>
     <div class="daytabs" role="tablist">${t.days.map((x, i) => `<button type="button" role="tab" class="daytab" data-i="${i}" aria-selected="${i === S.day}" style="${i === S.day ? `background:${cv(DAYC[i % 5])}` : ""}"><span class="dot" style="background:${i === S.day ? "#fff" : cv(DAYC[i % 5])}"></span>${esc(x.label)}</button>`).join("")}</div>
     ${d.theme ? `<div class="daytheme">${esc(d.theme)}</div>` : ""}
-    <div class="timeline">${d.stops.map((s, i) => {
+    ${t.source === "sample" ? "" : `<div class="daytools"><button type="button" class="chipbtn" id="editDay" aria-pressed="${!!S.edit}">${ic(S.edit ? "check" : "route")}${S.edit ? "סיום שינויים" : "לשנות את היום"}</button>
+      <button type="button" class="chipbtn" id="addStop">${ic("plus")}הוספת מקום</button>
+      ${d.manualOrder ? `<button type="button" class="chipbtn" id="orderDay">${ic("nav")}לסדר לפי מרחק</button>` : ""}</div>`}
+    <div class="timeline${S.edit ? " editing" : ""}">${d.stops.map((s, i) => {
       let leg = "";
       if (i) { const L2 = legInfo(d, i), p = d.stops[i - 1];
         leg = legRow(t, p, s, L2); }
       return leg + `<button type="button" class="stop" data-i="${i}">${s.image ? `<span class="thumb" style="background-image:url('${cssUrl(s.image)}')"><span class="n" style="color:${col}">${i + 1}</span></span>` : `<span class="ic" style="background:${cv(CATS[catOf(s)].c)}">${ic(catOf(s))}<span class="n" style="color:${col}">${i + 1}</span></span>`}
         <span style="min-width:0">${s.mealHe ? `<span class="mealtag">${esc(s.mealHe)}</span>` : s.asked ? `<span class="mealtag must">ביקשתם</span>` : s.must ? `<span class="mealtag must">חובה לראות</span>` : ""}<span class="t">${esc(s.name)}</span>${placeLine(s) ? `<span class="pline">${placeLine(s)}</span>` : ""}<span class="meta">${s.time ? `<span>${ic("clock")}${esc(s.time)}</span>` : ""}${s.duration ? `<span>${ic("hourglass")}${esc(s.duration)}</span>` : ""}${s.busy ? `<span>${ic("users")}${peakWord(s)}</span>` : ""}</span></span>
-        ${s._added ? `<span class="tag new">הוספתם</span>` : s.booking?.needed ? `<span class="tag book">כדאי להזמין</span>` : "<span></span>"}</button>`;
+        ${s._added ? `<span class="tag new">הוספתם</span>` : s.booking?.needed ? `<span class="tag book">כדאי להזמין</span>` : "<span></span>"}</button>${S.edit ? editBar(t, d, s, i) : ""}`;
     }).join("")}</div>
     ${ideas.length ? `<div class="ideas"><h2>נשאר לכם זמן היום? רעיונות בדרך</h2>
       ${ideas.map(n => `<div class="idea"><span class="ic" style="background:${cv(CATS[catOf(n)].c)}">${ic(catOf(n))}</span><span><b>${esc(n.name)}</b><small>ליד ${esc(n._near)} · ${esc(n.why)}</small></span><button type="button" class="btn small soft" data-add="${esc(n.name)}">${ic("plus")}הוספה</button></div>`).join("")}</div>` : ""}
@@ -625,6 +809,7 @@ SCREENS.plan = {
   bind() {
     document.querySelectorAll(".daytab").forEach(b => b.onclick = () => { S.day = +b.dataset.i; S.stop = 0; go("plan"); });
     document.querySelectorAll(".stop").forEach(b => b.onclick = () => { S.stop = +b.dataset.i; go("place"); });
+    bindEdit();
     document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => {
       const d = S.trip.days[S.day];
       const n = d.stops.flatMap(s => s.nearby || []).find(x => x.name === b.dataset.add);
@@ -657,6 +842,7 @@ function addToDay(item, dayIdx = S.day, after = null) {
   else { let best = Infinity; d.stops.forEach((s, i) => { const dd = km(s, stop); if (dd < best) { best = dd; idx = i + 1; } }); }
   d.stops.splice(idx, 0, stop);
   d.route = null; d.legs = null;
+  if (after == null && !d.manualOrder) planner.optimizeDay(d);
   planner.assignTimes(d);
   toast(`${item.name} נוסף ל${d.label}`);
   renderMap();
@@ -697,6 +883,7 @@ SCREENS.place = {
       ${s.image && s.wikiUrl ? `<a class="credit" href="${esc(safeUrl(s.wikiUrl))}" target="_blank" rel="noopener">תמונה: ויקיפדיה</a>` : ""}</div>
     ${(s.time || s.duration || s.cost) ? `<div class="facts"><div><small>${ic("clock")}שעה</small><b>${esc(s.time || "—")}</b></div><div><small>${ic("hourglass")}משך</small><b>${esc(s.duration || "—")}</b></div><div><small>${ic("coin")}עלות</small><b>${money(esc(stopCost(s) || "—"))}</b></div></div>` : ""}
     ${placeLine(s) ? `<div class="pline big">${placeLine(s)}</div>` : ""}
+    ${s.cat === "food" && Masa.ratings?.known(s)?.url ? `<div class="pline"><a href="${esc(safeUrl(Masa.ratings.known(s).url))}" target="_blank" rel="noopener">הביקורות ב-Tripadvisor</a></div>` : ""}
     ${s.isHotel ? "" : visitedRow(s)}
     ${s.meal && s.meal !== "hotel" ? `<button type="button" class="btn small soft" id="swapMeal">${ic("search")}להחליף ב${s.kind === "bar" || s.kind === "club" ? "מקום" : "מסעדה"} אחר${s.kind === "bar" || s.kind === "club" ? "" : "ת"}, או לחפש לפי שם</button>` : ""}
     ${(s.signals || []).length ? `<div class="sigs">${s.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
@@ -737,6 +924,7 @@ SCREENS.place = {
     $("nextStop").onclick = () => { if (S.stop < S.trip.days[S.day].stops.length - 1) { S.stop++; go("place"); } };
     $("toBook") && ($("toBook").onclick = () => { S.openBook = s.name; go("book"); });
     bindVisited(s); bindNotes(s);
+    if (s.cat === "food" && Masa.ratings?.enabled() && !Masa.ratings.known(s)) Masa.ratings.ratingOf(s).then(r => { if (r && S.screen === "place" && S.trip.days[S.day].stops[S.stop] === s) rerenderKeepScroll(); });
     $("swapMeal") && ($("swapMeal").onclick = () => {
       const chip = s.kind === "cafe" || s.kind === "bakery" ? "cafe" : s.kind === "dessert" ? "dessert" : s.kind === "bar" || s.kind === "club" ? "bar" : s.kind === "market" || s.kind === "deli" ? "market" : "food";
       S.replace = { day: S.day, stop: S.stop, name: s.name, mealHe: s.mealHe };
@@ -1127,6 +1315,8 @@ setInterval(refreshNow, 60000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshNow(); });
 function placeLine(p) {
   const bits = [];
+  const tr = Masa.ratings?.known(p);
+  if (tr) bits.push(Masa.ratings.badge(tr, esc, false));
   if (p.kindHe && !p.mealHe) bits.push(p.kindHe);
   else if (!p.kindHe && planner.KIND[p.kind]) bits.push(planner.KIND[p.kind].he);
   if (p.cuisine) bits.push(cuisineHe(p.cuisine));
@@ -1135,7 +1325,7 @@ function placeLine(p) {
   const o = openState(p);
   if (o === true) bits.push(`<b class="open">פתוח עכשיו</b>`);
   if (o === false) bits.push(`<b class="closed">סגור עכשיו</b>`);
-  return bits.map(b => b.startsWith("<b") ? b : esc(b)).join(" · ");
+  return bits.map(b => b.startsWith("<b") || b.startsWith("<span class=\"tabadge") ? b : esc(b)).join(" · ");
 }
 const reviewsUrl = p => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.local || p.name} ${p.address || ""} ${cityQ()}`.trim())}`;
 /* what people film and post: TikTok and Instagram searches for a place or a city (opens in the app on a phone) */
@@ -1331,6 +1521,17 @@ async function searchCityWide(L2) {
 }
 /* swap a suggested meal for a place the traveler picked, keeping its time slot */
 function replaceStop(p) {
+  const R2 = S.replace;
+  const r = replaceAt(R2.day, R2.stop, p);
+  if (!r) { S.replace = null; return; }
+  const { d, old } = r;
+  S.replace = null;
+  afterEdit(d);
+  S.day = R2.day; S.stop = Math.max(0, d.stops.indexOf(r.ns));
+  toast(`${p.name} נכנס/ה במקום ${old.name}`);
+  go("place");
+}
+function replaceStopOld(p) {
   const R2 = S.replace, d = S.trip.days[R2.day], old = d?.stops[R2.stop];
   if (!old) { S.replace = null; return; }
   const ns = { ...old, name: p.name, local: p.local || p.name, kind: p.kind, kindHe: planner.KIND[p.kind]?.he, cat: p.cat || "food", lat: +p.lat, lng: +p.lng, osm: p.id,

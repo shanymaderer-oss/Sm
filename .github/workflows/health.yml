@@ -38,6 +38,8 @@ jobs:
         run: python tools/qa/test_sec.py
       - name: Wishes test
         run: python tools/qa/test_wish.py 0 2 4
+      - name: Choose and change the day
+        run: python tools/qa/test_pick_edit.py
       - name: Offline test
         run: python tools/qa/test_offline.py
       - name: Now card during the trip

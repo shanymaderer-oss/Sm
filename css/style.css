@@ -718,3 +718,38 @@ body.docpage{overflow:auto;padding:0}
 .backlink{font-weight:600}
 .legal{font-size:.82rem;color:var(--muted)}
 .legal a{color:var(--muted)}
+/* changing the day */
+.daytools{display:flex;gap:6px;flex-wrap:wrap}
+.daytools .chipbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.timeline.editing .stop{border-radius:10px 10px 0 0}
+.editbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:4px 6px 10px 6px;margin-inline-start:52px;border-bottom:1px dashed var(--line)}
+.editbar .iconbtn{width:34px;height:34px}
+.editbar .iconbtn svg{width:16px;height:16px}
+.select.small{padding:6px 8px;font-size:.85rem}
+.altlist{margin-inline-start:52px;display:flex;flex-direction:column;gap:6px;padding:4px 0 10px}
+/* build it for me / I'll choose */
+.modechoice{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modechoice button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;text-align:start;cursor:pointer;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.modechoice button b{font-weight:600}
+.modechoice button small{color:var(--muted);font-size:.8rem;line-height:1.35}
+.modechoice button[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.pickgroup{border-top:1px solid var(--line);padding-top:8px}
+.pickgroup summary{cursor:pointer;font-weight:600;padding:4px 0 8px;list-style:none;display:flex;justify-content:space-between}
+.pickgroup summary::-webkit-details-marker{display:none}
+.pickgroup summary small{color:var(--muted);font-weight:400}
+.pickrow{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;width:100%;border:0;background:none;text-align:start;padding:8px 2px;cursor:pointer;color:var(--ink);border-radius:8px}
+.pickrow:hover{background:var(--surface-2)}
+.pickrow .ic{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted)}
+.pickrow .ic svg{width:15px;height:15px}
+.pickrow[aria-pressed="true"] .ic{background:var(--primary);border-color:var(--primary);color:#fff}
+.pickrow b{display:block;font-family:var(--display);font-weight:600;font-size:1.02rem}
+.pickrow small{color:var(--muted);font-size:.8rem}
+.pickrow.small b{font-size:.92rem;font-family:var(--body)}
+.nearpicks{margin-inline-start:40px;border-inline-start:2px dotted var(--line);padding-inline-start:10px;margin-bottom:6px}
+.nearpicks>small{color:var(--muted);font-size:.78rem}
+.picked{display:flex;flex-direction:column}
+@media (max-width:380px){.modechoice{grid-template-columns:1fr}}
+.tabadge{display:inline-flex;align-items:center;gap:5px;color:inherit;text-decoration:none}
+.tabadge img{height:14px;width:auto;display:inline-block}
+.tabadge span{font-weight:700;color:var(--ink)}
+.tabadge small{color:var(--muted)}
