@@ -293,7 +293,7 @@ Masa.planner = (() => {
       else if (p.wheel === "limited") { q += 0.5; sig.push("נגישות חלקית"); }
       else if (p.wheel === "no") q -= mobility === "wheelchair" ? 7 : 3;
     }
-    if (p.michelin) { q += 6; sig.push(`כוכב מישלן${p.michelin > 1 ? ` ×${p.michelin}` : ""}`); }
+    if (p.michelin) { q += 6; sig.push(`כוכב מישלן${p.michelin > 1 ? ` ×${p.michelin}` : ""}`); if (p.michelin >= 2 && budget !== "מפנק") q -= 9; } // two or three stars are a splurge
     if (p.voyage) { q += 4; sig.push("מומלץ ב-Wikivoyage"); }
     if (p.wikidata) { q += 2.5; if (p.cat === "food" || p.cat === "night" || p.cat === "shopping") sig.push("מקום מוכר"); }
     if (p.wikiTag || p._he || p._en) q += 2;
@@ -1043,14 +1043,14 @@ Masa.planner = (() => {
     let dietRest = null;
     const mealPick = (anchor, near, far, extra) => {
       if (opts.diet && opts.diet !== "הכול") {
-        dietRest = dietRest || restaurants.filter(dietOk);
+        dietRest = dietRest || anyRestaurants.filter(dietOk);
         const d = nearBest(dietRest, anchor, opts.diet === "כשר" ? 3.5 : 1.5, extra);
         if (d) return d;
-        const any = nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra);
+        const any = nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra);
         if (any) any._dietMiss = true;
         return any;
       }
-      return nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra);
+      return nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra) || nearBest(anyRestaurants, anchor, far, extra);
     };
     // named places that did not get a day of their own join the day whose main place is nearest
     const extraOf = anchors.map(() => []);
@@ -1138,7 +1138,12 @@ Masa.planner = (() => {
     }
     const act = Object.keys(W).filter(c => W[c] > 0);
 
-    const restaurants = by(["restaurant"]);
+    /* restaurants with a real sign of quality come first: a Michelin star, a Wikivoyage recommendation, a known place
+       (Wikipedia), or a local kitchen that keeps its details up to date. Others are used only when none of these is near. */
+    const goodRest = p => p.michelin || p.voyage || p.wikidata || (p.fame || 0) > 0 || (p.website && p.hours && (p.cuisine || "").length > 0 && (LOCAL_CUISINE[geo.cc] || []).some(c => (p.cuisine || "").includes(c)));
+    const allRestaurants = by(["restaurant"]).filter(p => !p.brand && !CHAIN.test(p.local || ""));
+    const restaurants = allRestaurants.filter(goodRest);
+    const anyRestaurants = allRestaurants;
     const cafes = by(["cafe", "bakery"]);
     const treats = by(["dessert", "market", "deli", "bakery"]);
     const bars = by(["bar", "club"]);

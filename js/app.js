@@ -1043,38 +1043,186 @@ SCREENS.book = {
 };
 
 /* ---------- guide ---------- */
+/* ================= the guide: answers from the trip itself, free and offline; the AI only for open questions ================= */
+const GUIDE_QUICK = ["מה הבא?", "איפה לאכול כאן קרוב?", "יורד גשם, מה משנים?", "יש לי שעתיים פנויות", "ספר לי על המקום", "מה עושים בערב?", "אנחנו עייפים, משהו רגוע יותר"];
+const guideActs = new Map(); // action id -> function (kept in memory with the conversation)
+let guideActN = 0;
+const act = (label, fn) => { const id = "g" + (++guideActN); guideActs.set(id, fn); return { id, label }; };
+/* where the traveler is: their location when shared and near, otherwise the stop they are looking at */
+function guideRef() {
+  const t = S.trip, x = nowInfo(t);
+  if (S.me && km(S.me, t) < 50) return { p: S.me, where: "ממכם" };
+  const s = x?.s || t.days[S.day].stops[S.stop];
+  return { p: s, where: /^[\u0590-\u05FF]/.test(s.name) ? `מ${s.name}` : `מ-${s.name}` };
+}
+const walkMin = k => Math.max(1, Math.round(k * 1.25 / 4.6 * 60));
+/* kinds of places by Hebrew words; a word must start where the word starts ("ים" is the sea, not the end of "שעתיים") */
+const wre = stems => new RegExp(`(?:^|[\\s,.?!])[ובלמהשכ]{0,2}(?:${stems})`);
+const KIND_WORDS = [[wre("מוזיאו|גלרי|אמנות"), ["museum", "gallery"]], [wre("פארק|גן\\s|גנים|טבע|ירוק"), ["park"]], [wre("חוף|חופים|ים\\s"), ["beach"]], [wre("תצפית|נוף|שקיעה"), ["view"]], [wre("שוק|שווקים"), ["market"]],
+  [wre("קפה"), ["cafe", "bakery"]], [wre("גלידה|קינוח|מתוק|עוג"), ["dessert"]], [wre("בר\\s|ברים|בירה|יין|קוקטייל|לשתות"), ["bar"]], [wre("מועדון|לרקוד"), ["club"]], [wre("קניות|חנויות|קניון"), ["street", "mall", "store"]],
+  [wre("כנסי|קתדרל|מקדש|בית כנסת"), ["church"]], [wre("היסטורי|עתיק|טיר|ארמון"), ["sight", "attraction"]], [wre("מסעד|לאכול|ארוח|רעב|אוכל"), ["restaurant"]]];
+const kindsIn = q => { for (const [re, k] of KIND_WORDS) if (re.test(q + " ")) return k; return null; };
+function placesNear(ref, kinds, maxKm = 1.2, n = 3, skipTrip = true) {
+  const t = S.trip, inTrip = new Set(t.days.flatMap(d => d.stops.map(s => s.name)));
+  const now = cityNow();
+  return (t.places || []).filter(p => hasXY(p) && kinds.includes(p.kind) && (!skipTrip || !inTrip.has(p.name)) && !(now && p.hours && planner.isOpen(p.hours, now) === false))
+    .map(p => ({ p, k: km(ref, p) })).filter(x => x.k < maxKm).sort((a, b) => (b.p.q - b.k * 3) - (a.p.q - a.k * 3)).slice(0, n);
+}
+function placeLineShort(p, k) { return `${p.name} (${planner.KIND[p.kind]?.he || ""}, ${walkMin(k)} דק׳ הליכה${p.signals?.[0] ? `, ${p.signals[0]}` : ""})`; }
+function findStop(q) {
+  const t = S.trip;
+  const items = t.days.flatMap((d, di) => d.stops.map((s, i) => ({ s, i, di, names: [s.name, s.local, s._he], fame: 30 }))).sort((a, b) => (a.di === S.day ? -1 : 0) - (b.di === S.day ? -1 : 0));
+  const hit = Masa.intent.findPlaces(q, items, [t.city, t.cityLocal, t.cityEn])[0];
+  if (hit) return hit.it;
+  const qn = Masa.intent.norm(q);
+  return items.find(x => x.names.some(n => { const nn = Masa.intent.norm(n); return nn && (qn.includes(nn) || nn.split(" ").some(w => w.length > 3 && qn.includes(w))); })) || null;
+}
+function localAnswer(q) {
+  const t = S.trip, d = t.days[S.day], ref = guideRef(), qn = " " + q + " ";
+  const out = (text, acts = []) => ({ text, acts });
+  // what is next
+  if (/(מה הבא|מה עכשיו|לאן עכשיו|התחנה הבאה|מה עושים עכשיו|לאן הולכים)/.test(q)) {
+    const x = nowInfo(t);
+    const s = x?.s || d.stops[Math.min(S.stop + 1, d.stops.length - 1)];
+    const i = x?.i ?? d.stops.indexOf(s), k = km(ref.p, s);
+    const open = s.hours ? planner.isOpen(s.hours, cityNow() || new Date()) : null;
+    return out(`הבא: ${s.name}${s.time ? ` (מתוכנן ל-${s.time})` : ""}. ${walkMin(k)} דקות הליכה ${ref.where}.${open === false ? " שימו לב: לפי שעות הפתיחה הוא סגור עכשיו." : open ? " פתוח עכשיו." : ""}`,
+      [act("ניווט", () => window.open(gmDir(ref.p, s), "_blank", "noopener")), act("לפתוח את המקום", () => { S.day = x?.di ?? S.day; S.stop = i; go("place"); })]);
+  }
+  // rain or heat: swap the outdoor stops of today for indoor places close to them
+  if (/(גשם|יורד|סופה|קר מדי|חם מדי|שרב|מקורה|בפנים)/.test(q)) {
+    const outdoor = d.stops.map((s, i) => ({ s, i })).filter(({ s }) => !s.meal && ["park", "view", "beach", "street", "square", "bridge"].includes(s.kind));
+    if (!outdoor.length) return out(`היום (${d.label}) כמעט הכול בפנים ממילא. שווה לקחת מטריה בין התחנות.`);
+    const swaps = [];
+    const usedNow = new Set();
+    for (const { s, i } of outdoor) {
+      const alt = placesNear(s, ["museum", "gallery", "market", "mall", "church"], 1.5, 4).find(x => !usedNow.has(x.p.id));
+      if (alt) { usedNow.add(alt.p.id); swaps.push({ s, i, p: alt.p, k: alt.k }); }
+    }
+    if (!swaps.length) return out("לא מצאנו מקומות מקורים קרובים לתחנות של היום. אפשר לחפש מוזיאון בשורת החיפוש למעלה.");
+    const doSwap = list => { list.forEach(x => replaceAt(S.day, d.stops.indexOf(d.stops.find(y => y.name === x.s.name)), x.p)); afterEdit(d); toast("היום עודכן לגשם"); };
+    return out(`ב${d.label} יש ${outdoor.length === 1 ? "תחנה אחת בחוץ" : outdoor.length + " תחנות בחוץ"}. אפשר להחליף:\n${swaps.map(x => `• ${x.s.name} ← ${x.p.name} (${planner.KIND[x.p.kind]?.he}, ${walkMin(x.k)} דק׳ ממנו)`).join("\n")}`,
+      [act(swaps.length > 1 ? "להחליף את כולן" : "להחליף", () => doSwap(swaps))]);
+  }
+  // free time
+  const hrs = q.match(/(\d+(?:\.\d)?)\s*שעות/) ? parseFloat(q.match(/(\d+(?:\.\d)?)\s*שעות/)[1]) : /שעתיים/.test(q) ? 2 : /שעה וחצי/.test(q) ? 1.5 : /(שעה|זמן פנוי|זמן מת|מה עוד אפשר|משהו לעשות)/.test(q) ? 1 : null;
+  if (hrs && /(פנוי|יש לי|יש לנו|זמן|לעשות)/.test(q)) {
+    const kinds = kindsIn(q) || ["museum", "gallery", "view", "sight", "attraction", "church", "park", "market", "street", "square"];
+    let left = hrs * 60, picks = [];
+    for (const { p, k } of placesNear(ref.p, kinds, 1.5, 8)) { const need = walkMin(k) * 2 + (planner.KIND[p.kind]?.min || 45); if (need <= left) { picks.push({ p, k }); left -= need; } if (picks.length >= 3) break; }
+    if (!picks.length) return out("לא מצאנו משהו שנכנס בזמן הזה קרוב אליכם. אפשר לפתוח את \"גלו\" ולחפש.");
+    return out(`${hrs === 1 ? "בשעה" : hrs === 2 ? "בשעתיים" : "ב-" + hrs + " שעות"} מספיקים ${picks.length === 1 ? "את זה" : "את אלה"} (${ref.where}):\n${picks.map(x => "• " + placeLineShort(x.p, x.k)).join("\n")}`,
+      picks.map(x => act(`להוסיף: ${x.p.name}`, () => { addPlace(x.p, S.day); })));
+  }
+  // a story about the place
+  if (/(ספר|סיפור|היסטוריה|מה זה המקום|על המקום|מה רואים פה|מה מיוחד)/.test(q)) {
+    const named = findStop(q.replace(/(ספר|לי|על|סיפור|היסטוריה|של|המקום)/g, " "))?.s;
+    const s = named || [d.stops[S.stop], ...d.stops.slice(S.stop + 1), ...d.stops.slice(0, S.stop).reverse()].find(x => !x.meal && !x.isHotel && x.history) || d.stops[S.stop];
+    if (s.history) return out(`${s.name}: ${s.history}${s.fact ? `\n\nהידעתם? ${s.fact}` : ""}`, canSpeak ? [act("להקשיב", () => speak(`${s.name}. ${s.history}`, s.histLang === "en" ? "en-US" : "he-IL", "hist"))] : []);
+    return out(`עוד אין לנו סיפור על ${s.name}. ${s.why || ""}`, [act("חיפוש בוויקיפדיה", () => window.open(gSearch(`${s.local} ${cityQ()} wikipedia`), "_blank", "noopener"))]);
+  }
+  // remove, replace, add
+  const rm = q.match(/(?:תוריד|תורידו|להוריד|תמחק|למחוק|בלי|לוותר על)\s+(?:את\s+)?(.+)/);
+  if (rm && !kindsIn(rm[1])) {
+    const hit = findStop(rm[1]);
+    if (hit) return out(`להוריד את ${hit.s.name} מ${d.label}?`, [act("כן, להוריד", () => { const i = d.stops.indexOf(hit.s); if (i >= 0) { d.stops.splice(i, 1); afterEdit(d); toast(`${hit.s.name} ירד/ה מהמסלול`); } })]);
+  }
+  const rp = q.match(/(?:תחליף|להחליף|במקום)\s+(?:את\s+)?(.+)/);
+  if (rp) {
+    const hit = findStop(rp[1]);
+    if (hit) {
+      const alts = alternativesFor(t, d, hit.s);
+      if (!alts.length) return out(`לא מצאנו מקום דומה קרוב ל${hit.s.name}.`);
+      return out(`במקום ${hit.s.name} אפשר:\n${alts.slice(0, 3).map(x => "• " + placeLineShort(x.p, x.k)).join("\n")}`,
+        alts.slice(0, 3).map(x => act(x.p.name, () => { const i = d.stops.indexOf(hit.s); if (i >= 0) { replaceAt(S.day, i, x.p); afterEdit(d); toast(`${x.p.name} במקום ${hit.s.name}`); } })));
+    }
+  }
+  // tired: a lighter day
+  if (/(עייפ|רגוע יותר|פחות הליכה|קשה לנו|לנוח|יותר לאט|הרבה מדי)/.test(q)) {
+    const acts2 = d.stops.filter(s => !s.meal && !s.asked && !s.isHotel);
+    if (acts2.length < 2) return out("היום כבר קליל. אפשר לשבת לקפה ולהמשיך לאט.", placesNear(ref.p, ["cafe", "dessert"], 0.6, 1).map(x => act(`קפה קרוב: ${x.p.name}`, () => addPlace(x.p, S.day))));
+    const drop = [...acts2].sort((a, b) => (a.q || 0) - (b.q || 0))[0];
+    return out(`אפשר לוותר על ${drop.name}, התחנה הכי פחות חשובה היום, ולסדר מחדש את המסלול כך שיהיה פחות הליכה.`, [act(`להוריד את ${drop.name}`, () => { const i = d.stops.indexOf(drop); if (i >= 0) { d.stops.splice(i, 1); d.manualOrder = false; afterEdit(d); toast("היום קליל יותר"); } })]);
+  }
+  // evening
+  if (/(ערב|לילה|לצאת|לבלות)/.test(q) && !/מסעד|לאכול/.test(q)) {
+    const last = d.stops[d.stops.length - 1];
+    const list = [...placesNear(last, ["bar", "club"], 1.2, 2), ...placesNear(last, ["view"], 1.5, 1)];
+    if (!list.length) return out("לא מצאנו בילוי ערב קרוב לסוף היום.");
+    return out(`ליד ${last.name}, בסוף היום:\n${list.map(x => "• " + placeLineShort(x.p, x.k)).join("\n")}`, list.map(x => act(`להוסיף: ${x.p.name}`, () => addPlace(x.p, S.day))));
+  }
+  // is it open
+  if (/(פתוח|סגור|שעות פתיחה|עד מתי)/.test(q)) {
+    const named = findStop(q)?.s || (() => { const items = (t.places || []).filter(hasXY).map(p => ({ p, names: [p.name, p.local, p._he], fame: p.fame || 0 })); return Masa.intent.findPlaces(q, items, [t.city, t.cityLocal, t.cityEn])[0]?.it.p; })();
+    const hit = named || d.stops[S.stop];
+    const o = hit.hours ? planner.isOpen(hit.hours, cityNow() || new Date()) : null;
+    return out(hit.hours ? `${hit.name}: ${o === true ? "פתוח עכשיו" : o === false ? "סגור עכשיו" : "לא בטוחים"}. שעות לפי OpenStreetMap: ${hit.hours}` : `אין לנו שעות פתיחה של ${hit.name}. כדאי לבדוק בגוגל מפות.`,
+      [act("גוגל מפות", () => window.open(gmPlace(hit), "_blank", "noopener"))]);
+  }
+  // food, coffee, something sweet, or any other kind of place near here
+  const kinds = kindsIn(q);
+  if (kinds || /(קרוב|ליד|בסביבה|באזור)/.test(q)) {
+    const list = placesNear(ref.p, kinds || ["restaurant"], 1.2, 3);
+    if (!list.length) return out(`לא מצאנו ${kinds ? "מקום כזה" : "מסעדה"} פתוח קרוב ${ref.where}.`);
+    return out(`הכי טובים קרוב ${ref.where}:\n${list.map(x => "• " + placeLineShort(x.p, x.k)).join("\n")}`,
+      list.flatMap(x => [act(`להוסיף: ${x.p.name}`, () => addPlace(x.p, S.day))]).concat([act("ניווט לראשון", () => window.open(gmDir(ref.p, list[0].p), "_blank", "noopener"))]));
+  }
+  // add something by name or kind
+  const ad = q.match(/(?:תוסיף|להוסיף|רוצה גם|רוצים גם)\s+(.+)/);
+  if (ad) {
+    const items = (t.places || []).filter(hasXY).map(p => ({ p, names: [p.name, p.local], fame: p.fame || 0 }));
+    const hit = Masa.intent.findPlaces(ad[1], items, [t.city, t.cityLocal, t.cityEn])[0];
+    if (hit) return out(`להוסיף את ${hit.it.p.name} ל${d.label}?`, [act("כן, להוסיף", () => addPlace(hit.it.p, S.day))]);
+  }
+  return null;
+}
 SCREENS.guide = {
   view() {
     const cur = S.trip.days[S.day].stops[S.stop];
-    const head = `<div class="guidehead"><span class="av">${ic("guide")}</span><div><h2 style="color:#fff">המדריך שלכם ב${esc(S.trip.city)}</h2><p>${S.me ? "יודע איפה אתם עכשיו." : `מכיר את המסלול. כרגע אתם ליד ${esc(cur?.name || "")}.`}</p></div></div>`;
-    if (!ai.enabled()) return `<div class="screen chatwrap">${head}
-      <div class="card"><h2>${ic("key")} המדריך החכם עוד לא מופעל</h2>
-      <p>המדריך עונה על שאלות בזמן הטיול: מה עושים כשיורד גשם, איפה לאכול ליד, וסיפורים על כל מקום. הוא עובד עם מפתח חינמי של Google Gemini, שלוקח בערך דקה להוציא.</p>
-      <button type="button" class="btn block" data-settings>${ic("gear")} להפעלה בחינם</button></div>
-      <div class="disclaim">${ic("info")}<span>כל השאר באתר עובד גם בלי המדריך: מפה, מסלול, היסטוריה מוויקיפדיה והזמנות.</span></div></div>`;
+    const head = `<div class="guidehead"><span class="av">${ic("guide")}</span><div><h2>המדריך שלכם ב${esc(S.trip.city)}</h2><p>${S.me ? "יודע איפה אתם עכשיו." : `מכיר את המסלול. כרגע אתם ליד ${esc(cur?.name || "")}.`}</p></div></div>`;
+    const hello = `שלום! אני מכיר את הטיול שלכם ב${S.trip.city}. אפשר לשאול מה הבא, איפה לאכול קרוב, מה עושים בגשם או כשיש זמן פנוי, לבקש להוריד או להחליף תחנה, ולשמוע סיפור על המקום.${ai.enabled() ? " על כל שאלה אחרת עונה המדריך החכם." : ""}`;
     return `<div class="screen chatwrap">${head}
-    <div class="quick" id="quick">${["יורד גשם, מה משנים היום?", "יש לי שעתיים פנויות עכשיו", "ספר לי סיפור על המקום שאני נמצא בו", "איפה לאכול ליד התחנה הנוכחית?", "מה עושים פה בערב?"].map(q => `<button type="button">${q}</button>`).join("")}
+    <div class="quick" id="quick">${GUIDE_QUICK.map(q => `<button type="button">${q}</button>`).join("")}
       ${S.me ? "" : `<button type="button" id="shareLoc">${ic("locate")} לשתף מיקום</button>`}</div>
-    <div class="log" id="log">${[{ r: "bot", t: `שלום! אני המדריך שלכם ב${S.trip.city}. אפשר לשאול אותי כל דבר: לשנות תוכנית, למצוא מקום לאכול, לשמוע סיפור על המקום, או מה שווה לראות בסביבה.` }, ...S.chatLog].map(m => `<div class="msg ${m.r}">${esc(m.t)}</div>`).join("")}</div>
+    <div class="log" id="log">${[{ r: "bot", t: hello }, ...S.chatLog].map(m => msgHtml(m)).join("")}</div>
     <div class="status" id="chatStatus"></div>
   </div>`;
   },
   bind() {
     document.querySelectorAll("[data-settings]").forEach(b => b.onclick = () => { S.prev = S.screen; go("settings"); });
-    if (!ai.enabled()) return;
     $("composerSlot").innerHTML = `<form class="composer" id="askForm"><input id="askInput" type="text" placeholder="שאלו את המדריך..." aria-label="שאלה למדריך" autocomplete="off"><button class="btn" id="askBtn" type="submit" aria-label="שליחה" ${S.busy ? "disabled" : ""}>${ic("nav")}</button></form>`;
     $("askForm").onsubmit = e => { e.preventDefault(); const v = $("askInput").value.trim(); $("askInput").value = ""; ask(v); };
     document.querySelectorAll("#quick button:not(#shareLoc)").forEach(b => b.onclick = () => ask(b.textContent.trim()));
     $("shareLoc") && ($("shareLoc").onclick = locate);
+    bindGuideActs($("log"));
     setTimeout(() => { $("scroll").scrollTop = $("scroll").scrollHeight; }, 0);
   }
 };
-function addMsg(r, t) { S.chatLog.push({ r, t }); const m = document.createElement("div"); m.className = "msg " + r; m.textContent = t; $("log")?.appendChild(m); $("scroll").scrollTop = $("scroll").scrollHeight; return S.chatLog[S.chatLog.length - 1]; }
+const msgHtml = m => `<div class="msg ${m.r}">${esc(m.t)}${m.acts?.length ? `<div class="msgacts">${m.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}</div>`;
+function bindGuideActs(root) {
+  root?.querySelectorAll("[data-gact]").forEach(b => b.onclick = () => { const f = guideActs.get(b.dataset.gact); if (f) { b.disabled = true; f(); } });
+}
+function addMsg(r, t, acts) {
+  const m = { r, t, acts: acts || [] };
+  S.chatLog.push(m);
+  const log = $("log");
+  if (log) { log.insertAdjacentHTML("beforeend", msgHtml(m)); bindGuideActs(log.lastElementChild); }
+  $("scroll").scrollTop = $("scroll").scrollHeight;
+  return m;
+}
 async function ask(q) {
   if (!q || S.busy) return;
-  if (!ai.enabled()) { S.prev = S.screen; go("settings"); return; }
-  S.busy = true; $("askBtn") && ($("askBtn").disabled = true);
   addMsg("me", q);
+  // the trip itself answers first: instant, free and works offline
+  let local = null;
+  try { local = localAnswer(q); } catch (e) { console.warn("[masa] guide", e); }
+  if (local) { addMsg("bot", local.text, local.acts); return; }
+  if (!ai.enabled()) {
+    addMsg("bot", "על זה עוד אין לי תשובה בלי המדריך החכם. אפשר לשאול: מה הבא, איפה לאכול קרוב, מה עושים בגשם, יש לי שעתיים, להוריד או להחליף תחנה, מה עושים בערב, או לשמוע סיפור על המקום.",
+      [act("איך מפעילים את המדריך החכם", () => { S.prev = S.screen; go("settings"); })]);
+    return;
+  }
+  S.busy = true; $("askBtn") && ($("askBtn").disabled = true);
   const entry = addMsg("bot", "חושב…");
   const bubble = () => $("log")?.lastElementChild;
   const t = S.trip, cur = t.days[S.day].stops[S.stop];

@@ -1,0 +1,76 @@
+"""The guide without any AI key: every quick question gets a real answer from the trip, and its buttons change the trip
+(add a place, swap outdoor stops when it rains, remove a stop, a lighter day)."""
+import asyncio, os, sys, json
+from playwright.async_api import async_playwright
+URL = os.environ.get("QA_URL", "http://localhost:8790")
+FAILS = []
+def check(ok, what):
+    print(("PASS " if ok else "FAIL ") + what)
+    if not ok: FAILS.append(what)
+FALLBACK = "על זה עוד אין לי תשובה"
+
+async def main():
+    async with async_playwright() as p:
+        b = await p.chromium.launch()
+        ctx = await b.new_context(viewport={"width": 400, "height": 860}, service_workers="block")
+        pg = await ctx.new_page()
+        errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        async def r(route):
+            u = route.request.url
+            if u.startswith(URL): return await route.continue_()
+            if "openfreemap.org/styles" in u: return await route.fulfill(json={"version": 8, "sources": {}, "layers": [{"id": "bg", "type": "background", "paint": {"background-color": "#ece6da"}}]})
+            return await route.abort()
+        await pg.route("**/*", r)
+        await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+        await pg.click(".tile[data-k=nature]")
+        await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(800)
+        await pg.click("#nav button[data-k=guide]"); await pg.wait_for_selector("#askInput")
+        trip = lambda: pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
+        async def ask(q):
+            n = await pg.locator(".msg.bot").count()
+            await pg.fill("#askInput", q); await pg.press("#askInput", "Enter")
+            await pg.wait_for_function(f"document.querySelectorAll('.msg.bot').length > {n}", timeout=5000)
+            last = pg.locator(".msg.bot").last
+            return (await last.inner_text()), last
+        for q in ["מה הבא?", "איפה לאכול כאן קרוב?", "יש לי שעתיים פנויות", "ספר לי על המקום", "מה עושים בערב?", "אפשר קפה טוב בסביבה?", "הקולוסיאום פתוח עכשיו?"]:
+            text, _ = await ask(q)
+            check(FALLBACK not in text and len(text) > 20, f"answers '{q}': {text[:70]!r}")
+        # adding a place from an answer
+        before = sum(len(d["stops"]) for d in (await trip())["days"])
+        text, last = await ask("איפה לאכול כאן קרוב?")
+        await last.locator("[data-gact]").first.click(); await pg.wait_for_timeout(600)
+        after = sum(len(d["stops"]) for d in (await trip())["days"])
+        check(after == before + 1, "a place from the answer is added to the trip")
+        # rain: outdoor stops become indoor ones
+        text, last = await ask("יורד גשם, מה משנים?")
+        if await last.locator("[data-gact]").count():
+            t0 = await trip(); d0 = t0["days"][0]["stops"]
+            await last.locator("[data-gact]").first.click(); await pg.wait_for_timeout(800)
+            d1 = (await trip())["days"][0]["stops"]
+            outdoor = [s["name"] for s in d1 if s.get("kind") in ("park", "view", "beach", "street", "square", "bridge") and not s.get("meal")]
+            check(len(outdoor) < len([s for s in d0 if s.get("kind") in ("park", "view", "beach", "street", "square", "bridge") and not s.get("meal")]), f"rain swaps outdoor stops (left outside: {outdoor})")
+        else:
+            check("כמעט הכול בפנים" in text, f"rain answer: {text[:80]!r}")
+        # remove a stop by name
+        name = [s for s in (await trip())["days"][0]["stops"] if not s.get("meal") and not s.get("isHotel")][0]["name"]
+        text, last = await ask(f"תוריד את {name}")
+        if await last.locator("[data-gact]").count():
+            await last.locator("[data-gact]").first.click(); await pg.wait_for_timeout(600)
+            check(name not in [s["name"] for s in (await trip())["days"][0]["stops"]], f"'תוריד את {name}' removes it")
+        else:
+            check(False, f"'תוריד את {name}' understood: {text[:80]!r}")
+        # a lighter day
+        n0 = len((await trip())["days"][0]["stops"])
+        text, last = await ask("אנחנו עייפים, משהו רגוע יותר")
+        if await last.locator("[data-gact]").count():
+            await last.locator("[data-gact]").first.click(); await pg.wait_for_timeout(600)
+        check(len((await trip())["days"][0]["stops"]) <= n0, "a tired traveler gets a lighter day")
+        text, _ = await ask("מה השעה בטוקיו?")
+        check(FALLBACK in text, "an unrelated question without the AI says what it can do")
+        check(not errs, f"no page errors {errs[:2]}")
+        await b.close()
+    print("FAILED:" if FAILS else "ALL PASSED", FAILS)
+    sys.exit(1 if FAILS else 0)
+asyncio.run(main())

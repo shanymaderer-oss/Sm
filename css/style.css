@@ -753,3 +753,8 @@ body.docpage{overflow:auto;padding:0}
 .tabadge img{height:14px;width:auto;display:inline-block}
 .tabadge span{font-weight:700;color:var(--ink)}
 .tabadge small{color:var(--muted)}
+/* the guide's answers with actions */
+.msgacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.msgacts .chipbtn{background:var(--surface);font-size:.82rem;padding:5px 10px}
+.msgacts .chipbtn:disabled{opacity:.5}
+.guidehead h2{color:inherit}
