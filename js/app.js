@@ -42,8 +42,22 @@ function harden(root) {
     if (h.startsWith("#") || /^(\.\/)?(privacy|accessibility)\.html$/.test(h)) return; // our own pages
     const u = safeUrl(h);
     if (!u) { a.removeAttribute("href"); return; }
+    const pu = partnerUrl(u); if (pu !== u) a.setAttribute("href", pu);
     a.target = "_blank"; a.rel = "noopener noreferrer";
   });
+}
+/* partner programs (window.MASA_PARTNERS in cloud-config.js): our partner id is added to every link to that site, in one
+   place, so a new partnership is one line of settings. Only letters, digits, "-" and "_" are accepted as values. */
+function partnerUrl(href) {
+  const P = window.MASA_PARTNERS;
+  if (!P) return href;
+  try {
+    const u = new URL(href), host = u.hostname.replace(/^www\./, "");
+    const key = Object.keys(P).find(k => host === k || host.endsWith("." + k));
+    if (!key) return href;
+    for (const [k, v] of Object.entries(P[key] || {})) if (/^[\w-]{1,40}$/.test(k) && /^[\w-]{1,80}$/.test(String(v)) && !u.searchParams.has(k)) u.searchParams.set(k, v);
+    return u.toString();
+  } catch { return href; }
 }
 const gSearch = q => `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 let toastT = null;
@@ -1045,14 +1059,71 @@ SCREENS.discover = {
 /* ---------- bookings ---------- */
 const allBook = () => S.trip.days.flatMap(d => d.stops.map(s => ({ s, day: d.label }))).filter(x => x.s.booking?.needed);
 function ring(p, col) { const r = 15, c = 2 * Math.PI * r; return `<svg class="ring" viewBox="0 0 38 38"><circle cx="19" cy="19" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="5"/><circle cx="19" cy="19" r="${r}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${c * p} ${c}" transform="rotate(-90 19 19)"/><text x="19" y="23" text-anchor="middle" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink)">${Math.round(p * 100)}%</text></svg>`; }
+/* ================= the trip kit: everything a trip needs, in the order to close it, each one tap away and already
+   filled in with the city, the dates and the number of travelers. We only send people to the sites; we never sell. ================= */
+const KIT_KEY = "masa-kit";
+const kitDone = () => { const all = store.get(KIT_KEY, {}); return all[S.trip?.id] || {}; };
+function kitToggle(k) { const all = store.get(KIT_KEY, {}), id = S.trip.id, m = all[id] || {}; m[k] = !m[k]; all[id] = m; const ids = Object.keys(all); if (ids.length > 40) delete all[ids[0]]; store.set(KIT_KEY, all); }
+const enMonth = d => d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+const yymmdd = d => isoDate(d).slice(2).replace(/-/g, "");
+function kitItems(t = S.trip) {
+  const { start, end, people } = tripDates(t), city = cityName(), slug = t.slug || CITIES.findCity(t.city)?.slug;
+  const ap = slug ? Masa.transport.airport(slug, { family: !!t.opts?.notes?.match(/ילד/), mobility: t.opts?.mobility }) : null;
+  const iata = ap?.[0]?.code || "";
+  const all = t.days.flatMap((d, di) => d.stops.map(s => ({ s, di })));
+  const tickets = all.filter(x => x.s.booking?.needed);
+  const dinners = all.filter(x => x.s.meal === "dinner");
+  const c = tripCenter(t), near = all.filter(x => !x.s.isHotel && !x.s.meal && hasXY(x.s)).sort((a, b) => km(a.s, c) - km(b.s, c))[0]?.s;
+  const car = t.opts?.move === "car";
+  const easy = ap?.[0]?.list.find(o => o.easy);
+  const I = (k, icn, title, when, why, links, extra = {}) => ({ k, icn, title, when, why, links, ...extra });
+  return [
+    I("flights", "fwd", "טיסות", 60, `טיסה מתל אביב ל${t.city}${iata ? ` (${iata})` : ""}, ${fmtDay(start)}–${fmtDay(end)}, ${people} נוסעים. כדאי להשוות בשני אתרים: המחיר לאותה טיסה משתנה בין האתרים.`,
+      [["Google Flights", flightsUrl()], ...(iata ? [["Skyscanner", `https://www.skyscanner.co.il/transport/flights/tlv/${iata.toLowerCase()}/${yymmdd(start)}/${yymmdd(end)}/?adultsv2=${people}`], ["Kayak", `https://www.kayak.com/flights/TLV-${iata}/${isoDate(start)}/${isoDate(end)}/${people}adults`]] : [])]),
+    I("hotel", "bed", "לינה", 60, t.hotel ? `כבר בחרתם: ${t.hotel.name}. אם עוד לא הזמנתם, אפשר לבדוק את המחיר שלו בכמה אתרים.` : `הכי נוח לישון קרוב לרוב התחנות שלכם${near ? `, באזור של ${near.name}` : ""}. החיפוש כבר מסונן לאזור הזה ולתאריכים.`,
+      t.hotel ? [["Booking", bookingUrl(t.hotel)], ["Hotels.com", hotelsComUrl(t.hotel)], ["Google", googleHotelsUrl(t.hotel)]] : [["Booking באזור", bookingAreaUrl()], ["Airbnb באזור", airbnbAreaUrl()]], { go: "hotels" }),
+    I("insurance", "shield", "ביטוח נסיעות", 10, "בדקו קודם מה כבר כלול בכרטיס האשראי שלכם, ואז השוו. ברוב הפוליסות הישראליות קונים לפני היציאה מהארץ. שימו לב לכיסוי למחלה קיימת, לכבודה ולספורט.",
+      [["PassportCard", "https://www.passportcard.co.il/"], ["הראל", "https://www.harel-group.co.il/"], ["מגדל", "https://www.migdal.co.il/"], ["הפניקס", "https://www.fnx.co.il/"], ["כלל", "https://www.clalbit.co.il/"]]),
+    ...(tickets.length ? [I("tickets", "ticket", `כרטיסים מראש (${tickets.length})`, 30, `${tickets.slice(0, 3).map(x => x.s.name).join(", ")}${tickets.length > 3 ? " ועוד" : ""}. לרובם נפתחת מכירה כמה שבועות מראש, ובעונה הכרטיסים נגמרים.`, [], { below: true })] : []),
+    I("transfer", "bus", "מהשדה לעיר", 7, easy ? `הכי נוח מ${ap[0].he}: ${easy.n}, ${easy.min} דקות, ${easy.p}. רוצים שיחכו לכם עם שלט? אפשר להזמין הסעה מראש.` : "אפשר להזמין הסעה פרטית מראש, או לבדוק רכבת ואוטובוס מהשדה.",
+      [["Welcome Pickups", "https://www.welcomepickups.com/"]], { go: "move" }),
+    I("esim", "sim", "אינטרנט בחו״ל (eSIM)", 5, "חבילת גלישה דיגיטלית, בדרך כלל הרבה יותר זולה מחבילת חו״ל של החברה הסלולרית. קונים מהארץ ומפעילים כשנוחתים.",
+      [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["השוואה ב-eSIMDB", "https://esimdb.com/"]], { go: "info" }),
+    ...(car ? [I("car", "car", "השכרת רכב", 30, `${fmtDay(start)}–${fmtDay(end)}${iata ? `, איסוף מ-${iata}` : ""}. השוו ביטוח השתתפות עצמית, ובדקו אם צריך רישיון נהיגה בינלאומי.`,
+      [["Discover Cars", "https://www.discovercars.com/"], ["Rentalcars", "https://www.rentalcars.com/"]])] : []),
+    I("tours", "users", "סיורים וטיולי יום", 14, `סיור מודרך בעברית או באנגלית, סיור הליכה חינמי (משלמים טיפ בסוף), וטיולי יום מ${t.city}.`,
+      [["GetYourGuide", `https://www.getyourguide.com/s/?q=${encodeURIComponent(city)}&date_from=${isoDate(start)}&date_to=${isoDate(end)}`], ["Viator", `https://www.viator.com/searchResults/all?text=${encodeURIComponent(city)}`], ["סיור חינמי", gSearch(`free walking tour ${city}`)], ["סיורים בעברית", gSearch(`סיור מודרך בעברית ${t.city}`)]]),
+    ...(dinners.length ? [I("tables", "food", "שולחן לארוחות ערב", 7, `${dinners.slice(0, 3).map(x => x.s.name).join(", ")}. בסופי שבוע כדאי לשריין שולחן כמה ימים מראש.`,
+      dinners.slice(0, 3).map(x => [x.s.name, safeUrl(x.s.website) || `https://www.thefork.com/search?queryText=${encodeURIComponent(`${x.s.local || x.s.name} ${city}`)}`]))] : []),
+    I("events", "sparkle", "מה קורה בעיר בתאריכים שלכם", 30, "הופעות, משחקים, פסטיבלים ושווקים מיוחדים. שווה לבדוק לפני שסוגרים את המסלול.",
+      [["אירועים", gSearch(`events in ${city} ${enMonth(start)}`)], ["הופעות", gSearch(`concerts ${city} ${enMonth(start)}`)]]),
+    I("entry", "info", "דרכון וכניסה למדינה", 30, `בדקו שהדרכון בתוקף עוד חצי שנה לפחות אחרי החזרה, ומה צריך כדי להיכנס ל${t.country || t.city} (ויזה או אישור כניסה מקוון).`,
+      [["דרישות כניסה", gSearch(`דרישות כניסה ${t.country || t.city} לישראלים`)], ["אזהרות מסע", gSearch(`אזהרת מסע ${t.country || t.city} המטה לביטחון לאומי`)]])
+  ];
+}
+function kitView(t = S.trip) {
+  const done = kitDone(), items = kitItems(t), { start } = tripDates(t);
+  const left = Math.ceil((start - new Date()) / 864e5);
+  const closed = items.filter(x => done[x.k]).length;
+  const order = [...items].sort((a, b) => (!!done[a.k] - !!done[b.k]) || (a.when < b.when ? 1 : -1));
+  const whenTxt = x => left <= x.when ? `<span class="tag book">כדאי לסגור עכשיו</span>` : `<span class="tag free">עד ${x.when === 60 ? "חודשיים" : x.when === 30 ? "חודש" : x.when + " ימים"} לפני</span>`;
+  return `<div><div class="eyebrow">כל מה שצריך לטיול</div><h1 style="margin-top:4px">${closed} מתוך ${items.length} סגורים</h1></div>
+    <div class="progress"><i style="width:${closed / items.length * 100}%"></i></div>
+    <p class="lead">${left > 0 ? `עוד ${left} ימים לטיול. ` : ""}כל קישור כבר כולל את העיר, התאריכים ומספר הנוסעים. מסמנים מה כבר סגרתם.</p>
+    ${order.map(x => `<div class="kit${done[x.k] ? " done" : ""}"><div class="kithead"><span class="ic">${ic(x.icn)}</span><b>${esc(x.title)}</b>${done[x.k] ? `<span class="tag free">סגור</span>` : whenTxt(x)}</div>
+      ${done[x.k] ? "" : `<p>${esc(x.why)}</p>${x.links.length ? `<div class="chiprow">${x.links.map(([l, u]) => `<a class="chipbtn" href="${esc(u)}" target="_blank" rel="noopener">${ic("ext")}${esc(l)}</a>`).join("")}</div>` : ""}`}
+      <div class="kitfoot">${!done[x.k] && x.go ? `<button type="button" class="btn small soft" data-kitgo="${x.go}">${x.go === "hotels" ? "המלונות שלנו" : x.go === "move" ? "כל הדרכים מהשדה" : "פרטים"}</button>` : ""}${!done[x.k] && x.below ? `<button type="button" class="btn small soft" data-kitscroll>לרשימת הכרטיסים</button>` : ""}<label class="switchrow"><input type="checkbox" data-kit="${x.k}" ${done[x.k] ? "checked" : ""}><span>${done[x.k] ? "סגרתי" : "סימון שסגרתי"}</span></label></div></div>`).join("")}
+    ${partnerNote()}`;
+}
+const partnerNote = () => window.MASA_PARTNERS ? `<div class="disclaim">${ic("info")}<span>חלק מהקישורים הם של שותפים: אם תזמינו דרכם, ייתכן שמסע יקבל עמלה קטנה, בלי שום תוספת למחיר שלכם. ככה האפליקציה נשארת חינמית.</span></div>` : "";
 SCREENS.book = {
   view() {
     const list = allBook();
-    if (!list.length) return `<div class="screen"><div class="eyebrow">מרכז ההזמנות</div><h1>אין הזמנות לעשות</h1><p class="lead">אף תחנה במסלול לא דורשת הזמנה מראש.</p></div>`;
+    if (!list.length) return `<div class="screen">${kitView()}<div class="disclaim">${ic("shield")}<span>מסע לא גובה תשלום ולא שומר פרטי אשראי. ההזמנה עצמה נעשית תמיד באתר של המקום.</span></div></div>`;
     const stat = list.map(({ s }) => { const n = s.booking.steps.length, d = s.booking.steps.filter((_, i) => checks[ckey(s, i)]).length; return { n, d }; });
     const complete = stat.filter(x => x.d === x.n).length;
-    return `<div class="screen">
-    <div><div class="eyebrow">מרכז ההזמנות</div><h1 style="margin-top:4px">${complete} מתוך ${list.length} הזמנות הושלמו</h1></div>
+    return `<div class="screen">${kitView()}
+    <div id="bookList"><div class="eyebrow">כרטיסים מראש</div><h2 style="margin-top:4px">${complete} מתוך ${list.length} הזמנות הושלמו</h2></div>
     <div class="progress"><i style="width:${complete / list.length * 100}%"></i></div>
     <p class="lead">סמנו כל שלב כשסיימתם. ההתקדמות נשמרת בדפדפן הזה.</p>
     ${list.map(({ s, day }, bi) => { const st = stat[bi], open = S.openBook === s.name, c = CATS[catOf(s)], url = safeUrl(s.website || s.booking.url);
@@ -1065,6 +1136,9 @@ SCREENS.book = {
   </div>`;
   },
   bind() {
+    document.querySelectorAll("[data-kit]").forEach(b => b.onchange = () => { kitToggle(b.dataset.kit); rerenderKeepScroll(); });
+    document.querySelectorAll("[data-kitgo]").forEach(b => b.onclick = () => { S.prev = "book"; b.dataset.kitgo === "hotels" ? openList("hotel") : go(b.dataset.kitgo); });
+    document.querySelectorAll("[data-kitscroll]").forEach(b => b.onclick = () => $("bookList")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
     document.querySelectorAll(".bookhead[data-name]").forEach(b => b.onclick = () => {
       S.openBook = S.openBook === b.dataset.name ? null : b.dataset.name;
       rerenderKeepScroll();

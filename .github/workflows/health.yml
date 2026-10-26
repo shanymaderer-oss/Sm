@@ -46,6 +46,8 @@ jobs:
         run: python tools/qa/test_now.py
       - name: Building alone, day by day
         run: python tools/qa/test_self.py
+      - name: The trip kit (everything a trip needs)
+        run: python tools/qa/test_kit.py
       - name: The guide (local answers and the shared guide)
         run: python tools/qa/test_guide.py
       - name: The guide server's rules

@@ -16,3 +16,8 @@ window.MASA_TA = null;
    connect-src of the Content-Security-Policy in index.html. */
 window.MASA_AI = null;
 /* window.MASA_AI = { proxy: "https://masa-ai.<your-subdomain>.workers.dev" }; */
+
+/* partner programs: when a partnership is approved, its id goes here and is added to every link to that site.
+   Example: { "booking.com": { aid: "1234567" }, "getyourguide.com": { partner_id: "ABC123" }, "viator.com": { pid: "P00012345", mcid: "42383" } }
+   While this is null, no link carries a partner id and the "partner links" notice is not shown. */
+window.MASA_PARTNERS = null;

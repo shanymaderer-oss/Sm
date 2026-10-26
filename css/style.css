@@ -768,3 +768,13 @@ body.docpage{overflow:auto;padding:0}
 .chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px;font-size:.78rem;cursor:pointer}
 .chip:hover{border-color:var(--ink)}
 .selfdays button small.cnt{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--coral);color:#fff;font-size:.7rem;margin-inline-start:6px;padding:0 4px}
+.kit{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:8px;background:var(--surface)}
+.kit+.kit{margin-top:8px}
+.kit.done{opacity:.7}
+.kithead{display:flex;align-items:center;gap:8px}
+.kithead b{flex:1}
+.kithead .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--surface-2);flex:none}
+.kithead .ic svg{width:17px;height:17px}
+.kit p{margin:0;font-size:.9rem;line-height:1.5}
+.kitfoot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.kitfoot .switchrow{margin:0}
