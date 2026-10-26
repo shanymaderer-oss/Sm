@@ -1,6 +1,8 @@
-/* מסע · optional smart guide through the Google Gemini API free tier.
-   The key is pasted by the traveler and stays in this browser only (localStorage).
-   Without a key the site still works on open data. */
+/* מסע · the smart guide through the Google Gemini API free tier.
+   Open to everyone: when the site has a guide server (window.MASA_AI.proxy, a small Cloudflare Worker that keeps our
+   key secret, see tools/ai-worker) every traveler gets the guide without doing anything.
+   A traveler may still paste a key of their own; it stays in this browser only and goes straight to Google.
+   Without either, the site works on open data and the guide answers from the trip itself. */
 window.Masa = window.Masa || {};
 Masa.ai = (() => {
   const BASE = "https://generativelanguage.googleapis.com/v1beta";
@@ -9,8 +11,13 @@ Masa.ai = (() => {
   const get = k => { try { return localStorage.getItem(k) || ""; } catch { return ""; } };
   const set = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch {} };
 
-  const enabled = () => !!get(KEY);
-  const model = () => get(MODEL);
+  const testing = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && get("masa-ai-test") === "1";
+  const SHARED = (window.MASA_AI && window.MASA_AI.proxy) || (testing ? location.origin + "/__ai" : "");
+  let sharedOff = false; // the shared guide said it is out of quota: until the page reloads, do not keep asking
+  const own = () => !!get(KEY);
+  const shared = () => !!SHARED && !own();
+  const enabled = () => own() || (!!SHARED && !sharedOff);
+  const model = () => own() ? get(MODEL) : SHARED ? "Gemini (משותף)" : "";
 
   async function fail(r) {
     let body = {};
@@ -41,6 +48,21 @@ Masa.ai = (() => {
   }
 
   async function generate(body) {
+    if (shared()) {
+      if (sharedOff) throw Object.assign(new Error("off"), { code: "shared_quota" });
+      let r;
+      try { r = await fetch(SHARED.replace(/\/$/, "") + "/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); }
+      catch { throw Object.assign(new Error("net"), { code: "net" }); }
+      if (!r.ok) {
+        const code = r.status === 429 ? "shared_quota" : "ai_error";
+        if (r.status === 429) { let j = {}; try { j = await r.json(); } catch {} if (j.scope === "day") sharedOff = true; }
+        throw Object.assign(new Error("HTTP " + r.status), { code });
+      }
+      const j = await r.json();
+      const text = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
+      if (!text) throw Object.assign(new Error("empty"), { code: "ai_error" });
+      return text;
+    }
     const m = await pickModel();
     const r = await fetch(`${BASE}/models/${m}:generateContent?key=${encodeURIComponent(get(KEY))}`, {
       method: "POST",
@@ -96,11 +118,12 @@ Masa.ai = (() => {
   }
 
   const errText = code => ({
+    shared_quota: "המדריך החכם עמוס כרגע. נסו שוב בעוד כמה דקות, ובינתיים אפשר לשאול על הטיול עצמו.",
     quota: "הגעתם למגבלת השימוש החינמית של Gemini. נסו שוב בעוד דקה.",
     bad_key: "המפתח לא תקין. העתיקו אותו שוב מ-Google AI Studio.",
     no_model: "המודל לא זמין כרגע. נסו שוב, האתר יבחר מודל אחר.",
     ai_error: "המדריך החכם לא הצליח לענות. נסו שוב."
   })[code] || "המדריך החכם לא זמין כרגע. בדקו את החיבור לאינטרנט.";
 
-  return { enabled, model, json, chat, saveKey, errText };
+  return { enabled, shared, own, model, json, chat, saveKey, errText };
 })();

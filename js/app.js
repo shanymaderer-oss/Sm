@@ -1260,7 +1260,10 @@ SCREENS.settings = {
       <label class="switchrow"><input type="checkbox" id="a11yMotion" ${A11Y.still ? "checked" : ""}><span>בלי אנימציות במפה</span></label>
       <label class="switchrow"><input type="checkbox" id="a11yLinks" ${A11Y.links ? "checked" : ""}><span>קו תחתון לכל הקישורים</span></label>
     </div>
-    <div class="card"><h2>המדריך החכם <span class="tag ${on ? "free" : "book"}">${on ? "פעיל" : "כבוי"}</span></h2>
+    <div class="card"><h2>המדריך החכם <span class="tag ${on ? "free" : "book"}">${ai.shared() ? "פעיל לכולם" : on ? "פעיל" : "כבוי"}</span></h2>
+      ${ai.shared() ? `<p>המדריך החכם פועל לכל מי שמשתמש במסע, בלי מפתח ובלי הרשמה: צ׳אט עם מדריך, סיפורים בעברית לכל מקום וטיפים אישיים.</p>
+      <div class="disclaim">${ic("shield")}<span>השאלות שלכם עוברות דרך השרת של מסע אל Google Gemini, בלי שם ובלי פרטים מזהים, ולא נשמרות אצלנו. Google עשויה להשתמש בהן כדי לשפר את המודלים, אז לא כותבים למדריך פרטים אישיים.</span></div>
+      <details class="ownkey"><summary>יש לכם מפתח Gemini משלכם? (לא חובה)</summary>` : ""}
       <p>בלי המדריך, מסע עובד עם מידע פתוח מ-OpenStreetMap ומוויקיפדיה. עם מפתח חינמי של Google Gemini מקבלים גם צ׳אט עם מדריך, סיפורים בעברית לכל מקום, טיפים אישיים ומנות מקומיות.</p>
       <ol class="howto">
         <li>נכנסים ל-<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> עם חשבון גוגל.</li>
@@ -1269,9 +1272,10 @@ SCREENS.settings = {
         <li>מומלץ: בהגדרות המפתח ב-Google Cloud מגבילים אותו לאתר הזה (Website restrictions), כדי שגם מי שישיג אותו לא יוכל להשתמש בו.</li>
       </ol>
       <form id="keyForm" class="keyrow"><input id="keyInput" type="password" placeholder="${on ? "מפתח חדש" : "AIza..."}" aria-label="מפתח Gemini" autocomplete="off" dir="ltr"><button class="btn" type="submit">שמירה</button></form>
-      <div class="status ok" id="keyStatus">${on && ai.model() ? `מחובר. המודל: ${esc(ai.model())}` : ""}</div>
-      ${on ? `<button type="button" class="btn small soft" id="keyDel">${ic("trash")}מחיקת המפתח</button>` : ""}
+      <div class="status ok" id="keyStatus">${ai.own() && ai.model() ? `מחובר. המודל: ${esc(ai.model())}` : ""}</div>
+      ${ai.own() ? `<button type="button" class="btn small soft" id="keyDel">${ic("trash")}מחיקת המפתח</button>` : ""}
       <div class="disclaim">${ic("shield")}<span>המפתח נשמר רק בדפדפן הזה ונשלח רק ל-Google. בשכבה החינמית Google עשויה להשתמש בשאלות כדי לשפר את המודלים, אז לא כותבים למדריך פרטים אישיים.</span></div>
+      ${ai.shared() ? "</details>" : ""}
     </div>
     <div class="card"><h2>${ic("info")} מאיפה המידע מגיע</h2>
       <ul class="etiq">

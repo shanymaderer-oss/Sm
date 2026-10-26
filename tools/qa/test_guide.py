@@ -70,6 +70,34 @@ async def main():
         text, _ = await ask("מה השעה בטוקיו?")
         check(FALLBACK in text, "an unrelated question without the AI says what it can do")
         check(not errs, f"no page errors {errs[:2]}")
+
+        # the guide for everyone: through our guide server (mocked here), without any key in the browser
+        local = "localhost" in URL or "127.0.0.1" in URL
+        if not local and not await pg.evaluate("!!(window.MASA_AI && MASA_AI.proxy)"):
+            print("SKIP shared guide: not set up on this site yet"); await b.close()
+            print("FAILED:" if FAILS else "ALL PASSED", FAILS); sys.exit(1 if FAILS else 0)
+        sent = []
+        async def ai_route(route):
+            sent.append(route.request.post_data or "")
+            await route.fulfill(json={"candidates": [{"content": {"parts": [{"text": "בטוקיו עכשיו ערב. (תשובה מהמדריך החכם)"}]}}]})
+        await pg.route("**/generate", ai_route)
+        await pg.evaluate("localStorage.setItem('masa-ai-test','1')")
+        await pg.reload(); await pg.wait_for_timeout(1200)
+        await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero", timeout=15000)
+        await pg.click("#nav button[data-k=guide]"); await pg.wait_for_selector("#askInput")
+        n = await pg.locator(".msg.bot").count()
+        await pg.fill("#askInput", "מה השעה בטוקיו?"); await pg.press("#askInput", "Enter")
+        for _ in range(40):
+            if "המדריך החכם)" in "".join(await pg.locator(".msg.bot").all_inner_texts()): break
+            await pg.wait_for_timeout(200)
+        body = json.loads(sent[-1]) if sent else {}
+        check(len(sent) == 1 and "contents" in body and "key" not in json.dumps(body).lower().replace("keys", ""), "a question nobody else answers goes to the shared guide, without any key")
+        check(await pg.evaluate("!localStorage.getItem('masa-gemini-key')"), "no key is stored in the browser")
+        text, _ = await ask("מה הבא?")
+        check(len(sent) == 1, "questions about the trip are still answered locally (no server call)")
+        await pg.click("#gearBtn"); await pg.wait_for_timeout(500)
+        check(await pg.locator("text=פעיל לכולם").count() > 0, "settings say the guide is on for everyone")
+        check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS)
     sys.exit(1 if FAILS else 0)

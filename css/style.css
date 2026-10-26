@@ -758,3 +758,4 @@ body.docpage{overflow:auto;padding:0}
 .msgacts .chipbtn{background:var(--surface);font-size:.82rem;padding:5px 10px}
 .msgacts .chipbtn:disabled{opacity:.5}
 .guidehead h2{color:inherit}
+.ownkey{margin-top:10px}.ownkey summary{cursor:pointer;font-weight:600;padding:6px 0}.ownkey[open]{display:grid;gap:8px}
