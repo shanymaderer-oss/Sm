@@ -3,7 +3,7 @@
    City data is served from the cache and refreshed in the background. Map tiles of places already seen stay
    available offline (a limited number). Everything else (Wikipedia, routing, weather, AI) goes straight to the network.
    VERSION is written by tools/stamp-sw.py from a hash of the shell files; a new version refreshes the saved copy. */
-const VERSION = "5344385704";
+const VERSION = "f6aeba38e1";
 const SHELL_CACHE = "masa-shell-" + VERSION, DATA_CACHE = "masa-data-v1", TILE_CACHE = "masa-tiles-v1";
 const SHELL = [
   "./", "index.html", "privacy.html", "accessibility.html", "manifest.webmanifest", "css/style.css", "css/fonts.css",

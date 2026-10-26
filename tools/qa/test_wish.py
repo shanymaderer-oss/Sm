@@ -7,10 +7,19 @@ CASES=[("רומא","אנחנו זוג עם ילד בן 6, לא אוכלים בש
        ("ברצלונה","קצב רגוע, סבתא מתקשה בהליכה, חייבים את סגרדה פמיליה ופארק גואל, חוף ים"),
        ("פראג","חיי לילה, בירה, בלי כנסיות, לא לפספס את גשר קארל, גרים במלון Hotel Josef"),
        ("לונדון","שומרים כשרות, רוצים לראות את הביג בן ואת הלונדון איי, תחבורה ציבורית")]
+PARSE=[("אנחנו 2 מבוגרים ו-3 ילדים",5,None),("2 מבוגרים",2,None),("אנחנו 4",4,None),
+       ("טסים עם הורים מבוגרים",None,"walking"),("לא הרבה הליכה",None,"walking"),("בלי הרבה הליכה",None,"walking")]
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"])
     sel = [int(x) for x in sys.argv[1:]] or range(len(CASES))
+    # the parser alone: text -> (travelers, mobility); a wrong reading fails the run
+    pg=await b.new_page(); await pg.goto(os.environ.get("QA_URL","http://localhost:8790")+"/index.html"); await pg.wait_for_timeout(500)
+    for txt,ppl,mob in PARSE:
+      got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);return [w.people||null,w.mobility||null]}",txt)
+      ok=got==[ppl,mob]; print("PARSE","ok " if ok else "BAD",txt,"->",got)
+      if not ok: FAILS.append(txt)
+    await pg.close()
     for i in sel:
       city,txt=CASES[i]
       pg=await b.new_page(viewport={"width":400,"height":860}); errs=[]

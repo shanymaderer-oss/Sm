@@ -23,7 +23,7 @@ Masa.intent = (() => {
     T([word("ילד"), word("ילדים"), word("תינוק"), word("פעוט"), word("משפחה"), word("משפחתי"), /\b(kids?|children|family|toddler|baby)\b/], { add: ["family"], kids: true, label: "עם ילדים: פארקים, גני חיות ופחות שעות במוזיאונים" }),
     T([word("עגל(?:ה|ת)"), word("טיולון"), /\bstroller|pram\b/], { mobility: "stroller", label: "עם עגלה: מקומות נגישים ופחות מדרגות" }),
     T([word("כיסא גלגלים"), word("כסא גלגלים"), word("נכה"), word("נגיש"), /\bwheelchair\b/], { mobility: "wheelchair", label: "כיסא גלגלים: מקומות נגישים בלבד כשאפשר" }),
-    T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("מבוגרים"), word("הורים מבוגרים"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
+    T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("לא הרבה הליכה"), word("הורים מבוגרים"), word("אנשים מבוגרים"), word("קשישים"), word("גיל הזהב"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
     T([word("ירח דבש"), word("רומנטי"), word("יום נישואין"), word("זוגי"), /\b(honeymoon|romantic|anniversary)\b/], { romantic: true, boost: { view: 3, dessert: 2 }, label: "טיול זוגי: תצפיות, שקיעות וארוחת ערב טובה" }),
     // food and diet
     T([word("צמחוני"), word("טבעוני"), word("ויגן"), /\b(vegan|vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
@@ -117,7 +117,11 @@ Masa.intent = (() => {
     }
     // numbers of people: "אנחנו 4", "משפחה של 5", "זוג"
     const ppl = w.text.match(/(?:אנחנו|משפחה של|קבוצה של|we are|family of)\s*(\d{1,2})/i) || w.text.match(/(\d{1,2})\s*(?:אנשים|מבוגרים|חברים|נפשות|people|adults)/i);
-    if (ppl && +ppl[1] >= 1 && +ppl[1] <= 12) { w.people = +ppl[1]; say(`${w.people} מטיילים`); }
+    // "2 מבוגרים ו-3 ילדים" is 5 travelers ("מבוגרים" here means adults, not elderly)
+    const parts = [...w.text.matchAll(/(\d{1,2})\s*(?:מבוגרים|מבוגרות|ילדים|ילדות|נערים|תינוקות|adults|kids|children)/gi)].map(m => +m[1]);
+    const sum = parts.length > 1 ? parts.reduce((a, b) => a + b, 0) : 0;
+    if (sum >= 2 && sum <= 12) { w.people = sum; say(`${w.people} מטיילים`); }
+    else if (ppl && +ppl[1] >= 1 && +ppl[1] <= 12) { w.people = +ppl[1]; say(`${w.people} מטיילים`); }
     else if (/(?:^|\s)(?:ו?זוג|אני ו(?:בעלי|אשתי|בן הזוג|בת הזוג|החבר|החברה))(?=\s|$)|\bcouple\b/i.test(w.text)) { w.people = 2; }
     const days = w.text.match(/(\d)\s*(?:ימים|days)/i);
     if (days && +days[1] >= 1 && +days[1] <= 5) { w.days = +days[1]; say(`${w.days} ימים`); }
