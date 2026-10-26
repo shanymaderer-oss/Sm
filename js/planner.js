@@ -838,8 +838,8 @@ Masa.planner = (() => {
     ["history", "היסטוריה ואדריכלות", ["sight", "church", "square", "attraction"]],
     ["nature", "פארקים, גנים וחופים", ["park", "beach", "zoo", "themepark"]],
     ["taste", "שווקים, קינוחים ובתי קפה", ["market", "deli", "dessert", "bakery", "cafe"]],
-    ["food", "מסעדות", ["restaurant"]],
-    ["shop", "קניות", ["street", "mall", "store"]],
+    ["food", "המסעדות שאנחנו ממליצים", ["restaurant"]],
+    ["shop", "רחובות קניות", ["street"]],
     ["night", "ברים ובילוי", ["bar", "club"]]
   ];
   async function candidates(opts, signal) {
@@ -859,11 +859,13 @@ Masa.planner = (() => {
       why: p.kind === "street" ? streetWhy(p) : WHY[p.kind] || "", signals: (p.signals || []).slice(0, 2), wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null, website: p.website || null, cuisine: p.cuisine || null, voyage: p.voyage ? { text: p.voyage.text, priceClass: p.voyage.priceClass } : null });
     const far = p => p.dist > Math.max(2.5, R / 1000 * 1.3) && (p.fame || 0) < 40;
     for (const [key, he, kinds] of PICK_GROUPS) {
-      const list = pool.filter(p => !taken.has(p.id) && !far(p) && (kinds ? kinds.includes(p.kind) : MUSTK.includes(p.kind) && p.q >= 6))
+      // recommended restaurants: only ones with a real sign of quality (a star, a guide, a known name), no chains
+      const goodFood = p => p.kind !== "restaurant" || ((p.michelin || p.voyage || p.wikidata || (p.fame || 0) > 0) && !p.brand && !CHAIN.test(p.local || ""));
+      const list = pool.filter(p => !taken.has(p.id) && !far(p) && goodFood(p) && (kinds ? kinds.includes(p.kind) : MUSTK.includes(p.kind) && p.q >= 6))
         .sort((a, b) => b.q - a.q);
       const items = [];
       for (const p of list) {
-        if (items.length >= (key === "must" ? 14 : 10)) break;
+        if (items.length >= (key === "must" ? 14 : key === "food" ? 12 : 10)) break;
         // the same landmark twice (two map objects, or a museum inside it) shows once
         if (items.some(o => km(o, p) < 0.12 || (km(o, p) < 0.6 && similar(o.local, p.local)))) continue;
         items.push(p); taken.add(p.id);
@@ -937,6 +939,10 @@ Masa.planner = (() => {
     /* what the traveler wrote in their own words */
     const wish = Masa.intent ? Masa.intent.parse(opts.notes || "") : null;
     const avoid = new Set(wish?.avoid || []);
+    /* shopping means shopping streets and markets: a specific shop, a department store or a mall only when the traveler
+       asked for one (a mall, outlet, brands) or named it */
+    if (!wish?.stores) ["shop", "store", "mall"].forEach(k => avoid.add(k));
+    if (!wish?.stores && !wish?.wine) avoid.add("deli");
     let wishOut = wish && !wish.empty ? applyWish(wish, pool, geo, data) : null;
     /* places the traveler picked on the "I'll choose" screen: each is in the trip, like a place named in the wishes */
     if (opts.picks?.length) {
@@ -1008,8 +1014,17 @@ Masa.planner = (() => {
     const mustPool = by(MUST).filter(p => p.q >= 6);
     // the places the traveler named come first: each one opens a day, and ones close to each other share a day
     const userMusts = (wishOut?.places || []).filter(p => !["food", "night", "sleep"].includes(p.cat));
-    const anchors = pickFor(userMusts, Math.min(days, userMusts.length), [], Math.max(0.6, M.gap * 0.7));
-    if (!onlyPicks) anchors.push(...pickFor(mustPool, days - anchors.length, anchors, M.gap));
+    /* "I'll build it myself": places the traveler put on a day stay on that day; the day's best one is its main place */
+    const dayOf = p => { const v = opts.pickDays?.[p.id]; return Number.isInteger(v) && v >= 0 && v < days ? v : -1; };
+    const fixedAnchor = Array.from({ length: days }, (_, d) => userMusts.filter(p => dayOf(p) === d).sort((a, b) => b.q - a.q)[0] || null);
+    const freeMusts = userMusts.filter(p => dayOf(p) < 0);
+    const anchors = fixedAnchor.some(Boolean) ? (() => {
+      const free = pickFor(freeMusts, Math.min(fixedAnchor.filter(x => !x).length, freeMusts.length), fixedAnchor.filter(Boolean), Math.max(0.6, M.gap * 0.7));
+      const more = onlyPicks ? [] : pickFor(mustPool.filter(p => !userMusts.includes(p)), fixedAnchor.filter(x => !x).length - free.length, [...fixedAnchor.filter(Boolean), ...free], M.gap);
+      const fill = [...free, ...more];
+      return fixedAnchor.map(a => a || fill.shift()).filter(Boolean);
+    })() : pickFor(userMusts, Math.min(days, userMusts.length), [], Math.max(0.6, M.gap * 0.7));
+    if (!onlyPicks && anchors.length < days) anchors.push(...pickFor(mustPool, days - anchors.length, anchors, M.gap));
     const extraMusts = userMusts.filter(p => !anchors.includes(p));
     if (anchors.length < days) anchors.push(...pickFor(by([...MUST, ...Object.keys(W).filter(c => W[c] > 0).flatMap(c => SLOT_KINDS[c])]), days - anchors.length, anchors, M.gap * 0.7));
     anchors.forEach(p => { if (p.q >= 6) p.must = true; });
@@ -1058,6 +1073,7 @@ Masa.planner = (() => {
       if (anchors.includes(p) || extraOf.some(g => g.includes(p))) return;
       let bi = 0;
       anchors.forEach((a, i) => { if (km(a, p) < km(anchors[bi], p)) bi = i; });
+      const fixed = dayOf(p); if (fixed >= 0 && fixed < anchors.length) bi = fixed;
       extraOf[bi].push(p); used.add(p.id); markTwins(p);
     });
     const satDay = d => { if (!wish?.shabbat || !opts.start) return false; const x = new Date(opts.start + "T12:00:00"); x.setDate(x.getDate() + d); return x.getDay() === 6; };
@@ -1145,7 +1161,7 @@ Masa.planner = (() => {
     const restaurants = allRestaurants.filter(goodRest);
     const anyRestaurants = allRestaurants;
     const cafes = by(["cafe", "bakery"]);
-    const treats = by(["dessert", "market", "deli", "bakery"]);
+    const treats = by(["dessert", "market", "deli", "bakery"]); // "deli" only when asked (see avoid above)
     const bars = by(["bar", "club"]);
     const cuisinesUsed = {};
     const usedNames = new Set(groups.flat().map(p => normName(p.local)));
@@ -1171,8 +1187,14 @@ Masa.planner = (() => {
       if (used.has(p.id)) return;
       let bi = 0;
       groups.forEach((g, i) => { if (Math.min(...g.map(x => km(x, p))) < Math.min(...groups[bi].map(x => km(x, p)))) bi = i; });
+      const fixed = dayOf(p); if (fixed >= 0 && fixed < groups.length) bi = fixed;
       const slot = p.cat === "night" ? "drinks" : p.kind === "restaurant" ? (namedMeals[bi].dinner ? "lunch" : "dinner") : "treat";
-      if (namedMeals[bi][slot]) return;
+      if (namedMeals[bi][slot]) {
+        // a second restaurant chosen for the same day is lunch, then the other day's free meal
+        const alt = slot === "dinner" && !namedMeals[bi].lunch ? "lunch" : null;
+        if (!alt) return;
+        namedMeals[bi][alt] = p; used.add(p.id); usedNames.add(normName(p.local)); return;
+      }
       namedMeals[bi][slot] = p; used.add(p.id); usedNames.add(normName(p.local));
     });
     const dayPlans = groups.map((g, gi) => {
@@ -1229,7 +1251,7 @@ Masa.planner = (() => {
       city: geo.name, slug: geo.slug || null, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
       source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,
       opts: { query, days, budget, pace, diet: opts.diet || "הכול", mobility: opts.mobility || "", move, notes: opts.notes || "", interests, start: opts.start || null, people: opts.people || 2,
-        ...(opts.picks?.length ? { picks: opts.picks, onlyPicks: !!opts.onlyPicks, pickObjs: (opts.pickObjs || []).map(o => ({ id: o.id, name: o.name, local: o.local, kind: o.kind, cat: o.cat, lat: o.lat, lng: o.lng, q: o.q, signals: o.signals || [] })) } : {}) },
+        ...(opts.picks?.length ? { picks: opts.picks, onlyPicks: !!opts.onlyPicks, pickDays: opts.pickDays || null, pickObjs: (opts.pickObjs || []).map(o => ({ id: o.id, name: o.name, local: o.local, kind: o.kind, cat: o.cat, lat: o.lat, lng: o.lng, q: o.q, signals: o.signals || [] })) } : {}) },
       hotel: hotel ? { ...hotel } : null,
       summary: "",
       days: dayPlans.map((list, i) => {

@@ -45,7 +45,8 @@ Masa.intent = (() => {
     T([word("טבע(?!וני)"), word("פארק(?:ים)?(?!\\s*שעשועים)"), word("גנים"), word("ירוק"), word("אגם"), /\b(nature|parks?|gardens?)\b/], { add: ["nature"], label: "טבע ופארקים" }, { drop: ["nature"], label: "פחות פארקים" }),
     T([word("חו(?:ף|פים)"), /(?:^|\s)[ובלה]{0,2}ים(?=\s|$)/, /\bbeach(es)?\b/], { add: ["nature"], boost: { beach: 7 }, label: "חוף ים" }),
     T([word("חיי לילה"), word("ברים"), word("פאב"), word("מועדו"), word("מסיבות"), word("לבלות בלילה"), word("לצאת בלילה"), word("קוקטייל"), word("בירה"), /\b(nightlife|bars|clubs?|party|cocktails?|beer|pubs?)\b/], { add: ["night"], label: "בילוי בערב" }, { drop: ["night"], label: "בלי בילויי לילה" }),
-    T([word("קניות"), word("שופינג"), word("לקנות"), word("קניו(?:ן|נים)"), word("אאוטלט"), word("מותגים"), word("חנויות"), /\b(shopping|mall|outlets?|shops)\b/], { add: ["shopping"], label: "קניות" }, { drop: ["shopping"], avoid: ["street", "mall", "store", "shop"], label: "בלי קניות" }),
+    T([word("קניות"), word("שופינג"), word("לקנות"), /\bshopping\b/], { add: ["shopping"], label: "קניות: רחובות הקניות והשווקים" }, { drop: ["shopping"], avoid: ["street", "mall", "store", "shop"], label: "בלי קניות" }),
+    T([word("קניו(?:ן|נים)"), word("אאוטלט"), word("מותגים"), word("חנויות"), word("חנות"), word("כלבו"), /\b(malls?|outlets?|shops|stores?|department store)\b/], { add: ["shopping"], stores: true, label: "קניות: גם קניונים וחנויות" }, { drop: ["shopping"], avoid: ["street", "mall", "store", "shop"], label: "בלי קניות" }),
     T([word("נו(?:ף|פים)"), word("תצפית"), word("לצלם"), word("צילום"), word("אינסטגרמ"), /\b(views?|photos?|instagram|viewpoints?)\b/], { add: ["view"], label: "תצפיות ומקומות לצילום" }),
     T([word("שקיע"), /\bsunsets?\b/], { add: ["view"], sunset: true, label: "שקיעה יפה בסוף היום" }),
     T([word("גג(?:ות)?(?=\\s|$)"), word("רופטופ"), /\brooftops?\b/], { rooftop: true, label: "ברים ומקומות על הגג" }),
@@ -103,7 +104,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null) w[k] = eff[k];
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }

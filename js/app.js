@@ -183,9 +183,10 @@ function renderMap() {
     setRoute([]);
     const shown = S.pick.groups.flatMap(g => g.items.slice(0, 6)).concat([...S.pick.sel].map(pickById).filter(Boolean));
     [...new Map(shown.map(p => [p.id, p])).values()].filter(hasXY).forEach(p => {
-      const on = S.pick.sel.has(p.id);
+      const on = S.pick.sel.has(p.id) && (!S.pick.self || S.pick.day[p.id] === S.pick.active || !(S.pick.day[p.id] >= 0));
+      if (S.pick.sel.has(p.id) && !on) return addMarker(p, dotNode(C("--ink"), "", "pickdot"), { z: 3, anchor: "center" }, () => { S.pick.active = S.pick.day[p.id]; rerenderKeepScroll(); renderMap(); });
       addMarker(p, on ? node("mk gpin on", `<span class="mk-label">${esc(p.name)}</span><span class="gpinbody" style="--c:${C("--coral")}">${ic("check", 2.4)}</span>`) : dotNode(C("--muted"), "", "pickdot"), { z: on ? 5 : 2, ...(on ? {} : { anchor: "center" }) },
-        () => { on ? S.pick.sel.delete(p.id) : S.pick.sel.add(p.id); rerenderKeepScroll(); renderMap(); });
+        () => { if (on) { S.pick.sel.delete(p.id); delete S.pick.day[p.id]; } else { S.pick.sel.add(p.id); if (S.pick.self) S.pick.day[p.id] = S.pick.active; } rerenderKeepScroll(); renderMap(); });
     });
     syncLabels();
     return;
@@ -441,7 +442,8 @@ SCREENS.goals = {
     <div><h1>מה בא לכם לעשות ב${esc(S.dest?.he || "יעד")}?</h1></div>
     <div class="modechoice" role="radiogroup" aria-label="איך לבנות את המסלול">
       <button type="button" role="radio" data-mode="auto" aria-checked="${(f.mode || "auto") === "auto"}"><b>תבנו לי מסלול</b><small>המקומות נבחרים לפי מה שאתם אוהבים</small></button>
-      <button type="button" role="radio" data-mode="pick" aria-checked="${f.mode === "pick"}"><b>אני רוצה לבחור</b><small>רואים את המקומות הכי טובים בעיר ומסמנים</small></button>
+      <button type="button" role="radio" data-mode="pick" aria-checked="${f.mode === "pick"}"><b>אני רוצה לבחור</b><small>מסמנים מקומות, ואנחנו מסדרים אותם בימים</small></button>
+      <button type="button" role="radio" data-mode="self" aria-checked="${f.mode === "self"}"><b>אני בונה לבד</b><small>אתם מחליטים מה בכל יום, אנחנו ממליצים מה קרוב ואיפה לאכול</small></button>
     </div>
     <div class="wishbox">
       <label class="section-label" for="notes">ספרו במילים שלכם</label>
@@ -467,7 +469,7 @@ SCREENS.goals = {
     <div class="seg wrap" id="mobility">${MOBILITY.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(f.mobility || "") === v}">${l}</button>`).join("")}</div>
     <div class="section-label">קצב</div>
     <div class="seg" id="pace">${["רגוע", "מאוזן", "אינטנסיבי"].map(v => `<button type="button" aria-pressed="${f.pace === v}">${v}</button>`).join("")}</div>
-    <button class="btn coral block" id="buildBtn" type="button">${f.mode === "pick" ? "המשך לבחירת מקומות" : "בנו לי טיול"}</button>
+    <button class="btn coral block" id="buildBtn" type="button">${f.mode === "pick" || f.mode === "self" ? "המשך לבחירת מקומות" : "בנו לי טיול"}</button>
     <div class="status" id="buildStatus"></div>
   </div>`;
   },
@@ -495,11 +497,11 @@ SCREENS.goals = {
     const setP = v => { f.people = Math.min(8, Math.max(1, v)); $("pval").textContent = f.people; };
     $("pminus").onclick = () => { touched.add("people"); setP(f.people - 1); };
     $("pplus").onclick = () => { touched.add("people"); setP(f.people + 1); };
-    $("buildBtn").onclick = () => f.mode === "pick" ? startPick() : build();
+    $("buildBtn").onclick = () => f.mode === "pick" || f.mode === "self" ? startPick() : build();
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
       f.mode = b.dataset.mode;
       document.querySelectorAll("[data-mode]").forEach(x => x.setAttribute("aria-checked", x === b));
-      $("buildBtn").textContent = f.mode === "pick" ? "המשך לבחירת מקומות" : "בנו לי טיול";
+      $("buildBtn").textContent = f.mode === "pick" || f.mode === "self" ? "המשך לבחירת מקומות" : "בנו לי טיול";
     });
   }
 };
@@ -582,7 +584,9 @@ async function build() {
   const step = i => document.querySelectorAll("#lsteps div").forEach((d, k) => d.className = k < i ? "on" : k === i ? "now" : "");
   const onGeo = g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.3, reduced ? 0 : 5200); };
   try {
-    const P2 = S.form.mode === "pick" && S.pick?.sel?.size ? { picks: [...S.pick.sel], pickObjs: S.pick.all.filter(x => S.pick.sel.has(x.id)), onlyPicks: !S.pick.fill } : {};
+    const self = S.form.mode === "self";
+    const P2 = (S.form.mode === "pick" || self) && S.pick?.sel?.size ? { picks: [...S.pick.sel], pickObjs: S.pick.all.filter(x => S.pick.sel.has(x.id)), onlyPicks: !S.pick.fill,
+      ...(self ? { pickDays: Object.fromEntries([...S.pick.sel].map(id => [id, S.pick.day[id] ?? -1]).filter(([, d]) => d >= 0 && d < S.form.days)) } : {}) } : {};
     const trip = await planner.build({ query: S.dest.q, ...S.form, ...memoryOpts(), ...P2, onGeo }, step, buildCtl.signal);
     rememberForm(S.form);
     saveTrip(trip);
@@ -598,7 +602,11 @@ async function build() {
 /* ================= "I'll choose": the city's best places, the traveler marks what they want ================= */
 async function startPick() {
   const q = S.dest.q;
-  if (S.pick?.q !== q) S.pick = { q, status: "loading", groups: [], all: [], sel: new Set(), fill: true };
+  if (S.pick?.q !== q) S.pick = { q, status: "loading", groups: [], all: [], sel: new Set(), fill: true, day: {}, active: 0 };
+  // building alone: the days hold only what the traveler put in them (meals still come in), unless they ask us to fill
+  const self = S.form.mode === "self";
+  if (S.pick.self !== self) { S.pick.self = self; S.pick.fill = !self; }
+  S.pick.active = Math.min(S.pick.active, S.form.days - 1);
   go("pick");
   if (S.pick.status === "ready") return;
   try {
@@ -626,20 +634,42 @@ function pickRow(p, small) {
   const on = S.pick.sel.has(p.id);
   return `<button type="button" class="pickrow${small ? " small" : ""}" data-pick="${esc(p.id)}" aria-pressed="${on}"><span class="ic">${ic(on ? "check" : "plus", 2.4)}</span><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")}${p.signals?.[0] ? `, ${esc(p.signals[0])}` : ""}</small></span></button>`;
 }
+/* "I'll build it myself": a tab per day; what is marked goes into the open day, with our suggestions for that day */
+const dayItems = d => [...S.pick.sel].filter(id => S.pick.day[id] === d).map(pickById).filter(Boolean);
+function daySuggest(d) {
+  const items = dayItems(d), recs = S.pick.all.filter(x => !S.pick.sel.has(x.id));
+  const c = items.length ? { lat: items.reduce((a, p) => a + p.lat, 0) / items.length, lng: items.reduce((a, p) => a + p.lng, 0) / items.length } : null;
+  const score = (x, w) => x.q - (c ? km(x, c) * w : 0);
+  const eat = recs.filter(x => x.kind === "restaurant" && (!c || km(x, c) < 1.6)).sort((a, b) => score(b, 5) - score(a, 5)).slice(0, 3);
+  const near = c ? recs.filter(x => x.kind !== "restaurant" && km(x, c) < 0.8).sort((a, b) => score(b, 6) - score(a, 6)).slice(0, 4) : [];
+  return { eat, near };
+}
+function selfView(P3) {
+  const n = S.form.days, a = P3.active, items = dayItems(a), sug = daySuggest(a);
+  const loose = [...P3.sel].filter(id => !(P3.day[id] >= 0 && P3.day[id] < n)).map(pickById).filter(Boolean);
+  const moveBtns = p => n > 1 ? `<div class="daymove">${Array.from({ length: n }, (_, d) => d === a ? "" : `<button type="button" class="chip" data-pickday="${esc(p.id)}" data-to="${d}">ליום ${d + 1}</button>`).join("")}</div>` : "";
+  return `<div class="seg selfdays" role="tablist">${Array.from({ length: n }, (_, d) => `<button type="button" role="tab" data-sd="${d}" aria-selected="${d === a}" aria-pressed="${d === a}">יום ${d + 1}${dayItems(d).length ? `<small class="cnt" aria-label="${dayItems(d).length} מקומות">${dayItems(d).length}</small>` : ""}</button>`).join("")}</div>
+    <div class="card selfday"><div class="section-label">ביום ${a + 1} ${items.length ? `(${items.length})` : ""}</div>
+      ${items.length ? items.map(p => pickRow(p) + moveBtns(p)).join("") : `<p class="lead">עוד אין כלום ביום הזה. בוחרים למטה, או מתוך ההמלצות.</p>`}
+      ${sug.near.length ? `<div class="nearpicks"><small>קרוב למה שכבר ביום הזה:</small>${sug.near.map(x => pickRow(x, true)).join("")}</div>` : ""}
+      ${sug.eat.length ? `<div class="nearpicks"><small>${items.length ? "המסעדות שאנחנו ממליצים ליד היום הזה:" : "המסעדות שאנחנו ממליצים בעיר:"}</small>${sug.eat.map(x => pickRow(x, true)).join("")}</div>` : ""}
+    </div>
+    ${loose.length ? `<div class="picked"><div class="section-label">בלי יום (נשבץ איפה שמתאים)</div>${loose.map(p => pickRow(p) + moveBtns(p)).join("")}</div>` : ""}`;
+}
 SCREENS.pick = {
   view() {
     const P3 = S.pick;
     const head = `<div class="topnav"><button class="iconbtn" id="backGoals" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 3 מתוך 3</span><span style="width:38px"></span></div>
-      <div><h1>מה בא לכם לראות ב${esc(S.dest?.he || "")}?</h1><p class="lead" style="margin-top:6px">מסמנים את מה שרוצים. ליד כל מקום שמסמנים מופיעים דברים טובים שקרובים אליו.</p></div>`;
+      <div><h1>${S.pick?.self ? `בונים את ${esc(S.dest?.he || "")} לבד` : `מה בא לכם לראות ב${esc(S.dest?.he || "")}?`}</h1><p class="lead" style="margin-top:6px">${S.pick?.self ? "בוחרים יום, ומוסיפים אליו מקומות מהרשימה. לכל יום אנחנו מציעים מה קרוב ואיפה כדאי לאכול, ובסוף מסדרים כל יום לפי מרחק ושעות." : "מסמנים את מה שרוצים. ליד כל מקום שמסמנים מופיעים דברים טובים שקרובים אליו."}</p></div>`;
     if (!P3 || P3.status === "loading") return `<div class="screen">${head}<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>`;
     if (P3.status === "error") return `<div class="screen">${head}<div class="status">${esc(P3.err)}</div><button type="button" class="btn soft" id="pickRetry">לנסות שוב</button></div>`;
     const sel = [...P3.sel].map(pickById).filter(Boolean);
     return `<div class="screen">${head}
-      ${sel.length ? `<div class="picked"><div class="section-label">בחרתם ${sel.length === 1 ? "מקום אחד" : sel.length + " מקומות"}</div>
+      ${P3.self ? selfView(P3) : sel.length ? `<div class="picked"><div class="section-label">בחרתם ${sel.length === 1 ? "מקום אחד" : sel.length + " מקומות"}</div>
         ${sel.map(p => { const nb = nearPicks(p); return pickRow(p) + (nb.length ? `<div class="nearpicks"><small>קרוב לזה:</small>${nb.map(x => pickRow(x, true)).join("")}</div>` : ""); }).join("")}</div>` : ""}
       ${P3.groups.map(g => `<details class="pickgroup" ${g.key === "must" ? "open" : ""}><summary>${esc(g.he)} <small>${g.items.length}</small></summary>${g.items.filter(p => !P3.sel.has(p.id)).map(p => pickRow(p)).join("")}</details>`).join("")}
       <label class="switchrow"><input type="checkbox" id="pickFill" ${P3.fill ? "checked" : ""}><span>להשלים את הימים בהמלצות שלנו (ארוחות תמיד נכנסות)</span></label>
-      <button class="btn coral block" id="pickBuild" type="button">${sel.length ? `בנו לי טיול עם ${sel.length === 1 ? "המקום שבחרתי" : "ה-" + sel.length + " שבחרתי"}` : "בנו לי טיול בלי לבחור"}</button>
+      <button class="btn coral block" id="pickBuild" type="button">${P3.self ? (sel.length ? "סדרו לי את הימים שבניתי" : "בנו לי טיול בלי לבחור") : sel.length ? `בנו לי טיול עם ${sel.length === 1 ? "המקום שבחרתי" : "ה-" + sel.length + " שבחרתי"}` : "בנו לי טיול בלי לבחור"}</button>
       <div class="status" id="buildStatus"></div></div>`;
   },
   bind() {
@@ -647,9 +677,12 @@ SCREENS.pick = {
     $("pickRetry") && ($("pickRetry").onclick = () => { S.pick = null; startPick(); });
     document.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => {
       const id = b.dataset.pick;
-      S.pick.sel.has(id) ? S.pick.sel.delete(id) : S.pick.sel.add(id);
+      if (S.pick.sel.has(id)) { S.pick.sel.delete(id); delete S.pick.day[id]; }
+      else { S.pick.sel.add(id); if (S.pick.self) S.pick.day[id] = S.pick.active; }
       rerenderKeepScroll(); renderMap();
     });
+    document.querySelectorAll("[data-sd]").forEach(b => b.onclick = () => { S.pick.active = +b.dataset.sd; rerenderKeepScroll(); renderMap(); });
+    document.querySelectorAll("[data-pickday]").forEach(b => b.onclick = () => { S.pick.day[b.dataset.pickday] = +b.dataset.to; toast(`הועבר ליום ${+b.dataset.to + 1}`); rerenderKeepScroll(); renderMap(); });
     $("pickFill") && ($("pickFill").onchange = e => { S.pick.fill = e.target.checked; });
     $("pickBuild") && ($("pickBuild").onclick = build);
   }

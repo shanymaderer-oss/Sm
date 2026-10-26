@@ -759,3 +759,12 @@ body.docpage{overflow:auto;padding:0}
 .msgacts .chipbtn:disabled{opacity:.5}
 .guidehead h2{color:inherit}
 .ownkey{margin-top:10px}.ownkey summary{cursor:pointer;font-weight:600;padding:6px 0}.ownkey[open]{display:grid;gap:8px}
+.modechoice{grid-template-columns:1fr}
+.modechoice button{padding:8px 12px}
+.selfdays{display:flex;overflow-x:auto}
+.selfdays button small{margin-inline-start:4px;color:var(--muted);font-size:.75rem}
+.selfday{display:grid;gap:6px}
+.daymove{display:flex;gap:6px;flex-wrap:wrap;margin:-2px 0 4px;padding-inline-start:38px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px;font-size:.78rem;cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.selfdays button small.cnt{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--coral);color:#fff;font-size:.7rem;margin-inline-start:6px;padding:0 4px}
