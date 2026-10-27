@@ -458,6 +458,7 @@ SCREENS.home = {
   }
 };
 
+const MODE_HINT = { auto: "אתם מסמנים מה אתם אוהבים, ואנחנו בונים את כל המסלול.", pick: "רואים את המקומות הכי טובים בעיר, מסמנים מה רוצים, ואנחנו מסדרים בימים.", self: "אתם מחליטים מה בכל יום, ואנחנו ממליצים מה קרוב ואיפה לאכול." };
 SCREENS.goals = {
   view() {
     const f = S.form;
@@ -465,24 +466,28 @@ SCREENS.goals = {
     <div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 2 מתוך 3</span><span style="width:38px"></span></div>
     <div><h1>מה בא לכם לעשות ב${esc(S.dest?.he || "יעד")}?</h1></div>
     <div class="modechoice" role="radiogroup" aria-label="איך לבנות את המסלול">
-      <button type="button" role="radio" data-mode="auto" aria-checked="${(f.mode || "auto") === "auto"}"><b>תבנו לי מסלול</b><small>המקומות נבחרים לפי מה שאתם אוהבים</small></button>
-      <button type="button" role="radio" data-mode="pick" aria-checked="${f.mode === "pick"}"><b>אני רוצה לבחור</b><small>מסמנים מקומות, ואנחנו מסדרים אותם בימים</small></button>
-      <button type="button" role="radio" data-mode="self" aria-checked="${f.mode === "self"}"><b>אני בונה לבד</b><small>אתם מחליטים מה בכל יום, אנחנו ממליצים מה קרוב ואיפה לאכול</small></button>
+      <button type="button" role="radio" data-mode="auto" aria-checked="${(f.mode || "auto") === "auto"}"><b>תבנו לי</b></button>
+      <button type="button" role="radio" data-mode="pick" aria-checked="${f.mode === "pick"}"><b>אני בוחר מקומות</b></button>
+      <button type="button" role="radio" data-mode="self" aria-checked="${f.mode === "self"}"><b>אני בונה לבד</b></button>
     </div>
-    <div class="wishbox">
-      <label class="section-label" for="notes">ספרו במילים שלכם</label>
-      <textarea id="notes" rows="3" placeholder="למשל: אנחנו זוג עם ילד בן 6, לא אוכלים בשר, חייבים לראות את הקולוסיאום, ובערב משהו עם נוף">${esc(f.notes)}</textarea>
-      <div class="wishhints" id="wishHints">${WISH_HINTS.map(h => `<button type="button" data-h="${esc(h)}">${esc(h)}</button>`).join("")}</div>
-      <div class="wishout" id="wishOut" aria-live="polite"></div>
-    </div>
+    <p class="modehint" id="modeHint">${MODE_HINT[f.mode || "auto"]}</p>
     <div class="section-label">כמה ימים</div>
     <div class="stepper"><button type="button" class="iconbtn" id="dminus" aria-label="פחות ימים" style="background:var(--surface)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><output id="dval">${f.days === 1 ? "יום אחד" : f.days + " ימים"}</output><button type="button" class="iconbtn" id="dplus" aria-label="יותר ימים" style="background:var(--surface)">${ic("plus", 2.4)}</button></div>
     <div class="twocol">
       <label class="field"><span class="section-label">תאריך הגעה</span><input type="date" id="startDate" class="select" value="${esc(f.start || "")}"></label>
       <label class="field"><span class="section-label">מטיילים</span><span class="stepper small"><button type="button" class="iconbtn" id="pminus" aria-label="פחות מטיילים" style="background:var(--surface)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><output id="pval">${f.people}</output><button type="button" class="iconbtn" id="pplus" aria-label="יותר מטיילים" style="background:var(--surface)">${ic("plus", 2.4)}</button></span></label>
     </div>
+    <label class="field"><span class="section-label">איפה ישנים? <small class="muted">לא חובה. המסלול יתחיל ויסתיים קרוב למלון</small></span>
+      <span class="search hotelfield">${ic("bed")}<input id="hotelInput" type="text" value="${esc(f.hotelName || "")}" placeholder="שם המלון או הכתובת" autocomplete="off" aria-label="שם המלון או הכתובת"></span></label>
     <div class="section-label">מה הכי חשוב לכם? <small class="muted">נבנה תמהיל, והדברים שבחרתם יקבלו את רוב הזמן</small></div>
     <div class="tiles">${INTERESTS.map(k => `<button type="button" class="tile" data-k="${k}" aria-pressed="${f.interests.includes(k)}"><span class="ic" style="background:${cv(CATS[k].c)}">${ic(k)}</span>${CATS[k].he}</button>`).join("")}</div>
+    <div class="wishbox">
+      <label class="section-label" for="notes">ספרו במילים שלכם</label>
+      <textarea id="notes" rows="3" placeholder="למשל: אנחנו זוג עם ילד בן 6, לא אוכלים בשר, חייבים לראות את הקולוסיאום, ובערב משהו עם נוף">${esc(f.notes)}</textarea>
+      <div class="wishhints" id="wishHints">${WISH_HINTS.map(h => `<button type="button" data-h="${esc(h)}">${esc(h)}</button>`).join("")}</div>
+      <div class="wishout" id="wishOut" aria-live="polite"></div>
+    </div>
+    <details class="moreprefs"><summary>עוד העדפות <small class="muted">תקציב, אוכל, תחבורה, נגישות וקצב</small></summary>
     <div class="section-label">תקציב</div>
     <div class="seg" id="budget">${["חסכוני", "בינוני", "מפנק"].map(v => `<button type="button" aria-pressed="${f.budget === v}">${v}</button>`).join("")}</div>
     <div class="section-label">אוכל</div>
@@ -493,11 +498,13 @@ SCREENS.goals = {
     <div class="seg wrap" id="mobility">${MOBILITY.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(f.mobility || "") === v}">${l}</button>`).join("")}</div>
     <div class="section-label">קצב</div>
     <div class="seg" id="pace">${["רגוע", "מאוזן", "אינטנסיבי"].map(v => `<button type="button" aria-pressed="${f.pace === v}">${v}</button>`).join("")}</div>
+    </details>
     <button class="btn coral block" id="buildBtn" type="button">${f.mode === "pick" || f.mode === "self" ? "המשך לבחירת מקומות" : "בנו לי טיול"}</button>
     <div class="status" id="buildStatus"></div>
   </div>`;
   },
   bind() {
+    $("hotelInput") && ($("hotelInput").oninput = e => { S.form.hotelName = e.target.value.slice(0, 120); });
     const f = S.form;
     $("backHome").onclick = () => go("home");
     const touched = f.touched = f.touched || new Set();
@@ -525,6 +532,7 @@ SCREENS.goals = {
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
       f.mode = b.dataset.mode;
       document.querySelectorAll("[data-mode]").forEach(x => x.setAttribute("aria-checked", x === b));
+      $("modeHint") && ($("modeHint").textContent = MODE_HINT[f.mode] || "");
       $("buildBtn").textContent = f.mode === "pick" || f.mode === "self" ? "המשך לבחירת מקומות" : "בנו לי טיול";
     });
   }

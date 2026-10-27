@@ -861,3 +861,18 @@ textarea:focus{border-color:var(--primary)}
 .card,.pcard,.bookcard,.mvrow,.wishcard,.kit{border-width:2px;border-radius:18px}
 .chipbtn,.filters button{border-width:2px;border-radius:999px}
 .tag{border-radius:999px}
+/* goals: the basics first, extras folded */
+.modechoice{grid-template-columns:repeat(3,1fr);gap:6px}
+.modechoice button{padding:10px 6px;align-items:center;text-align:center;justify-content:center;min-height:52px}
+.modechoice button b{font-size:.95rem;line-height:1.2}
+@media (max-width:380px){.modechoice{grid-template-columns:repeat(3,1fr)}.modechoice button b{font-size:.85rem}}
+.modehint{margin:-6px 2px 0;color:var(--muted);font-size:.88rem}
+.hotelfield{padding:10px 14px;margin-top:6px}
+.hotelfield svg{width:18px;height:18px;color:var(--muted);flex:none}
+.hotelfield input{flex:1;border:0;background:none;font:inherit;color:inherit;outline:none;min-width:0}
+.moreprefs{border:2px solid var(--line);border-radius:18px;padding:12px 14px}
+.moreprefs summary{cursor:pointer;font-family:var(--display);font-weight:600;font-size:1.05rem;list-style:none;display:flex;flex-direction:column}
+.moreprefs summary::-webkit-details-marker{display:none}
+.moreprefs summary small{font-family:var(--body);font-weight:400;font-size:.82rem}
+.moreprefs[open]{display:grid;gap:12px}
+.moreprefs[open] summary{margin-bottom:2px}

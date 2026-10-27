@@ -954,12 +954,26 @@ Masa.planner = (() => {
       picked.forEach(p => { if (!wishOut.places.includes(p)) wishOut.places.push(p); });
     }
     const onlyPicks = !!(opts.picks?.length && opts.onlyPicks);
+    /* the hotel written in "where do you sleep": first among the city's hotels, otherwise on the whole map (name or address) */
+    const hotelName = String(opts.hotelName || "").trim().slice(0, 120);
+    if (hotelName && !hotel && !wishOut?.hotel) {
+      const hs = pool.filter(p => p.cat === "sleep").map(p => ({ p, names: [p.name, p.local], fame: p.fame || 0 }));
+      const h = Masa.intent ? Masa.intent.findPlaces(hotelName, hs, [geo.name, geo.local, geo.en].filter(Boolean))[0] : null;
+      wishOut = wishOut || { places: [], missed: [], hotel: null };
+      if (h) { const p = h.it.p; wishOut.hotel = { id: p.id, name: p.name, local: p.local, kind: p.kind, lat: p.lat, lng: p.lng, stars: p.stars, priceClass: p.priceClass, website: p.website, phone: p.phone, address: p.address, signals: p.signals || [], q: p.q }; }
+      else { wishOut.hotelMissed = hotelName; wishOut.hotelAddr = true; }
+    }
     // their hotel is not on our list: look it up on the whole map (a few seconds at most)
     if (wishOut?.hotelMissed && !hotel) {
       try {
         const r = await Promise.race([svc.searchNear(wishOut.hotelMissed, geo.lat, geo.lng, signal), new Promise(res => setTimeout(() => res([]), 5000))]);
         const x = (r || []).find(x => x.category === "tourism" && /hotel|hostel|guest_house|apartment|motel/.test(x.type) && km(geo, x) < 25);
         if (x) { wishOut.hotel = { id: `${x.osmType}/${x.osmId}`, name: x.name, local: x.local, kind: x.type === "hostel" ? "hostel" : "hotel", lat: x.lat, lng: x.lng, address: x.address, signals: [] }; wishOut.hotelMissed = null; }
+        // an address (an apartment, a friend's place): where they sleep is that spot
+        else if (wishOut.hotelAddr) {
+          const y = (r || []).find(x => km(geo, x) < 25);
+          if (y) { wishOut.hotel = { id: `${y.osmType}/${y.osmId}`, name: wishOut.hotelMissed, local: y.local || y.name, kind: "apartment", lat: y.lat, lng: y.lng, address: y.address, signals: [] }; wishOut.hotelMissed = null; }
+        }
       } catch {}
       chk();
     }
