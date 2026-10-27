@@ -55,15 +55,18 @@ async def main():
         check(not any("partner_id" in l for l in links), "a bad partner value is ignored")
         check(await pg.locator("text=חלק מהקישורים הם של שותפים").count() > 0, "with partners, the notice is shown")
         await pg.evaluate("window.MASA_PARTNERS = null")
-        # live events search (Tavily, through our server): shown, never saved
-        await pg.route("**/__ai/fresh", lambda route: route.fulfill(json={"results": [{"title": "Zzyzx Winter Festival", "url": "https://www.turismoroma.it/en/xmas", "snippet": "Dec 1 to Jan 6"}], "via": "Tavily"}))
-        await pg.evaluate("localStorage.setItem('masa-ai-test','1')")
-        await pg.reload(); await pg.wait_for_timeout(1000)
-        await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero"); await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector(".kit")
-        await pg.click("#freshEvents"); await pg.wait_for_selector(".freshlist", timeout=5000)
-        check("Zzyzx" in await pg.inner_text(".freshlist"), "events in the city come from a live search")
-        check(await pg.evaluate("!JSON.stringify(Object.assign({}, localStorage)).includes('Zzyzx')"), "search results are never saved")
-        await pg.evaluate("localStorage.removeItem('masa-ai-test')")
+        # live events search (Tavily, through our server): shown, never saved. The test server is mocked on localhost only.
+        if "localhost" not in URL and "127.0.0.1" not in URL:
+            print("SKIP live events search: needs the local test server")
+        else:
+          await pg.route("**/__ai/fresh", lambda route: route.fulfill(json={"results": [{"title": "Zzyzx Winter Festival", "url": "https://www.turismoroma.it/en/xmas", "snippet": "Dec 1 to Jan 6"}], "via": "Tavily"}))
+          await pg.evaluate("localStorage.setItem('masa-ai-test','1')")
+          await pg.reload(); await pg.wait_for_timeout(1000)
+          await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero"); await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector(".kit")
+          await pg.click("#freshEvents"); await pg.wait_for_selector(".freshlist", timeout=5000)
+          check("Zzyzx" in await pg.inner_text(".freshlist"), "events in the city come from a live search")
+          check(await pg.evaluate("!JSON.stringify(Object.assign({}, localStorage)).includes('Zzyzx')"), "search results are never saved")
+          await pg.evaluate("localStorage.removeItem('masa-ai-test')")
         await pg.screenshot(path=os.environ.get("QA_OUT", "/tmp/masa-qa/") + "kit.png", full_page=False)
         # the trip as a picture to share
         await pg.click("#nav button[data-k=plan]"); await pg.wait_for_selector("#shareTrip")
