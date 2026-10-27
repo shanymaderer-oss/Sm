@@ -51,7 +51,7 @@ Masa.cloud = (() => {
     if (EMU) return emuSignIn();
     const state = rand(24), nonce = rand(24);
     ss.set("masa-oauth", JSON.stringify({ state, nonce }));
-    const p = new URLSearchParams({ client_id: CFG.googleClientId, redirect_uri: location.origin + location.pathname, response_type: "id_token", scope: "openid email profile", nonce, state, prompt: "select_account" });
+    const p = new URLSearchParams({ client_id: CFG.googleClientId, redirect_uri: location.origin + location.pathname.replace(/index\.html$/, ""), response_type: "id_token", scope: "openid email profile", nonce, state, prompt: "select_account" });
     location.assign("https://accounts.google.com/o/oauth2/v2/auth?" + p.toString());
   }
   /* tests only: the Firebase emulator accepts a plain token */

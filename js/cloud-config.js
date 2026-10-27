@@ -4,7 +4,7 @@
 window.MASA_CLOUD = {
   apiKey: "AIzaSyBBKGdDxEHaZ14CFcTNvHNF5S3bXgkaAE8", authDomain: "masa-86058.firebaseapp.com", projectId: "masa-86058",
   appId: "1:746493644804:web:39440905d851f442b6a551",
-  googleClientId: "" // the "Web client" id from Google Cloud → Credentials; sign-in stays hidden until it is set
+  googleClientId: "746493644804-r6qi6f8iru8e1k8ssgh8abd4vurvhvq0.apps.googleusercontent.com" // the "Web client" id from Google Cloud → Credentials
 };
 /* window.MASA_CLOUD = {
   apiKey: "...", authDomain: "....firebaseapp.com", projectId: "...", appId: "...",
