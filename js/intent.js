@@ -123,7 +123,15 @@ Masa.intent = (() => {
     const sum = parts.length > 1 ? parts.reduce((a, b) => a + b, 0) : 0;
     if (sum >= 2 && sum <= 12) { w.people = sum; say(`${w.people} מטיילים`); }
     else if (ppl && +ppl[1] >= 1 && +ppl[1] <= 12) { w.people = +ppl[1]; say(`${w.people} מטיילים`); }
-    else if (/(?:^|\s)(?:ו?זוג|אני ו(?:בעלי|אשתי|בן הזוג|בת הזוג|החבר|החברה))(?=\s|$)|\bcouple\b/i.test(w.text)) { w.people = 2; }
+    else if (/(?:^|\s)(?:ו?זוג|אני ו(?:בעלי|אשתי|בן הזוג|בת הזוג|החבר|החברה))(?=\s|$)|\bcouple\b/i.test(w.text)) {
+      // "זוג עם ילד בן 6" is 3, "זוג ושני ילדים" is 4: the children come on top of the couple
+      const NUM = { "שני": 2, "שתי": 2, "שלושה": 3, "שלוש": 3, "ארבעה": 4, "ארבע": 4, "two": 2, "three": 3, "four": 4 };
+      const many = w.text.match(/(?:^|[\s+])ו?(\d|שני|שתי|שלושה|שלוש|ארבעה|ארבע|two|three|four)\s*(?:ה?ילדים|ה?ילדות|תינוקות|kids|children)/i);
+      const one = /(?:^|[\sוה+])(?:ילד|ילדה|תינוק|תינוקת|פעוט|פעוטה|הבן|הבת)(?=\s|$|[,.])|\b(?:a (?:kid|child|baby|toddler))\b/i.test(w.text);
+      const kids = many ? (NUM[many[1].toLowerCase()] || +many[1]) : one ? 1 : 0;
+      w.people = 2 + kids;
+      if (kids) say(`${w.people} מטיילים`);
+    }
     const days = w.text.match(/(\d)\s*(?:ימים|days)/i);
     if (days && +days[1] >= 1 && +days[1] <= 5) { w.days = +days[1]; say(`${w.days} ימים`); }
     // a place they want, written after "לראות", "לבקר ב", "חייבים", "לא לפספס"

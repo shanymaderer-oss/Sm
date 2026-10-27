@@ -8,7 +8,8 @@ CASES=[("רומא","אנחנו זוג עם ילד בן 6, לא אוכלים בש
        ("פראג","חיי לילה, בירה, בלי כנסיות, לא לפספס את גשר קארל, גרים במלון Hotel Josef"),
        ("לונדון","שומרים כשרות, רוצים לראות את הביג בן ואת הלונדון איי, תחבורה ציבורית")]
 PARSE=[("אנחנו 2 מבוגרים ו-3 ילדים",5,None),("2 מבוגרים",2,None),("אנחנו 4",4,None),
-       ("טסים עם הורים מבוגרים",None,"walking"),("לא הרבה הליכה",None,"walking"),("בלי הרבה הליכה",None,"walking")]
+       ("טסים עם הורים מבוגרים",None,"walking"),("לא הרבה הליכה",None,"walking"),("בלי הרבה הליכה",None,"walking"),
+       ("זוג עם ילד בן 6",3,None),("אנחנו זוג ושני ילדים",4,None),("זוג + 2 ילדים",4,None),("זוג עם תינוקת",3,None),("זוג",2,None),("זוג בלי ילדים",2,None)]
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"])
