@@ -99,7 +99,7 @@ export default {
     const origin = req.headers.get("Origin") || "";
     const url = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { status: ORIGINS.includes(origin) ? 204 : 403, headers: cors(origin) });
-    if (!["/generate", "/fresh"].includes(url.pathname) || req.method !== "POST") return reply(404, { error: "not found" }, origin);
+    if (!["/generate", "/fresh", "/translate"].includes(url.pathname) || req.method !== "POST") return reply(404, { error: "not found" }, origin);
     if (!ORIGINS.includes(origin)) return reply(403, { error: "origin" }, origin);
     if (!env.GEMINI_KEY) return reply(503, { error: "not configured" }, origin);
     const ip = req.headers.get("CF-Connecting-IP") || "?";
@@ -108,6 +108,18 @@ export default {
     const raw = await req.text();
     if (raw.length > MAX_BODY) return reply(413, { error: "too big" }, origin);
     let parsed; try { parsed = JSON.parse(raw); } catch { parsed = null; }
+
+    // descriptions from Wikivoyage and Wikipedia that exist only in English, into plain Hebrew
+    if (url.pathname === "/translate") {
+      const texts = Array.isArray(parsed?.texts) ? parsed.texts.slice(0, 6).map(t => text(t, 1500)).filter(Boolean) : [];
+      if (!texts.length) return reply(400, { error: "bad request" }, origin);
+      const g = await gemini(env, { contents: [{ role: "user", parts: [{ text: `Translate each of these travel descriptions into natural, fluent Hebrew for Israeli travelers. Keep place names as they are commonly written in Hebrew, or in Latin letters when there is no common Hebrew name. Do not add anything. Answer with a JSON array of strings, in the same order.\n${JSON.stringify(texts)}` }] }],
+        generationConfig: { temperature: 0.2, maxOutputTokens: 2048, responseMimeType: "application/json" } });
+      if (g.status === 429) return reply(429, { error: "busy", scope: g.scope }, origin);
+      let out = null; try { out = JSON.parse(g.text); } catch {}
+      if (!Array.isArray(out) || out.length !== texts.length) return reply(502, { error: "upstream" }, origin);
+      return reply(200, { texts: out.map(x => text(x, 3000)) }, origin);
+    }
 
     // what is on in the city on the trip's dates: a list of links, straight from the search
     if (url.pathname === "/fresh") {

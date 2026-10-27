@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Write a new VERSION into sw.js from a hash of every shell file, so a release reaches every visitor.
 Run from the repo root before committing a release: python3 tools/stamp-sw.py"""
-import hashlib, re, pathlib
+import hashlib, re, pathlib, subprocess, sys
 root = pathlib.Path(__file__).resolve().parent.parent
+# the site runs the minified scripts: build them first, so a release never ships stale ones
+subprocess.run([sys.executable, str(root / "tools" / "build-js.py")], check=True)
 sw = (root / "sw.js").read_text(encoding="utf-8")
 files = re.findall(r'"([^"]+)"', sw[sw.index("const SHELL = ["):sw.index("];", sw.index("const SHELL = ["))])
 h = hashlib.sha256()

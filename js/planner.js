@@ -900,7 +900,9 @@ Masa.planner = (() => {
     }).catch(() => null));
   }
   let TA = null;
-  const loadTA = () => TA || (TA = svc.getJSON("data/ta/hotels.json", {}, 8000).catch(() => ({})));
+  /* Tripadvisor ratings were collected ahead of time here until 27.10. Their terms allow keeping only location ids, so the
+     stored ratings were removed; hotel ratings come back live (js/ratings.js) once there is an agreement and a key. */
+  const loadTA = () => TA || (TA = Promise.resolve({}));
   async function build(opts, step, signal) {
     const { query, days, budget, pace } = opts;
     const interests = opts.interests.length ? opts.interests : ["food", "history", "view"];

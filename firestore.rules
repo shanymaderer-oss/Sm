@@ -70,6 +70,25 @@ service cloud.firestore {
         && request.auth.uid in request.resource.data.members;
     }
 
+    // Feedback ("something did not work?"): anyone may send one short note; nobody can read, change or list them from
+    // the site (they are read in the Firebase console).
+    match /feedback/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['text', 'screen', 'city', 'contact', 'at'])
+        && str(request.resource.data.text, 1500) && request.resource.data.text.size() >= 3
+        && optStr(request.resource.data, 'screen', 30) && optStr(request.resource.data, 'city', 60)
+        && optStr(request.resource.data, 'contact', 120)
+        && request.resource.data.at == request.time;
+    }
+
+    // Anonymous counts: what happened (a trip built, a picture shared), the city and the day. No user, no device id.
+    match /events/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['e', 'city', 'n', 'at'])
+        && request.resource.data.e in ['build', 'share_image', 'share_link', 'kit_open', 'signin', 'guide_ai', 'feedback']
+        && optStr(request.resource.data, 'city', 40)
+        && (!('n' in request.resource.data) || (request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 30))
+        && request.resource.data.at == request.time;
+    }
+
     // An invite: whoever has the (long, random) code may look it up; only the trip owner creates or deletes it.
     match /invites/{code} {
       allow get: if signedIn();

@@ -50,4 +50,9 @@ tq = []; r = await tcall({ kind: "events", city: "Rome<script>", month: "Decembe
 ok(r.status === 200 && j.results.length === 1 && j.via === "Tavily" && /^Rome.*events.*December 2026/.test(tq[0].query) && !tq[0].query.includes("<"), "events in the city come straight from the search, cleaned");
 r = await tcall({ kind: "anything", city: "Rome" }, "t6", "/fresh"); ok(r.status === 400, "only the events search is offered");
 r = await w.fetch(new Request("https://x/fresh", { method: "POST", headers: { Origin: O }, body: JSON.stringify({ kind: "events", city: "Rome" }) }), { GEMINI_KEY: "k" }); ok(r.status === 503, "without a Tavily key, events search says so");
+// translation
+upstream = (u, o) => { const b = JSON.parse(o.body); const arr = JSON.parse(b.contents[0].parts[0].text.split("\n").slice(1).join("\n")); return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(arr.map(x => "עב: " + x)) }] } }] }), { status: 200 }); };
+r = await tcall({ texts: ["Great views", "x".repeat(5000), 7] }, "tr1", "/translate"); j = await r.json();
+ok(r.status === 200 && j.texts.length === 2 && j.texts[0] === "עב: Great views" && j.texts[1].length <= 3000, "texts are translated in order, long ones cut");
+r = await tcall({ texts: [] }, "tr2", "/translate"); ok(r.status === 400, "nothing to translate is refused");
 console.log(fails.length ? "FAILED: " + fails : "ALL PASSED"); process.exit(fails.length ? 1 : 0);

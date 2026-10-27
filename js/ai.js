@@ -139,6 +139,19 @@ Masa.ai = (() => {
     ai_error: "המדריך החכם לא הצליח לענות. נסו שוב."
   })[code] || "המדריך החכם לא זמין כרגע. בדקו את החיבור לאינטרנט.";
 
+  /* English descriptions into Hebrew: through our server, or with the traveler's own key */
+  async function translate(texts) {
+    if (shared()) {
+      const r = await fetch(SHARED.replace(/\/$/, "") + "/translate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ texts }) });
+      if (!r.ok) throw Object.assign(new Error("HTTP " + r.status), { code: r.status === 429 ? "shared_quota" : "ai_error" });
+      const j = await r.json();
+      if (!Array.isArray(j.texts) || j.texts.length !== texts.length) throw Object.assign(new Error("bad"), { code: "ai_error" });
+      return j.texts.map(x => String(x || "").slice(0, 3000));
+    }
+    const out = await json(`Translate each of these travel descriptions into natural, fluent Hebrew for Israeli travelers. Keep place names as commonly written. Answer with a JSON array of strings in the same order.\n${JSON.stringify(texts)}`);
+    if (!Array.isArray(out) || out.length !== texts.length) throw Object.assign(new Error("bad"), { code: "ai_error" });
+    return out.map(x => String(x || "").slice(0, 3000));
+  }
   const hasSearch = () => !!SHARED;
-  return { enabled, shared, own, model, json, chat, events, hasSearch, lastSources: () => sources, saveKey, errText };
+  return { enabled, shared, own, model, json, chat, events, translate, hasSearch, lastSources: () => sources, saveKey, errText };
 })();

@@ -121,3 +121,23 @@ test("the owner removes a member but never adds one", async () => {
   await assertSucceeds(updateDoc(doc(db("alice"), "trips", "T1"), { members: arrayRemove("bob"), updatedAt: serverTimestamp() }));
   await assertFails(updateDoc(doc(db("alice"), "trips", "T1"), { members: arrayUnion("mallory"), updatedAt: serverTimestamp() }));
 });
+
+// ---------- feedback and anonymous counts ----------
+test("anyone may send feedback, nobody may read or change it", async () => {
+  await assertSucceeds(setDoc(doc(db(null), "feedback", "f1"), { text: "המפה לא נטענה", screen: "plan", city: "rome", at: serverTimestamp() }));
+  await assertSucceeds(setDoc(doc(db("alice"), "feedback", "f2"), { text: "תודה!", contact: "a@b.c", at: serverTimestamp() }));
+  await assertFails(getDoc(doc(db("alice"), "feedback", "f1")));
+  await assertFails(getDocs(collection(db("alice"), "feedback")));
+  await assertFails(updateDoc(doc(db(null), "feedback", "f1"), { text: "changed" }));
+  await assertFails(deleteDoc(doc(db("alice"), "feedback", "f1")));
+  await assertFails(setDoc(doc(db(null), "feedback", "f3"), { text: "x".repeat(1501), at: serverTimestamp() }));
+  await assertFails(setDoc(doc(db(null), "feedback", "f4"), { text: "hi there", uid: "alice", at: serverTimestamp() }));
+  await assertFails(setDoc(doc(db(null), "feedback", "f5"), { text: "hi there", at: new Date(2020, 1, 1) }));
+});
+test("counts are anonymous, of known events only, and cannot be read", async () => {
+  await assertSucceeds(setDoc(doc(db(null), "events", "e1"), { e: "build", city: "rome", n: 3, at: serverTimestamp() }));
+  await assertFails(setDoc(doc(db(null), "events", "e2"), { e: "build", city: "rome", uid: "alice", at: serverTimestamp() }));
+  await assertFails(setDoc(doc(db(null), "events", "e3"), { e: "anything", at: serverTimestamp() }));
+  await assertFails(setDoc(doc(db(null), "events", "e4"), { e: "build", n: 9999, at: serverTimestamp() }));
+  await assertFails(getDocs(collection(db("alice"), "events")));
+});

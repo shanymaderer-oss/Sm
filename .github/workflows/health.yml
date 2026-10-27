@@ -29,11 +29,13 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Live site answers
         run: |
-          for p in "" index.html sw.js js/tt.js data/cities/rome.json data/ta/hotels.json; do
+          for p in "" index.html sw.js js/tt.js data/cities/rome.json; do
             code=$(curl -s -o /dev/null -w "%{http_code}" "$QA_URL/$p")
             echo "$p $code"; test "$code" = "200"
           done
           curl -s "$QA_URL/index.html" | grep -q "require-trusted-types-for" || (echo "CSP missing on the live site" && exit 1)
+      - name: The minified scripts match the source
+        run: python tools/build-js.py && git diff --exit-code js/min
       - name: Security test
         run: python tools/qa/test_sec.py
       - name: Wishes test

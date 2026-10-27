@@ -876,3 +876,8 @@ textarea:focus{border-color:var(--primary)}
 .moreprefs summary small{font-family:var(--body);font-weight:400;font-size:.82rem}
 .moreprefs[open]{display:grid;gap:12px}
 .moreprefs[open] summary{margin-bottom:2px}
+.fbcard{display:grid;gap:10px}
+.fbcard textarea{width:100%;border:2px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;color:inherit;background:var(--surface);resize:vertical}
+.fbcard .select{width:100%}
+.fbcard .btn{justify-self:start}
+.legal .linkbtn{font:inherit;font-size:inherit;padding:0}

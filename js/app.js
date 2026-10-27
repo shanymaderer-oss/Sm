@@ -49,7 +49,7 @@ function harden(root) {
   });
   root.querySelectorAll("a[href]").forEach(a => {
     const h = a.getAttribute("href");
-    if (h.startsWith("#") || /^(\.\/)?(privacy|accessibility)\.html$/.test(h)) return; // our own pages
+    if (h.startsWith("#") || /^(\.\/)?(privacy|accessibility|terms)\.html$/.test(h)) return; // our own pages
     const u = safeUrl(h);
     if (!u) { a.removeAttribute("href"); return; }
     const pu = partnerUrl(u); if (pu !== u) a.setAttribute("href", pu);
@@ -370,7 +370,14 @@ function openTrip(t) {
   if (t.source !== "sample") checkRatings(t);
 }
 /* lunch and dinner: restaurants rated 4.5 and up on Tripadvisor (when the ratings are switched on) */
-function checkRatings(t) {
+/* the ratings code loads only when ratings are switched on (a Tripadvisor key in cloud-config.js) */
+const ratingsWanted = () => !!window.MASA_TA || (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && store.get("masa-ta-test", 0) === 1);
+let ratingsLoad = null;
+const loadRatings = () => ratingsLoad || (ratingsLoad = !ratingsWanted() ? Promise.resolve() : new Promise(res => {
+  const el = document.createElement("script"); el.src = "js/min/ratings.js"; el.onload = el.onerror = () => res(); document.head.append(el);
+}));
+async function checkRatings(t) {
+  await loadRatings();
   const R3 = Masa.ratings;
   if (!R3?.enabled() || !t.days.some(d => d.stops.some(s => ["lunch", "dinner"].includes(s.meal) && !s._ratingChecked))) return;
   const touched = new Set();
@@ -436,7 +443,7 @@ SCREENS.home = {
     <button type="button" class="btn soft block" id="sampleBtn">לראות טיול לדוגמה: 3 ימים ברומא</button>
     ${cloud.configured() && cloud.state.status === "off" && !cloud.pendingInvite() ? `<p class="aboutnote"><button type="button" class="linkbtn" id="homeIn">התחברו עם Google</button> כדי לשמור את הטיולים בכל המכשירים ולתכנן יחד עם המשפחה.</p>` : ""}
     <p class="aboutnote">המקומות במסלול אמיתיים: מסעדות, אתרים ורחובות מ-OpenStreetMap, ההמלצות מ-Wikivoyage והסיפורים מוויקיפדיה. אין כאן מקומות ממומנים, וההזמנות נעשות באתר של המקום עצמו.</p>
-    <p class="legal"><a href="privacy.html">מדיניות פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
+    <p class="legal"><button type="button" class="linkbtn" id="homeFb">משהו לא עבד?</button> · <a href="terms.html">תנאי שימוש</a> · <a href="privacy.html">מדיניות פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
   </div></div>`;
   },
   bind() {
@@ -453,6 +460,7 @@ SCREENS.home = {
       go("goals");
     };
     $("sampleBtn").onclick = loadSample;
+    $("homeFb") && ($("homeFb").onclick = openFeedback);
     $("inviteIn") && ($("inviteIn").onclick = () => cloud.signIn());
     $("homeIn") && ($("homeIn").onclick = () => cloud.signIn());
   }
@@ -610,6 +618,54 @@ const buildErr = code => ({
   too_few: "מצאנו מעט מדי מקומות ביעד הזה. נסו עיר גדולה יותר, פחות ימים או תחומי עניין אחרים.",
   network: "השרתים של OpenStreetMap ושל ויקיפדיה לא ענו. בדקו את החיבור לאינטרנט ולחצו שוב על 'בנו לי טיול'."
 })[code] || "משהו השתבש בבניית הטיול. בדקו את החיבור לאינטרנט ונסו שוב.";
+/* ================= feedback and anonymous counts =================
+   Both go straight to our Firestore with its REST API (no extra code is loaded). Counts carry only what happened, the
+   city and a small number: no user, no device id, no cookie. Do-Not-Track or the switch in settings turns counts off. */
+const STATS_KEY = "masa-nostats";
+const statsOff = () => navigator.doNotTrack === "1" || !!store.get(STATS_KEY, false);
+async function fsCreate(col, fields) {
+  const C = window.MASA_CLOUD;
+  if (!C?.projectId || !C.apiKey) throw new Error("no cloud");
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(15)), b => "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36]).join("");
+  const name = `projects/${C.projectId}/databases/(default)/documents/${col}/${id}`;
+  const f = {};
+  for (const [k, v] of Object.entries(fields)) if (v != null && v !== "") f[k] = typeof v === "number" ? { integerValue: String(Math.round(v)) } : { stringValue: String(v) };
+  const r = await fetch(`https://firestore.googleapis.com/v1/projects/${C.projectId}/databases/(default)/documents:commit?key=${encodeURIComponent(C.apiKey)}`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ writes: [{ update: { name, fields: f }, currentDocument: { exists: false }, updateTransforms: [{ fieldPath: "at", setToServerValue: "REQUEST_TIME" }] }] })
+  });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+}
+const sentOnce = new Set();
+function track(e, city, n, once) {
+  if (statsOff()) return;
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && !window.MASA_STATS_TEST) return; // tests and local work are not counted
+  if (once) { if (sentOnce.has(once)) return; sentOnce.add(once); }
+  fsCreate("events", { e, city: city ? String(city).slice(0, 40) : null, n: Number.isFinite(n) ? Math.max(0, Math.min(30, n)) : null }).catch(() => {});
+}
+async function sendFeedback(text, contact) {
+  await fsCreate("feedback", { text: text.slice(0, 1500), contact: contact.slice(0, 120), screen: (S.prev || S.screen || "").slice(0, 30), city: (S.trip?.slug || S.trip?.cityEn || "").slice(0, 60) });
+  track("feedback");
+}
+/* English texts on a place page become Hebrew once, through the smart guide; the original stays for the source line */
+const translating = new Set();
+async function translateStop(s) {
+  if (!s || !ai.enabled()) return;
+  const need = [];
+  if (s.whyLang === "en" && s.why && !s.whyHe) need.push(["whyHe", s.why]);
+  if (s.histLang === "en" && s.history && !s.historyHe) need.push(["historyHe", s.history]);
+  const key = S.trip.id + ":" + s.name;
+  if (!need.length || translating.has(key)) return;
+  translating.add(key);
+  try {
+    const out = await ai.translate(need.map(x => x[1]));
+    need.forEach(([k], i) => { if (out[i]) s[k] = out[i]; });
+    saveTrip(S.trip);
+    if (S.screen === "place" && S.trip.days[S.day]?.stops[S.stop] === s) rerenderKeepScroll();
+  } catch { /* the English text stays */ }
+}
+function openFeedback() { S.prev = S.screen === "settings" ? S.prev : S.screen; S.openFeedback = true; go("settings"); }
+
 async function build() {
   go("loading");
   buildCtl = new AbortController();
@@ -624,6 +680,7 @@ async function build() {
     saveTrip(trip);
     openTrip(trip);
     toast(`המסלול ב${trip.city} מוכן`);
+    track("build", trip.slug || trip.cityEn || trip.city, trip.days.length);
   } catch (e) {
     if (e?.code !== "cancelled") console.error("[masa] build failed", e?.code || "", e?.stack || e);
     go("goals");
@@ -953,11 +1010,13 @@ SCREENS.place = {
     ${s.isHotel ? "" : visitedRow(s)}
     ${s.meal && s.meal !== "hotel" ? `<button type="button" class="btn small soft" id="swapMeal">${ic("search")}להחליף ב${s.kind === "bar" || s.kind === "club" ? "מקום" : "מסעדה"} אחר${s.kind === "bar" || s.kind === "club" ? "" : "ת"}, או לחפש לפי שם</button>` : ""}
     ${(s.signals || []).length ? `<div class="sigs">${s.signals.map(x => `<span>${ic("check", 2.6)}${esc(x)}</span>`).join("")}</div>` : ""}
-    ${s.whyLang === "en" ? `<div class="vquote"><p dir="ltr" lang="en">${esc(s.why)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : `<p>${esc(s.why)}</p>`}
+    ${s.whyHe ? `<div class="vquote"><p>${esc(s.whyHe)}</p><div class="source">תרגום של המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>`
+      : s.whyLang === "en" ? `<div class="vquote"><p dir="ltr" lang="en">${esc(s.why)}</p><div class="source">המלצה מתוך <a href="https://en.wikivoyage.org/wiki/${encodeURIComponent(S.trip.cityEn || S.trip.cityLocal)}" target="_blank" rel="noopener">Wikivoyage</a>, ברישיון CC BY-SA</div></div>` : `<p>${esc(s.why)}</p>`}
     ${contactRow(s)}
     ${brokerRow(s)}
     <div class="card storycard"><h2>${ic("book")} הסיפור של המקום</h2>
-      ${s.history ? `<p class="story" ${s.histLang === "en" ? 'dir="ltr" lang="en" style="text-align:left"' : ""}>${esc(s.history)}</p>` : `<p class="lead">${S.trip.pending ? "טוענים את הסיפור…" : ai.enabled() ? "עוד אין כאן סיפור. המדריך החכם יכול לספר אותו." : "לא מצאנו ערך בוויקיפדיה על המקום הזה."}</p>`}
+      ${s.history && s.histLang === "en" && s.historyHe ? `<p class="story">${esc(s.historyHe)}</p><p class="source">תרגום מוויקיפדיה באנגלית</p>`
+        : s.history ? `<p class="story" ${s.histLang === "en" ? 'dir="ltr" lang="en" style="text-align:left"' : ""}>${esc(s.history)}</p>` : `<p class="lead">${S.trip.pending ? "טוענים את הסיפור…" : ai.enabled() ? "עוד אין כאן סיפור. המדריך החכם יכול לספר אותו." : "לא מצאנו ערך בוויקיפדיה על המקום הזה."}</p>`}
       ${s.fact ? `<div class="didyou"><b>הידעתם? </b>${esc(s.fact)}</div>` : ""}
       <div class="listen">
         ${s.history && canSpeak ? `<button type="button" class="btn small ${playing ? "coral playing" : ""}" id="listenBtn">${playing ? ic("stop") : ic("sound")}${playing ? "עצירה" : "האזינו לסיפור"}<span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>` : ""}
@@ -984,6 +1043,7 @@ SCREENS.place = {
   </div>`;
   },
   bind() {
+    translateStop(S.trip?.days[S.day]?.stops[S.stop]);
     const s = S.trip.days[S.day].stops[S.stop];
     $("backPlan").onclick = () => go("plan");
     $("prevStop").onclick = () => { if (S.stop > 0) { S.stop--; go("place"); } };
@@ -1176,6 +1236,7 @@ SCREENS.book = {
   },
   bind() {
     $("freshEvents") && ($("freshEvents").onclick = loadFreshEvents);
+    track("kit_open", S.trip?.slug || S.trip?.cityEn, null, "kit:" + S.trip?.id);
     document.querySelectorAll("[data-kit]").forEach(b => b.onchange = () => { kitToggle(b.dataset.kit); rerenderKeepScroll(); });
     document.querySelectorAll("[data-kitgo]").forEach(b => b.onclick = () => { S.prev = "book"; b.dataset.kitgo === "hotels" ? openList("hotel") : go(b.dataset.kitgo); });
     document.querySelectorAll("[data-kitscroll]").forEach(b => b.onclick = () => $("bookList")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
@@ -1372,7 +1433,7 @@ async function ask(q) {
   if (local) { addMsg("bot", local.text, local.acts); return; }
   if (!ai.enabled()) {
     addMsg("bot", "על זה עוד אין לי תשובה בלי המדריך החכם. אפשר לשאול: מה הבא, איפה לאכול קרוב, מה עושים בגשם, יש לי שעתיים, להוריד או להחליף תחנה, מה עושים בערב, או לשמוע סיפור על המקום.",
-      [act("איך מפעילים את המדריך החכם", () => { S.prev = S.screen; go("settings"); })]);
+      [act("איך מפעילים את המדריך החכם", () => { S.prev = S.screen; go("settings"); }), act("משהו לא עבד?", openFeedback)]);
     return;
   }
   S.busy = true; $("askBtn") && ($("askBtn").disabled = true);
@@ -1387,6 +1448,7 @@ Traveler is currently viewing: ${t.days[S.day].label}, stop ${S.stop + 1}: ${cur
   S.chat.push({ role: "user", content: q });
   try {
     const fresh = ai.shared() && FRESH_Q.test(q) ? { q, city: t.cityEn || t.cityLocal || t.city } : null;
+    track("guide_ai", t.slug || t.cityEn);
     const text = await ai.chat(system, S.chat.slice(-10), fresh);
     S.chat.push({ role: "assistant", content: text });
     entry.t = text;
@@ -1408,6 +1470,13 @@ SCREENS.settings = {
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backPrev" aria-label="חזרה">${ic("back")}</button><h1 style="font-size:1.5rem">הגדרות</h1><span style="width:38px"></span></div>
     ${accountCard()}
+    <div class="card fbcard" id="fbCard"><h2>${ic("chat")} משהו לא עבד?</h2>
+      <p class="lead">ספרו מה קרה או מה חסר לכם. זה מגיע ישר אלינו.</p>
+      <textarea id="fbText" rows="3" maxlength="1500" placeholder="למשל: בבנייה של טיול לפראג המסך נתקע"></textarea>
+      <input id="fbContact" type="text" class="select" maxlength="120" placeholder="מייל או טלפון, אם תרצו שנחזור אליכם (לא חובה)" autocomplete="email">
+      <button type="button" class="btn" id="fbSend">שליחה</button>
+      <div class="status" id="fbStatus" aria-live="polite"></div>
+    </div>
     <div class="card"><h2>${ic("access")} נגישות ותצוגה</h2>
       <div class="section-label">גודל טקסט</div>
       <div class="seg" id="a11ySize">${[["100", "רגיל"], ["115", "גדול"], ["130", "גדול מאוד"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${A11Y.size === v}">${l}</button>`).join("")}</div>
@@ -1439,6 +1508,10 @@ SCREENS.settings = {
         <li>${ic("check")}<span>מסלולי הליכה: שרת הניתוב של FOSSGIS (OSRM)</span></li>
         <li>${ic("check")}<span>עומסים: הערכה לפי סוג המקום, לא נתון חי</span></li>
       </ul></div>
+    <div class="card"><h2>${ic("info")} תנאי שימוש ופרטיות</h2>
+      <p class="lead"><a href="terms.html">תנאי שימוש</a> · <a href="privacy.html">מדיניות פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
+      <label class="switchrow"><input type="checkbox" id="statsOn" ${statsOff() ? "" : "checked"} ${navigator.doNotTrack === "1" ? "disabled" : ""}><span>לשלוח ספירה אנונימית (כמה טיולים נבנו ובאיזו עיר), כדי שנדע מה לשפר. בלי שם, בלי מזהה ובלי עוגיות.</span></label>
+    </div>
     <div class="card"><h2>${ic("save")} נתונים שמורים</h2>
       <p class="lead">${savedTrips().length} טיולים שמורים בדפדפן הזה.</p>
       <button type="button" class="btn small soft" id="clearData">${ic("trash")}מחיקת הטיולים וההתקדמות</button>
@@ -1447,6 +1520,16 @@ SCREENS.settings = {
   </div>`;
   },
   bind() {
+    $("statsOn") && ($("statsOn").onchange = e => store.set(STATS_KEY, !e.target.checked));
+    $("fbSend") && ($("fbSend").onclick = async () => {
+      const text = $("fbText").value.trim(), contact = $("fbContact").value.trim();
+      if (text.length < 3) { $("fbStatus").textContent = "כתבו כמה מילים על מה שקרה."; $("fbText").focus(); return; }
+      $("fbSend").disabled = true; $("fbStatus").textContent = "שולחים…";
+      try { await sendFeedback(text, contact); $("fbText").value = ""; $("fbContact").value = ""; $("fbStatus").textContent = "תודה! קיבלנו."; toast("תודה! קיבלנו את ההודעה"); }
+      catch { $("fbStatus").textContent = "לא הצלחנו לשלוח. בדקו את החיבור לאינטרנט ונסו שוב, או כתבו ל-Sivanmad7@gmail.com."; }
+      finally { $("fbSend").disabled = false; }
+    });
+    if (S.openFeedback) { S.openFeedback = false; setTimeout(() => { $("fbCard")?.scrollIntoView({ block: "start" }); $("fbText")?.focus(); }, 50); }
     $("a11ySize").querySelectorAll("button").forEach(b => b.onclick = () => { A11Y.size = b.dataset.v; applyA11y(); rerenderKeepScroll(); });
     $("a11yHc").onchange = e => { A11Y.hc = e.target.checked; applyA11y(); };
     $("a11yMotion").onchange = e => { A11Y.still = e.target.checked; applyA11y(); };
@@ -2319,9 +2402,10 @@ function bindFamily() {
   $("famRename") && ($("famRename").onclick = () => { me.name = ""; saveMe(); rerenderKeepScroll(); });
   const link = async () => { try { return await shareLink(t); } catch { toast("לא הצלחנו ליצור קישור"); return null; } };
   const msg = u => `${me.name ? me.name + " שיתף/ה" : "שיתפו"} איתך טיול ל${t.city} במסע. פותחים, מסמנים איפה הייתם ומוסיפים הערות: ${u}`;
-  $("famWa") && ($("famWa").onclick = async () => { const u = await link(); if (u) window.open(`https://wa.me/?text=${encodeURIComponent(msg(u))}`, "_blank", "noopener"); });
+  $("famWa") && ($("famWa").onclick = async () => { const u = await link(); if (u) track("share_link", t.slug || t.cityEn); if (u) window.open(`https://wa.me/?text=${encodeURIComponent(msg(u))}`, "_blank", "noopener"); });
   $("famShare") && ($("famShare").onclick = async () => {
     const u = await link(); if (!u) return;
+    track("share_link", t.slug || t.cityEn);
     if (navigator.share) { try { await navigator.share({ title: `טיול ל${t.city}`, text: msg(""), url: u }); } catch {} }
     else { try { await navigator.clipboard.writeText(u); toast("הקישור הועתק"); } catch { toast("לא הצלחנו להעתיק"); } }
   });
@@ -2401,6 +2485,7 @@ async function shareTripImage(t) {
   const file = new File([blob], `masa-${(t.cityEn || "trip").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`, { type: "image/png" });
   let url = ""; try { url = await shareLink(t); } catch {}
   const text = `הטיול שלי ל${t.city}, נבנה במסע${url ? `: ${url}` : ""}`;
+  track("share_image", t.slug || t.cityEn || t.city);
   if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], text, title: `טיול ל${t.city}` }); return; } catch (e) { if (e?.name === "AbortError") return; } }
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
@@ -2549,6 +2634,7 @@ cloud.init({
   }
 });
 cloud.on(st => {
+  if (st.status === "in") track("signin", null, null, "signin");
   // the avatar in the search bar
   const g = $("gearBtn");
   if (g) g.innerHTML = st.status === "in" && st.user?.photo ? `<img class="avatar" src="${esc(safeUrl(st.user.photo))}" alt="" referrerpolicy="no-referrer">` : GEAR_SVG;
@@ -2570,7 +2656,7 @@ function accountCard() {
   return `<div class="card account"><h2>${ic("users")} החשבון שלי</h2>
       <p>מתחברים עם Google כדי שהטיולים יישמרו גם אם מחליפים טלפון, יופיעו בכל מכשיר, ואפשר יהיה לתכנן טיול יחד עם המשפחה בזמן אמת.</p>
       <button type="button" class="btn block" id="accIn" ${st.status === "loading" ? "disabled" : ""}>${st.status === "loading" ? "מתחברים…" : "התחברות עם Google"}</button>
-      <div class="disclaim">${ic("shield")}<span>נשמרים רק השם, התמונה והטיולים שלכם. אפשר למחוק הכול בכל רגע. <a href="privacy.html">מדיניות הפרטיות</a></span></div></div>`;
+      <div class="disclaim">${ic("shield")}<span>נשמרים רק השם, התמונה והטיולים שלכם. אפשר למחוק הכול בכל רגע. <a href="privacy.html">מדיניות הפרטיות</a>, <a href="terms.html">תנאי השימוש</a></span></div></div>`;
 }
 function bindAccount() {
   $("accIn") && ($("accIn").onclick = () => cloud.signIn());

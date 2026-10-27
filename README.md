@@ -124,3 +124,8 @@ js/app.js         המפה והמסכים
 ### כשמגדילים
 - **ספק מפות ותמונות לוויין בתשלום** כשיש הרבה משתמשים או שימוש מסחרי.
 - **אנגלית ושפות נוספות** אחרי שהגרסה בעברית יציבה.
+
+## Scripts: source and minified
+The readable code is in `js/`. The site loads the minified copies in `js/min/`, built by `tools/build-js.py`.
+Edit `js/` only; `python3 tools/stamp-sw.py` (run before every release) rebuilds `js/min/` and stamps the service worker.
+The nightly check fails if `js/min/` is out of date. `js/cloud-config.js` is not minified, so its settings stay editable.

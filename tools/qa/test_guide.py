@@ -110,6 +110,25 @@ async def main():
         srcs = await pg.evaluate("[...document.querySelectorAll('.msg.bot')].pop().querySelectorAll('.srcs a').length")
         bad = await pg.evaluate("[...document.querySelectorAll('.srcs a')].some(a => !a.href.startsWith('https://'))")
         check(srcs == 1 and not bad, f"the answer shows its sources as links, only safe ones ({srcs})")
+        # English descriptions on a place page become Hebrew through the shared guide
+        tr = []
+        async def ai_tr(route):
+            body = json.loads(route.request.post_data or "{}"); tr.append(body)
+            await route.fulfill(json={"texts": ["תרגום: " + x[:20] for x in body.get("texts", [])]})
+        await pg.route("**/__ai/translate", ai_tr)
+        t = await trip()
+        target = next(((di, si) for di, d in enumerate(t["days"]) for si, st in enumerate(d["stops"]) if st.get("whyLang") == "en"), None)
+        if target:
+            await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(300)
+            if target[0]: await pg.click(f".daytab[data-i='{target[0]}']"); await pg.wait_for_timeout(300)
+            await pg.click(f"button.stop >> nth={target[1]}"); await pg.wait_for_timeout(1200)
+            body = await pg.inner_text(".screen")
+            check(len(tr) >= 1 and "תרגום:" in body and "תרגום של המלצה" in body, "an English recommendation is shown in Hebrew, with its source")
+            await pg.click("#backPlan"); await pg.wait_for_timeout(200)
+            await pg.click(f"button.stop >> nth={target[1]}"); await pg.wait_for_timeout(600)
+            check(len(tr) == 1, "it is translated once, then kept")
+        else:
+            print("SKIP no English recommendation in this trip")
         await pg.click("#gearBtn"); await pg.wait_for_timeout(500)
         check(await pg.locator("text=פעיל לכולם").count() > 0, "settings say the guide is on for everyone")
         check(not errs, f"no page errors {errs[:2]}")
