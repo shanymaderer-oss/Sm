@@ -6,10 +6,24 @@
      answers are short (max 1024 tokens), no tools, no files;
    - one person cannot use up the day: a limit per address per minute and per day;
    - cost: the key comes from Google AI Studio WITHOUT billing, so the worst case is "quota used up", never a bill.
-   Settings (Cloudflare → the Worker → Settings → Variables): GEMINI_KEY (secret, required), MODEL (optional). */
+   Fresh information (optional, TAVILY_KEY): for questions about now (open on a holiday, events this week, strikes) the
+   guide first searches the web through Tavily and answers from those results, with links. Tavily's terms allow using
+   results to answer the question being asked, never storing them: nothing is kept here or in the app.
+   Searches are capped (per address and per day) so the free 1,000 a month last.
+   Settings (Cloudflare → the Worker → Settings → Variables): GEMINI_KEY (secret, required), TAVILY_KEY (secret, optional), MODEL (optional). */
 const ORIGINS = ["https://shanymaderer-oss.github.io", "http://localhost:8790"];
 const MODELS = ["gemini-2.5-flash", "gemini-flash-latest"];
 const PER_MIN = 12, PER_DAY = 120, MAX_BODY = 24000;
+const FRESH_PER_IP = 8, FRESH_PER_DAY = 30;
+const freshSeen = new Map(); let freshDay = -1, freshCount = 0;
+function freshAllowed(ip, now = Date.now()) {
+  const d = Math.floor(now / 86400000);
+  if (d !== freshDay) { freshDay = d; freshCount = 0; freshSeen.clear(); }
+  const n = freshSeen.get(ip) || 0;
+  if (freshCount >= FRESH_PER_DAY || n >= FRESH_PER_IP) return false;
+  freshCount++; freshSeen.set(ip, n + 1);
+  return true;
+}
 const seen = new Map(); // address -> {m: minute, mn: count this minute, d: day, dn: count today}; per Worker instance, best effort
 
 function cors(origin) {
@@ -50,12 +64,42 @@ function clean(b) {
   return out;
 }
 
+async function gemini(env, body) {
+  const models = env.MODEL ? [env.MODEL, ...MODELS] : MODELS;
+  for (const m of models) {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+      method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_KEY }, body: JSON.stringify(body)
+    });
+    if (r.status === 404) continue; // that model is gone: try the next one
+    if (r.status === 429) {
+      let msg = ""; try { msg = (await r.json()).error?.message || ""; } catch {}
+      return { status: 429, scope: /per ?day|daily/i.test(msg) ? "day" : "minute" };
+    }
+    if (!r.ok) return { status: 502 };
+    const j = await r.json();
+    return { status: 200, text: (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("") };
+  }
+  return { status: 502 };
+}
+/* a web search through Tavily: titles, links and a short piece of each page, used for this answer only */
+async function tavily(env, query) {
+  try {
+    const r = await fetch("https://api.tavily.com/search", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.TAVILY_KEY}` },
+      body: JSON.stringify({ query: query.slice(0, 300), search_depth: "basic", max_results: 5, include_answer: false, include_images: false }) });
+    if (!r.ok) return [];
+    const j = await r.json();
+    return (j.results || []).filter(x => /^https:\/\//.test(x.url || "")).slice(0, 5)
+      .map(x => ({ title: text(x.title, 140), url: text(x.url, 400), snippet: text(x.content, 600) }));
+  } catch { return []; }
+}
+const today = () => new Date().toISOString().slice(0, 10);
+
 export default {
   async fetch(req, env) {
     const origin = req.headers.get("Origin") || "";
     const url = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { status: ORIGINS.includes(origin) ? 204 : 403, headers: cors(origin) });
-    if (url.pathname !== "/generate" || req.method !== "POST") return reply(404, { error: "not found" }, origin);
+    if (!["/generate", "/fresh"].includes(url.pathname) || req.method !== "POST") return reply(404, { error: "not found" }, origin);
     if (!ORIGINS.includes(origin)) return reply(403, { error: "origin" }, origin);
     if (!env.GEMINI_KEY) return reply(503, { error: "not configured" }, origin);
     const ip = req.headers.get("CF-Connecting-IP") || "?";
@@ -63,23 +107,36 @@ export default {
     if (lim) return reply(429, { error: "busy", scope: lim === "day" ? "you" : "minute" }, origin);
     const raw = await req.text();
     if (raw.length > MAX_BODY) return reply(413, { error: "too big" }, origin);
-    let body; try { body = clean(JSON.parse(raw)); } catch { body = null; }
-    if (!body) return reply(400, { error: "bad request" }, origin);
-    const models = env.MODEL ? [env.MODEL, ...MODELS] : MODELS;
-    for (const m of models) {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
-        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_KEY }, body: JSON.stringify(body)
-      });
-      if (r.status === 404) continue; // that model is gone: try the next one
-      if (r.status === 429) {
-        let msg = ""; try { msg = (await r.json()).error?.message || ""; } catch {}
-        return reply(429, { error: "busy", scope: /per ?day|daily/i.test(msg) ? "day" : "minute" }, origin);
-      }
-      if (!r.ok) return reply(502, { error: "upstream " + r.status }, origin);
-      const j = await r.json();
-      // only the answer goes back, nothing else from Google's reply
-      return reply(200, { candidates: [{ content: { parts: [{ text: (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("") }] } }] }, origin);
+    let parsed; try { parsed = JSON.parse(raw); } catch { parsed = null; }
+
+    // what is on in the city on the trip's dates: a list of links, straight from the search
+    if (url.pathname === "/fresh") {
+      const city = text(parsed?.city, 60).replace(/[^\p{L}\p{N} .,'-]/gu, ""), month = text(parsed?.month, 30).replace(/[^\p{L}\p{N} ]/gu, "");
+      if (parsed?.kind !== "events" || !city) return reply(400, { error: "bad request" }, origin);
+      if (!env.TAVILY_KEY) return reply(503, { error: "no search" }, origin);
+      if (!freshAllowed(ip)) return reply(429, { error: "busy", scope: "search" }, origin);
+      return reply(200, { results: await tavily(env, `${city} events festivals concerts exhibitions ${month}`), via: "Tavily" }, origin);
     }
-    return reply(502, { error: "no model" }, origin);
+
+    const body = clean(parsed);
+    if (!body) return reply(400, { error: "bad request" }, origin);
+    // a question about now: search first, then answer from what was found
+    let sources = [];
+    const sq = text(parsed?.search?.q, 300), sc = text(parsed?.search?.city, 60);
+    if (sq && env.TAVILY_KEY && freshAllowed(ip)) {
+      const qr = await gemini(env, { contents: [{ role: "user", parts: [{ text: `Write one short English web search query (max 12 words, no quotes) to answer this traveler's question about ${sc || "their destination"} as of ${today()}:\n${sq}` }] }], generationConfig: { temperature: 0, maxOutputTokens: 40 } });
+      const query = qr.status === 200 && qr.text ? qr.text.split("\n")[0].replace(/["']/g, "") : `${sc} ${sq}`;
+      sources = await tavily(env, query);
+      if (sources.length) {
+        const found = sources.map((x, i) => `[${i + 1}] ${x.title} (${x.url})\n${x.snippet}`).join("\n\n");
+        const sys = body.systemInstruction?.parts[0].text || "";
+        body.systemInstruction = { parts: [{ text: `${sys}\n\nToday is ${today()}. Fresh web search results for the traveler's last question (they may be wrong or old; prefer official sites, say when unsure, and mention which source by its site name):\n${found}`.slice(0, 14000) }] };
+      }
+    }
+    const g = await gemini(env, body);
+    if (g.status === 429) return reply(429, { error: "busy", scope: g.scope }, origin);
+    if (g.status !== 200) return reply(502, { error: "upstream" }, origin);
+    // only the answer (and the links it used) goes back, nothing else from Google's or Tavily's reply
+    return reply(200, { candidates: [{ content: { parts: [{ text: g.text }] } }], sources: sources.map(x => ({ title: x.title, url: x.url })) }, origin);
   }
 };

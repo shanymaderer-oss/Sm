@@ -28,4 +28,26 @@ r = await call(good, { ip: "6" }); ok(sent.length === 2 && r.status === 502, "a 
 upstream = () => new Response(JSON.stringify({ error: { message: "Quota exceeded for metric: generate_content_free_tier_requests, limit per day" } }), { status: 429 });
 r = await call(good, { ip: "7" }); j = await r.json(); ok(r.status === 429 && j.scope === "day", "Google's daily quota is reported as such");
 r = await w.fetch(new Request("https://x/generate", { method: "POST", headers: { Origin: O }, body: "{}" }), {}); ok(r.status === 503, "without a key it says it is not set up");
+// fresh information through Tavily
+const envT = { GEMINI_KEY: "k", TAVILY_KEY: "tv" };
+const tcall = (body, ip, path = "/generate") => w.fetch(new Request("https://x.workers.dev" + path, { method: "POST", headers: { Origin: O, "CF-Connecting-IP": ip, "Content-Type": "application/json" }, body: JSON.stringify(body) }), envT);
+let tq = [];
+upstream = (u, o) => {
+  if (String(u).includes("tavily")) { tq.push(JSON.parse(o.body)); return new Response(JSON.stringify({ results: [{ title: "Vatican Museums hours", url: "https://www.museivaticani.va/hours", content: "Closed on 25 December", raw_content: "x".repeat(9000) }, { title: "bad", url: "javascript:alert(1)", content: "x" }] }), { status: 200 }); }
+  const b = JSON.parse(o.body);
+  if (!b.systemInstruction) return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: "Vatican Museums opening hours Christmas 2026" }] } }] }), { status: 200 });
+  return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: b.systemInstruction.parts[0].text.includes("Closed on 25 December") ? "סגור ב-25 בדצמבר" : "לא יודע" }] } }] }), { status: 200 });
+};
+r = await tcall({ ...good, search: { q: "הוותיקן פתוח בחג המולד?", city: "Rome" } }, "t1"); j = await r.json();
+ok(r.status === 200 && j.candidates[0].content.parts[0].text === "סגור ב-25 בדצמבר", "a question about now is answered from fresh search results");
+ok(tq.length === 1 && /Vatican/.test(tq[0].query) && tq[0].max_results === 5, "the search query is rewritten in English and limited");
+ok(j.sources.length === 1 && j.sources[0].url.startsWith("https://") && !JSON.stringify(j).includes("raw_content"), "only https sources come back, as title and link");
+tq = []; r = await tcall(good, "t2"); ok(tq.length === 0, "an ordinary question does not search");
+r = await tcall({ ...good, search: { q: "x", city: "Rome" } }, "t3"); ok(tq.length === 1, "search allowed");
+let n = 0; for (let i = 0; i < 10; i++) { tq = []; await tcall({ ...good, search: { q: "x", city: "Rome" } }, "t4"); n += tq.length; }
+ok(n === 8, `one address gets at most 8 searches a day (${n})`);
+tq = []; r = await tcall({ kind: "events", city: "Rome<script>", month: "December 2026" }, "t5", "/fresh"); j = await r.json();
+ok(r.status === 200 && j.results.length === 1 && j.via === "Tavily" && /^Rome.*events.*December 2026/.test(tq[0].query) && !tq[0].query.includes("<"), "events in the city come straight from the search, cleaned");
+r = await tcall({ kind: "anything", city: "Rome" }, "t6", "/fresh"); ok(r.status === 400, "only the events search is offered");
+r = await w.fetch(new Request("https://x/fresh", { method: "POST", headers: { Origin: O }, body: JSON.stringify({ kind: "events", city: "Rome" }) }), { GEMINI_KEY: "k" }); ok(r.status === 503, "without a Tavily key, events search says so");
 console.log(fails.length ? "FAILED: " + fails : "ALL PASSED"); process.exit(fails.length ? 1 : 0);

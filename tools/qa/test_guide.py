@@ -95,6 +95,21 @@ async def main():
         check(await pg.evaluate("!localStorage.getItem('masa-gemini-key')"), "no key is stored in the browser")
         text, _ = await ask("מה הבא?")
         check(len(sent) == 1, "questions about the trip are still answered locally (no server call)")
+        # a question about now: the guide searches the web first and shows its sources
+        def ai_fresh(route):
+            sent.append(route.request.post_data or "")
+            return route.fulfill(json={"candidates": [{"content": {"parts": [{"text": "לפי האתר הרשמי, סגור ב-25 בדצמבר. (תשובה עדכנית)"}]}}], "sources": [{"title": "Vatican", "url": "https://www.museivaticani.va/hours"}, {"title": "x", "url": "javascript:alert(1)"}]})
+        await pg.unroute("**/generate"); await pg.route("**/generate", ai_fresh)
+        n0 = len(sent)
+        await pg.fill("#askInput", "הוותיקן פתוח בחג המולד?"); await pg.press("#askInput", "Enter")
+        for _ in range(40):
+            if "תשובה עדכנית" in "".join(await pg.locator(".msg.bot").all_inner_texts()): break
+            await pg.wait_for_timeout(200)
+        body = json.loads(sent[-1]) if len(sent) > n0 else {}
+        check(body.get("search", {}).get("q") == "הוותיקן פתוח בחג המולד?", "a question about now asks the server to search first")
+        srcs = await pg.evaluate("[...document.querySelectorAll('.msg.bot')].pop().querySelectorAll('.srcs a').length")
+        bad = await pg.evaluate("[...document.querySelectorAll('.srcs a')].some(a => !a.href.startsWith('https://'))")
+        check(srcs == 1 and not bad, f"the answer shows its sources as links, only safe ones ({srcs})")
         await pg.click("#gearBtn"); await pg.wait_for_timeout(500)
         check(await pg.locator("text=פעיל לכולם").count() > 0, "settings say the guide is on for everyone")
         check(not errs, f"no page errors {errs[:2]}")

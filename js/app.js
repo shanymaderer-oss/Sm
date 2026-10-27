@@ -1096,7 +1096,7 @@ function kitItems(t = S.trip) {
     ...(dinners.length ? [I("tables", "food", "שולחן לארוחות ערב", 7, `${dinners.slice(0, 3).map(x => x.s.name).join(", ")}. בסופי שבוע כדאי לשריין שולחן כמה ימים מראש.`,
       dinners.slice(0, 3).map(x => [x.s.name, safeUrl(x.s.website) || `https://www.thefork.com/search?queryText=${encodeURIComponent(`${x.s.local || x.s.name} ${city}`)}`]))] : []),
     I("events", "sparkle", "מה קורה בעיר בתאריכים שלכם", 30, "הופעות, משחקים, פסטיבלים ושווקים מיוחדים. שווה לבדוק לפני שסוגרים את המסלול.",
-      [["אירועים", gSearch(`events in ${city} ${enMonth(start)}`)], ["הופעות", gSearch(`concerts ${city} ${enMonth(start)}`)]]),
+      [["אירועים", gSearch(`events in ${city} ${enMonth(start)}`)], ["הופעות", gSearch(`concerts ${city} ${enMonth(start)}`)]], { fresh: true }),
     I("entry", "info", "דרכון וכניסה למדינה", 30, `בדקו שהדרכון בתוקף עוד חצי שנה לפחות אחרי החזרה, ומה צריך כדי להיכנס ל${t.country || t.city} (ויזה או אישור כניסה מקוון).`,
       [["דרישות כניסה", gSearch(`דרישות כניסה ${t.country || t.city} לישראלים`)], ["אזהרות מסע", gSearch(`אזהרת מסע ${t.country || t.city} המטה לביטחון לאומי`)]])
   ];
@@ -1112,8 +1112,28 @@ function kitView(t = S.trip) {
     <p class="lead">${left > 0 ? `עוד ${left} ימים לטיול. ` : ""}כל קישור כבר כולל את העיר, התאריכים ומספר הנוסעים. מסמנים מה כבר סגרתם.</p>
     ${order.map(x => `<div class="kit${done[x.k] ? " done" : ""}"><div class="kithead"><span class="ic">${ic(x.icn)}</span><b>${esc(x.title)}</b>${done[x.k] ? `<span class="tag free">סגור</span>` : whenTxt(x)}</div>
       ${done[x.k] ? "" : `<p>${esc(x.why)}</p>${x.links.length ? `<div class="chiprow">${x.links.map(([l, u]) => `<a class="chipbtn" href="${esc(u)}" target="_blank" rel="noopener">${ic("ext")}${esc(l)}</a>`).join("")}</div>` : ""}`}
+      ${!done[x.k] && x.fresh && ai.hasSearch() ? freshEventsHtml(t) : ""}
       <div class="kitfoot">${!done[x.k] && x.go ? `<button type="button" class="btn small soft" data-kitgo="${x.go}">${x.go === "hotels" ? "המלונות שלנו" : x.go === "move" ? "כל הדרכים מהשדה" : "פרטים"}</button>` : ""}${!done[x.k] && x.below ? `<button type="button" class="btn small soft" data-kitscroll>לרשימת הכרטיסים</button>` : ""}<label class="switchrow"><input type="checkbox" data-kit="${x.k}" ${done[x.k] ? "checked" : ""}><span>${done[x.k] ? "סגרתי" : "סימון שסגרתי"}</span></label></div></div>`).join("")}
     ${partnerNote()}`;
+}
+/* events found by a live web search (Tavily): kept in memory for this visit only, never saved */
+const freshMem = new Map();
+function freshEventsHtml(t) {
+  const f = freshMem.get(t.id);
+  if (!f) return `<button type="button" class="btn small" id="freshEvents">${ic("search")}חיפוש עכשיו: מה מתוכנן בעיר בתאריכים שלכם</button>`;
+  if (f === "loading") return `<div class="skeleton" style="height:60px"></div>`;
+  if (f.err) return `<p class="muted">${esc(f.err)}</p>`;
+  if (!f.list.length) return `<p class="muted">החיפוש לא מצא אירועים מיוחדים. אפשר לנסות בקישורים למטה.</p>`;
+  return `<ul class="freshlist">${f.list.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener"><b>${esc(x.title)}</b></a><small>${esc(siteName(x.url))}</small>${x.snippet ? `<p dir="auto">${esc(x.snippet)}</p>` : ""}</li>`).join("")}</ul><small class="muted">תוצאות חיפוש מהרשת (Tavily). בדקו תאריכים ומחירים באתר של האירוע.</small>`;
+}
+async function loadFreshEvents() {
+  const t = S.trip, { start } = tripDates(t);
+  freshMem.set(t.id, "loading"); rerenderKeepScroll();
+  try {
+    const list = await ai.events(t.cityEn || t.cityLocal || t.city, enMonth(start));
+    freshMem.set(t.id, list ? { list } : { err: "החיפוש לא זמין כרגע.", list: [] });
+  } catch (e) { freshMem.set(t.id, { err: e.code === "shared_quota" ? "הגענו למכסת החיפושים להיום. נסו שוב מחר." : "החיפוש לא הצליח. נסו שוב.", list: [] }); }
+  if (S.screen === "book") rerenderKeepScroll();
 }
 const partnerNote = () => window.MASA_PARTNERS ? `<div class="disclaim">${ic("info")}<span>חלק מהקישורים הם של שותפים: אם תזמינו דרכם, ייתכן שמסע יקבל עמלה קטנה, בלי שום תוספת למחיר שלכם. ככה האפליקציה נשארת חינמית.</span></div>` : "";
 SCREENS.book = {
@@ -1136,6 +1156,7 @@ SCREENS.book = {
   </div>`;
   },
   bind() {
+    $("freshEvents") && ($("freshEvents").onclick = loadFreshEvents);
     document.querySelectorAll("[data-kit]").forEach(b => b.onchange = () => { kitToggle(b.dataset.kit); rerenderKeepScroll(); });
     document.querySelectorAll("[data-kitgo]").forEach(b => b.onclick = () => { S.prev = "book"; b.dataset.kitgo === "hotels" ? openList("hotel") : go(b.dataset.kitgo); });
     document.querySelectorAll("[data-kitscroll]").forEach(b => b.onclick = () => $("bookList")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
@@ -1259,7 +1280,9 @@ function localAnswer(q) {
     return out(`ליד ${last.name}, בסוף היום:\n${list.map(x => "• " + placeLineShort(x.p, x.k)).join("\n")}`, list.map(x => act(`להוסיף: ${x.p.name}`, () => addPlace(x.p, S.day))));
   }
   // is it open
-  if (/(פתוח|סגור|שעות פתיחה|עד מתי)/.test(q)) {
+  // "open now?" is answered from the opening hours we have; a date or a holiday needs a fresh search, when there is one
+  const AHEAD = /(חג|כריסמס|המולד|שנה החדשה|פסחא|מחר|בשבת|ביום [א-ו]|בראשון|בשני|בשלישי|ברביעי|בחמישי|בשישי|ב-?\d{1,2}[./]|שביתה)/;
+  if (/(פתוח|סגור|שעות פתיחה|עד מתי)/.test(q) && !(AHEAD.test(q) && ai.shared())) {
     const named = findStop(q)?.s || (() => { const items = (t.places || []).filter(hasXY).map(p => ({ p, names: [p.name, p.local, p._he], fame: p.fame || 0 })); return Masa.intent.findPlaces(q, items, [t.city, t.cityLocal, t.cityEn])[0]?.it.p; })();
     const hit = named || d.stops[S.stop];
     const o = hit.hours ? planner.isOpen(hit.hours, cityNow() || new Date()) : null;
@@ -1305,7 +1328,11 @@ SCREENS.guide = {
     setTimeout(() => { $("scroll").scrollTop = $("scroll").scrollHeight; }, 0);
   }
 };
-const msgHtml = m => `<div class="msg ${m.r}">${esc(m.t)}${m.acts?.length ? `<div class="msgacts">${m.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}</div>`;
+const linksHtml = links => links?.length ? `<div class="msgacts srcs"><small>מקורות מהרשת (חיפוש Tavily):</small>${links.map(l => safeUrl(l.url) ? `<a class="chipbtn" href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${ic("ext")}${esc(siteName(l.url))}</a>` : "").join("")}</div>` : "";
+const siteName = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return "קישור"; } };
+/* questions about now (a holiday, this week, a strike, an event): the guide searches the web first, when it can */
+const FRESH_Q = /(היום|מחר|השבוע|סופ"?ש|סוף השבוע|הערב|הלילה|כרגע|פתוח|סגור|שביתה|הפגנ|אירוע|הופע|קונצרט|פסטיבל|משחק|חג|כריסמס|המולד|שנה החדשה|פסחא|תערוכ|עדכני|חדשות|בטוח|מזג)/;
+const msgHtml = m => `<div class="msg ${m.r}">${esc(m.t)}${linksHtml(m.links)}${m.acts?.length ? `<div class="msgacts">${m.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}</div>`;
 function bindGuideActs(root) {
   root?.querySelectorAll("[data-gact]").forEach(b => b.onclick = () => { const f = guideActs.get(b.dataset.gact); if (f) { b.disabled = true; f(); } });
 }
@@ -1340,14 +1367,16 @@ ${compact}
 Traveler is currently viewing: ${t.days[S.day].label}, stop ${S.stop + 1}: ${cur?.name} (${cur?.local}).${S.me ? `\nTraveler's live location: ${S.me.lat.toFixed(5)},${S.me.lng.toFixed(5)}.` : ""}`;
   S.chat.push({ role: "user", content: q });
   try {
-    const text = await ai.chat(system, S.chat.slice(-10));
+    const fresh = ai.shared() && FRESH_Q.test(q) ? { q, city: t.cityEn || t.cityLocal || t.city } : null;
+    const text = await ai.chat(system, S.chat.slice(-10), fresh);
     S.chat.push({ role: "assistant", content: text });
     entry.t = text;
+    entry.links = fresh ? ai.lastSources() : [];
   } catch (e) {
     entry.t = ai.errText(e.code);
     S.chat.pop();
   } finally {
-    if (S.screen === "guide" && bubble()) bubble().textContent = entry.t;
+    if (S.screen === "guide" && bubble()) { bubble().textContent = entry.t; if (entry.links?.length) bubble().insertAdjacentHTML("beforeend", linksHtml(entry.links)); }
     S.busy = false; $("askBtn") && ($("askBtn").disabled = false);
     $("scroll").scrollTop = $("scroll").scrollHeight;
   }

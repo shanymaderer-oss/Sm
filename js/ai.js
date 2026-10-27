@@ -47,8 +47,11 @@ Masa.ai = (() => {
     return m;
   }
 
-  async function generate(body) {
+  let sources = [];
+  async function generate(body, search) {
+    sources = [];
     if (shared()) {
+      if (search) body = { ...body, search };
       if (sharedOff) throw Object.assign(new Error("off"), { code: "shared_quota" });
       let r;
       try { r = await fetch(SHARED.replace(/\/$/, "") + "/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); }
@@ -61,6 +64,7 @@ Masa.ai = (() => {
       const j = await r.json();
       const text = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
       if (!text) throw Object.assign(new Error("empty"), { code: "ai_error" });
+      sources = (Array.isArray(j.sources) ? j.sources : []).filter(x => x && typeof x.url === "string" && /^https:\/\//.test(x.url)).slice(0, 5).map(x => ({ title: String(x.title || "").slice(0, 140), url: x.url.slice(0, 400) }));
       return text;
     }
     const m = await pickModel();
@@ -98,12 +102,22 @@ Masa.ai = (() => {
   }
 
   /* turns: [{role:"user"|"assistant", content}] */
-  async function chat(system, turns) {
+  async function chat(system, turns, search) {
     return generate({
       systemInstruction: { parts: [{ text: system }] },
       contents: turns.map(t => ({ role: t.role === "assistant" ? "model" : "user", parts: [{ text: t.content }] })),
       generationConfig: { temperature: 0.8, maxOutputTokens: 700 }
-    });
+    }, search);
+  }
+  /* what is on in the city on the trip's dates, straight from a web search (shown, never stored) */
+  async function events(city, month) {
+    if (!SHARED) return null;
+    const r = await fetch(SHARED.replace(/\/$/, "") + "/fresh", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind: "events", city, month }) });
+    if (r.status === 503) return null;
+    if (!r.ok) throw Object.assign(new Error("HTTP " + r.status), { code: r.status === 429 ? "shared_quota" : "ai_error" });
+    const j = await r.json();
+    return (Array.isArray(j.results) ? j.results : []).filter(x => x && typeof x.url === "string" && /^https:\/\//.test(x.url)).slice(0, 5)
+      .map(x => ({ title: String(x.title || "").slice(0, 140), url: x.url.slice(0, 400), snippet: String(x.snippet || "").slice(0, 300) }));
   }
 
   async function saveKey(k) {
@@ -125,5 +139,6 @@ Masa.ai = (() => {
     ai_error: "המדריך החכם לא הצליח לענות. נסו שוב."
   })[code] || "המדריך החכם לא זמין כרגע. בדקו את החיבור לאינטרנט.";
 
-  return { enabled, shared, own, model, json, chat, saveKey, errText };
+  const hasSearch = () => !!SHARED;
+  return { enabled, shared, own, model, json, chat, events, hasSearch, lastSources: () => sources, saveKey, errText };
 })();
