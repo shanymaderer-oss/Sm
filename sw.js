@@ -3,14 +3,14 @@
    City data is served from the cache and refreshed in the background. Map tiles of places already seen stay
    available offline (a limited number). Everything else (Wikipedia, routing, weather, AI) goes straight to the network.
    VERSION is written by tools/stamp-sw.py from a hash of the shell files; a new version refreshes the saved copy. */
-const VERSION = "9bf1bf412b";
+const VERSION = "fd7383b801";
 const SHELL_CACHE = "masa-shell-" + VERSION, DATA_CACHE = "masa-data-v1", TILE_CACHE = "masa-tiles-v1";
 const SHELL = [
   "./", "index.html", "privacy.html", "accessibility.html", "manifest.webmanifest", "css/style.css", "css/fonts.css",
   "js/tt.js", "js/data.js", "js/sources.js", "js/cities.js", "js/services.js", "js/cost.js", "js/transport.js", "js/ai.js", "js/intent.js", "js/cloud-config.js", "js/cloud.js", "js/ratings.js", "js/planner.js", "js/app.js",
   "vendor/maplibre-gl-5.24.0/maplibre-gl.js", "vendor/maplibre-gl-5.24.0/maplibre-gl.css",
   "fonts/ibm-plex-sans-hebrew-hebrew-400-normal.woff2", "fonts/ibm-plex-sans-hebrew-hebrew-500-normal.woff2", "fonts/ibm-plex-sans-hebrew-hebrew-600-normal.woff2",
-  "fonts/frank-ruhl-libre-hebrew-700-normal.woff2", "icons/icon-192.png"
+  "fonts/fredoka-hebrew-600-normal.woff2", "fonts/fredoka-hebrew-700-normal.woff2", "icons/icon-192.png"
 ];
 const MAX_TILES = 600, MAX_CITIES = 8;
 

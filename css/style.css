@@ -597,9 +597,7 @@ h3{font-family:var(--body);font-weight:600}
 .dest:hover b{color:var(--primary)}
 .aboutnote{font-size:.86rem;color:var(--muted);line-height:1.55}
 /* category and card icons are ink, never colored tiles */
-.tile .ic,.stop .ic,.duocard .ic,.savedtrip .ic,.catgrid .ic,.pmain .ic,.bookhead .ic,.mvrow .ic,.idea .ic,.dsec>h2 .chipic{background:var(--surface-2)!important;color:var(--ink)}
 .tile{border-width:1px;border-radius:10px;font-weight:600}
-.tile .ic{background:none!important;width:28px;height:28px}
 .tile[aria-pressed="true"]{border-color:var(--ink);background:var(--surface-2)}
 .tile[aria-pressed="true"] .ic{color:var(--primary)}
 .seg{border-radius:10px}
@@ -783,3 +781,83 @@ body.docpage{overflow:auto;padding:0}
 .freshlist small{display:block;color:var(--muted);font-size:.75rem}
 .freshlist p{margin:2px 0 0;font-size:.82rem;line-height:1.45;color:var(--ink)}
 .srcs small{width:100%;color:var(--muted);font-size:.75rem}
+
+/* ===== design layer 3 (27.10): joyful travel ephemera =====
+   Direction chosen by שני: colorful and happy. The memorable things are the city stickers on the home screen and the
+   boarding-pass header of a trip, each city in its own color. Everything else stays calm: white cards, navy ink.
+   Display type is Fredoka (rounded, friendly, has Hebrew); body stays IBM Plex Sans Hebrew. */
+:root{
+  --bg:#eef4ff; --surface:#ffffff; --surface-2:#f1f5fe; --ink:#1a2150; --muted:#5b6488; --line:#dce3f3;
+  --primary:#e2336b; --primary-ink:#ffffff; --link:#2f5bea;
+  --coral:#e2336b; --sun:#e5631b; --teal:#0b8f8c; --violet:#7a45d6; --sky:#2f5bea; --rose:#c2185b; --yellow:#ffc531;
+  --display:"Fredoka","IBM Plex Sans Hebrew",system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(26,33,80,.10),0 8px 22px rgba(26,33,80,.10);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10142e; --surface:#181d3d; --surface-2:#20264a; --ink:#eef1ff; --muted:#a3aacb; --line:#2c335c;
+  --primary:#ff5c8e; --primary-ink:#1a0610; --link:#8eabff;
+  --coral:#ff5c8e; --sun:#ff8a4c; --teal:#2cc4be; --violet:#a784f5; --sky:#6e92ff; --rose:#ff6fa5; --yellow:#ffd25a}}
+:root[data-theme="dark"]{
+  --bg:#10142e; --surface:#181d3d; --surface-2:#20264a; --ink:#eef1ff; --muted:#a3aacb; --line:#2c335c;
+  --primary:#ff5c8e; --primary-ink:#1a0610; --link:#8eabff;
+  --coral:#ff5c8e; --sun:#ff8a4c; --teal:#2cc4be; --violet:#a784f5; --sky:#6e92ff; --rose:#ff6fa5; --yellow:#ffd25a}
+h1{font-family:var(--display);font-weight:700;font-size:2.1rem;line-height:1.08;letter-spacing:0}
+h2{font-family:var(--display);font-weight:600;font-size:1.12rem}
+.section-label{font-family:var(--display);font-weight:600;font-size:1.05rem;margin-bottom:-6px}
+.gsearch .logo,.logo{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--primary)}
+.btn{border-radius:999px;font-weight:700}
+.btn.block{padding:14px;font-size:1.05rem}
+.btn:not(.soft):not(:disabled){box-shadow:0 3px 0 color-mix(in srgb,var(--primary) 60%,#000)}
+.btn:not(.soft):not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--primary) 60%,#000)}
+.search{border-radius:999px;border-width:2px;padding:4px 4px 4px 14px;background:var(--surface)}
+.search:focus-within{border-color:var(--primary)}
+.panel{border-radius:22px}
+@media (max-width:760px){.panel{border-radius:22px 22px 0 0}}
+/* city stickers: each destination is a die-cut sticker in its own color, slightly tilted like on a suitcase */
+.dests{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;border:0;padding:4px 2px}
+.dest,.dest:nth-child(odd),.dest:nth-child(even){border:0;padding:14px 14px 12px;min-height:88px;border-radius:20px;justify-content:space-between;
+  background:var(--c,var(--primary));color:var(--cink,#fff);box-shadow:0 0 0 3px var(--surface),0 6px 16px rgba(26,33,80,.18);transform:rotate(var(--tilt,0deg));transition:transform .15s}
+.dest b{font-family:var(--display);font-weight:700;font-size:1.45rem;line-height:1.05;color:inherit}
+.dest small{color:inherit;opacity:.85;font-weight:600}
+.dest:hover b{color:inherit}
+@media (prefers-reduced-motion:no-preference){.dest:hover,.dest:focus-visible{transform:rotate(0deg) scale(1.03)}}
+.dest::after{display:block;content:"";position:absolute;inset:auto auto -18px -18px;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.18)}
+.dest:nth-child(3n+2)::after{border-radius:14px;transform:rotate(20deg)}
+.savedtrip{border:2px solid var(--line);border-radius:18px}
+.savedtrip .ic{border-radius:14px}
+/* interest tiles keep their category color */
+.tile{border:2px solid var(--line);border-radius:16px;font-weight:600}
+.tile .ic{width:38px;height:38px;border-radius:12px;color:#fff}
+.tile[aria-pressed="true"]{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
+.tile[aria-pressed="true"] .ic{color:#fff;box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--primary)}
+.modechoice button{border-width:2px;border-radius:16px}
+.modechoice button[aria-checked="true"]{border-color:var(--primary);box-shadow:none;background:color-mix(in srgb,var(--primary) 7%,var(--surface))}
+.modechoice button b{font-family:var(--display);font-size:1.08rem}
+textarea{border-width:2px;border-radius:16px}
+textarea:focus{border-color:var(--primary)}
+/* the trip header is a boarding pass in the city's color: name and days on the ticket, numbers on the stub */
+.triphero{background:var(--c,var(--primary));color:var(--cink,#fff);border-radius:22px;padding:18px 18px 0;position:relative;overflow:hidden}
+.triphero .stepof{color:inherit;opacity:.85;font-weight:600}
+.triphero h1{color:inherit;font-size:2.2rem;margin-top:2px}
+.triphero p{color:inherit;opacity:.9}
+.triphero .stats{margin:16px -18px 0;padding:12px 18px 14px;border:0;border-top:2px dashed color-mix(in srgb,var(--cink,#fff) 45%,transparent);background:rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:8px 0;position:relative}
+.triphero .stats::before,.triphero .stats::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--surface)}
+.triphero .stats::before{right:-10px}.triphero .stats::after{left:-10px}
+.triphero .stats div,.triphero .stats button{border-color:color-mix(in srgb,var(--cink,#fff) 30%,transparent)}
+.triphero .stats b{font-family:var(--display);font-weight:700;font-size:1.4rem;color:inherit}
+.triphero .stats small{color:inherit;opacity:.85}
+.triphero .stats button b{color:inherit}
+.triphero .pending{background:rgba(255,255,255,.2);color:inherit}
+.triphero .pending i{border-color:currentColor;border-top-color:transparent}
+.sharetrip{position:absolute;z-index:2;top:14px;inset-inline-end:14px;border:0;border-radius:999px;padding:7px 12px;font-weight:700;font-size:.85rem;cursor:pointer;display:inline-flex;gap:6px;align-items:center;
+  background:var(--surface);color:var(--ink);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.sharetrip svg{width:15px;height:15px}
+.triphero h1{padding-inline-end:84px}
+.daytab{border-width:2px;border-radius:999px;font-weight:700}
+.stop .n{font-family:var(--display);font-weight:700}
+.stop .t,.pmain .t,.savedtrip b{font-family:var(--display);font-weight:600;font-size:1.1rem}
+.nav button[aria-current="true"]{color:var(--primary)}
+.story{font-family:var(--body);font-size:1.02rem;line-height:1.75}
+.card,.pcard,.bookcard,.mvrow,.wishcard,.kit{border-width:2px;border-radius:18px}
+.chipbtn,.filters button{border-width:2px;border-radius:999px}
+.tag{border-radius:999px}

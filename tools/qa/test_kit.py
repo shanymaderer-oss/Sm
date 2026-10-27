@@ -11,7 +11,7 @@ def check(ok, what):
 async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch()
-        ctx = await b.new_context(viewport={"width": 400, "height": 860}, service_workers="block")
+        ctx = await b.new_context(viewport={"width": 400, "height": 860}, service_workers="block", accept_downloads=True)
         pg = await ctx.new_page()
         errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
@@ -65,6 +65,13 @@ async def main():
         check(await pg.evaluate("!JSON.stringify(Object.assign({}, localStorage)).includes('Zzyzx')"), "search results are never saved")
         await pg.evaluate("localStorage.removeItem('masa-ai-test')")
         await pg.screenshot(path=os.environ.get("QA_OUT", "/tmp/masa-qa/") + "kit.png", full_page=False)
+        # the trip as a picture to share
+        await pg.click("#nav button[data-k=plan]"); await pg.wait_for_selector("#shareTrip")
+        async with pg.expect_download() as dl:
+            await pg.click("#shareTrip")
+        d = await dl.value; path = await d.path()
+        size = os.path.getsize(path)
+        check(d.suggested_filename.endswith(".png") and size > 30000, f"the trip becomes a picture to share ({d.suggested_filename}, {size // 1000}KB)")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS)

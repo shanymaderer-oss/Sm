@@ -7,6 +7,16 @@ const svc = Masa.svc, ai = Masa.ai, planner = Masa.planner;
 /* ---------- helpers ---------- */
 const ic = (n, sw = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || P.pin}</svg>`;
 const cv = n => `var(${n})`;
+/* every city has its own color, used on its sticker, its trips and its boarding pass. [background, text] */
+const CITY_PAL = [["--yellow", "#1a2150"], ["--sky", "#fff"], ["--coral", "#fff"], ["--teal", "#fff"], ["--violet", "#fff"], ["--sun", "#fff"]];
+const CITY_FIX = { "רומא": 0, "פריז": 1, "ברצלונה": 2, "ליסבון": 3, "לונדון": 4, "אמסטרדם": 5, "פראג": 2, "אתונה": 1, "ניו יורק": 5, "טוקיו": 2, "בנגקוק": 0, "ברלין": 4, "וינה": 3, "בודפשט": 5 };
+function cityColor(name) {
+  const k = String(name || "").split(",")[0].trim();
+  let i = CITY_FIX[k];
+  if (i == null) { let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; i = h % CITY_PAL.length; }
+  const [bg, ink] = CITY_PAL[i];
+  return { bg: cv(bg), ink, style: `--c:${cv(bg)};--cink:${ink}` };
+}
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -420,9 +430,9 @@ SCREENS.home = {
     <form class="search" id="destForm">${ic("search")}<input id="destInput" type="text" placeholder="עיר ומדינה, למשל ליסבון, פורטוגל" value="${esc(S.dest?.q || "")}" aria-label="יעד" autocomplete="off"><button class="btn" type="submit">המשך</button></form>
     <div class="status" id="destStatus"></div>
     ${cloud.configured() && cloud.pendingInvite() && cloud.state.status !== "in" ? `<div class="card invitecard"><h2>${ic("users")} הוזמנתם לטיול משותף</h2><p>כדי לראות את הטיול ולתכנן אותו יחד, מתחברים עם Google.</p><button type="button" class="btn block" id="inviteIn">התחברות עם Google</button></div>` : ""}
-    ${saved.length ? `<div class="section-label">הטיולים שלי</div><div class="saved">${saved.map((t, i) => `<button type="button" class="savedtrip" data-i="${i}"><span class="ic" style="background:${cv(DAYC[i % 5])}">${ic("save")}</span><span><b>${esc(t.city)}</b><small>${t.days.length} ימים, ${t.days.reduce((a, d) => a + d.stops.length, 0)} תחנות${t.cloud?.members > 1 ? ", משותף" : ""}</small></span>${ic("fwd")}</button>`).join("")}</div>` : ""}
+    ${saved.length ? `<div class="section-label">הטיולים שלי</div><div class="saved">${saved.map((t, i) => `<button type="button" class="savedtrip" data-i="${i}"><span class="ic" style="background:${cityColor(t.city).bg};color:${cityColor(t.city).ink}">${ic("save")}</span><span><b>${esc(t.city)}</b><small>${t.days.length} ימים, ${t.days.reduce((a, d) => a + d.stops.length, 0)} תחנות${t.cloud?.members > 1 ? ", משותף" : ""}</small></span>${ic("fwd")}</button>`).join("")}</div>` : ""}
     <div class="section-label">יעדים פופולריים</div>
-    <div class="dests">${DESTS.slice(0, 8).map((d, i) => `<button type="button" class="dest" data-i="${i}"><b>${esc(d.he)}</b><small>${esc(d.country)}, ${esc(d.days)}</small></button>`).join("")}</div>
+    <div class="dests">${DESTS.slice(0, 8).map((d, i) => `<button type="button" class="dest" data-i="${i}" style="${cityColor(d.he).style};--tilt:${[-2, 1.5, 1, -1.5, -1, 2, 1.5, -2][i % 8]}deg"><b>${esc(d.he)}</b><small>${esc(d.country)}, ${esc(d.days)}</small></button>`).join("")}</div>
     <button type="button" class="btn soft block" id="sampleBtn">לראות טיול לדוגמה: 3 ימים ברומא</button>
     ${cloud.configured() && cloud.state.status === "off" && !cloud.pendingInvite() ? `<p class="aboutnote"><button type="button" class="linkbtn" id="homeIn">התחברו עם Google</button> כדי לשמור את הטיולים בכל המכשירים ולתכנן יחד עם המשפחה.</p>` : ""}
     <p class="aboutnote">המקומות במסלול אמיתיים: מסעדות, אתרים ורחובות מ-OpenStreetMap, ההמלצות מ-Wikivoyage והסיפורים מוויקיפדיה. אין כאן מקומות ממומנים, וההזמנות נעשות באתר של המקום עצמו.</p>
@@ -821,7 +831,7 @@ SCREENS.plan = {
     const d = t.days[S.day], col = cv(DAYC[S.day % 5]);
     const ideas = d.stops.flatMap(s => (s.nearby || []).map(n => ({ ...n, _near: s.name }))).filter(n => !d.stops.some(s => s.name === n.name)).slice(0, 3);
     return `<div class="screen">${nowCard(t)}
-    <div class="triphero"><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
+    <div class="triphero" style="${cityColor(t.city).style}"><button type="button" class="sharetrip" id="shareTrip">${ic("share")}שיתוף</button><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
       <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
       <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}${t.cc || t.slug ? `<button type="button" id="costStat"><b>${money(COST.ils(COST.trip(t).total))}</b><small>עלות משוערת</small></button>` : ""}</div></div>
     ${t.wish ? wishCard(t) : ""}
@@ -863,6 +873,7 @@ SCREENS.plan = {
       if (n) { addToDay(n); rerenderKeepScroll(); }
     });
     $("toDiscover").onclick = () => go("discover");
+    $("shareTrip") && ($("shareTrip").onclick = () => shareTripImage(S.trip));
     $("costStat") && ($("costStat").onclick = () => $("costCard")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     const setPeople = v => { const t = S.trip; t.opts = t.opts || {}; t.opts.people = Math.min(12, Math.max(1, v)); saveTrip(t); rerenderKeepScroll(); };
     $("cpMinus") && ($("cpMinus").onclick = () => setPeople((S.trip.opts?.people || 2) - 1));
@@ -2328,6 +2339,65 @@ function tripData(t) {
   const data = { v: 1, id: t.id, from: me.name || "", city: t.city, slug: t.slug, cityLocal: t.cityLocal, cityEn: t.cityEn, country: t.country, cc: t.cc, tz: t.tz, lat: t.lat, lng: t.lng,
     opts: t.opts, hotel: t.hotel, summary: t.summary, days: t.days.map(d => ({ label: d.label, theme: d.theme, stops: d.stops.map(slim) })), fam: t.fam || null };
   return data;
+}
+/* the trip as a picture to send or post: a boarding pass in the city's color with the best stops of each day.
+   Drawn here in the browser; nothing is uploaded. Shared with the trip's link when the phone allows it. */
+async function tripImage(t) {
+  const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d"), css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const col = cityColor(t.city), bg = css(col.bg.slice(4, -1)) || "#e2336b", ink = col.ink, navy = "#1a2150";
+  try { await Promise.all(["700 90px Fredoka", "600 40px Fredoka", "500 34px 'IBM Plex Sans Hebrew'"].map(f => document.fonts.load(f, "אבג abc"))); } catch {}
+  x.fillStyle = bg; x.fillRect(0, 0, W, H);
+  // sticker-like circles in the background
+  x.fillStyle = "rgba(255,255,255,.14)"; [[120, 160, 140], [990, 1240, 190], [960, 120, 70]].forEach(([cx, cy, r]) => { x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); });
+  x.direction = "rtl"; x.textAlign = "right";
+  x.fillStyle = ink; x.font = "600 42px Fredoka, sans-serif"; x.fillText(t.country || "", W - 90, 150);
+  x.font = "700 104px Fredoka, sans-serif"; x.fillText(`${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${t.city}`, W - 90, 260, W - 180);
+  // the ticket
+  const tx = 70, ty = 330, tw = W - 140, th = 860, r = 40;
+  x.fillStyle = "#fff"; x.beginPath(); x.roundRect(tx, ty, tw, th, r); x.fill();
+  const stubY = ty + th - 170;
+  x.fillStyle = bg; [tx, tx + tw].forEach(cx => { x.beginPath(); x.arc(cx, stubY, 26, 0, 7); x.fill(); });
+  x.strokeStyle = "#c9d2ea"; x.lineWidth = 4; x.setLineDash([16, 14]); x.beginPath(); x.moveTo(tx + 40, stubY); x.lineTo(tx + tw - 40, stubY); x.stroke(); x.setLineDash([]);
+  let y = ty + 90;
+  const days = t.days.slice(0, 4), HEAD = 46, ROW = 40, GAP = 18;
+  const per = Math.max(1, Math.min(4, Math.floor(((stubY - 40 - y) / days.length - HEAD - GAP) / ROW)));
+  days.forEach((d, i) => {
+    x.fillStyle = css(DAYC[i % 5]) || bg; x.beginPath(); x.arc(tx + tw - 70, y - 14, 26, 0, 7); x.fill();
+    x.fillStyle = "#fff"; x.textAlign = "center"; x.font = "700 30px Fredoka, sans-serif"; x.fillText(String(i + 1), tx + tw - 70, y - 4); x.textAlign = "right";
+    x.fillStyle = navy; x.font = "600 40px Fredoka, sans-serif"; x.fillText(d.label || `יום ${i + 1}`, tx + tw - 115, y, tw - 200);
+    y += HEAD;
+    d.stops.filter(s => !s.isHotel && !["breakfast", "treat"].includes(s.meal)).slice(0, per).forEach(s => {
+      x.textAlign = "right"; x.direction = "rtl"; x.font = "500 33px 'IBM Plex Sans Hebrew', sans-serif"; x.fillStyle = "#3a426e"; x.fillText(s.name, tx + tw - 115, y, tw - 330);
+      if (s.time) { x.textAlign = "left"; x.direction = "ltr"; x.font = "600 30px Fredoka, sans-serif"; x.fillStyle = "#8a92b5"; x.fillText(s.time, tx + 60, y); }
+      y += ROW;
+    });
+    x.textAlign = "right"; x.direction = "rtl";
+    y += GAP;
+  });
+  const all = t.days.flatMap(d => d.stops);
+  const stat = [[String(all.length), "תחנות"], [totalWalk(t).toFixed(1), "ק״מ הליכה"], [String(all.filter(s => s.booking?.needed).length), "להזמין מראש"]];
+  stat.forEach(([n, l], i) => {
+    const cx = tx + tw - (tw / 3) * (i + .5);
+    x.textAlign = "center"; x.fillStyle = navy; x.font = "700 64px Fredoka, sans-serif"; x.fillText(n, cx, stubY + 88);
+    x.font = "500 28px 'IBM Plex Sans Hebrew', sans-serif"; x.fillStyle = "#5b6488"; x.fillText(l, cx, stubY + 130);
+  });
+  x.textAlign = "right"; x.fillStyle = ink; x.font = "700 56px Fredoka, sans-serif"; x.fillText("מסע", W - 90, H - 70);
+  x.font = "500 30px 'IBM Plex Sans Hebrew', sans-serif"; x.textAlign = "left"; x.direction = "ltr"; x.fillText("shanymaderer-oss.github.io/Sm", 90, H - 78);
+  return await new Promise(res => c.toBlob(res, "image/png"));
+}
+async function shareTripImage(t) {
+  toast("מכינים תמונה של הטיול…");
+  let blob; try { blob = await tripImage(t); } catch { blob = null; }
+  if (!blob) { toast("לא הצלחנו ליצור תמונה"); return; }
+  const file = new File([blob], `masa-${(t.cityEn || "trip").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`, { type: "image/png" });
+  let url = ""; try { url = await shareLink(t); } catch {}
+  const text = `הטיול שלי ל${t.city}, נבנה במסע${url ? `: ${url}` : ""}`;
+  if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], text, title: `טיול ל${t.city}` }); return; } catch (e) { if (e?.name === "AbortError") return; } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  if (url) { try { await navigator.clipboard.writeText(url); } catch {} }
+  toast(url ? "התמונה ירדה, והקישור לטיול הועתק" : "התמונה ירדה");
 }
 async function shareLink(t) { return `${location.origin}${location.pathname}#t=${await zip(JSON.stringify(tripData(t)))}`; }
 function mergeFam(a, b) {
