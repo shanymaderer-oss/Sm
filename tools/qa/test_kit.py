@@ -68,6 +68,15 @@ async def main():
           check(await pg.evaluate("!JSON.stringify(Object.assign({}, localStorage)).includes('Zzyzx')"), "search results are never saved")
           await pg.evaluate("localStorage.removeItem('masa-ai-test')")
         await pg.screenshot(path=os.environ.get("QA_OUT", "/tmp/masa-qa/") + "kit.png", full_page=False)
+        # the trip in the calendar
+        await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector("#toCal")
+        async with pg.expect_download() as dl:
+            await pg.click("#toCal")
+        d = await dl.value; ics = open(await d.path(), encoding="utf-8", newline="").read()
+        events = ics.count("BEGIN:VEVENT")
+        check(ics.startswith("BEGIN:VCALENDAR") and "TZID=Europe/Rome" in ics and events >= 15, f"the calendar file has the stops at Rome time ({events} events)")
+        check("BEGIN:VALARM" in ics and "לסגור לטיול לרומא" in ics, "it reminds when to close what is still open")
+        check(all(len(l.encode()) <= 75 for l in ics.split("\r\n")), "long lines are folded as calendars expect")
         # the trip as a picture to share
         await pg.click("#nav button[data-k=plan]"); await pg.wait_for_selector("#shareTrip")
         async with pg.expect_download() as dl:

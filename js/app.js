@@ -1189,6 +1189,7 @@ function kitView(t = S.trip) {
   return `<div><div class="eyebrow">כל מה שצריך לטיול</div><h1 style="margin-top:4px">${closed} מתוך ${items.length} סגורים</h1></div>
     <div class="progress"><i style="width:${closed / items.length * 100}%"></i></div>
     <p class="lead">${left > 0 ? `עוד ${left} ימים לטיול. ` : ""}כל קישור כבר כולל את העיר, התאריכים ומספר הנוסעים. מסמנים מה כבר סגרתם.</p>
+    <button type="button" class="btn soft block" id="toCal">${ic("clock")}הוספה ליומן: כל יום בטיול, ותזכורת מתי לסגור כל דבר</button>
     ${order.map(x => `<div class="kit${done[x.k] ? " done" : ""}"><div class="kithead"><span class="ic">${ic(x.icn)}</span><b>${esc(x.title)}</b>${done[x.k] ? `<span class="tag free">סגור</span>` : whenTxt(x)}</div>
       ${done[x.k] ? "" : `<p>${esc(x.why)}</p>${x.links.length ? `<div class="chiprow">${x.links.map(([l, u]) => `<a class="chipbtn" href="${esc(u)}" target="_blank" rel="noopener">${ic("ext")}${esc(l)}</a>`).join("")}</div>` : ""}`}
       ${!done[x.k] && x.fresh && ai.hasSearch() ? freshEventsHtml(t) : ""}
@@ -1214,6 +1215,50 @@ async function loadFreshEvents() {
   } catch (e) { freshMem.set(t.id, { err: e.code === "shared_quota" ? "הגענו למכסת החיפושים להיום. נסו שוב מחר." : "החיפוש לא הצליח. נסו שוב.", list: [] }); }
   if (S.screen === "book") rerenderKeepScroll();
 }
+/* the trip in the phone's calendar: every stop at its time, and a reminder for each thing still to close before the
+   trip, on the day it is best closed (an .ics file that Google, Apple and Outlook calendars open) */
+function tripIcs(t) {
+  const { start } = tripDates(t), tz = t.tz || "", now = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  const ymd = d => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+  const escI = x => String(x || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+  const fold = line => { const out = []; let cur = ""; for (const ch of line) { if (new TextEncoder().encode(cur + ch).length > 73) { out.push(cur); cur = " " + ch; } else cur += ch; } out.push(cur); return out.join("\r\n"); };
+  const stamp = `${ymd(now)}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}00Z`;
+  const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Masa//Trip//HE", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${escI("טיול ל" + t.city)}`];
+  let n = 0;
+  t.days.forEach((d, di) => {
+    const day = addDays(start, di);
+    d.stops.forEach(s => {
+      const m = /^(\d{1,2}):(\d{2})$/.exec(s.time || ""); if (!m) return;
+      const mins = Math.max(15, Math.min(240, +s._min || 60));
+      const a = new Date(day); a.setHours(+m[1], +m[2], 0, 0); const b = new Date(a.getTime() + mins * 60000);
+      const dt = x => `${ymd(x)}T${pad(x.getHours())}${pad(x.getMinutes())}00`;
+      L.push("BEGIN:VEVENT", `UID:masa-${t.id}-${di}-${n++}@masa`, `DTSTAMP:${stamp}`,
+        tz ? `DTSTART;TZID=${tz}:${dt(a)}` : `DTSTART:${dt(a)}`, tz ? `DTEND;TZID=${tz}:${dt(b)}` : `DTEND:${dt(b)}`,
+        `SUMMARY:${escI((s.mealHe ? s.mealHe + ": " : "") + s.name)}`,
+        ...(hasXY(s) ? [`LOCATION:${escI(s.address || s.local || s.name)}`, `GEO:${(+s.lat).toFixed(5)};${(+s.lng).toFixed(5)}`] : []),
+        `DESCRIPTION:${escI(`${d.label || ""}. ${String(s.whyHe || s.why || "").slice(0, 200)}`)}`, "END:VEVENT");
+    });
+  });
+  // reminders for what is still open in the trip kit
+  const done = kitDone();
+  for (const x of kitItems(t)) {
+    if (done[x.k]) continue;
+    let when = addDays(start, -x.when); if (when < now) when = addDays(now, 1);
+    if (when >= start) continue;
+    L.push("BEGIN:VEVENT", `UID:masa-${t.id}-kit-${x.k}@masa`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${ymd(when)}`, `DTEND;VALUE=DATE:${ymd(addDays(when, 1))}`,
+      `SUMMARY:${escI(`לסגור לטיול ל${t.city}: ${x.title}`)}`, `DESCRIPTION:${escI(x.why)}`,
+      "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${escI(x.title)}`, "TRIGGER:PT9H", "END:VALARM", "END:VEVENT");
+  }
+  L.push("END:VCALENDAR");
+  return L.map(fold).join("\r\n") + "\r\n";
+}
+function downloadIcs(t) {
+  const blob = new Blob([tripIcs(t)], { type: "text/calendar;charset=utf-8" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `masa-${(t.cityEn || "trip").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.ics`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("הקובץ ירד. פותחים אותו, והטיול נכנס ליומן");
+}
 const partnerNote = () => window.MASA_PARTNERS ? `<div class="disclaim">${ic("info")}<span>חלק מהקישורים הם של שותפים: אם תזמינו דרכם, ייתכן שמסע יקבל עמלה קטנה, בלי שום תוספת למחיר שלכם. ככה האפליקציה נשארת חינמית.</span></div>` : "";
 SCREENS.book = {
   view() {
@@ -1236,6 +1281,7 @@ SCREENS.book = {
   },
   bind() {
     $("freshEvents") && ($("freshEvents").onclick = loadFreshEvents);
+    $("toCal") && ($("toCal").onclick = () => downloadIcs(S.trip));
     track("kit_open", S.trip?.slug || S.trip?.cityEn, null, "kit:" + S.trip?.id);
     document.querySelectorAll("[data-kit]").forEach(b => b.onchange = () => { kitToggle(b.dataset.kit); rerenderKeepScroll(); });
     document.querySelectorAll("[data-kitgo]").forEach(b => b.onclick = () => { S.prev = "book"; b.dataset.kitgo === "hotels" ? openList("hotel") : go(b.dataset.kitgo); });
