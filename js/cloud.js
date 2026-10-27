@@ -19,7 +19,7 @@ Masa.cloud = (() => {
   const listeners = new Set();
   const emit = () => listeners.forEach(f => { try { f(S); } catch {} });
 
-  const configured = () => !!(CFG && CFG.apiKey && CFG.projectId);
+  const configured = () => !!(CFG && CFG.apiKey && CFG.projectId && (EMU || /\.apps\.googleusercontent\.com$/.test(CFG.googleClientId || "")));
   const rand = (n = 32) => { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a, b => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[b % 62]).join(""); };
 
   /* ---------- loading Firebase only when needed ---------- */

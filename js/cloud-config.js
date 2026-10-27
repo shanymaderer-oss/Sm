@@ -1,7 +1,11 @@
 /* The Firebase project of מסע. These values are public by design (they identify the project);
    what each signed-in traveler may read or write is enforced on the server by firestore.rules.
    Until the project exists this stays null, and the site works without accounts. */
-window.MASA_CLOUD = null;
+window.MASA_CLOUD = {
+  apiKey: "AIzaSyBBKGdDxEHaZ14CFcTNvHNF5S3bXgkaAE8", authDomain: "masa-86058.firebaseapp.com", projectId: "masa-86058",
+  appId: "1:746493644804:web:39440905d851f442b6a551",
+  googleClientId: "" // the "Web client" id from Google Cloud → Credentials; sign-in stays hidden until it is set
+};
 /* window.MASA_CLOUD = {
   apiKey: "...", authDomain: "....firebaseapp.com", projectId: "...", appId: "...",
   googleClientId: "....apps.googleusercontent.com"
