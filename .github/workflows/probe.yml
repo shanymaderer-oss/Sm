@@ -1,0 +1,20 @@
+name: Firestore probe
+# Run by hand: sends one test feedback note to our Firestore exactly like the site does, and prints the answer.
+on: workflow_dispatch
+permissions: { contents: read }
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send a test note like the site
+        run: |
+          KEY=AIzaSyBBKGdDxEHaZ14CFcTNvHNF5S3bXgkaAE8
+          P=masa-86058
+          ID=probe$(date +%s)
+          BODY='{"writes":[{"update":{"name":"projects/'$P'/databases/(default)/documents/feedback/'$ID'","fields":{"text":{"stringValue":"בדיקה אוטומטית של שליחת משוב"},"screen":{"stringValue":"probe"}}},"currentDocument":{"exists":false},"updateTransforms":[{"fieldPath":"at","setToServerValue":"REQUEST_TIME"}]}]}'
+          echo "== with the site's referrer"
+          curl -sS -X POST "https://firestore.googleapis.com/v1/projects/$P/databases/(default)/documents:commit?key=$KEY" \
+            -H "Content-Type: application/json" -H "Referer: https://shanymaderer-oss.github.io/" -H "Origin: https://shanymaderer-oss.github.io" -d "$BODY"
+          echo; echo "== without a referrer (must be refused if the key is limited to the site)"
+          curl -sS -X POST "https://firestore.googleapis.com/v1/projects/$P/databases/(default)/documents:commit?key=$KEY" \
+            -H "Content-Type: application/json" -d "${BODY//$ID/${ID}b}" | head -c 600
