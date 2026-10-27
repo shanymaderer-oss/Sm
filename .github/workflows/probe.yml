@@ -12,9 +12,9 @@ jobs:
           P=masa-86058
           ID=probe$(date +%s)
           BODY='{"writes":[{"update":{"name":"projects/'$P'/databases/(default)/documents/feedback/'$ID'","fields":{"text":{"stringValue":"בדיקה אוטומטית של שליחת משוב"},"screen":{"stringValue":"probe"}}},"currentDocument":{"exists":false},"updateTransforms":[{"fieldPath":"at","setToServerValue":"REQUEST_TIME"}]}]}'
-          echo "== with the site's referrer"
-          curl -sS -X POST "https://firestore.googleapis.com/v1/projects/$P/databases/(default)/documents:commit?key=$KEY" \
-            -H "Content-Type: application/json" -H "Referer: https://shanymaderer-oss.github.io/" -H "Origin: https://shanymaderer-oss.github.io" -d "$BODY"
-          echo; echo "== without a referrer (must be refused if the key is limited to the site)"
-          curl -sS -X POST "https://firestore.googleapis.com/v1/projects/$P/databases/(default)/documents:commit?key=$KEY" \
-            -H "Content-Type: application/json" -d "${BODY//$ID/${ID}b}" | head -c 600
+          A=$(curl -sS -X POST "https://firestore.googleapis.com/v1/projects/$P/databases/(default)/documents:commit?key=$KEY" \
+            -H "Content-Type: application/json" -H "Referer: https://shanymaderer-oss.github.io/" -H "Origin: https://shanymaderer-oss.github.io" -d "$BODY")
+          echo "::notice title=with referrer::$(echo "$A" | tr '\n' ' ' | head -c 900)"
+          B=$(curl -sS -X POST "https://firestore.googleapis.com/v1/projects/$P/databases/(default)/documents:commit?key=$KEY" \
+            -H "Content-Type: application/json" -d "${BODY//$ID/${ID}b}")
+          echo "::notice title=without referrer::$(echo "$B" | tr '\n' ' ' | head -c 900)"
