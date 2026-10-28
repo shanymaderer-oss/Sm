@@ -50,7 +50,7 @@ Masa.intent = (() => {
     T([word("נו(?:ף|פים)"), word("תצפית"), word("לצלם"), word("צילום"), word("אינסטגרמ"), /\b(views?|photos?|instagram|viewpoints?)\b/], { add: ["view"], label: "תצפיות ומקומות לצילום" }),
     T([word("שקיע"), /\bsunsets?\b/], { add: ["view"], sunset: true, label: "שקיעה יפה בסוף היום" }),
     T([word("גג(?:ות)?(?=\\s|$)"), word("רופטופ"), /\brooftops?\b/], { rooftop: true, label: "ברים ומקומות על הגג" }),
-    T([word("מרחצ"), word("ספא(?!ר)"), word("ח(?:א)?מאם"), word("מעיינות חמ"), word("בריכות תרמ"), /\b(spa|thermal baths?|hammam|bath ?house|hot springs)\b/], { baths: true, label: "מרחצאות: מרחץ תרמי או חמאם במסלול" }),
+    T([word("מרחצ"), word("ספא(?=\\s|$)"), word("ח(?:א)?מאם"), word("מעיינות חמ"), word("בריכות תרמ"), /\b(spa|thermal baths?|hammam|bath ?house|hot springs)\b/], { baths: true, label: "מרחצאות: מרחץ תרמי או חמאם במסלול" }),
     T([word("גשם"), word("גשום"), word("מקומות סגורים"), word("מקור(?:ה|ים|ות)(?=\\s|$)"), /\b(rain(?:s|y|ing)?|indoors?)\b/], { indoor: true, boost: { museum: 2, gallery: 2, market: 2 }, label: "גשם: נעדיף מקומות מקורים, וכשיש גשם בתחזית נציע להחליף תחנות שבחוץ" }),
     T([word("כדורגל"), word("אצטדיו"), word("סטדיו"), /\b(football|soccer|stadium)\b/], { football: true, label: "כדורגל: האצטדיון המפורסם של העיר במסלול" }),
     T([word("גן חיות"), word("אקווריום"), /\b(zoo|aquarium)\b/], { add: ["family"], boost: { zoo: 8 }, label: "גן חיות או אקווריום" }),
@@ -147,7 +147,8 @@ Masa.intent = (() => {
       // ... but "כיכר ואצלב" and "מוזיאון ואן גוך" are one name: a piece that is only a kind word joins the next one
       const pieces = [];
       for (const [i, x] of part.split(/\s+(?=ו(?:גם\s+)?(?:את\s+)?\S|and\s)/).entries()) {
-        if (i && pieces.length && norm(pieces[pieces.length - 1]).split(" ").every(t => GENERIC.has(t))) pieces[pieces.length - 1] += " " + x;
+        // ... and so are "גראן ויה" and "פונטה וקיו": a short word after ו is part of the name, not a new place
+        if (i && pieces.length && (norm(pieces[pieces.length - 1]).split(" ").every(t => GENERIC.has(t)) || /^ו\S{1,3}$/.test(x.trim()))) pieces[pieces.length - 1] += " " + x;
         else pieces.push(i ? x.replace(/^(?:ו(?:גם\s+)?(?:את\s+)?|and\s+)/, "") : x);
       }
       for (let ph of pieces) {
