@@ -1,0 +1,44 @@
+name: Deploy the guide server
+# Puts tools/ai-worker/worker.js on Cloudflare (the masa-ai Worker) and sets its secret keys.
+# Needs the repository secret CLOUDFLARE_API_TOKEN (Cloudflare → My Profile → API Tokens → "Edit Cloudflare Workers").
+# GEMINI_KEY and TAVILY_KEY, when set as repository secrets, are copied into the Worker's own secrets;
+# they never appear in the code, the logs or the site.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["tools/ai-worker/worker.js", "tools/ai-worker/wrangler.toml", ".github/workflows/worker.yml"]
+permissions: { contents: read }
+concurrency: { group: worker-deploy, cancel-in-progress: false }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with: { node-version: 22 }
+      - name: The server's own tests
+        run: node tools/ai-worker/test_worker.mjs
+      - name: Deploy
+        working-directory: tools/ai-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then echo "::error::CLOUDFLARE_API_TOKEN is not set in the repository secrets"; exit 1; fi
+          npx --yes wrangler@4.149.0 deploy
+      - name: Secret keys
+        working-directory: tools/ai-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+          TAVILY_KEY: ${{ secrets.TAVILY_KEY }}
+        run: |
+          if [ -n "$GEMINI_KEY" ]; then printf '%s' "$GEMINI_KEY" | npx --yes wrangler@4.149.0 secret put GEMINI_KEY; echo "::notice::GEMINI_KEY set"; else echo "::warning::GEMINI_KEY is not set in the repository secrets"; fi
+          if [ -n "$TAVILY_KEY" ]; then printf '%s' "$TAVILY_KEY" | npx --yes wrangler@4.149.0 secret put TAVILY_KEY; echo "::notice::TAVILY_KEY set"; fi
+      - name: The server answers our site only
+        run: |
+          A=$(curl -s -o /dev/null -w '%{http_code}' -X POST https://masa-ai.sivanmad7.workers.dev/generate -H 'Origin: https://evil.example' -d '{}')
+          B=$(curl -s -X POST https://masa-ai.sivanmad7.workers.dev/generate -H 'Origin: https://shanymaderer-oss.github.io' -H 'Content-Type: application/json' -d '{"contents":[{"role":"user","parts":[{"text":"Say only: שלום"}]}],"generationConfig":{"maxOutputTokens":20}}' | head -c 300)
+          echo "::notice title=another site::$A (must be 403)"
+          echo "::notice title=our site::$B"
+          [ "$A" = "403" ]
