@@ -141,3 +141,10 @@ test("counts are anonymous, of known events only, and cannot be read", async () 
   await assertFails(setDoc(doc(db(null), "events", "e4"), { e: "build", n: 9999, at: serverTimestamp() }));
   await assertFails(getDocs(collection(db("alice"), "events")));
 });
+test("feedback sent the way the site sends it (REST commit with a server time) is accepted", async () => {
+  const host = process.env.FIRESTORE_EMULATOR_HOST || "127.0.0.1:8080";
+  const body = id => JSON.stringify({ writes: [{ update: { name: `projects/demo-masa/databases/(default)/documents/feedback/${id}`, fields: { text: { stringValue: "בדיקה של שליחה" }, screen: { stringValue: "home" } } }, currentDocument: { exists: false }, updateTransforms: [{ fieldPath: "at", setToServerValue: "REQUEST_TIME" }] }] });
+  const r = await fetch(`http://${host}/v1/projects/demo-masa/databases/(default)/documents:commit`, { method: "POST", headers: { "Content-Type": "application/json" }, body: body("rest1") });
+  const t = await r.text();
+  if (!r.ok) throw new Error(`REST feedback refused: ${r.status} ${t.slice(0, 300)}`);
+});
