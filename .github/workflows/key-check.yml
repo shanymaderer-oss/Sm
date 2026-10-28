@@ -1,0 +1,20 @@
+name: Gemini key check
+# Run by hand: calls Google directly with the GEMINI_KEY secret and reports only status codes and timings (never the key).
+on: workflow_dispatch
+permissions: { contents: read }
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask Google directly
+        env: { K: "${{ secrets.GEMINI_KEY }}" }
+        run: |
+          echo "::notice title=key length::${#K}"
+          L=$(curl -s -m 30 -o /dev/null -w '%{http_code}' -H "x-goog-api-key: $K" 'https://generativelanguage.googleapis.com/v1beta/models?pageSize=5')
+          echo "::notice title=list models::$L"
+          for m in gemini-2.5-flash gemini-2.5-flash-lite gemini-flash-latest gemini-2.0-flash; do
+            S=$(date +%s)
+            A=$(curl -s -m 60 -w ' HTTP%{http_code}' -X POST "https://generativelanguage.googleapis.com/v1beta/models/$m:generateContent" -H "x-goog-api-key: $K" -H 'Content-Type: application/json' \
+              -d '{"contents":[{"role":"user","parts":[{"text":"Say hello in Hebrew, 3 words."}]}]}' | tr '\n' ' ' | sed -E 's/"(text|message)": "([^"]{0,120})[^"]*"/"\1": "\2"/g' | grep -oE '"(text|status|message)": "[^"]*"|HTTP[0-9]+' | tr '\n' ' ')
+            echo "::notice title=$m in $(( $(date +%s) - S ))s::$A"
+          done
