@@ -17,9 +17,11 @@ FOOD=[("אוכל ללא גלוטן",[False,False]),("בלי אוכל חריף",[
 # Hebrew names of famous places and areas (data/he-names.json): (city, wish, a word that must be in the asked stops, a word that must not)
 NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",None),("טוקיו","חייבים לראות את מגדל טוקיו","מגדל טוקיו","Forum"),
        ("פראג","רוצים לראות את כיכר ואצלב","Václavské",None),("לונדון","לבקר בשוק קמדן","קמדן",None),("ליסבון","לא לפספס את מגדל בלם","מגדל בלם",None),
-       ("רומא","רוצים לראות את וילה בורגזה","בורגזה","Chiesa")]
+       ("רומא","רוצים לראות את וילה בורגזה","בורגזה","Chiesa"),("ברצלונה","אוהבים כדורגל","קאמפ נואו",None),
+       ("מדריד","חייבים לראות את סנטיאגו ברנבאו","ברנבאו","Metropolitano")]
 FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),
-       ("חם לנו, נעדיף מקומות סגורים כשיורד גשם",'indoor',True),("if it rains, indoors",'indoor',True),("אוהבים פארקים",'indoor',False)]
+       ("חם לנו, נעדיף מקומות סגורים כשיורד גשם",'indoor',True),("if it rains, indoors",'indoor',True),("אוהבים פארקים",'indoor',False),
+       ("אוהבים כדורגל",'football',True),("רוצים לראות משחק בסטדיום",'football',True),("בלי כדורגל",'football',False),("soccer fans",'football',True)]
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"])

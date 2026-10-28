@@ -52,6 +52,7 @@ Masa.intent = (() => {
     T([word("גג(?:ות)?(?=\\s|$)"), word("רופטופ"), /\brooftops?\b/], { rooftop: true, label: "ברים ומקומות על הגג" }),
     T([word("מרחצ"), word("ספא(?!ר)"), word("ח(?:א)?מאם"), word("מעיינות חמ"), word("בריכות תרמ"), /\b(spa|thermal baths?|hammam|bath ?house|hot springs)\b/], { baths: true, label: "מרחצאות: מרחץ תרמי או חמאם במסלול" }),
     T([word("גשם"), word("גשום"), word("מקומות סגורים"), word("מקור(?:ה|ים|ות)(?=\\s|$)"), /\b(rain(?:s|y|ing)?|indoors?)\b/], { indoor: true, boost: { museum: 2, gallery: 2, market: 2 }, label: "גשם: נעדיף מקומות מקורים, וכשיש גשם בתחזית נציע להחליף תחנות שבחוץ" }),
+    T([word("כדורגל"), word("אצטדיו"), word("סטדיו"), /\b(football|soccer|stadium)\b/], { football: true, label: "כדורגל: האצטדיון המפורסם של העיר במסלול" }),
     T([word("גן חיות"), word("אקווריום"), /\b(zoo|aquarium)\b/], { add: ["family"], boost: { zoo: 8 }, label: "גן חיות או אקווריום" }),
     T([word("פארק שעשועים"), word("לונה פארק"), word("דיסני"), /\b(theme park|disney|amusement)\b/], { add: ["family"], boost: { themepark: 8 }, label: "פארק שעשועים" }),
     T([word("פחות תיירים"), word("לא תיירותי"), word("פינות נסתרות"), word("מקומות סודיים"), word("כמו מקומיים"), word("הצד הפחות מוכר"), /\b(hidden gems?|off the beaten|less touristy|like locals?)\b/], { offbeat: true, label: "פחות תיירותי: גם פינות שהמקומיים אוהבים" }),
@@ -106,7 +107,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null) w[k] = eff[k];
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "football"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }

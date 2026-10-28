@@ -812,18 +812,20 @@ Masa.planner = (() => {
        are then taken out of the text, so "מגדל טוקיו" does not also pick some other tower */
     let text = Masa.intent.norm(w.text);
     const byAlias = [];
-    const al = aliases.map(([he, local, kind, lat, lng, area]) => ({ names: he.split("|"), local, kind: KIND[kind] ? kind : "attraction", lat, lng, area: !!area, fame: 60 }));
-    // (the city's name is part of these names, "מגדל טוקיו", "טירת פראג", so it is not dropped here)
-    for (const { it: a } of Masa.intent.findPlaces(text, al, [], {})) {
-      if (w.avoid.includes(a.kind)) continue;
+    const al = aliases.map(([he, local, kind, lat, lng, area, tag]) => ({ names: he.split("|"), local, kind: KIND[kind] ? kind : "attraction", lat, lng, area: !!area, tag, fame: 60 }));
+    const useAlias = a => {
       const same = x => x && normName(x) === normName(a.local);
       const near = pool.find(p => !["food", "night", "sleep"].includes(p.cat) && km(p, a) < 0.3 && (same(p.local) || same(p.en)));
       const p = near || { id: `he/${geo.slug}/${a.local}`, src: "alias", name: a.names[0], local: a.local, kind: a.kind, cat: KIND[a.kind].cat, lat: a.lat, lng: a.lng, dist: km(geo, a), q: 6, area: a.area, signals: [] };
       if (!near) pool.push(p);
       else if (!/[א-ת]/.test(p.name || "")) p.name = a.names[0]; // "東京タワー" is shown as "מגדל טוקיו"
-      p._alias = a.names; byAlias.push(p);
+      p._alias = a.names; p._tag = a.tag; byAlias.push(p);
       for (const n of a.names) text = (" " + text + " ").split(Masa.intent.norm(n)).join(" ").trim();
-    }
+    };
+    // (the city's name is part of these names, "מגדל טוקיו", "טירת פראג", so it is not dropped here)
+    for (const { it: a } of Masa.intent.findPlaces(text, al, [], {})) if (!w.avoid.includes(a.kind)) useAlias(a);
+    // football without a stadium's name: the city's main stadium
+    const footballMiss = w.football && !byAlias.some(p => p._tag === "football" || /stadi|στάδιο|arena|אצטדיון|ארנה/i.test(`${p.local} ${p.name}`)) && !(() => { const a = al.find(x => x.tag === "football"); if (a) useAlias(a); return a; })();
     // a kind they said they do not want is not picked by its name alone ("Montmartre" is the hill, not the Montmartre Museum)
     let found = Masa.intent.findPlaces(text, items.filter(i => !w.avoid.includes(i.p.kind)), cityNames, opt).map(o => o.it.p);
     // not on the map under that name: a Hebrew Wikipedia article at that spot can stand in
@@ -851,6 +853,7 @@ Masa.planner = (() => {
       if (h) { const p = h.it.p; hotel = { id: p.id, name: p.name, local: p.local, kind: p.kind, lat: p.lat, lng: p.lng, stars: p.stars, priceClass: p.priceClass, website: p.website, phone: p.phone, address: p.address, signals: p.signals, q: p.q }; }
       else hotelMissed = w.hotelName;
     }
+    if (footballMiss) missed.push("אצטדיון כדורגל");
     return { places: found, missed, hotel, hotelMissed };
   }
   /* ---------- "I'll choose": the city's best places by kind, for the traveler to pick from ---------- */
@@ -1340,7 +1343,7 @@ Masa.planner = (() => {
     const noBath = wish?.baths && !trip.days.some(d => d.stops.some(s => bathIds.has(s.osm)));
     if (wishOut && noBath) wishOut.missed = [...wishOut.missed, "מרחץ תרמי או חמאם"];
     if (wishOut) trip.wish = {
-      labels: noBath ? wish.labels.filter(l => !l.startsWith("מרחצאות")) : wish.labels,
+      labels: wish.labels.filter(l => !(noBath && l.startsWith("מרחצאות")) && !(wishOut.missed.includes("אצטדיון כדורגל") && l.startsWith("כדורגל"))),
       places: trip.days.flatMap((d, di) => d.stops.filter(s => s.asked || (s.meal && wishOut.places.some(p => p.id === s.osm))).map(s => ({ name: s.name, day: di }))),
       missed: wishOut.missed, hotel: wishOut.hotel ? wishOut.hotel.name : null, hotelMissed: wishOut.hotelMissed || null
     };

@@ -1,5 +1,5 @@
 {
- "_": "Famous places and neighborhoods by the Hebrew names travelers write, for cities whose map data has no Hebrew name for them. Row: [Hebrew names separated by |, local name, kind, lat, lng, 1 if it is an area to walk around]. Used by js/planner.js (wishes) only.",
+ "_": "Famous places and neighborhoods by the Hebrew names travelers write. Row: [Hebrew names separated by |, local name, kind, lat, lng, 1 if an area to walk around, \"football\" for the city's main football stadiums (used for a football wish)]. Used by js/planner.js (wishes) only.",
  "paris": [
   [
    "מונמארטר|מונמרטר|מונמארטר",
@@ -39,6 +39,24 @@
    48.892,
    2.238,
    1
+  ],
+  [
+   "פארק דה פרינס|פארק דה פראנס|האצטדיון של פריז סן ז'רמן",
+   "Parc des Princes",
+   "attraction",
+   48.8414,
+   2.253,
+   0,
+   "football"
+  ],
+  [
+   "סטאד דה פרנס",
+   "Stade de France",
+   "attraction",
+   48.9245,
+   2.3602,
+   0,
+   "football"
   ]
  ],
  "rome": [
@@ -84,6 +102,15 @@
    "sight",
    41.8925,
    12.4853
+  ],
+  [
+   "האולימפיקו|אצטדיון האולימפיקו|האצטדיון האולימפי",
+   "Stadio Olimpico",
+   "attraction",
+   41.9341,
+   12.4547,
+   0,
+   "football"
   ]
  ],
  "barcelona": [
@@ -122,6 +149,15 @@
    41.3851,
    2.1823,
    1
+  ],
+  [
+   "קאמפ נואו|ספוטיפיי קאמפ נואו|האצטדיון של ברצלונה",
+   "Spotify Camp Nou",
+   "attraction",
+   41.3809,
+   2.1228,
+   0,
+   "football"
   ]
  ],
  "london": [
@@ -188,6 +224,33 @@
    "church",
    51.4993,
    -0.1273
+  ],
+  [
+   "האמירייטס|אצטדיון האמירייטס|האצטדיון של ארסנל",
+   "Emirates Stadium",
+   "attraction",
+   51.5549,
+   -0.1084,
+   0,
+   "football"
+  ],
+  [
+   "סטמפורד ברידג'|סטמפורד ברידג׳|האצטדיון של צ'לסי",
+   "Stamford Bridge",
+   "attraction",
+   51.4817,
+   -0.191,
+   0,
+   "football"
+  ],
+  [
+   "וומבלי|אצטדיון וומבלי",
+   "Wembley Stadium",
+   "attraction",
+   51.556,
+   -0.2796,
+   0,
+   "football"
   ]
  ],
  "lisbon": [
@@ -257,6 +320,24 @@
    "attraction",
    38.7034,
    -9.1785
+  ],
+  [
+   "אשטדיו דה לוז|אצטדיון האור|האצטדיון של בנפיקה",
+   "Estádio da Luz",
+   "attraction",
+   38.7527,
+   -9.1847,
+   0,
+   "football"
+  ],
+  [
+   "ז'וזה אלבלאדה|ז׳וזה אלבלאדה|האצטדיון של ספורטינג",
+   "Estádio José Alvalade",
+   "attraction",
+   38.7614,
+   -9.1608,
+   0,
+   "football"
   ]
  ],
  "prague": [
@@ -328,6 +409,15 @@
    "museum",
    52.3584,
    4.8811
+  ],
+  [
+   "יוהאן קרויף ארנה|קרויף ארנה|האצטדיון של אייאקס",
+   "Johan Cruijff ArenA",
+   "attraction",
+   52.3144,
+   4.9419,
+   0,
+   "football"
   ]
  ],
  "budapest": [
@@ -351,6 +441,15 @@
    "church",
    47.5009,
    19.0539
+  ],
+  [
+   "פושקאש ארנה|פושקש ארנה",
+   "Puskás Aréna",
+   "attraction",
+   47.5032,
+   19.0981,
+   0,
+   "football"
   ]
  ],
  "new-york": [
@@ -389,6 +488,20 @@
    40.714,
    -73.961,
    1
+  ],
+  [
+   "מדיסון סקוור גארדן",
+   "Madison Square Garden",
+   "attraction",
+   40.7505,
+   -73.9934
+  ],
+  [
+   "יאנקי סטדיום|אצטדיון היאנקיז",
+   "Yankee Stadium",
+   "attraction",
+   40.8296,
+   -73.9262
   ]
  ],
  "tokyo": [
@@ -481,6 +594,24 @@
    40.9903,
    29.029,
    1
+  ],
+  [
+   "האצטדיון של בשיקטאש|טופרש|בשיקטאש ארנה",
+   "Tüpraş Stadyumu",
+   "attraction",
+   41.0394,
+   28.9947,
+   0,
+   "football"
+  ],
+  [
+   "האצטדיון של פנרבחצ'ה|שוקרו סאראג'אוגלו|פנרבחצ'ה",
+   "Şükrü Saracoğlu Stadyumu",
+   "attraction",
+   40.9876,
+   29.0368,
+   0,
+   "football"
   ]
  ],
  "athens": [
@@ -519,6 +650,130 @@
    "museum",
    37.9685,
    23.7285
+  ],
+  [
+   "אצטדיון פנאתינאיקו|הפנאתינאיקו|האצטדיון הפנאתנאי",
+   "Παναθηναϊκό Στάδιο",
+   "sight",
+   37.9683,
+   23.741
+  ],
+  [
+   "האצטדיון האולימפי של אתונה|OAKA",
+   "Ολυμπιακό Στάδιο Αθηνών",
+   "attraction",
+   38.0363,
+   23.7875,
+   0,
+   "football"
+  ]
+ ],
+ "madrid": [
+  [
+   "סנטיאגו ברנבאו|ברנבאו|האצטדיון של ריאל מדריד",
+   "Estadio Santiago Bernabéu",
+   "attraction",
+   40.4531,
+   -3.6883,
+   0,
+   "football"
+  ],
+  [
+   "מטרופוליטנו|האצטדיון של אתלטיקו",
+   "Estadio Metropolitano",
+   "attraction",
+   40.4362,
+   -3.5995,
+   0,
+   "football"
+  ]
+ ],
+ "milan": [
+  [
+   "סן סירו|ג'וזפה מאצה|ג׳וזפה מאצה",
+   "Stadio San Siro",
+   "attraction",
+   45.4781,
+   9.124,
+   0,
+   "football"
+  ]
+ ],
+ "munich": [
+  [
+   "אליאנץ ארנה|האצטדיון של באיירן",
+   "Allianz Arena",
+   "attraction",
+   48.2188,
+   11.6247,
+   0,
+   "football"
+  ]
+ ],
+ "porto": [
+  [
+   "אשטדיו דו דראגאו|דראגאו|האצטדיון של פורטו",
+   "Estádio do Dragão",
+   "attraction",
+   41.1618,
+   -8.5839,
+   0,
+   "football"
+  ]
+ ],
+ "berlin": [
+  [
+   "האולימפיה שטדיון|האצטדיון האולימפי|אולימפיהשטדיון",
+   "Olympiastadion",
+   "attraction",
+   52.5147,
+   13.2395,
+   0,
+   "football"
+  ]
+ ],
+ "naples": [
+  [
+   "מראדונה|אצטדיון מראדונה|סן פאולו",
+   "Stadio Diego Armando Maradona",
+   "attraction",
+   40.8279,
+   14.1931,
+   0,
+   "football"
+  ]
+ ],
+ "valencia": [
+  [
+   "מסטאיה|אצטדיון מסטאיה",
+   "Mestalla",
+   "attraction",
+   39.4746,
+   -0.3583,
+   0,
+   "football"
+  ]
+ ],
+ "seville": [
+  [
+   "סנצ'ס פיסחואן|רמון סנצ'ס פיסחואן|האצטדיון של סביליה",
+   "Estadio Ramón Sánchez-Pizjuán",
+   "attraction",
+   37.384,
+   -5.9705,
+   0,
+   "football"
+  ]
+ ],
+ "dublin": [
+  [
+   "קרוק פארק",
+   "Croke Park",
+   "attraction",
+   53.3607,
+   -6.2511,
+   0,
+   "football"
   ]
  ]
 }
