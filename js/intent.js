@@ -50,6 +50,7 @@ Masa.intent = (() => {
     T([word("נו(?:ף|פים)"), word("תצפית"), word("לצלם"), word("צילום"), word("אינסטגרמ"), /\b(views?|photos?|instagram|viewpoints?)\b/], { add: ["view"], label: "תצפיות ומקומות לצילום" }),
     T([word("שקיע"), /\bsunsets?\b/], { add: ["view"], sunset: true, label: "שקיעה יפה בסוף היום" }),
     T([word("גג(?:ות)?(?=\\s|$)"), word("רופטופ"), /\brooftops?\b/], { rooftop: true, label: "ברים ומקומות על הגג" }),
+    T([word("מרחצ"), word("ספא(?!ר)"), word("ח(?:א)?מאם"), word("מעיינות חמ"), word("בריכות תרמ"), /\b(spa|thermal baths?|hammam|bath ?house|hot springs)\b/], { baths: true, label: "מרחצאות: מרחץ תרמי או חמאם במסלול" }),
     T([word("גן חיות"), word("אקווריום"), /\b(zoo|aquarium)\b/], { add: ["family"], boost: { zoo: 8 }, label: "גן חיות או אקווריום" }),
     T([word("פארק שעשועים"), word("לונה פארק"), word("דיסני"), /\b(theme park|disney|amusement)\b/], { add: ["family"], boost: { themepark: 8 }, label: "פארק שעשועים" }),
     T([word("פחות תיירים"), word("לא תיירותי"), word("פינות נסתרות"), word("מקומות סודיים"), word("כמו מקומיים"), word("הצד הפחות מוכר"), /\b(hidden gems?|off the beaten|less touristy|like locals?)\b/], { offbeat: true, label: "פחות תיירותי: גם פינות שהמקומיים אוהבים" }),
@@ -104,7 +105,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null) w[k] = eff[k];
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }
@@ -139,8 +140,15 @@ Masa.intent = (() => {
     const ASK = /(?:רוצ\S* לראות|לראות את|חייבי\S*(?: לראות| לבקר ב| להגיע ל)?|לבקר ב|להגיע ל|לא לפספס(?: את)?|חובה(?: לראות)?|ללכת ל|לאכול ב|must see|want to see|visit)\s+([^,.;!?\n]{2,80})/gi;
     for (const m of w.text.matchAll(ASK)) {
       // "את מגדל אייפל ואת מונמארטר" is two places; stop at words that start a new thought
-      const part = m[1].split(/\s+(?:כי|אבל|גם|ובערב|בערב|ביום|ואז|but|because)\s/)[0];
-      for (let ph of part.split(/\s+(?:ו(?:גם\s+)?(?:את\s+)?(?=\S)|and\s+)/)) {
+      // a leading "את" goes first, so a name that starts with ו ("את וילה בורגזה", "את וישהרד") is not read as "and ..."
+      const part = m[1].split(/\s+(?:כי|אבל|גם|ובערב|בערב|ביום|ואז|but|because)\s/)[0].trim().replace(/^(?:את|the)\s+/i, "");
+      // ... but "כיכר ואצלב" and "מוזיאון ואן גוך" are one name: a piece that is only a kind word joins the next one
+      const pieces = [];
+      for (const [i, x] of part.split(/\s+(?=ו(?:גם\s+)?(?:את\s+)?\S|and\s)/).entries()) {
+        if (i && pieces.length && norm(pieces[pieces.length - 1]).split(" ").every(t => GENERIC.has(t))) pieces[pieces.length - 1] += " " + x;
+        else pieces.push(i ? x.replace(/^(?:ו(?:גם\s+)?(?:את\s+)?|and\s+)/, "") : x);
+      }
+      for (let ph of pieces) {
         ph = ph.trim().replace(/^(?:את|the)\s+/i, "");
         if (ph.length >= 2 && ph.split(/\s+/).length <= 4 && !w.asks.includes(ph)) w.asks.push(ph);
       }
