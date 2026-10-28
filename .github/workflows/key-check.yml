@@ -11,10 +11,10 @@ jobs:
         run: |
           echo "::notice title=key length::${#K}"
           q='{"contents":[{"role":"user","parts":[{"text":"מה כדאי לראות ברומא ביום אחד? שני משפטים."}]}]'
-          for m in gemini-3.8-flash gemini-3.7-flash gemini-flash-lite-latest gemini-3.1-flash-lite; do
+          for m in gemini-3.7-flash gemini-3.5-flash-lite gemini-flash-lite-latest gemini-3.1-flash-lite; do
             for t in '' ',"generationConfig":{"thinkingConfig":{"thinkingLevel":"minimal"}}' ',"generationConfig":{"thinkingConfig":{"thinkingBudget":0}}'; do
               S=$(date +%s%N)
-              C=$(curl -s -m 60 -o /dev/null -w '%{http_code}' -X POST "https://generativelanguage.googleapis.com/v1beta/models/$m:generateContent" -H "x-goog-api-key: $K" -H 'Content-Type: application/json' -d "$q$t}")
+              C=$(curl -s -m 25 -o /dev/null -w '%{http_code}' -X POST "https://generativelanguage.googleapis.com/v1beta/models/$m:generateContent" -H "x-goog-api-key: $K" -H 'Content-Type: application/json' -d "$q$t}" || true)
               echo "::notice title=$m ${t:+$(echo $t | grep -oE 'thinking[A-Za-z]+\":[^}]*' | tr -d '\"')}::HTTP$C in $(( ($(date +%s%N) - S) / 1000000 ))ms"
             done
           done
