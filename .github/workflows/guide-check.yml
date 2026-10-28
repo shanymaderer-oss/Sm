@@ -1,0 +1,16 @@
+name: Guide server check
+# Run by hand: asks the guide server one question the way the site does, and reports the answer and how long it took.
+on: workflow_dispatch
+permissions: { contents: read }
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask the guide
+        run: |
+          for q in 'מה כדאי לראות ברומא ביום אחד? תשובה של שני משפטים.' 'Say hello in Hebrew.'; do
+            S=$(date +%s)
+            A=$(curl -s -m 120 -X POST https://masa-ai.sivanmad7.workers.dev/generate -H 'Origin: https://shanymaderer-oss.github.io' -H 'Content-Type: application/json' \
+              -d "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"$q\"}]}],\"generationConfig\":{\"maxOutputTokens\":400}}" | head -c 400 | tr '\n' ' ')
+            echo "::notice title=answer in $(( $(date +%s) - S ))s::$A"
+          done
