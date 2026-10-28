@@ -18,7 +18,7 @@ window.MASA_TA = null;
 
 /* the smart guide for everyone: the address of our Cloudflare Worker (tools/ai-worker). Its host must also be in the
    connect-src of the Content-Security-Policy in index.html. */
-window.MASA_AI = null;
+window.MASA_AI = { proxy: "https://masa-ai.sivanmad7.workers.dev" };
 /* window.MASA_AI = { proxy: "https://masa-ai.<your-subdomain>.workers.dev" }; */
 
 /* partner programs: when a partnership is approved, its id goes here and is added to every link to that site.

@@ -12,7 +12,7 @@ Masa.ai = (() => {
   const set = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch {} };
 
   const testing = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && get("masa-ai-test") === "1";
-  const SHARED = (window.MASA_AI && window.MASA_AI.proxy) || (testing ? location.origin + "/__ai" : "");
+  const SHARED = testing ? location.origin + "/__ai" : ((window.MASA_AI && window.MASA_AI.proxy) || "");
   let sharedOff = false; // the shared guide said it is out of quota: until the page reloads, do not keep asking
   const own = () => !!get(KEY);
   const shared = () => !!SHARED && !own();
