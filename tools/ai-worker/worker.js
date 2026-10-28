@@ -12,7 +12,7 @@
    Searches are capped (per address and per day) so the free 1,000 a month last.
    Settings (Cloudflare → the Worker → Settings → Variables): GEMINI_KEY (secret, required), TAVILY_KEY (secret, optional), MODEL (optional). */
 const ORIGINS = ["https://shanymaderer-oss.github.io", "http://localhost:8790"];
-const MODELS = ["gemini-2.5-flash", "gemini-flash-latest"];
+const MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest"];
 const PER_MIN = 12, PER_DAY = 120, MAX_BODY = 24000;
 const FRESH_PER_IP = 8, FRESH_PER_DAY = 30;
 const freshSeen = new Map(); let freshDay = -1, freshCount = 0;
@@ -66,11 +66,20 @@ function clean(b) {
 
 async function gemini(env, body) {
   const models = env.MODEL ? [env.MODEL, ...MODELS] : MODELS;
+  let last = { status: 502 };
   for (const m of models) {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
-      method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_KEY }, body: JSON.stringify(body)
-    });
+    // 2.5 models "think" before answering by default: slow, and not needed for a travel answer
+    const b = /^gemini-2\.5/.test(m) ? { ...body, generationConfig: { ...(body.generationConfig || {}), thinkingConfig: { thinkingBudget: 0 } } } : body;
+    const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 20000);
+    let r;
+    try {
+      r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_KEY }, body: JSON.stringify(b), signal: ac.signal
+      });
+    } catch { last = { status: 502, code: 504, why: "TIMEOUT" }; continue; } // too slow: try the next model
+    finally { clearTimeout(timer); }
     if (r.status === 404) continue; // that model is gone: try the next one
+    if (r.status >= 500) { last = { status: 502, code: r.status, why: "BUSY" }; continue; } // overloaded right now: try the next model
     if (r.status === 429) {
       let msg = ""; try { msg = (await r.json()).error?.message || ""; } catch {}
       return { status: 429, scope: /per ?day|daily/i.test(msg) ? "day" : "minute" };
@@ -79,7 +88,7 @@ async function gemini(env, body) {
     const j = await r.json();
     return { status: 200, text: (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("") };
   }
-  return { status: 502 };
+  return last;
 }
 /* a web search through Tavily: titles, links and a short piece of each page, used for this answer only */
 async function tavily(env, query) {
