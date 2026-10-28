@@ -18,7 +18,8 @@ FOOD=[("אוכל ללא גלוטן",[False,False]),("בלי אוכל חריף",[
 NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",None),("טוקיו","חייבים לראות את מגדל טוקיו","מגדל טוקיו","Forum"),
        ("פראג","רוצים לראות את כיכר ואצלב","Václavské",None),("לונדון","לבקר בשוק קמדן","קמדן",None),("ליסבון","לא לפספס את מגדל בלם","מגדל בלם",None),
        ("רומא","רוצים לראות את וילה בורגזה","בורגזה","Chiesa")]
-FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False)]
+FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),
+       ("חם לנו, נעדיף מקומות סגורים כשיורד גשם",'indoor',True),("if it rains, indoors",'indoor',True),("אוהבים פארקים",'indoor',False)]
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"])

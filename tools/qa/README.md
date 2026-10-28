@@ -15,6 +15,7 @@ python3 -m http.server 8790 &   # from the repo root
 | `test_now.py` | The "עכשיו בטיול" card: no card before the trip, next stop of today, done/skip, walking time from the traveler, end of day, and the saved trip opening on today. Must end with all checks True. |
 | `test_pick_edit.py` | "אני רוצה לבחור": places grouped by kind, marking places and "קרוב לזה", every pick in the trip; then changing the day: move, remove, replace with a nearby alternative, move to another day, order by distance. |
 | `test_ratings.py` | Restaurant ratings against a pretend Tripadvisor (local only): low-rated meals are replaced by 4.5+ restaurants from our own list, ratings show, nothing from Tripadvisor is stored. |
+| `test_rain.py` | A trip that starts in two days with a pretend rainy forecast: the day shows the forecast and offers to swap the stops outside for indoor places nearby; a dry forecast shows nothing. Must end with `FAILS: []`. |
 | `test_offline.py` | Builds a trip, goes offline, reloads and opens the saved trip from the service worker cache. Must end with `errors: []`. |
 
 Environment: `QA_URL` (default `http://localhost:8790`), `QA_OUT`, `MAPLIBRE_DIST`.

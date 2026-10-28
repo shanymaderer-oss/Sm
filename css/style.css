@@ -199,6 +199,7 @@ textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface-2);bo
 .besttime svg{width:20px;height:20px;color:var(--teal);flex:none}
 .tipbox{border-radius:14px;padding:12px 14px;background:color-mix(in srgb,var(--sky) 13%,var(--surface));display:flex;gap:10px}
 .tipbox svg{width:20px;height:20px;color:var(--sky);flex:none;margin-top:2px}
+.rainbox{align-items:center;margin:10px 0}.rainbox span{flex:1;min-width:0}.rainbox small{display:block;margin-top:4px;color:var(--muted)}.rainbox .btn{flex:none}
 .linkrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .lnk{display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;font-weight:700;font-size:.9rem;border-radius:12px;padding:11px 8px;background:var(--surface-2);color:var(--ink);text-align:center}
 .lnk svg{width:17px;height:17px;flex:none}

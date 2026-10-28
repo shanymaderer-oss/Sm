@@ -909,6 +909,7 @@ SCREENS.plan = {
     </div>
     <div class="daytabs" role="tablist">${t.days.map((x, i) => `<button type="button" role="tab" class="daytab" data-i="${i}" aria-selected="${i === S.day}" style="${i === S.day ? `background:${cv(DAYC[i % 5])}` : ""}"><span class="dot" style="background:${i === S.day ? "#fff" : cv(DAYC[i % 5])}"></span>${esc(x.label)}</button>`).join("")}</div>
     ${d.theme ? `<div class="daytheme">${esc(d.theme)}</div>` : ""}
+    ${t.source === "sample" ? "" : rainTip(t, S.day)}
     ${t.source === "sample" ? "" : `<div class="daytools"><button type="button" class="chipbtn" id="editDay" aria-pressed="${!!S.edit}">${ic(S.edit ? "check" : "route")}${S.edit ? "סיום שינויים" : "לשנות את היום"}</button>
       <button type="button" class="chipbtn" id="addStop">${ic("plus")}הוספת מקום</button>
       ${d.manualOrder ? `<button type="button" class="chipbtn" id="orderDay">${ic("nav")}לסדר לפי מרחק</button>` : ""}</div>`}
@@ -930,6 +931,14 @@ SCREENS.plan = {
   },
   bind() {
     document.querySelectorAll(".daytab").forEach(b => b.onclick = () => { S.day = +b.dataset.i; S.stop = 0; go("plan"); });
+    // the forecast, once, when the trip starts within about two weeks (open-meteo gives 16 days)
+    const t = S.trip, wc = infoCache[`${t.lat},${t.lng}`] = infoCache[`${t.lat},${t.lng}`] || {};
+    const ahead = (tripDates(t).start - Date.now()) / 864e5;
+    if (t.source !== "sample" && wc.weather === undefined && !wc.wxLoading && ahead > -t.days.length && ahead < 15) {
+      wc.wxLoading = true;
+      svc.weather(+t.lat, +t.lng).then(w => { wc.weather = w || null; wc.wxLoading = false; if (S.screen === "plan" && S.trip === t && dayForecast(t, S.day)) rerenderKeepScroll(); }).catch(() => {});
+    }
+    $("rainSwap") && ($("rainSwap").onclick = () => doRainSwap(S.day, rainSwaps(t.days[S.day]).swaps));
     document.querySelectorAll(".stop").forEach(b => b.onclick = () => { S.stop = +b.dataset.i; go("place"); });
     bindEdit();
     document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => {
@@ -1322,6 +1331,38 @@ function placesNear(ref, kinds, maxKm = 1.2, n = 3, skipTrip = true) {
   return (t.places || []).filter(p => hasXY(p) && kinds.includes(p.kind) && (!skipTrip || !inTrip.has(p.name)) && !(now && p.hours && planner.isOpen(p.hours, now) === false))
     .map(p => ({ p, k: km(ref, p) })).filter(x => x.k < maxKm).sort((a, b) => (b.p.q - b.k * 3) - (a.p.q - a.k * 3)).slice(0, n);
 }
+/* rain or heat: the outdoor stops of a day, and an indoor place close to each (used by the guide and by the forecast tip) */
+const OUTDOOR = ["park", "view", "beach", "street", "square", "bridge"];
+function rainSwaps(d) {
+  const outdoor = d.stops.map((s, i) => ({ s, i })).filter(({ s }) => !s.meal && !s.asked && OUTDOOR.includes(s.kind));
+  const swaps = [], usedNow = new Set();
+  for (const { s, i } of outdoor) {
+    const alt = placesNear(s, ["museum", "gallery", "market", "mall", "church"], 1.5, 4).find(x => !usedNow.has(x.p.id));
+    if (alt) { usedNow.add(alt.p.id); swaps.push({ s, i, p: alt.p, k: alt.k }); }
+  }
+  return { outdoor, swaps };
+}
+function doRainSwap(di, list) {
+  const d = S.trip.days[di];
+  list.forEach(x => replaceAt(di, d.stops.indexOf(d.stops.find(y => y.name === x.s.name)), x.p));
+  d.rainSwapped = true;
+  afterEdit(d); toast("היום עודכן לגשם");
+}
+/* the forecast for a day of the trip, when the trip is close enough for one (about two weeks) */
+function dayForecast(t, di) {
+  const c = infoCache[`${t.lat},${t.lng}`];
+  if (!c?.weather) return null;
+  const date = isoDate(addDays(tripDates(t).start, di));
+  return c.weather.find(w => w.date === date) || null;
+}
+function rainTip(t, di) {
+  const d = t.days[di], f = dayForecast(t, di);
+  if (!f || d.rainSwapped || !(f.rain >= 60 || (f.code >= 61 && f.code <= 99 && f.rain >= 40))) return "";
+  const { swaps } = rainSwaps(d);
+  return `<div class="tipbox rainbox">${ic("info")}<span><b>תחזית ל${esc(fmtDay(addDays(tripDates(t).start, di)))}: ${Math.round(f.rain)}% גשם.</b> ${swaps.length
+    ? `אפשר להחליף ${swaps.length === 1 ? "תחנה שבחוץ במקום מקורה קרוב" : swaps.length + " תחנות שבחוץ במקומות מקורים קרובים"}:<small>${swaps.map(x => `<bdi>${esc(x.s.name)}</bdi> ← <bdi>${esc(x.p.name)}</bdi>`).join("<br>")}</small></span><button type="button" class="btn small" id="rainSwap">להחליף</button>`
+    : "כדאי מטריה בין התחנות.</span>"}</div>`;
+}
 function placeLineShort(p, k) { return `${p.name} (${planner.KIND[p.kind]?.he || ""}, ${walkMin(k)} דק׳ הליכה${p.signals?.[0] ? `, ${p.signals[0]}` : ""})`; }
 function findStop(q) {
   const t = S.trip;
@@ -1345,16 +1386,10 @@ function localAnswer(q) {
   }
   // rain or heat: swap the outdoor stops of today for indoor places close to them
   if (/(גשם|יורד|סופה|קר מדי|חם מדי|שרב|מקורה|בפנים)/.test(q)) {
-    const outdoor = d.stops.map((s, i) => ({ s, i })).filter(({ s }) => !s.meal && ["park", "view", "beach", "street", "square", "bridge"].includes(s.kind));
+    const { outdoor, swaps } = rainSwaps(d);
     if (!outdoor.length) return out(`היום (${d.label}) כמעט הכול בפנים ממילא. שווה לקחת מטריה בין התחנות.`);
-    const swaps = [];
-    const usedNow = new Set();
-    for (const { s, i } of outdoor) {
-      const alt = placesNear(s, ["museum", "gallery", "market", "mall", "church"], 1.5, 4).find(x => !usedNow.has(x.p.id));
-      if (alt) { usedNow.add(alt.p.id); swaps.push({ s, i, p: alt.p, k: alt.k }); }
-    }
     if (!swaps.length) return out("לא מצאנו מקומות מקורים קרובים לתחנות של היום. אפשר לחפש מוזיאון בשורת החיפוש למעלה.");
-    const doSwap = list => { list.forEach(x => replaceAt(S.day, d.stops.indexOf(d.stops.find(y => y.name === x.s.name)), x.p)); afterEdit(d); toast("היום עודכן לגשם"); };
+    const doSwap = list => doRainSwap(S.day, list);
     return out(`ב${d.label} יש ${outdoor.length === 1 ? "תחנה אחת בחוץ" : outdoor.length + " תחנות בחוץ"}. אפשר להחליף:\n${swaps.map(x => `• ${x.s.name} ← ${x.p.name} (${planner.KIND[x.p.kind]?.he}, ${walkMin(x.k)} דק׳ ממנו)`).join("\n")}`,
       [act(swaps.length > 1 ? "להחליף את כולן" : "להחליף", () => doSwap(swaps))]);
   }
@@ -2254,7 +2289,7 @@ SCREENS.info = {
     const c = infoCache[key] = infoCache[key] || {};
     $("backInfo").onclick = () => go("plan");
     $("toPhr").onclick = () => go("discover");
-    if (c.weather === undefined) svc.weather(+t.lat, +t.lng).then(w => { c.weather = w; if (S.screen === "info") rerenderKeepScroll(); });
+    if (c.weather === undefined && !c.wxLoading) { c.wxLoading = true; svc.weather(+t.lat, +t.lng).then(w => { c.weather = w; c.wxLoading = false; if (S.screen === "info") rerenderKeepScroll(); }); }
     if (ci && c.rate === undefined) svc.rateToILS(ci.cur).then(r => { c.rate = r; if (S.screen === "info") rerenderKeepScroll(); });
     $("convLocal") && ($("convLocal").oninput = e => { const v = parseFloat(e.target.value) || 0; $("convILS").textContent = `${(v * c.rate.rate).toFixed(1)} ₪`; });
   }
