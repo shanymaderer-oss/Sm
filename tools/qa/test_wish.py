@@ -51,6 +51,13 @@ async def main():
       ok=not t["wish"]["missed"] and any(want in n for n in names) and not (bad and any(bad in n for n in names))
       print("NAMED","ok " if ok else "BAD",city,txt,"->",names,t["wish"]["missed"])
       if not ok: FAILS.append(txt)
+    # kosher: every meal and sweet stop is kosher or says it is not; Roman-Jewish cuisine alone is not kosher
+    for city in ["לונדון","רומא"]:
+      t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:3, interests:["food","history"], budget:"בינוני", pace:"מאוזן", diet:"כשר", move:"walk", notes:"", start:"2026-12-01", people:2 }, ()=>{}, null)""",city)
+      meals=[s for d in t["days"] for s in d["stops"] if s.get("meal") in ("breakfast","lunch","dinner","treat") and s.get("kind")!="market"]
+      silent=[s["name"] for s in meals if "כשר" not in (s.get("signals") or []) and not s.get("notKosher")]
+      ok=not silent; print("KOSHER","ok " if ok else "BAD",city,"not kosher and not marked:",silent)
+      if not ok: FAILS.append("kosher "+city)
     await pg.close()
     for i in sel:
       city,txt=CASES[i]

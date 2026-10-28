@@ -126,7 +126,7 @@ Masa.planner = (() => {
       wikidata: t.wikidata || null, wikiTag: t.wikipedia || null, website: t.website || t["contact:website"] || t.url || null,
       phone: t.phone || t["contact:phone"] || null, hours: t.opening_hours || null, cuisine: t.cuisine || null,
       fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || "") || /vegetarian|vegan/.test(t.cuisine || ""),
-      kosher: /yes|only/.test(t["diet:kosher"] || "") || /kosher|jewish/.test(t.cuisine || "") || /kosher|cacher|casher|כשר/i.test(t.name || ""), michelin: +t["michelin:stars"] || 0, brand: !!t.brand, heritage: !!t.heritage, hasHe: !!t["name:he"],
+      kosher: /yes|only/.test(t["diet:kosher"] || "") || /kosher/.test(t.cuisine || "") || /kosher|cacher|casher|כשר/i.test(t.name || ""), michelin: +t["michelin:stars"] || 0, brand: !!t.brand, heritage: !!t.heritage, hasHe: !!t["name:he"],
       address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") || null, reservation: t.reservation || null,
       tourism: t.tourism || null, historic: t.historic || null, bath: BATH(t), stars: parseFloat(t.stars) || 0, jewish: t.religion === "jewish", wheel: t.wheelchair || null
     };
@@ -137,7 +137,8 @@ Masa.planner = (() => {
     if (v.type === "eat") return /caf[eé]|coffee|bakery|pastr|ice cream|gelat|dessert/i.test(txt) && !/restaurant/i.test(txt) ? (/ice cream|gelat|dessert|pastr/i.test(txt) ? "dessert" : "cafe") : /market|food hall/i.test(txt) ? "market" : "restaurant";
     if (v.type === "drink") return /caf[eé]|coffee|tea/i.test(txt) && !/bar|pub|beer|wine|cocktail/i.test(txt) ? "cafe" : /club/i.test(txt) ? "club" : "bar";
     if (v.type === "buy" && /\b(street|avenue|boulevard|road|lane|via|rue|calle|carrer|rua|strasse|straße|ulice|utca|dori|dōri|soi|caddesi|sokak|gasse|straat)\b|street$/i.test(v.name)) return "street";
-    if (v.type === "buy") return /mall|shopping cent|galer|department/i.test(txt) ? "mall" : /market/i.test(txt) ? "market" : "shop";
+    // a supermarket chain ("Aldi discount store", "CBA supermarket") is a shop, not a market to visit
+    if (v.type === "buy") return /supermarket|hypermarket|discount store|grocery|convenience|minimarket|drogerie|drugstore|pharmacy/i.test(txt) ? "shop" : /mall|shopping cent|galer|department/i.test(txt) ? "mall" : /\bmarkets?\b|mercado|mercat|marché/i.test(txt) ? "market" : "shop";
     if (v.type === "see") return /museum/i.test(txt) ? "museum" : /gallery/i.test(txt) ? "gallery" : /church|cathedral|basilica|synagogue|mosque|temple|monastery/i.test(txt) ? "church" : /park|garden/i.test(txt) ? "park" : /view|lookout|tower/i.test(txt) ? "view" : "sight";
     return /zoo|aquarium/i.test(txt) ? "zoo" : /park|garden/i.test(txt) ? "park" : /beach/i.test(txt) ? "beach" : "attraction";
   }
@@ -1205,6 +1206,7 @@ Masa.planner = (() => {
     const anyRestaurants = allRestaurants;
     const cafes = by(["cafe", "bakery"]);
     const treats = by(["dessert", "market", "deli", "bakery"]); // "deli" only when asked (see avoid above)
+    const kosherFood = opts.diet === "כשר" ? by(["cafe", "bakery", "dessert"]).filter(p => p.kosher && !p.brand) : null; // breakfast: places open in the morning
     const bars = by(["bar", "club"]);
     const cuisinesUsed = {};
     const usedNames = new Set(groups.flat().map(p => normName(p.local)));
@@ -1245,7 +1247,10 @@ Masa.planner = (() => {
       const list = g.map(p => ({ p, meal: null }));
       const first = g[0] || geo, last = g[g.length - 1] || geo;
       if (wantFood) {
-        const b = (hotel && nearBest(cafes, hotel, 0.5)) || nearBest(cafes, first, M.bfast[0]) || nearBest(cafes, first, M.bfast[1]);
+        // kosher: breakfast at a kosher place even a bit farther; otherwise the café is marked as not kosher
+        const b = (kosherFood && (nearBest(kosherFood, hotel || first, 1.5) || nearBest(kosherFood, first, 2.5)))
+          || (hotel && nearBest(cafes, hotel, 0.5)) || nearBest(cafes, first, M.bfast[0]) || nearBest(cafes, first, M.bfast[1]);
+        if (b && kosherFood && !b.kosher) b._dietMiss = true;
         if (b) list.unshift({ p: b, meal: "breakfast" });
       }
       const li = list.findIndex((x, i) => i >= Math.ceil(g.length / 2) + (wantFood ? 1 : 0));
@@ -1256,7 +1261,10 @@ Masa.planner = (() => {
       if (wantFood && g.length >= 2) {
         const ti = Math.min(list.length, at + 2);
         const dayKinds = new Set(list.map(x => x.p.kind));
-        const tr = named.treat || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 0.8) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 1.5);
+        // kosher: a kosher sweet place or a market to walk through first
+        const tl = kosherFood ? treats.filter(t => !dayKinds.has(t.kind) && (t.kosher || t.kind === "market")) : null;
+        const tr = named.treat || (tl && (nearBest(tl, list[ti - 1]?.p || anchor, 1.5))) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 0.8) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 1.5);
+        if (tr && kosherFood && !tr.kosher && tr.kind !== "market" && !named.treat) tr._dietMiss = true;
         if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
       }
       const dinner = named.dinner || mealPick(last, M.dinner[0], M.dinner[1], dinnerBoost);
@@ -1301,6 +1309,8 @@ Masa.planner = (() => {
         const stops = list.map(({ p, meal }) => { const s = toStop(p, budget, meal); if (p.must && !meal) s.must = true;
           if (p.userMust) { s.asked = true; s.must = true; }
           if (p._sunset) { s.tip = "הגיעו בערך 20 דקות לפני השקיעה. זה המקום לסיים בו את היום."; s.sunset = true; }
+          if (p._dietMiss && (meal === "breakfast" || meal === "treat") && opts.diet === "כשר") { s.tip = "המקום הזה לא מסומן ככשר: לא מצאנו כשר מסומן קרוב. אפשר לעצור כאן רק לשתייה, או לאכול במלון."; s.notKosher = true; }
+          if (p._dietMiss && (meal === "lunch" || meal === "dinner") && opts.diet === "כשר") s.notKosher = true;
           if (p._dietMiss && (meal === "lunch" || meal === "dinner")) s.tip = opts.diet === "כשר" ? kosherMissTip(p) : "לא מצאנו מסעדה צמחונית מסומנת קרוב למסלול. רוב המסעדות מציעות מנות צמחוניות, כדאי לשאול.";
           s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
