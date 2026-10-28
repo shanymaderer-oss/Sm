@@ -1,7 +1,7 @@
 /* מסע · app: Leaflet map + app screens */
 (() => {
 "use strict";
-const { P, CATS, INTERESTS, DAYC, DESTS, SAMPLE, PHRASES, ETIQUETTE_GENERIC, COUNTRY_INFO } = window.MASA_DATA;
+const { P, CATS, INTERESTS, DAYC, DESTS, PHRASES, ETIQUETTE_GENERIC, COUNTRY_INFO } = window.MASA_DATA;
 const svc = Masa.svc, ai = Masa.ai, planner = Masa.planner;
 
 /* ---------- helpers ---------- */
@@ -410,7 +410,12 @@ function runHydrate(t) {
     if (stage === "routes" && S.trip === t && S.screen === "plan") setTimeout(() => fitPoints(t.days[S.day].stops), 350);
   }).catch(() => { hydrating.delete(t); t.pending = false; if (S.trip === t) refreshSoon(); });
 }
-function loadSample() { openTrip(JSON.parse(JSON.stringify(SAMPLE))); }
+/* the sample trip is a separate file, fetched only when opened (it is a third of the data, and most visitors never open it) */
+let sampleLoad = null;
+function loadSample() {
+  (sampleLoad || (sampleLoad = svc.getJSON("js/sample-trip.json", {}, 15000))).then(t => openTrip(JSON.parse(JSON.stringify(t))))
+    .catch(() => { sampleLoad = null; toast("לא הצלחנו לפתוח את הטיול לדוגמה. נסו שוב."); });
+}
 /* the sample has hand-written Hebrew stories; fetch photos and walking routes live */
 function hydrateSample(t) {
   t.days.forEach(d => d.stops.forEach(s => {

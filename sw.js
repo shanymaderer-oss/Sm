@@ -7,7 +7,7 @@ const VERSION = "42e97cf2e3";
 const SHELL_CACHE = "masa-shell-" + VERSION, DATA_CACHE = "masa-data-v1", TILE_CACHE = "masa-tiles-v1";
 const SHELL = [
   "./", "index.html", "privacy.html", "accessibility.html", "terms.html", "manifest.webmanifest", "css/style.css", "css/fonts.css",
-  "js/min/tt.js", "js/min/data.js", "js/min/sources.js", "js/min/cities.js", "js/min/services.js", "js/min/cost.js", "js/min/transport.js", "js/min/ai.js", "js/min/intent.js", "js/cloud-config.js", "js/min/cloud.js", "js/min/planner.js", "js/min/app.js",
+  "js/min/tt.js", "js/min/data.js", "js/min/sources.js", "js/min/cities.js", "js/min/services.js", "js/min/cost.js", "js/min/transport.js", "js/min/ai.js", "js/min/intent.js", "js/cloud-config.js", "js/sample-trip.json", "js/min/cloud.js", "js/min/planner.js", "js/min/app.js",
   "vendor/maplibre-gl-5.24.0/maplibre-gl.js", "vendor/maplibre-gl-5.24.0/maplibre-gl.css",
   "fonts/ibm-plex-sans-hebrew-hebrew-400-normal.woff2", "fonts/ibm-plex-sans-hebrew-hebrew-500-normal.woff2", "fonts/ibm-plex-sans-hebrew-hebrew-600-normal.woff2",
   "fonts/fredoka-hebrew-600-normal.woff2", "fonts/fredoka-hebrew-700-normal.woff2", "icons/icon-192.png"
