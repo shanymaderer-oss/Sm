@@ -29,7 +29,7 @@ Masa.intent = (() => {
     T([word("צמחוני"), word("טבעוני"), word("ויגן"), /\b(vegan|vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
     T([word("כשר"), word("כשרות"), /\bkosher\b/], { diet: "כשר", label: "אוכל כשר, ובית הכנסת הקרוב בכל יום" }),
     T([word("שומר\\S* שבת"), word("שבת"), /\bshabbat|sabbath\b/], { shabbat: true, label: "שומרים שבת: נסמן את השבת במסלול" }),
-    T([word("אוכל(?!ים|ת)"), word("קולינרי"), word("לטעום"), word("טעימות"), word("מסעדות טובות"), word("פודי"), /\b(food|foodie|eat well|restaurants)\b/], { add: ["food"], label: "אוכל טוב בכל יום" }, { drop: ["food"], label: "פחות עצירות אוכל" }),
+    T([word("אוכל(?!ים|ת)(?!\\s+(?:ללא|בלי|לא|חריף|חריפ))"), word("קולינרי"), word("לטעום"), word("טעימות"), word("מסעדות טובות"), word("פודי"), /\b(food|foodie|eat well|restaurants)\b/], { add: ["food"], label: "אוכל טוב בכל יום" }, { drop: ["food"], label: "פחות עצירות אוכל" }),
     T([word("אוכל מקומי"), word("אותנטי"), word("מקומי(?:ים|ות)?(?=\\s|$)"), /\b(local food|authentic)\b/], { local: true, label: "אוכל מקומי ואותנטי" }),
     T([word("אוכל רחוב"), /\bstreet food\b/], { add: ["food"], boost: { market: 4 }, cheapFood: true, label: "אוכל רחוב ושווקים" }),
     T([word("שו(?:ק|וקים)"), /\bmarkets?\b/], { add: ["food"], boost: { market: 5 }, label: "שווקים" }),

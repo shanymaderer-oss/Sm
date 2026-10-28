@@ -10,6 +10,9 @@ CASES=[("רומא","אנחנו זוג עם ילד בן 6, לא אוכלים בש
 PARSE=[("אנחנו 2 מבוגרים ו-3 ילדים",5,None),("2 מבוגרים",2,None),("אנחנו 4",4,None),
        ("טסים עם הורים מבוגרים",None,"walking"),("לא הרבה הליכה",None,"walking"),("בלי הרבה הליכה",None,"walking"),
        ("זוג עם ילד בן 6",3,None),("אנחנו זוג ושני ילדים",4,None),("זוג + 2 ילדים",4,None),("זוג עם תינוקת",3,None),("זוג",2,None),("זוג בלי ילדים",2,None)]
+# food words that are not "we want good food": "אוכל ללא גלוטן" / "בלי אוכל חריף" must not add or drop food stops
+FOOD=[("אוכל ללא גלוטן",[False,False]),("בלי אוכל חריף",[False,False]),("אוכל לא חריף בבקשה",[False,False]),
+      ("אוהבים אוכל טוב",[True,False]),("לא בא לנו לעצור לאוכל",[False,True])]
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"])
@@ -19,6 +22,10 @@ async def main():
     for txt,ppl,mob in PARSE:
       got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);return [w.people||null,w.mobility||null]}",txt)
       ok=got==[ppl,mob]; print("PARSE","ok " if ok else "BAD",txt,"->",got)
+      if not ok: FAILS.append(txt)
+    for txt,want in FOOD:
+      got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);const h=(s,x)=>[...(s||[])].includes(x);return [h(w.add,'food'),h(w.drop,'food')]}",txt)
+      ok=got==want; print("FOOD","ok " if ok else "BAD",txt,"->",got)
       if not ok: FAILS.append(txt)
     await pg.close()
     for i in sel:
