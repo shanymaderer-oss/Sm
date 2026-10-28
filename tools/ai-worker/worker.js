@@ -75,7 +75,7 @@ async function gemini(env, body) {
       let msg = ""; try { msg = (await r.json()).error?.message || ""; } catch {}
       return { status: 429, scope: /per ?day|daily/i.test(msg) ? "day" : "minute" };
     }
-    if (!r.ok) return { status: 502 };
+    if (!r.ok) { let why = ""; try { why = ((await r.json()).error?.status || "").slice(0, 40); } catch {} return { status: 502, code: r.status, why }; }
     const j = await r.json();
     return { status: 200, text: (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("") };
   }
@@ -147,7 +147,7 @@ export default {
     }
     const g = await gemini(env, body);
     if (g.status === 429) return reply(429, { error: "busy", scope: g.scope }, origin);
-    if (g.status !== 200) return reply(502, { error: "upstream" }, origin);
+    if (g.status !== 200) return reply(502, { error: "upstream", code: g.code || 0, why: g.why || "" }, origin);
     // only the answer (and the links it used) goes back, nothing else from Google's or Tavily's reply
     return reply(200, { candidates: [{ content: { parts: [{ text: g.text }] } }], sources: sources.map(x => ({ title: x.title, url: x.url })) }, origin);
   }
