@@ -16,8 +16,12 @@ async def main():
         pg = await ctx.new_page()
         errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
+        no_ai = [True]  # the first part checks the guide without any AI: the site's guide server is switched off for it
         async def r(route):
             u = route.request.url
+            if no_ai[0] and u.split("?")[0].endswith("/js/cloud-config.js"):
+                resp = await route.fetch()
+                return await route.fulfill(response=resp, body=(await resp.text()).replace("window.MASA_AI = {", "window.MASA_AI_OFF = {"))
             if u.startswith(URL): return await route.continue_()
             if "openfreemap.org/styles" in u: return await route.fulfill(json={"version": 8, "sources": {}, "layers": [{"id": "bg", "type": "background", "paint": {"background-color": "#ece6da"}}]})
             return await route.abort()
@@ -72,8 +76,9 @@ async def main():
         check(not errs, f"no page errors {errs[:2]}")
 
         # the guide for everyone: through our guide server (mocked here), without any key in the browser
-        local = "localhost" in URL or "127.0.0.1" in URL
-        if not local and not await pg.evaluate("!!(window.MASA_AI && MASA_AI.proxy)"):
+        local = ("localhost" in URL or "127.0.0.1" in URL) and not os.environ.get("QA_AS_LIVE")
+        no_ai[0] = False
+        if not local and not await pg.evaluate("fetch('js/cloud-config.js').then(r => r.text()).then(t => /MASA_AI = \\{/.test(t))"):
             print("SKIP shared guide: not set up on this site yet"); await b.close()
             print("FAILED:" if FAILS else "ALL PASSED", FAILS); sys.exit(1 if FAILS else 0)
         sent = []
@@ -81,7 +86,8 @@ async def main():
             sent.append(route.request.post_data or "")
             await route.fulfill(json={"candidates": [{"content": {"parts": [{"text": "בטוקיו עכשיו ערב. (תשובה מהמדריך החכם)"}]}}]})
         await pg.route("**/generate", ai_route)
-        await pg.evaluate("localStorage.setItem('masa-ai-test','1')")
+        no_ai[0] = False
+        if local: await pg.evaluate("localStorage.setItem('masa-ai-test','1')")
         await pg.reload(); await pg.wait_for_timeout(1200)
         await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero", timeout=15000)
         await pg.click("#nav button[data-k=guide]"); await pg.wait_for_selector("#askInput")
@@ -115,7 +121,7 @@ async def main():
         async def ai_tr(route):
             body = json.loads(route.request.post_data or "{}"); tr.append(body)
             await route.fulfill(json={"texts": ["תרגום: " + x[:20] for x in body.get("texts", [])]})
-        await pg.route("**/__ai/translate", ai_tr)
+        await pg.route("**/translate", ai_tr)
         t = await trip()
         target = next(((di, si) for di, d in enumerate(t["days"]) for si, st in enumerate(d["stops"]) if st.get("whyLang") == "en"), None)
         if target:
