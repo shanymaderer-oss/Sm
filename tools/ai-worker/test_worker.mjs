@@ -24,7 +24,7 @@ r = await call({ contents: [{ role: "model", parts: [{ text: "hi" }] }] }, { ip:
 let codes = []; for (let i = 0; i < 14; i++) codes.push((await call(good, { ip: "9.9.9.9" })).status);
 ok(codes.slice(0, 12).every(c => c === 200) && codes[12] === 429, "one address is limited per minute");
 upstream = () => new Response("{}", { status: 404 }); sent = [];
-r = await call(good, { ip: "6" }); ok(sent.length === 3 && r.status === 502, "a missing model falls back to the next one");
+r = await call(good, { ip: "6" }); ok(sent.length === 4 && r.status === 502, "a missing model falls back to the next one");
 { let n = 0; const keep = upstream; upstream = (u, o) => (++n === 1 ? new Response(JSON.stringify({ error: { status: "UNAVAILABLE" } }), { status: 503 }) : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: "שלום" }] } }] }), { status: 200 }));
   r = await call(good, { ip: "6b" }); j = await r.json(); ok(r.status === 200 && j.candidates[0].content.parts[0].text === "שלום" && n === 2, "a busy model (503) falls back to the next one"); upstream = keep; }
 upstream = () => new Response(JSON.stringify({ error: { message: "Quota exceeded for metric: generate_content_free_tier_requests, limit per day" } }), { status: 429 });

@@ -7,7 +7,7 @@ window.Masa = window.Masa || {};
 Masa.ai = (() => {
   const BASE = "https://generativelanguage.googleapis.com/v1beta";
   const KEY = "masa-gemini-key", MODEL = "masa-gemini-model";
-  const FALLBACK_MODEL = "gemini-2.5-flash";
+  const FALLBACK_MODEL = "gemini-flash-lite-latest";
   const get = k => { try { return localStorage.getItem(k) || ""; } catch { return ""; } };
   const set = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch {} };
 
