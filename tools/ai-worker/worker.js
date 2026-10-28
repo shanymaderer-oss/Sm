@@ -12,8 +12,9 @@
    Searches are capped (per address and per day) so the free 1,000 a month last.
    Settings (Cloudflare → the Worker → Settings → Variables): GEMINI_KEY (secret, required), TAVILY_KEY (secret, optional), MODEL (optional). */
 const ORIGINS = ["https://shanymaderer-oss.github.io", "http://localhost:8790"];
-// newest first; when one is busy, slow or retired the next one answers. The "lite" ones are fast and almost always free to use.
-const MODELS = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-flash-lite-latest", "gemini-3.1-flash-lite"];
+// the fast "lite" models: tested 28.10.2026, they answer in about a second while the big Flash models were overloaded
+// (503) or took over 25s on the free tier. When one is busy, slow or retired, the next one answers.
+const MODELS = ["gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-3.1-flash-lite"];
 const PER_MIN = 12, PER_DAY = 120, MAX_BODY = 24000;
 const FRESH_PER_IP = 8, FRESH_PER_DAY = 30;
 const freshSeen = new Map(); let freshDay = -1, freshCount = 0;
@@ -69,9 +70,8 @@ async function gemini(env, body) {
   const models = env.MODEL ? [env.MODEL, ...MODELS] : MODELS;
   let last = { status: 502 };
   for (const m of models) {
-    // 2.5 models "think" before answering by default: slow, and not needed for a travel answer
-    const b = /^gemini-2\.5/.test(m) ? { ...body, generationConfig: { ...(body.generationConfig || {}), thinkingConfig: { thinkingBudget: 0 } } } : body;
-    const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 15000);
+    const b = body;
+    const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 12000);
     let r;
     try {
       r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
