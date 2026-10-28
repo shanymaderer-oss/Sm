@@ -38,7 +38,11 @@ jobs:
       - name: The server answers our site only
         run: |
           A=$(curl -s -o /dev/null -w '%{http_code}' -X POST https://masa-ai.sivanmad7.workers.dev/generate -H 'Origin: https://evil.example' -d '{}')
-          B=$(curl -s -X POST https://masa-ai.sivanmad7.workers.dev/generate -H 'Origin: https://shanymaderer-oss.github.io' -H 'Content-Type: application/json' -d '{"contents":[{"role":"user","parts":[{"text":"Say only: שלום"}]}],"generationConfig":{"maxOutputTokens":20}}' | head -c 300)
+          # a new secret can take a few seconds to reach the server
+          for i in 1 2 3 4 5 6; do
+            B=$(curl -s -X POST https://masa-ai.sivanmad7.workers.dev/generate -H 'Origin: https://shanymaderer-oss.github.io' -H 'Content-Type: application/json' -d '{"contents":[{"role":"user","parts":[{"text":"Say only: שלום"}]}],"generationConfig":{"maxOutputTokens":20}}' | head -c 300)
+            echo "$B" | grep -q 'not configured' || break; sleep 10
+          done
           echo "::notice title=another site::$A (must be 403)"
           echo "::notice title=our site::$B"
           [ "$A" = "403" ]
