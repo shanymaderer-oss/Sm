@@ -18,3 +18,12 @@ jobs:
           B=$(curl -sS -X POST "https://firestore.googleapis.com/v1/projects/$P/databases/(default)/documents:commit?key=$KEY" \
             -H "Content-Type: application/json" -d "${BODY//$ID/${ID}b}")
           echo "::notice title=without referrer::$(echo "$B" | tr '\n' ' ' | head -c 900)"
+      - name: The key works only from our site (sign-in and Google maps services)
+        run: |
+          KEY=AIzaSyBBKGdDxEHaZ14CFcTNvHNF5S3bXgkaAE8
+          A=$(curl -s -o /dev/null -w '%{http_code}' "https://identitytoolkit.googleapis.com/v1/projects?key=$KEY" -H "Referer: https://shanymaderer-oss.github.io/Sm/")
+          B=$(curl -s "https://identitytoolkit.googleapis.com/v1/projects?key=$KEY" | tr '\n' ' ' | grep -o '"message": "[^"]*"' | head -1)
+          C=$(curl -s "https://maps.googleapis.com/maps/api/geocode/json?address=Rome&key=$KEY" | tr '\n' ' ' | grep -o '"status" : "[^"]*"\|"error_message" : "[^"]\{0,120\}' | tr '\n' ' ')
+          echo "::notice title=sign-in from our site::HTTP $A"
+          echo "::notice title=sign-in from anywhere else::$B"
+          echo "::notice title=maps from anywhere else::$C"
