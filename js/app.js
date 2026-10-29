@@ -1571,7 +1571,10 @@ const linksHtml = links => links?.length ? `<div class="msgacts srcs"><small>מ�
 const siteName = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return "קישור"; } };
 /* questions about now (a holiday, this week, a strike, an event): the guide searches the web first, when it can */
 const FRESH_Q = /(היום|מחר|השבוע|סופ"?ש|סוף השבוע|הערב|הלילה|כרגע|פתוח|סגור|שביתה|הפגנ|אירוע|הופע|קונצרט|פסטיבל|משחק|חג|כריסמס|המולד|שנה החדשה|פסחא|תערוכ|עדכני|חדשות|בטוח|מזג)/;
-const msgHtml = m => `<div class="msg ${m.r}">${esc(m.t)}${linksHtml(m.links)}${m.acts?.length ? `<div class="msgacts">${m.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}</div>`;
+/* the smart guide writes **bold** and *italics* and "- " lists: shown as bold text and plain bullets (escaped first, so
+   nothing else can become markup) */
+const richText = t => esc(t).replace(/\*\*([^*\n]{1,120})\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*([^*\n]{1,120})\*(?=[\s.,:;!?)]|$)/g, "$1$2").replace(/^\s*[-*]\s+/gm, "• ").replace(/^#{1,4}\s*/gm, "");
+const msgHtml = m => `<div class="msg ${m.r}">${m.r === "bot" ? richText(m.t) : esc(m.t)}${linksHtml(m.links)}${m.acts?.length ? `<div class="msgacts">${m.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}</div>`;
 function bindGuideActs(root) {
   root?.querySelectorAll("[data-gact]").forEach(b => b.onclick = () => { const f = guideActs.get(b.dataset.gact); if (f) { b.disabled = true; f(); } });
 }
