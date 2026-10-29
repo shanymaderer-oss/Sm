@@ -608,38 +608,61 @@ function bindHotel() {
 const buildLabel = () => S.form.mode === "mine" && S.form.mine?.length ? `בנו טיול סביב ${S.form.mine.length === 1 ? "המקום שלי" : "ה-" + S.form.mine.length + " מקומות שלי"}` : "בנו לי טיול";
 const myChips = () => (S.form.mine || []).map((n, i) => `<span class="mychip">${esc(n)}<button type="button" data-myrm="${i}" aria-label="להסיר את ${esc(n)}">×</button></span>`).join("");
 function myExample() { return { "רומא": "הקולוסיאום, טרסטוורה", "פריז": "מונמארטר, מוזיאון אורסיי", "ברצלונה": "קאסה בטלו, הבוקריה", "לונדון": "קובנט גרדן, מוזיאון הטבע", "פראג": "גשר קארל, טירת פראג" }[S.dest?.he] || "הכיכר המרכזית, השוק"; }
-let myIdx = null;
+let myIdx = null, myT = null, mySeq = 0;
+const myKey = n => Masa.intent.norm(n);
 function bindMine() {
   const f = S.form, inp = $("myIn"), sug = $("mySug");
   if (!inp) return;
   const city = Masa.cities.findCity(S.dest?.q || "");
+  const at = city ? { lat: city.lat, lng: city.lng } : hasXY(S.dest || {}) ? S.dest : null;
+  f.minePick = f.minePick || {};
   const redraw = () => { $("myList").innerHTML = myChips(); $("buildBtn").textContent = buildLabel(); bindChips(); };
-  const add = name => {
+  /* obj: a place picked from the map search, with its exact spot; a typed name is looked up when building */
+  const add = (name, obj) => {
     name = String(name || "").replace(/\s+/g, " ").trim().slice(0, 80);
     if (name.length < 2) return;
     f.mine = f.mine || [];
-    if (!f.mine.some(x => Masa.intent.norm(x) === Masa.intent.norm(name))) f.mine.push(name);
+    if (!f.mine.some(x => myKey(x) === myKey(name))) f.mine.push(name);
+    if (obj) f.minePick[myKey(name)] = obj;
     inp.value = ""; sug.innerHTML = ""; redraw(); inp.focus();
   };
-  const bindChips = () => document.querySelectorAll("[data-myrm]").forEach(b => b.onclick = () => { f.mine.splice(+b.dataset.myrm, 1); redraw(); });
+  const bindChips = () => document.querySelectorAll("[data-myrm]").forEach(b => b.onclick = () => { const [x] = f.mine.splice(+b.dataset.myrm, 1); delete f.minePick[myKey(x)]; redraw(); });
   bindChips();
-  // suggestions from the city's own places as they type (ready cities); any other name is looked up when building
   if (city && myIdx?.slug !== city.slug) planner.wishIndex(city.slug).then(items => { myIdx = { slug: city.slug, items: items || [] }; if (inp.isConnected && inp.value.trim().length >= 2) inp.oninput(); });
+  const draw = list => {
+    if (!sug.isConnected) return;
+    sug.innerHTML = list.map((it, i) => `<button type="button" role="option" data-mysug="${i}">${ic(it.obj ? (it.obj.cat === "food" ? "food" : it.obj.cat === "shopping" ? "shopping" : it.obj.cat === "night" ? "night" : "pin") : "pin", 2.2)}<span>${esc(it.he)}${it.sub ? `<small>${esc(it.sub)}</small>` : ""}</span></button>`).join("");
+    sug.querySelectorAll("[data-mysug]").forEach(b => b.onclick = () => { const it = list[+b.dataset.mysug]; add(it.he, it.obj); });
+  };
   inp.oninput = () => {
     if (!sug.isConnected) return;
-    const q = Masa.intent.norm(inp.value);
-    if (q.length < 2 || !myIdx || myIdx.slug !== city?.slug) { sug.innerHTML = ""; return; }
-    const seen = new Set(), out = [];
-    for (const it of myIdx.items) {
-      const hit = it.names.filter(Boolean).some(n => Masa.intent.norm(n).startsWith(q) || Masa.intent.norm(n).split(" ").some(w => w.startsWith(q) || (w.length > 3 && /^[א-ת]/.test(w) && w.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(q))));
+    const raw = inp.value.trim(), q = myKey(raw), seq = ++mySeq;
+    clearTimeout(myT);
+    if (q.length < 2) { sug.innerHTML = ""; return; }
+    // our list of the city's places, at once
+    const seen = new Set(), mine = [];
+    for (const it of (myIdx && myIdx.slug === city?.slug ? myIdx.items : [])) {
+      const hit = it.names.filter(Boolean).some(n => myKey(n).startsWith(q) || myKey(n).split(" ").some(w => w.startsWith(q) || (w.length > 3 && /^[א-ת]/.test(w) && w.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(q))));
       // "הפנתאון ברומא" is shown as "הפנתאון"
       const he = String(it.he || "").replace(/\s*\([^)]*\)\s*$/, "").replace(new RegExp(`\\s+ב${city.he}$`), "").trim();
       if (!hit || !he || seen.has(he)) continue;
-      seen.add(he); out.push({ ...it, he });
+      seen.add(he); mine.push({ ...it, he });
     }
-    out.sort((a, b) => (b.fame || 0) - (a.fame || 0));
-    sug.innerHTML = out.slice(0, 6).map(it => `<button type="button" role="option" data-mysug="${esc(it.he)}">${ic("pin", 2.2)}${esc(it.he)}</button>`).join("");
-    sug.querySelectorAll("[data-mysug]").forEach(b => b.onclick = () => add(b.dataset.mysug));
+    mine.sort((a, b) => (b.fame || 0) - (a.fame || 0));
+    const top = mine.slice(0, 4);
+    draw(top);
+    // and the whole map: restaurants, cafés, shops, anything (a moment after they stop typing)
+    if (raw.length < 3 || !at) return;
+    myT = setTimeout(async () => {
+      let r = [];
+      try { r = await svc.searchNear(raw, at.lat, at.lng); } catch {}
+      if (seq !== mySeq) return;
+      const more = r.filter(x => km(at, x) < 25 && !["highway", "railway", "office", "landuse"].includes(x.category) && !/hotel|hostel|apartment|guest_house|motel/.test(x.type))
+        .map(x => { const kind = planner.searchKind(x.category, x.type, x.local); const K = planner.KIND[kind];
+          return { he: x.name, sub: [K?.he, x.address].filter(Boolean).join(" · "), obj: { id: `${x.osmType}/${x.osmId}`, name: x.name, local: x.local, kind, cat: K?.cat || "sight", lat: x.lat, lng: x.lng, address: x.address } }; })
+        .filter(x => !top.some(t => myKey(t.he) === myKey(x.he))).slice(0, 6 - top.length);
+      draw([...top, ...more]);
+    }, 700);
   };
   inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); add(inp.value); } };
   $("myAdd").onclick = () => add(inp.value);
@@ -803,7 +826,10 @@ async function build() {
   const step = i => document.querySelectorAll("#lsteps div").forEach((d, k) => d.className = k < i ? "on" : k === i ? "now" : "");
   const onGeo = g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.3, reduced ? 0 : 5200); };
   try {
-    const P2 = S.form.mode === "mine" ? { mine: (S.form.mine || []).slice(0, 20) } : {};
+    // "I have places": a place picked from the map search goes in at its spot; a typed name is looked up by name
+    const mineAll = S.form.mode === "mine" ? (S.form.mine || []).slice(0, 20) : [];
+    const picksM = mineAll.map(n => S.form.minePick?.[myKey(n)]).filter(o => o && hasXY(o));
+    const P2 = mineAll.length ? { mine: mineAll.filter(n => !S.form.minePick?.[myKey(n)]), ...(picksM.length ? { picks: picksM.map(o => o.id), pickObjs: picksM.map(o => ({ ...o, q: 8, signals: [] })), onlyPicks: false } : {}) } : {};
     const trip = await planner.build({ query: S.dest.q, ...S.form, ...memoryOpts(), ...P2, onGeo }, step, buildCtl.signal);
     rememberForm(S.form);
     saveTrip(trip);

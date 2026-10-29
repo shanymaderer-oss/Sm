@@ -28,6 +28,13 @@ Masa.planner = (() => {
     zoo: { cat: "family", he: "גן חיות", min: 150 }, themepark: { cat: "family", he: "פארק שעשועים", min: 180 },
     hotel: { cat: "sleep", he: "מלון", min: 0 }, hostel: { cat: "sleep", he: "הוסטל", min: 0 }, guesthouse: { cat: "sleep", he: "בית הארחה", min: 0 }, apartment: { cat: "sleep", he: "דירה", min: 0 }
   };
+  /* the kind of a place found on the map search (its class and type) */
+  function searchKind(category, type, name) {
+    if (category === "place" || category === "boundary") return "sight";
+    const k = kindFromTags({ [category]: type, name: name || "" });
+    if (KIND[k] && KIND[k].cat !== "sleep") return k;
+    return type === "museum" ? "museum" : type === "viewpoint" ? "view" : /park|garden/.test(type || "") ? "park" : type === "beach" ? "beach" : category === "shop" ? "shop" : category === "amenity" ? "restaurant" : "attraction";
+  }
   function kindFromTags(t) {
     const a = t.amenity, tu = t.tourism, sh = t.shop;
     // a place tagged both as a hotel and as a food place is usually the food place, unless its name says hotel
@@ -1067,19 +1074,21 @@ Masa.planner = (() => {
     if (wishOut?.missed?.length) {
       // Nominatim allows one request a second: ask one at a time, and give up after 6 seconds in total
       const res = [], t0 = Date.now();
-      for (const [i, a] of wishOut.missed.slice(0, 3).entries()) {
-        if (Date.now() - t0 > 4500) break;
+      const many = (opts.mine || []).length ? 8 : 3, budgetMs = (opts.mine || []).length ? 9000 : 4500;
+      for (const [i, a] of wishOut.missed.slice(0, many).entries()) {
+        if (Date.now() - t0 > budgetMs) break;
         if (i) await new Promise(ok => setTimeout(ok, 1100));
-        const r = await Promise.race([svc.searchNear(a, geo.lat, geo.lng, signal).catch(() => []), new Promise(ok => setTimeout(() => ok([]), 6000 - (Date.now() - t0)))]);
+        const r = await Promise.race([svc.searchNear(a, geo.lat, geo.lng, signal).catch(() => []), new Promise(ok => setTimeout(() => ok([]), Math.max(1500, budgetMs + 1500 - (Date.now() - t0))))]);
         res.push({ a, r });
         if (signal?.aborted) break;
       }
       chk();
       for (const { a, r } of res) {
-        const x = (r || []).find(x => km(geo, x) < 20 && !["highway", "railway", "shop", "amenity", "office", "building"].includes(x.category) && !/hotel|hostel|apartment|guest_house/.test(x.type));
+        // any kind of place: a restaurant, a café, a bar, a shop, a bakery, a sight or a neighborhood (not a road or a hotel)
+        const x = (r || []).find(x => km(geo, x) < 20 && !["highway", "railway", "office", "landuse"].includes(x.category) && !/hotel|hostel|apartment|guest_house|motel/.test(x.type));
         if (!x) continue;
         const area = x.category === "place" || x.category === "boundary";
-        const kind = area ? "sight" : x.type === "museum" ? "museum" : x.type === "viewpoint" ? "view" : /park|garden/.test(x.type) ? "park" : x.type === "beach" ? "beach" : "attraction";
+        const kind = area ? "sight" : searchKind(x.category, x.type, x.name);
         const p = { id: `${x.osmType}/${x.osmId}`, src: "search", name: x.name, local: x.local, kind, cat: KIND[kind].cat, lat: x.lat, lng: x.lng, dist: km(geo, x), q: 30, userMust: true, area, signals: ["ביקשתם"] };
         pool.push(p); wishOut.places.push(p); wishOut.missed = wishOut.missed.filter(m => m !== a);
       }
@@ -1490,5 +1499,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { candidates, optimizeDay, prefetch, wishIndex, hotelIndex, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
+  return { candidates, optimizeDay, prefetch, wishIndex, hotelIndex, searchKind, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

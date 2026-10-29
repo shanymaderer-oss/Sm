@@ -42,6 +42,8 @@ jobs:
         run: python tools/qa/test_wish.py 0 2 4
       - name: My places, and changing the day
         run: python tools/qa/test_mine_edit.py
+      - name: My places can be anything (restaurant, café, shop)
+        run: python tools/qa/test_mine_any.py
       - name: Wishes by what was written (been there, the guide's reading)
         run: python tools/qa/test_wish_ai.py
       - name: Offline test
