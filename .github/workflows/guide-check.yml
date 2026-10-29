@@ -27,6 +27,9 @@ jobs:
                   t = time.time()
                   a = await pg.evaluate("Masa.ai.enabled() ? Masa.ai.chat('ענה בעברית, משפט אחד.', [{role:'user', content:'מה מומלץ לאכול ברומא?'}]).catch(e => 'ERR ' + e.code) : 'guide is off'")
                   print(f"::notice title=live site in {time.time()-t:.1f}s::{a[:300]}")
+                  t = time.time()
+                  u = await pg.evaluate("Masa.ai.understand('בפעם הקודמת עשינו את כל המבנים של גאודי וכבר היינו בבוקריה, הפעם חייבים את הקאמפ נואו', 'Barcelona').then(JSON.stringify).catch(e => 'ERR ' + e.code)")
+                  print(f"::notice title=reading the wishes in {time.time()-t:.1f}s::{u[:600]}")
                   await b.close()
           asyncio.run(main())
           PY
