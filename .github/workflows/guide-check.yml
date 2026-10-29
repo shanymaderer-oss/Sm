@@ -14,6 +14,13 @@ jobs:
               -d "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"$q\"}]}],\"generationConfig\":{\"maxOutputTokens\":400}}" | head -c 400 | tr '\n' ' ')
             echo "::notice title=answer in $(( $(date +%s) - S ))s::$A"
           done
+      - name: Fresh information (Tavily)
+        run: |
+          O='Origin: https://shanymaderer-oss.github.io'; U=https://masa-ai.sivanmad7.workers.dev
+          E=$(curl -s -m 60 -X POST $U/fresh -H "$O" -H 'Content-Type: application/json' -d '{"kind":"events","city":"Paris","month":"November 2026"}' | head -c 500 | tr '\n' ' ')
+          echo "::notice title=events in Paris::$E"
+          F=$(curl -s -m 90 -X POST $U/generate -H "$O" -H 'Content-Type: application/json' -d '{"contents":[{"role":"user","parts":[{"text":"האם הלובר פתוח ביום שלישי?"}]}],"systemInstruction":{"parts":[{"text":"ענה בעברית בשני משפטים."}]},"search":{"q":"האם הלובר פתוח ביום שלישי?","city":"Paris"}}' | head -c 700 | tr '\n' ' ')
+          echo "::notice title=a question about now::$F"
       - name: Ask from the live site in a real browser
         run: |
           pip install -q playwright==1.48.0 && python -m playwright install --with-deps chromium >/dev/null
