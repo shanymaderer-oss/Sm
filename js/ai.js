@@ -169,7 +169,9 @@ Never add a place they did not refer to. Answer JSON only: {"want":[{"name":"","
     };
     const j = parseJSON(await generate(body));
     const list = a => (Array.isArray(a) ? a : []).slice(0, 10).map(x => ({ name: String(x?.name || "").replace(/[<>"`]/g, "").slice(0, 80).trim(), he: String(x?.he || "").replace(/[<>"`]/g, "").slice(0, 80).trim() })).filter(x => x.name || x.he);
-    return { want: list(j?.want), skip: list(j?.skip) };
+    // a group they wrote ("המבנים של גאודי") comes back as the Hebrew of each building: keep the real names then
+    const fix = a => { const n = {}; a.forEach(x => { if (x.he) n[x.he] = (n[x.he] || 0) + 1; }); return a.map(x => n[x.he] > 1 ? { ...x, he: "" } : x).filter(x => x.name || x.he); };
+    return { want: fix(list(j?.want)), skip: fix(list(j?.skip)) };
   }
   const hasSearch = () => !!SHARED;
   return { enabled, shared, own, model, json, chat, events, translate, understand, hasSearch, lastSources: () => sources, saveKey, errText };
