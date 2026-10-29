@@ -54,7 +54,7 @@ async def run(p, phone, engine, device):
     names = " ".join(s["name"] + " " + (s.get("local") or "") for d in t["days"] for s in d["stops"])
     check(len(t["days"]) >= 1 and sum(len(d["stops"]) for d in t["days"]) >= 8, f"a trip is built ({len(t['days'])} days)", phone)
     check("Pantheon" in names or "פנתאון" in names, "my place is in the trip", phone)
-    check("Artemide" in (t.get("hotel") or {}).get("name", ""), "the trip starts from the hotel", phone)
+    check("Artemide" in (t.get("hotel") or {}).get("name", "") and all(d["stops"][0].get("meal") == "hotel" for d in t["days"]), f"the trip starts from the chosen hotel ({(t.get('hotel') or {}).get('name')})", phone)
     check(await pg.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), "the trip screen fits the width", phone)
     await shot("4-trip")
     # a place
@@ -62,7 +62,7 @@ async def run(p, phone, engine, device):
     body = await pg.inner_text(".screen")
     check(len(body) > 200, "a place opens with its story", phone)
     await shot("5-place")
-    await pg.go_back(); await pg.wait_for_timeout(800)
+    await pg.locator("#backPlan").tap(); await pg.wait_for_timeout(800)
     # the guide: a quick question and an open one (the real smart guide)
     await pg.tap("#nav button[data-k=guide]"); await pg.wait_for_selector("#askInput")
     n = await pg.locator(".msg.bot").count()

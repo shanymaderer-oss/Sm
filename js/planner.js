@@ -1067,7 +1067,11 @@ Masa.planner = (() => {
     const hp = opts.hotelPick;
     if (hotelName && hp && hp.name === hotelName && Number.isFinite(+hp.lat) && Number.isFinite(+hp.lng) && km(geo, { lat: +hp.lat, lng: +hp.lng }) < 40 && !wishOut?.hotel) {
       wishOut = wishOut || { places: [], missed: [], hotel: null };
-      const p = pool.find(x => x.cat === "sleep" && km(x, { lat: +hp.lat, lng: +hp.lng }) < 0.05);
+      // the same hotel in our list (for its stars and website): close by AND with the same name, never just the one next door
+      // ("Hotel Artemide" and "Hotel La Griffe" share only the word "hotel": compare what is left)
+      const core = n => normName(n).replace(/\b(hotel|hotels|hostel|albergo|hotel|residence|residenza|suites?|inn|apartments?|b b|bnb|the|le|la|il|de|di|del|des)\b/g, " ").replace(/\s+/g, " ").trim();
+      const want = core(hp.local || hp.name);
+      const p = want ? pool.find(x => x.cat === "sleep" && km(x, { lat: +hp.lat, lng: +hp.lng }) < 0.15 && core(x.local) && (core(x.local) === want || core(x.local).includes(want) || want.includes(core(x.local)))) : null;
       wishOut.hotel = p ? { id: p.id, name: p.name, local: p.local, kind: p.kind, lat: p.lat, lng: p.lng, stars: p.stars, priceClass: p.priceClass, website: p.website, phone: p.phone, address: p.address, signals: p.signals || [], q: p.q }
         : { id: String(hp.id || "pick").slice(0, 60), name: String(hp.name).slice(0, 120), local: String(hp.local || hp.name).slice(0, 120), kind: ["hotel", "hostel", "apartment", "guest_house", "motel"].includes(hp.kind) ? hp.kind : "hotel", lat: +hp.lat, lng: +hp.lng, address: String(hp.address || "").slice(0, 160), signals: [] };
     }

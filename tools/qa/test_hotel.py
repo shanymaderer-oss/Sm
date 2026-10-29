@@ -52,6 +52,16 @@ async def main():
             await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(400)
             tp = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
             check("Conciliazione" in (tp.get("hotel") or {}).get("name", ""), "the chosen hotel is the trip's hotel")
+        # a hotel from the map search, right next to another hotel: the chosen one, not its neighbor
+        HR = [{"osm_type": "node", "osm_id": 77, "category": "tourism", "type": "hotel", "lat": "41.9009", "lon": "12.4935", "name": "Hotel Artemide", "display_name": "Hotel Artemide, 22, Via Nazionale, Roma", "address": {"road": "Via Nazionale", "house_number": "22"}, "namedetails": {"name": "Hotel Artemide"}}]
+        await pg.route("**/nominatim.openstreetmap.org/search**", lambda rt: rt.fulfill(json=HR if "artemide" in rt.request.url.lower() else []))
+        await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(700)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+        await pg.fill("#hotelInput", "Hotel Artemide"); await pg.wait_for_timeout(1500)
+        await pg.locator("#hotelSug [data-h]", has_text="Artemide").first.click()
+        await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(400)
+        tp = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
+        check("Artemide" in (tp.get("hotel") or {}).get("name", ""), f"a hotel picked from the map is the trip's hotel, not the one next door ({(tp.get('hotel') or {}).get('name')})")
         base = await build("")
         t = await build("Hotel della Conciliazione")
         h = t.get("hotel")
