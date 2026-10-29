@@ -1,0 +1,42 @@
+name: Phones check
+# Run by hand (and weekly): the live site on an iPhone (Safari's engine) and an Android phone (Chrome), real network.
+# Results are notes on the run; screenshots go to the qa-report-mobile branch.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 3 * * 1"
+permissions: { contents: write }
+concurrency: { group: mobile, cancel-in-progress: true }
+jobs:
+  phones:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      QA_URL: https://shanymaderer-oss.github.io/Sm
+      QA_OUT: qa-out/
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Install the two browsers
+        run: |
+          pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: The phones
+        run: |
+          set +e
+          python tools/qa/test_mobile.py > out.txt 2>&1; code=$?
+          grep -E "^(FAIL|NOTE)" out.txt | while read -r l; do echo "::notice title=phones::$l"; done
+          echo "::notice title=phones::$(tail -1 out.txt | cut -c1-300)"
+          exit $code
+      - name: Save the screenshots to the qa-report-mobile branch
+        if: always()
+        run: |
+          mkdir -p /tmp/rep && cp -r out.txt qa-out /tmp/rep/ 2>/dev/null || true
+          git config user.name "masa-bot"; git config user.email "actions@users.noreply.github.com"
+          git switch --orphan report-tmp
+          git rm -rqf --cached . 2>/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r /tmp/rep/. .
+          git add -A && git commit -qm "phones $(date -u +%F-%H%M)" && git push -qf origin HEAD:refs/heads/qa-report-mobile
