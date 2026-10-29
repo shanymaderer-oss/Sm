@@ -23,6 +23,9 @@ NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",No
 FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),("רוצים לראות את ספאקה נאפולי",'baths',False),
        ("חם לנו, נעדיף מקומות סגורים כשיורד גשם",'indoor',True),("if it rains, indoors",'indoor',True),("אוהבים פארקים",'indoor',False),
        ("אוהבים כדורגל",'football',True),("רוצים לראות משחק בסטדיום",'football',True),("בלי כדורגל",'football',False),("soccer fans",'football',True)]
+# words that only look like a rule: (text, a piece of a label that must or must not show)
+LABELS=[("אוהבים שוקולד","שווקים",False),("שוקולד בלגי","קינוחים",True),("שוק פשפשים","שווקים",True),("שוקי איכרים","שווקים",True),
+        ("נוסעים באוטובוס","ברכב",False),("נוסעים באוטובוס","ציבורית",True),("שוכרים אוטו","ברכב",True)]
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"])
@@ -40,6 +43,10 @@ async def main():
     for txt,flag,want in FLAGS:
       got=await pg.evaluate("([t,f])=>!!Masa.intent.parse(t)[f]",[txt,flag])
       ok=got==want; print("FLAG","ok " if ok else "BAD",txt,flag,"->",got)
+      if not ok: FAILS.append(txt)
+    for txt,lab,want in LABELS:
+      got=await pg.evaluate("([t,l])=>Masa.intent.parse(t).labels.some(x=>x.includes(l))",[txt,lab])
+      ok=got==want; print("LABEL","ok " if ok else "BAD",txt,lab,"->",got)
       if not ok: FAILS.append(txt)
     await pg.close()
     pg=await b.new_page()
