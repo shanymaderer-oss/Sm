@@ -8,6 +8,7 @@ Masa.intent = (() => {
   /* light normalizing: no niqqud or punctuation marks, one spelling for doubled letters (ותיקן = וותיקן) */
   const norm = s => String(s || "").toLowerCase()
     .normalize("NFD").replace(/[̀-֑ͯ-ׇ]/g, "")
+    .replace(/\b(l|d|j|m|n|s|t|qu|dell|all|nell|sull)['’`](?=[a-z])/g, "$1 ") // "l'Entrecôte" is "l Entrecôte", "dell'Arte" is "dell Arte"
     .replace(/[׳'`"״”“‘’]/g, "").replace(/[-–—_/\\]+/g, " ")
     .replace(/וו/g, "ו").replace(/יי/g, "י")
     .replace(/[^a-z0-9א-תÀ-ɏͰ-ϿЀ-ӿ぀-ヿ一-鿿 ]+/g, " ")
@@ -297,5 +298,47 @@ Masa.intent = (() => {
     return kept;
   }
 
-  return { parse, findPlaces, norm, CUISINE_HE };
+  /* ---------- a name written in Hebrew letters against a name in Latin letters, by how it sounds ----------
+     "לה אנטריקוט" and "Le Relais de l'Entrecôte" both have the consonants l-n-t-r-k-t. Vowels are left out on both
+     sides (Hebrew does not write most of them), and letters that sound alike count as one (c/k/q, v/w/b, f/p, s/z/sh). */
+  const HEB = { "ב": "b", "ג": "g", "ד": "d", "ז": "s", "ט": "t", "כ": "k", "ך": "k", "ל": "l", "מ": "m", "ם": "m", "נ": "n", "ן": "n", "ס": "s", "פ": "p", "ף": "p", "צ": "s", "ץ": "s", "ק": "k", "ר": "r", "ש": "s", "ת": "t" };
+  function skel(str) {
+    let t = String(str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\u0591-\u05c7]/g, "");
+    if (/[א-ת]/.test(t)) t = t.replace(/וו/g, "b").replace(/[א-ת]/g, c => HEB[c] || "");
+    t = t.replace(/[^a-z]/g, "").replace(/ph/g, "p").replace(/sch|sh|ch/g, "s").replace(/th/g, "t").replace(/ck|qu/g, "k").replace(/gn/g, "n")
+      .replace(/[cq]/g, "k").replace(/x/g, "ks").replace(/[vw]/g, "b").replace(/f/g, "p").replace(/z/g, "s").replace(/j/g, "g").replace(/[aeiouyh]/g, "");
+    return t.replace(/(.)\1+/g, "$1");
+  }
+  /* the vowels written in Hebrew (י is i/e, ו is o/u) in the same order in the Latin name: 1, otherwise 0 */
+  function vowelsFit(he, latin) {
+    const hv = String(he).replace(/[^א-ת ]/g, "").split(" ").map(w => w.slice(1).replace(/וו/g, "").replace(/[^יו]/g, "").replace(/י/g, "I").replace(/ו/g, "O")).join("");
+    if (!hv) return 0;
+    const lv = String(latin).toLowerCase().normalize("NFD").replace(/[^a-z]/g, "").replace(/[^aeiouy]/g, "").replace(/[eiy]/g, "I").replace(/[ou]/g, "O").replace(/a/g, "A");
+    let i = 0;
+    for (const c of lv) if (c === hv[i]) i++;
+    return i >= hv.length ? 1 : 0;
+  }
+  /* does the Hebrew name sound like (part of) this Latin name? */
+  function soundsLike(he, latin) {
+    const q = skel(String(he).split(/\s+/).filter(w => !GENERIC.has(norm(w)) || /^(לה|לו|לס|דה|דל|אל)$/.test(w)).join(" "));
+    if (q.length < 4) return false;
+    const n = skel(latin);
+    if (n.includes(q)) return true;
+    if (q.length < 5) return false;
+    for (let i = 0; i + q.length - 1 <= n.length; i++) for (const L of [q.length - 1, q.length, q.length + 1]) if (lev1(q, n.slice(i, i + L))) return true;
+    return false;
+  }
+  /* a name they typed for a place that is not famous ("Entrecote", "לה אנטריקוט"): all the telling words they wrote are in the
+     place's name, or, written in Hebrew, it sounds like it. items: [{names, fame, ...}]; best first */
+  function looseFind(q, items) {
+    const words = norm(q).split(" ").filter(w => w.length >= 3 && !GENERIC.has(w));
+    const heb = /[א-ת]/.test(q);
+    if (!words.length && !heb) return [];
+    const all = n => { const ws = norm(n).split(" "); return words.length && words.every(w => ws.some(x => same(x, w) || (w.length >= 5 && x.startsWith(w)))); };
+    const out = items.filter(it => it.names.filter(Boolean).some(n => all(n) || (heb && !/[א-ת]/.test(n) && soundsLike(q, n))));
+    // two names can sound the same in Hebrew letters (Entrecôte, Entracte): the vowels י and ו that were written decide
+    const score = it => heb ? Math.max(0, ...it.names.filter(n => n && !/[א-ת]/.test(n)).map(n => vowelsFit(q, n))) : 0;
+    return out.map(it => [it, score(it)]).sort((a, b) => b[1] - a[1] || (b[0].fame || 0) - (a[0].fame || 0) || (b[0].q || 0) - (a[0].q || 0)).map(x => x[0]);
+  }
+  return { parse, findPlaces, looseFind, norm, CUISINE_HE, skel, soundsLike };
 })();

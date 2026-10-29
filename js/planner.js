@@ -871,6 +871,14 @@ Masa.planner = (() => {
     // phrases after "לראות", "לבקר ב" that matched nothing: said back to the traveler
     const missed = (w.asks || []).filter(a => !byAlias.some(p => p._alias.some(n => Masa.intent.norm(a).includes(Masa.intent.norm(n)))) && !Masa.intent.findPlaces(a, found.map(p => ({ names: [p.name, p.local, p.en, p._he, ...(p._alias || [])], fame: 30 })), cityNames).length
       && !Masa.intent.findPlaces(a, items.filter(i => !found.includes(i.p)).map(i => ({ ...i, fame: 0 })), cityNames).length);
+    // a name that is not famous (a restaurant, a shop): every word they wrote is in its name, or it sounds the same in Hebrew
+    for (const a of [...missed]) {
+      const o = Masa.intent.looseFind(a, items.filter(i => !found.includes(i.p)))[0];
+      if (!o) continue;
+      const p = o.p;
+      p.userMust = true; p.q += 25; if (!p.signals?.includes("ביקשתם")) p.signals = ["ביקשתם", ...(p.signals || [])];
+      found.push(p); missed.splice(missed.indexOf(a), 1);
+    }
     // the hotel they already booked
     let hotel = null, hotelMissed = null;
     if (w.hotelName) {
@@ -947,6 +955,20 @@ Masa.planner = (() => {
       const t = e.tags, c = e.center || e;
       return { id: `${e.type}/${e.id}`, name: t["name:he"] || t.name, local: t.name, kind: kindFromTags(t), lat: +c.lat, lng: +c.lon, address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" "), stars: +t.stars || null };
     }).filter(h => Number.isFinite(h.lat) && Number.isFinite(h.lng))).catch(() => []));
+  }
+  /* every named place of a ready city (restaurants and shops too), for the "I have places" suggestions */
+  const placeIdx = {};
+  function placeIndex(slug) {
+    if (!slug) return Promise.resolve([]);
+    return placeIdx[slug] || (placeIdx[slug] = readyCity(slug).then(d => {
+      const F = d.fame || {};
+      return (d.els || []).filter(e => e.tags?.name).map(e => {
+        const t = e.tags, c = e.center || e, kind = kindFromTags(t);
+        if (!KIND[kind] || KIND[kind].cat === "sleep") return null;
+        const he = t["name:he"] || (t.wikidata && F.he?.[t.wikidata]) || "";
+        return { id: `${e.type}/${e.id}`, names: [t.name, t["name:en"], he], he: he || t.name, name: he || t.name, local: t.name, kind, cat: KIND[kind].cat, lat: +c.lat, lng: +(c.lon ?? c.lng), fame: (t.wikidata && F.n?.[t.wikidata]) || 0, address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") };
+      }).filter(x => x && Number.isFinite(x.lat) && Number.isFinite(x.lng));
+    }).catch(() => []));
   }
   function wishIndex(slug) {
     if (!slug) return Promise.resolve(null);
@@ -1499,5 +1521,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { candidates, optimizeDay, prefetch, wishIndex, hotelIndex, searchKind, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
+  return { candidates, optimizeDay, prefetch, wishIndex, hotelIndex, placeIndex, searchKind, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

@@ -608,7 +608,7 @@ function bindHotel() {
 const buildLabel = () => S.form.mode === "mine" && S.form.mine?.length ? `בנו טיול סביב ${S.form.mine.length === 1 ? "המקום שלי" : "ה-" + S.form.mine.length + " מקומות שלי"}` : "בנו לי טיול";
 const myChips = () => (S.form.mine || []).map((n, i) => `<span class="mychip">${esc(n)}<button type="button" data-myrm="${i}" aria-label="להסיר את ${esc(n)}">×</button></span>`).join("");
 function myExample() { return { "רומא": "הקולוסיאום, טרסטוורה", "פריז": "מונמארטר, מוזיאון אורסיי", "ברצלונה": "קאסה בטלו, הבוקריה", "לונדון": "קובנט גרדן, מוזיאון הטבע", "פראג": "גשר קארל, טירת פראג" }[S.dest?.he] || "הכיכר המרכזית, השוק"; }
-let myIdx = null, myT = null, mySeq = 0;
+let myIdx = null, myAll = null, myT = null, mySeq = 0;
 const myKey = n => Masa.intent.norm(n);
 function bindMine() {
   const f = S.form, inp = $("myIn"), sug = $("mySug");
@@ -628,6 +628,7 @@ function bindMine() {
   };
   const bindChips = () => document.querySelectorAll("[data-myrm]").forEach(b => b.onclick = () => { const [x] = f.mine.splice(+b.dataset.myrm, 1); delete f.minePick[myKey(x)]; redraw(); });
   bindChips();
+  if (city && myAll?.slug !== city.slug) planner.placeIndex(city.slug).then(items => { myAll = { slug: city.slug, items: items || [] }; if (inp.isConnected && inp.value.trim().length >= 3) inp.oninput(); });
   if (city && myIdx?.slug !== city.slug) planner.wishIndex(city.slug).then(items => { myIdx = { slug: city.slug, items: items || [] }; if (inp.isConnected && inp.value.trim().length >= 2) inp.oninput(); });
   const draw = list => {
     if (!sug.isConnected) return;
@@ -639,14 +640,24 @@ function bindMine() {
     const raw = inp.value.trim(), q = myKey(raw), seq = ++mySeq;
     clearTimeout(myT);
     if (q.length < 2) { sug.innerHTML = ""; return; }
-    // our list of the city's places, at once
+    // our list of the city's places, at once: famous ones by their Hebrew names, and every restaurant, café and shop by
+    // its name (or how it sounds, when typed in Hebrew)
     const seen = new Set(), mine = [];
+    const clean = n => String(n || "").replace(/\s*\([^)]*\)\s*$/, "").replace(new RegExp(`\\s+ב${city?.he || "-"}$`), "").trim();
     for (const it of (myIdx && myIdx.slug === city?.slug ? myIdx.items : [])) {
       const hit = it.names.filter(Boolean).some(n => myKey(n).startsWith(q) || myKey(n).split(" ").some(w => w.startsWith(q) || (w.length > 3 && /^[א-ת]/.test(w) && w.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(q))));
-      // "הפנתאון ברומא" is shown as "הפנתאון"
-      const he = String(it.he || "").replace(/\s*\([^)]*\)\s*$/, "").replace(new RegExp(`\\s+ב${city.he}$`), "").trim();
+      const he = clean(it.he);
       if (!hit || !he || seen.has(he)) continue;
       seen.add(he); mine.push({ ...it, he });
+    }
+    if (myAll && myAll.slug === city?.slug && raw.length >= 3) {
+      for (const [i, it] of Masa.intent.looseFind(raw, myAll.items).slice(0, 6).entries()) {
+        const he = clean(it.he);
+        if (seen.has(he)) continue;
+        seen.add(he);
+        const K = planner.KIND[it.kind];
+        mine.push({ he, fame: it.fame + 6 - i, sub: [K?.he, it.address].filter(Boolean).join(" · "), obj: { id: it.id, name: it.name, local: it.local, kind: it.kind, cat: it.cat, lat: it.lat, lng: it.lng, address: it.address } });
+      }
     }
     mine.sort((a, b) => (b.fame || 0) - (a.fame || 0));
     const top = mine.slice(0, 4);

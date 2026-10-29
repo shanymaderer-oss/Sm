@@ -50,6 +50,19 @@ async def main():
         rest = next((s for s in stops if "Petit Cler" in s["name"]), None)
         check(bool(rest) and bool(rest.get("meal")), f"the restaurant is one of the day's meals ({rest and rest.get('meal')})")
         check(not t["wish"].get("missed"), f"nothing is said not found ({t['wish'].get('missed')})")
+        # a restaurant on our own list, by part of its name: in English, with an apostrophe, and in Hebrew letters
+        for typed, how in [("Le Entrecote", "typed in English"), ("לה אנטריקוט", "typed in Hebrew")]:
+            await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
+            await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+            await pg.click("[data-mode=mine]")
+            await pg.fill("#myIn", typed); await pg.wait_for_timeout(1200)
+            opts = await pg.locator("#mySug [data-mysug]").all_inner_texts()
+            check(any("Entrecôte" in o for o in opts), f"'{typed}' suggests Le Relais de l'Entrecôte ({opts[:3]})")
+            await pg.press("#myIn", "Enter")  # added as typed, not picked
+            await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=60000); await pg.wait_for_timeout(400)
+            t = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
+            names = " | ".join(s["name"] + " " + (s.get("local") or "") for d in t["days"] for s in d["stops"])
+            check("Entrecôte" in names, f"'{typed}' {how} is in the trip (missed: {t['wish'].get('missed')})")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS); sys.exit(1 if FAILS else 0)
