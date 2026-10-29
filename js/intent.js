@@ -80,6 +80,21 @@ Masa.intent = (() => {
   ];
   const CUISINE_HE = Object.fromEntries(CUISINES.map(([h, e]) => [e, h]));
 
+  /* "we have been to X", "we do not want X", "skip X": the places in that part of the text are left out of the trip,
+     and a kind of place there ("כבר היינו בהרבה מוזיאונים") counts as "less of it" */
+  const BEEN = /(?:^|\s)(?:ו?כבר\s+(?:\S+\s+)?(?:היינו|הייתי|ראינו|ראיתי|ביקרנו|ביקרתי|עשינו|עשיתי|הלכנו|טיילנו|עלינו|נכנסנו)|(?:היינו|הייתי|ראינו|ראיתי|ביקרנו|ביקרתי|עשינו)\s+כבר|(?:have|we've|i've|already)\s+(?:been|seen|visited|done|saw)|been\s+to)(?=\s|$)/i;
+  const SKIP = /(?:^|\s)(?:ו?לא\s+(?:רוצ\S*|צריכ\S*|צריך|מעוניינ\S*|מתעניינ\S*|אוהב\S*|בא\s+(?:לנו|לי))(?:\s+(?:לראות|לבקר|ללכת|להגיע|לעלות|להיכנס|לעשות))?|ו?בלי|ו?ללא|חוץ\s+מ|לדלג\s+על|לוותר\s+על|תוותר\S*\s+על|תוריד\S*|don'?t\s+want|no|skip|except|not)(?=\s|$)/i;
+  const FILL = new Set("בלי ללא לא את הרבה מספיק יותר פחות כל מדי שום דבר דברים מקומות מקום אתרים תורים עוד too many much more any".split(" "));
+  /* the names in "את X ואת Y": "כיכר ואצלב" and "מוזיאון ואן גוך" stay one name */
+  function splitNames(part) {
+    part = part.split(/\s+(?:כי|אבל|גם|ובערב|בערב|ביום|ואז|but|because)\s/)[0].trim().replace(/^(?:את|the)\s+/i, "");
+    const pieces = [];
+    for (const [i, x] of part.split(/\s+(?=ו(?:גם\s+)?(?:את\s+)?\S|and\s)/).entries()) {
+      if (i && pieces.length && (norm(pieces[pieces.length - 1]).split(" ").every(t => GENERIC.has(t)) || /^ו\S{1,3}$/.test(x.trim()))) pieces[pieces.length - 1] += " " + x;
+      else pieces.push(i ? x.replace(/^(?:ו(?:גם\s+)?(?:את\s+)?|and\s+)/, "") : x);
+    }
+    return pieces.map(ph => ph.trim().replace(/^(?:את|the)\s+/i, "").replace(/^[בלה](?=[א-ת]{3})/, m => m)).filter(ph => ph.length >= 2 && ph.split(/\s+/).length <= 4);
+  }
   /* split into short clauses, so "בלי מוזיאונים, אבל אוהבים אוכל" negates only the museums */
   const clauses = text => String(text || "").split(/[.,;!?\n]|\s(?:אבל|אך|but)\s/i).map(s => s.trim()).filter(Boolean);
   function hit(clause, re) {
@@ -93,14 +108,36 @@ Masa.intent = (() => {
     const w = { add: new Set(), drop: new Set(), avoid: new Set(), boost: {}, likeCuisine: [], dislikeCuisine: [], labels: [], text: String(text || ""), ruleWords: new Set() };
     const used = m => norm(m).split(" ").forEach(x => { if (x.length >= 3) { w.ruleWords.add(x); w.ruleWords.add(x.replace(/^[ובלמהשכ]{1,2}/, "")); } });
     const say = l => { if (l && !w.labels.includes(l)) w.labels.push(l); };
+    const want = [], skip = [];
+    w.skips = [];
+    for (const c of clauses(text)) {
+      const been = BEEN.exec(c), no = !been && SKIP.exec(c);
+      const t = been || no;
+      // a place named after the trigger is one to leave out ("לא רוצים את מגדל אייפל"); a clause with no place name in it
+      // ("בלי הרבה הליכה") changes nothing here
+      if (t) {
+        skip.push(c);
+        const after = c.slice(t.index + t[0].length).trim().replace(/^(?:(?:לראות|לבקר|ללכת|להגיע|לעלות|את|ב|ל|in|at|to|the)\s+)+/i, "");
+        // "היינו בסגרדה פמיליה ובפארק גואל": the ב of "in" is not part of the name
+        for (let n of splitNames(after)) { if (been) n = n.replace(/^ב(?=[א-ת]{3})/, ""); if (!w.skips.includes(n)) w.skips.push(n); }
+      } else want.push(c);
+    }
+    w.wantText = want.join(", "); w.skipText = skip.join(", ");
     for (const c of clauses(text)) {
       const cn = c.toLowerCase();
+      const beenHere = BEEN.test(c);
       for (const r of RULES) {
         let found = null;
         for (const re of r.re) { found = hit(cn, re); if (found) break; }
         if (!found) continue;
         used(found.m);
-        const eff = found.neg ? r.off : r.on;
+        // "כבר היינו בפארק גואל" is about one park, not about parks: only "כבר ראינו הרבה מוזיאונים" means less of a kind
+        if (beenHere) {
+          const mw = norm(found.m).split(" ").map(x => x.replace(/^[ובלמהשכ]{1,3}(?=[א-ת]{3})/, "")).filter(x => x.length >= 3);
+          const inName = w.skips.some(n => { const ws = norm(n).split(" "); return mw.some(m => ws.some(x => x.includes(m))) && ws.some(x => !FILL.has(x) && !GENERIC.has(x) && !mw.some(m => x.includes(m))); });
+          if (inName) continue;
+        }
+        const eff = found.neg || beenHere ? r.off : r.on;
         if (!eff) continue;
         (eff.add || []).forEach(x => { w.add.add(x); w.drop.delete(x); });
         (eff.drop || []).forEach(x => { w.drop.add(x); w.add.delete(x); });
@@ -140,7 +177,7 @@ Masa.intent = (() => {
     // a place they want, written after "לראות", "לבקר ב", "חייבים", "לא לפספס"
     w.asks = [];
     const ASK = /(?:רוצ\S* לראות|לראות את|חייבי\S*(?: לראות| לבקר ב| להגיע ל)?|לבקר ב|להגיע ל|לא לפספס(?: את)?|חובה(?: לראות)?|ללכת ל|לאכול ב|must see|want to see|visit)\s+([^,.;!?\n]{2,80})/gi;
-    for (const m of w.text.matchAll(ASK)) {
+    for (const m of w.wantText.matchAll(ASK)) {
       // "את מגדל אייפל ואת מונמארטר" is two places; stop at words that start a new thought
       // a leading "את" goes first, so a name that starts with ו ("את וילה בורגזה", "את וישהרד") is not read as "and ..."
       const part = m[1].split(/\s+(?:כי|אבל|גם|ובערב|בערב|ביום|ואז|but|because)\s/)[0].trim().replace(/^(?:את|the)\s+/i, "");
@@ -160,7 +197,13 @@ Masa.intent = (() => {
     const h = w.text.match(/(?:גרים ב|ישנים ב|המלון שלנו(?: הוא)?|מלון|hotel|staying at)\s*[-:]?\s*([^,.;!?\n]{3,40})/i);
     if (h && !/^(זול|טוב|קרוב|במרכז|ליד|בלי|מומלץ|cheap|near|in the)/i.test(h[1].trim())) w.hotelName = h[1].trim().replace(/^(?:מלון|hotel)\s+/i, "");
     w.add = [...w.add]; w.drop = [...w.drop]; w.avoid = [...w.avoid];
-    w.empty = !w.labels.length && !w.asks.length && !w.hotelName;
+    // a name in both lists ("לא את הלובר, כן את אורסיי") stays only where it was said last: here, simply out wins
+    w.asks = w.asks.filter(a => !w.skips.some(k => norm(k) === norm(a)));
+    // "בלי הרבה הליכה", "כבר ראינו הרבה מוזיאונים": not a place, the rules above already took care of it
+    const rw = [...w.ruleWords].filter(x => x.length >= 4);
+    w.skips = w.skips.filter(n => !norm(n).split(" ").every(x => FILL.has(x) || GENERIC.has(x) || w.ruleWords.has(x) || rw.some(r => x.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(r) || x.startsWith(r))));
+    if (w.skips.length) say(`לא נכניס למסלול: ${w.skips.join(", ")}`);
+    w.empty = !w.labels.length && !w.asks.length && !w.hotelName && !w.skips.length;
     return w;
   }
 

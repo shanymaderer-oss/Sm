@@ -1,5 +1,5 @@
-"""'I'll choose' and changing the day on the spot.
-Pick mode lists the city's places -> mark 3 and one 'close to it' -> the trip has all of them ->
+"""'I have places' and changing the day on the spot.
+Add places (a suggestion, typed names, a neighborhood) -> the trip is built around them with our recommendations ->
 edit the day: move a stop, remove one, replace one with a nearby alternative, move one to another day, re-order by distance."""
 import asyncio, os, sys
 from playwright.async_api import async_playwright
@@ -23,31 +23,33 @@ async def main():
         await pg.route("**/*", r)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
         await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
-        await pg.click("[data-mode=pick]")
-        check((await pg.inner_text("#buildBtn")).startswith("המשך"), "the button says it continues to choosing")
+        await pg.click("[data-mode=mine]")
+        check(await pg.locator("#myPlaces").is_visible() and "סביבם" in await pg.inner_text("#modeHint"), "'I have places' opens a places field and says what it does")
+        check(await pg.locator("[data-mode]").count() == 2, "two ways to build: 'build for me' and 'I have places'")
+        # a suggestion from the city's places, and two typed by hand (one in Hebrew, one a neighborhood)
+        await pg.fill("#myIn", "פנתא"); await pg.wait_for_timeout(700)
+        sug = await pg.locator("#mySug [data-mysug]").all_inner_texts()
+        check(any("פנתאון" in x for x in sug), f"typing suggests the city's places ({sug[:3]})")
+        await pg.click("#mySug [data-mysug] >> nth=0")
+        for name in ["מזרקת טרווי", "טרסטוורה"]:
+            await pg.fill("#myIn", name); await pg.press("#myIn", "Enter")
+        chips = await pg.locator(".mychip").all_inner_texts()
+        check(len(chips) == 3, f"each place shows as a chip ({chips})")
+        await pg.fill("#myIn", "מזרקת טרווי"); await pg.press("#myIn", "Enter")
+        check(await pg.locator(".mychip").count() == 3, "the same place is not added twice")
+        await pg.click(".mychip >> nth=2 >> button"); await pg.wait_for_timeout(100)
+        await pg.fill("#myIn", "טרסטוורה"); await pg.click("#myAdd")
+        check("3 מקומות שלי" in await pg.inner_text("#buildBtn"), "the button says the trip is built around my places")
         await pg.click("#buildBtn")
-        await pg.wait_for_selector(".pickgroup", timeout=20000)
-        groups = await pg.evaluate("[...document.querySelectorAll('.pickgroup summary')].map(s => s.innerText)")
-        check(len(groups) >= 5, f"places are grouped by kind ({len(groups)} groups)")
-        ids = []
-        for i in range(3):
-            row = pg.locator(".pickgroup[open] .pickrow").first
-            ids.append(await row.get_attribute("data-pick"))
-            await row.click(); await pg.wait_for_timeout(250)
-        check(await pg.evaluate("document.querySelectorAll('.picked > .pickrow[aria-pressed=true]').length") == 3, "three places are marked")
-        near = pg.locator(".nearpicks .pickrow").first
-        if await near.count():
-            ids.append(await near.get_attribute("data-pick"))
-            await near.click(); await pg.wait_for_timeout(250)
-            check(True, "a place 'close to it' can be added")
-        else:
-            check(False, "a place 'close to it' is offered")
-        await pg.screenshot(path=os.environ.get("QA_OUT", "/tmp/masa-qa/") + "pick.png")
-        await pg.click("#pickBuild")
-        await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(800)
-        in_trip = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0].days.flatMap(d => d.stops.map(s => s.osm))")
-        missing = [n for n in ids if n not in in_trip]
-        check(not missing, f"every chosen place is in the trip (missing: {missing})")
+        await pg.wait_for_selector(".triphero", timeout=40000); await pg.wait_for_timeout(800)
+        t = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
+        allnames = " | ".join(f"{s['name']} {s.get('local') or ''}" for d in t["days"] for s in d["stops"])
+        check("Pantheon" in allnames or "פנתאון" in allnames, "the suggested place is in the trip")
+        check("Trevi" in allnames or "טרווי" in allnames, "the typed place is in the trip")
+        check("Trastevere" in allnames or "טרסטוורה" in allnames or not t["wish"].get("missed"), f"the neighborhood is in the trip, or said not found ({t['wish'].get('missed')})")
+        own = sum(1 for d in t["days"] for s in d["stops"] if not s.get("meal") and not s.get("asked"))
+        check(own >= 4, f"our recommendations fill the rest of the days ({own} more places)")
+        check(t["opts"].get("mine") and len(t["opts"]["mine"]) == 3, "the trip keeps the places it was built around")
 
         # changing the day on the spot
         await pg.click("#editDay"); await pg.wait_for_timeout(300)

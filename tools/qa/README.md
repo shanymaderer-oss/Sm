@@ -13,7 +13,8 @@ python3 -m http.server 8790 &   # from the repo root
 | `test_sec.py` | Opens a malicious shared-trip link (HTML and `javascript:` in every field). Must print `PWN: 0 | bad hrefs: [] | on* attrs: 0`. |
 | `shots.py TAG [width height]` | Screenshots of home, wishes, loading, plan, place, discover, bookings and guide into `$QA_OUT` (default `/tmp/masa-qa/`). Run at 400×860 (phone) and 1360×860 (desktop). |
 | `test_now.py` | The "עכשיו בטיול" card: no card before the trip, next stop of today, done/skip, walking time from the traveler, end of day, and the saved trip opening on today. Must end with all checks True. |
-| `test_pick_edit.py` | "אני רוצה לבחור": places grouped by kind, marking places and "קרוב לזה", every pick in the trip; then changing the day: move, remove, replace with a nearby alternative, move to another day, order by distance. |
+| `test_mine_edit.py` | "יש לי מקומות": suggestions as you type, typed names and a neighborhood become chips, the trip is built around them with our recommendations; then changing the day: move, remove, replace with a nearby alternative, move to another day, order by distance. |
+| `test_wish_ai.py` | The wishes box by what was written: "כבר היינו ב..." and "לא רוצים את..." leave those places out (with their twins on the map), and the smart guide's reading (simulated) catches groups like "all of Gaudí". |
 | `test_ratings.py` | Restaurant ratings against a pretend Tripadvisor (local only): low-rated meals are replaced by 4.5+ restaurants from our own list, ratings show, nothing from Tripadvisor is stored. |
 | `test_rain.py` | A trip that starts in two days with a pretend rainy forecast: the day shows the forecast and offers to swap the stops outside for indoor places nearby; a dry forecast shows nothing. Must end with `FAILS: []`. |
 | `test_offline.py` | Builds a trip, goes offline, reloads and opens the saved trip from the service worker cache. Must end with `errors: []`. |

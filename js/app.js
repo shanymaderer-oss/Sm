@@ -203,18 +203,6 @@ function renderMap() {
   markers = [];
   const C = n => css(n);
   const inTrip = S.trip && TRIP_SCREENS.includes(S.screen);
-  if (S.screen === "pick" && S.pick?.status === "ready") {
-    setRoute([]);
-    const shown = S.pick.groups.flatMap(g => g.items.slice(0, 6)).concat([...S.pick.sel].map(pickById).filter(Boolean));
-    [...new Map(shown.map(p => [p.id, p])).values()].filter(hasXY).forEach(p => {
-      const on = S.pick.sel.has(p.id) && (!S.pick.self || S.pick.day[p.id] === S.pick.active || !(S.pick.day[p.id] >= 0));
-      if (S.pick.sel.has(p.id) && !on) return addMarker(p, dotNode(C("--ink"), "", "pickdot"), { z: 3, anchor: "center" }, () => { S.pick.active = S.pick.day[p.id]; rerenderKeepScroll(); renderMap(); });
-      addMarker(p, on ? node("mk gpin on", `<span class="mk-label">${esc(p.name)}</span><span class="gpinbody" style="--c:${C("--coral")}">${ic("check", 2.4)}</span>`) : dotNode(C("--muted"), "", "pickdot"), { z: on ? 5 : 2, ...(on ? {} : { anchor: "center" }) },
-        () => { if (on) { S.pick.sel.delete(p.id); delete S.pick.day[p.id]; } else { S.pick.sel.add(p.id); if (S.pick.self) S.pick.day[p.id] = S.pick.active; } rerenderKeepScroll(); renderMap(); });
-    });
-    syncLabels();
-    return;
-  }
   if (!inTrip) {
     setRoute([]);
     DESTS.forEach(d => addMarker(d, dotNode(C("--coral"), d.he, "destmk" + (S.dest?.q === d.q ? " sel" : "")), { offset: [0, 7] }, () => pickDest(d)));
@@ -471,19 +459,25 @@ SCREENS.home = {
   }
 };
 
-const MODE_HINT = { auto: "אתם מסמנים מה אתם אוהבים, ואנחנו בונים את כל המסלול.", pick: "רואים את המקומות הכי טובים בעיר, מסמנים מה רוצים, ואנחנו מסדרים בימים.", self: "אתם מחליטים מה בכל יום, ואנחנו ממליצים מה קרוב ואיפה לאכול." };
+const MODE_HINT = { auto: "אתם מסמנים מה אתם אוהבים, ואנחנו בונים את כל המסלול.", mine: "כתבו מקומות שאתם מכירים או רוצים, ונבנה את הטיול סביבם, עם ההמלצות שלנו מסביב." };
 SCREENS.goals = {
   view() {
     const f = S.form;
+    if (f.mode && !MODE_HINT[f.mode]) f.mode = "auto"; // the old "pick" and "self" modes are now "I have places"
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 2 מתוך 3</span><span style="width:38px"></span></div>
     <div><h1>מה בא לכם לעשות ב${esc(S.dest?.he || "יעד")}?</h1></div>
     <div class="modechoice" role="radiogroup" aria-label="איך לבנות את המסלול">
       <button type="button" role="radio" data-mode="auto" aria-checked="${(f.mode || "auto") === "auto"}"><b>תבנו לי</b></button>
-      <button type="button" role="radio" data-mode="pick" aria-checked="${f.mode === "pick"}"><b>אני בוחר מקומות</b></button>
-      <button type="button" role="radio" data-mode="self" aria-checked="${f.mode === "self"}"><b>אני בונה לבד</b></button>
+      <button type="button" role="radio" data-mode="mine" aria-checked="${f.mode === "mine"}"><b>יש לי מקומות</b></button>
     </div>
-    <p class="modehint" id="modeHint">${MODE_HINT[f.mode || "auto"]}</p>
+    <p class="modehint" id="modeHint">${MODE_HINT[f.mode] || MODE_HINT.auto}</p>
+    <div class="myplaces" id="myPlaces" ${f.mode === "mine" ? "" : "hidden"}>
+      <label class="section-label" for="myIn">המקומות שלכם <small class="muted">אטרקציה, מסעדה, שכונה או רחוב</small></label>
+      <div class="mylist" id="myList">${myChips()}</div>
+      <span class="search myfield">${ic("search")}<input id="myIn" type="text" placeholder="למשל: ${esc(myExample())}" autocomplete="off" aria-label="הוספת מקום" aria-controls="mySug" aria-autocomplete="list"><button type="button" class="chip" id="myAdd">הוספה</button></span>
+      <div class="sugs" id="mySug" role="listbox"></div>
+    </div>
     <div class="section-label">כמה ימים</div>
     <div class="stepper"><button type="button" class="iconbtn" id="dminus" aria-label="פחות ימים" style="background:var(--surface)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><output id="dval">${f.days === 1 ? "יום אחד" : f.days + " ימים"}</output><button type="button" class="iconbtn" id="dplus" aria-label="יותר ימים" style="background:var(--surface)">${ic("plus", 2.4)}</button></div>
     <div class="twocol">
@@ -491,7 +485,9 @@ SCREENS.goals = {
       <label class="field"><span class="section-label">מטיילים</span><span class="stepper small"><button type="button" class="iconbtn" id="pminus" aria-label="פחות מטיילים" style="background:var(--surface)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><output id="pval">${f.people}</output><button type="button" class="iconbtn" id="pplus" aria-label="יותר מטיילים" style="background:var(--surface)">${ic("plus", 2.4)}</button></span></label>
     </div>
     <label class="field"><span class="section-label">איפה ישנים? <small class="muted">לא חובה. המסלול יתחיל ויסתיים קרוב למלון</small></span>
-      <span class="search hotelfield">${ic("bed")}<input id="hotelInput" type="text" value="${esc(f.hotelName || "")}" placeholder="שם המלון או הכתובת" autocomplete="off" aria-label="שם המלון או הכתובת"></span></label>
+      <span class="search hotelfield">${ic("bed")}<input id="hotelInput" type="text" value="${esc(f.hotelName || "")}" placeholder="שם המלון או הכתובת" autocomplete="off" aria-label="שם המלון או הכתובת" aria-controls="hotelSug" aria-autocomplete="list"></span></label>
+    <div class="sugs" id="hotelSug" role="listbox"></div>
+    <p class="hotelok" id="hotelOk" aria-live="polite">${hotelOkText()}</p>
     <div class="section-label">מה הכי חשוב לכם? <small class="muted">נבנה תמהיל, והדברים שבחרתם יקבלו את רוב הזמן</small></div>
     <div class="tiles">${INTERESTS.map(k => `<button type="button" class="tile" data-k="${k}" aria-pressed="${f.interests.includes(k)}"><span class="ic" style="background:${cv(CATS[k].c)}">${ic(k)}</span>${CATS[k].he}</button>`).join("")}</div>
     <div class="wishbox">
@@ -512,12 +508,12 @@ SCREENS.goals = {
     <div class="section-label">קצב</div>
     <div class="seg" id="pace">${["רגוע", "מאוזן", "אינטנסיבי"].map(v => `<button type="button" aria-pressed="${f.pace === v}">${v}</button>`).join("")}</div>
     </details>
-    <button class="btn coral block" id="buildBtn" type="button">${f.mode === "pick" || f.mode === "self" ? "המשך לבחירת מקומות" : "בנו לי טיול"}</button>
+    <button class="btn coral block" id="buildBtn" type="button">${buildLabel()}</button>
     <div class="status" id="buildStatus"></div>
   </div>`;
   },
   bind() {
-    $("hotelInput") && ($("hotelInput").oninput = e => { S.form.hotelName = e.target.value.slice(0, 120); });
+    bindHotel();
     const f = S.form;
     $("backHome").onclick = () => go("home");
     const touched = f.touched = f.touched || new Set();
@@ -541,16 +537,113 @@ SCREENS.goals = {
     const setP = v => { f.people = Math.min(8, Math.max(1, v)); $("pval").textContent = f.people; };
     $("pminus").onclick = () => { touched.add("people"); setP(f.people - 1); };
     $("pplus").onclick = () => { touched.add("people"); setP(f.people + 1); };
-    $("buildBtn").onclick = () => f.mode === "pick" || f.mode === "self" ? startPick() : build();
+    $("buildBtn").onclick = () => build();
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
       f.mode = b.dataset.mode;
       document.querySelectorAll("[data-mode]").forEach(x => x.setAttribute("aria-checked", x === b));
       $("modeHint") && ($("modeHint").textContent = MODE_HINT[f.mode] || "");
-      $("buildBtn").textContent = f.mode === "pick" || f.mode === "self" ? "המשך לבחירת מקומות" : "בנו לי טיול";
+      $("myPlaces").hidden = f.mode !== "mine";
+      $("buildBtn").textContent = buildLabel();
+      if (f.mode === "mine") $("myIn").focus();
     });
+    bindMine();
   }
 };
 
+/* ================= where they sleep: a search like the one at the top, with a clear "found it" ================= */
+function hotelOkText() {
+  const f = S.form, h = f.hotelPick;
+  if (h && h.name === f.hotelName) return `<span class="ok">${ic("check", 2.6)}מצאנו: <b>${esc(h.name)}</b>${h.address ? ` · ${esc(h.address)}` : ""}. המסלול יתחיל ויסתיים כאן.</span>`;
+  if (f.hotelState === "searching") return `<span class="muted">מחפשים…</span>`;
+  if (f.hotelState === "none") return `<span class="muted">לא מצאנו בשם הזה. אפשר לכתוב את הכתובת, או להשאיר כך ונחפש שוב כשנבנה את המסלול.</span>`;
+  if ((f.hotelName || "").trim().length >= 3 && f.hotelState === "list") return `<span class="muted">בחרו מהרשימה כדי שנדע בדיוק איפה זה.</span>`;
+  return "";
+}
+let hotelT = null, hotelSeq = 0;
+function bindHotel() {
+  const f = S.form, inp = $("hotelInput"), sug = $("hotelSug");
+  if (!inp) return;
+  const city = Masa.cities.findCity(S.dest?.q || "");
+  const at = city ? { lat: city.lat, lng: city.lng } : hasXY(S.dest || {}) ? S.dest : null;
+  const show = () => { const el = $("hotelOk"); if (el) el.innerHTML = hotelOkText(); };
+  const choose = h => { f.hotelPick = h; f.hotelName = h.name; inp.value = h.name; sug.innerHTML = ""; f.hotelState = ""; show(); };
+  const row = (h, i) => `<button type="button" role="option" data-h="${i}">${ic(h.kind === "apartment" ? "pin" : "bed", 2.2)}<span>${esc(h.name)}${h.address ? `<small>${esc(h.address)}</small>` : ""}</span></button>`;
+  const draw = list => {
+    if (!sug.isConnected) return;
+    sug.innerHTML = list.map(row).join("");
+    sug.querySelectorAll("[data-h]").forEach(b => b.onclick = () => choose(list[+b.dataset.h]));
+  };
+  inp.oninput = () => {
+    f.hotelName = inp.value.slice(0, 120);
+    if (f.hotelPick && f.hotelPick.name !== f.hotelName) f.hotelPick = null;
+    const q = f.hotelName.trim(), seq = ++hotelSeq;
+    clearTimeout(hotelT);
+    if (q.length < 2) { sug.innerHTML = ""; f.hotelState = ""; return show(); }
+    // the city's own hotels at once
+    const N = Masa.intent.norm, nq = N(q);
+    const local = city ? planner.hotelIndex(city.slug) : Promise.resolve([]);
+    local.then(hs => {
+      if (seq !== hotelSeq) return;
+      const mine = hs.filter(h => [h.name, h.local].some(n => N(n).includes(nq) || N(n).split(" ").some(w => w.startsWith(nq)))).slice(0, 5);
+      if (mine.length) { f.hotelState = "list"; draw(mine); show(); }
+      // and the whole map, a moment after they stop typing (the map's search asks for one request a second)
+      if (q.length < 3 || !at) return;
+      hotelT = setTimeout(async () => {
+        if (!mine.length) { f.hotelState = "searching"; show(); }
+        let r = [];
+        try { r = await svc.searchNear(q, at.lat, at.lng); } catch {}
+        if (seq !== hotelSeq) return;
+        const stay = x => x.category === "tourism" && /hotel|hostel|guest_house|apartment|motel/.test(x.type);
+        const more = r.filter(x => km(at, x) < 25).sort((a, b) => stay(b) - stay(a)).map(x => ({ id: `${x.osmType}/${x.osmId}`, name: stay(x) ? x.name : q, local: x.local, kind: stay(x) ? (x.type === "hostel" ? "hostel" : "hotel") : "apartment", lat: x.lat, lng: x.lng, address: x.address }))
+          .filter(x => !mine.some(m => km(m, x) < 0.05)).slice(0, 6 - Math.min(3, mine.length));
+        const all = [...mine.slice(0, 3), ...more];
+        f.hotelState = all.length ? "list" : "none";
+        draw(all); show();
+      }, 700);
+    });
+  };
+  inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); sug.querySelector("[data-h]")?.click(); } };
+}
+/* ================= "I have places": the places the traveler knows or wants; the trip is built around them ================= */
+const buildLabel = () => S.form.mode === "mine" && S.form.mine?.length ? `בנו טיול סביב ${S.form.mine.length === 1 ? "המקום שלי" : "ה-" + S.form.mine.length + " מקומות שלי"}` : "בנו לי טיול";
+const myChips = () => (S.form.mine || []).map((n, i) => `<span class="mychip">${esc(n)}<button type="button" data-myrm="${i}" aria-label="להסיר את ${esc(n)}">×</button></span>`).join("");
+function myExample() { return { "רומא": "הקולוסיאום, טרסטוורה", "פריז": "מונמארטר, מוזיאון אורסיי", "ברצלונה": "קאסה בטלו, הבוקריה", "לונדון": "קובנט גרדן, מוזיאון הטבע", "פראג": "גשר קארל, טירת פראג" }[S.dest?.he] || "הכיכר המרכזית, השוק"; }
+let myIdx = null;
+function bindMine() {
+  const f = S.form, inp = $("myIn"), sug = $("mySug");
+  if (!inp) return;
+  const city = Masa.cities.findCity(S.dest?.q || "");
+  const redraw = () => { $("myList").innerHTML = myChips(); $("buildBtn").textContent = buildLabel(); bindChips(); };
+  const add = name => {
+    name = String(name || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    if (name.length < 2) return;
+    f.mine = f.mine || [];
+    if (!f.mine.some(x => Masa.intent.norm(x) === Masa.intent.norm(name))) f.mine.push(name);
+    inp.value = ""; sug.innerHTML = ""; redraw(); inp.focus();
+  };
+  const bindChips = () => document.querySelectorAll("[data-myrm]").forEach(b => b.onclick = () => { f.mine.splice(+b.dataset.myrm, 1); redraw(); });
+  bindChips();
+  // suggestions from the city's own places as they type (ready cities); any other name is looked up when building
+  if (city && myIdx?.slug !== city.slug) planner.wishIndex(city.slug).then(items => { myIdx = { slug: city.slug, items: items || [] }; if (inp.isConnected && inp.value.trim().length >= 2) inp.oninput(); });
+  inp.oninput = () => {
+    if (!sug.isConnected) return;
+    const q = Masa.intent.norm(inp.value);
+    if (q.length < 2 || !myIdx || myIdx.slug !== city?.slug) { sug.innerHTML = ""; return; }
+    const seen = new Set(), out = [];
+    for (const it of myIdx.items) {
+      const hit = it.names.filter(Boolean).some(n => Masa.intent.norm(n).startsWith(q) || Masa.intent.norm(n).split(" ").some(w => w.startsWith(q) || (w.length > 3 && /^[א-ת]/.test(w) && w.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(q))));
+      // "הפנתאון ברומא" is shown as "הפנתאון"
+      const he = String(it.he || "").replace(/\s*\([^)]*\)\s*$/, "").replace(new RegExp(`\\s+ב${city.he}$`), "").trim();
+      if (!hit || !he || seen.has(he)) continue;
+      seen.add(he); out.push({ ...it, he });
+    }
+    out.sort((a, b) => (b.fame || 0) - (a.fame || 0));
+    sug.innerHTML = out.slice(0, 6).map(it => `<button type="button" role="option" data-mysug="${esc(it.he)}">${ic("pin", 2.2)}${esc(it.he)}</button>`).join("");
+    sug.querySelectorAll("[data-mysug]").forEach(b => b.onclick = () => add(b.dataset.mysug));
+  };
+  inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); add(inp.value); } };
+  $("myAdd").onclick = () => add(inp.value);
+}
 /* what the traveler wrote fills in the choices below it (unless they set that choice by hand), and is said back to them */
 const WISH_HINTS = ["עם ילדים", "קצב רגוע", "שקיעה יפה", "אוכל מקומי", "בלי מוזיאונים", "שומרים כשרות", "חייבים לראות את…"];
 const WISH_KEYS = ["days", "people", "budget", "pace", "diet", "mobility", "move"];
@@ -582,17 +675,46 @@ function syncWish() {
   document.querySelectorAll(".tile").forEach(t => t.classList.toggle("fromtext", auto.has("i:" + t.dataset.k)));
   ["budget", "pace", "diet", "mobility"].forEach(id => $(id).classList.toggle("fromtext", auto.has(id)));
   $("moveForm").classList.toggle("fromtext", auto.has("move"));
-  const lines = w.labels.map(l => `<li>${ic("check", 2.6)}<span>${esc(l)}</span></li>`);
+  askGuideAboutWish();
+  const lines = w.labels.map(l => `<li${l.startsWith("לא נכניס") ? ' class="skip"' : ""}>${ic(l.startsWith("לא נכניס") ? "minus" : "check", 2.6)}<span>${esc(l)}</span></li>`);
   out.innerHTML = lines.length || w.asks.length ? `<ul>${lines.join("")}</ul><div id="wishPlaces"></div>` : (f.notes || "").trim().length > 6 ? `<p class="muted">לא זיהינו בקשה מסוימת. נסו לכתוב מה אתם אוהבים, עם מי אתם נוסעים או מקום שחייבים לראות.</p>` : "";
   // named places: for ready cities we can already say which ones we found
+  showWishAi();
   const city = Masa.cities.findCity(S.dest?.q || "");
   const text = f.notes || "";
   if (!city || text.trim().length < 3) { showAsks(w.asks, []); return; }
   planner.wishIndex(city.slug).then(items => {
     if (!items || S.form.notes !== text || !$("wishOut")) return;
-    const found = Masa.intent.findPlaces(text, items, [city.he, city.local, city.en], { skip: w.ruleWords }).map(o => o.it.he);
+    const found = Masa.intent.findPlaces(w.wantText, items, [city.he, city.local, city.en], { skip: w.ruleWords }).map(o => o.it.he);
     showAsks(w.asks, [...new Set(found)]);
   });
+}
+/* the smart guide reads the same words, a moment after the traveler stops typing, for places the rules above cannot
+   catch ("עשינו את כל המבנים של גאודי"). What it understood is shown under the box and goes into the build. */
+let wishAiT = null;
+const wishAiWanted = () => ai.enabled() && (S.form.notes || "").trim().length >= 12;
+function askGuideAboutWish() {
+  clearTimeout(wishAiT);
+  if (!wishAiWanted() || S.form.aiWish?.text === S.form.notes) return showWishAi();
+  wishAiT = setTimeout(() => guideWish().then(showWishAi, () => {}), 1200);
+}
+async function guideWish() {
+  const text = S.form.notes, city = S.dest?.en || S.dest?.q || S.dest?.he || "";
+  if (S.form.aiWish?.text === text) return S.form.aiWish;
+  const r = await ai.understand(text, city);
+  if (S.form.notes === text) S.form.aiWish = { text, ...r };
+  return r;
+}
+function showWishAi() {
+  const out = $("wishOut"), a = S.form.aiWish;
+  if (!out) return;
+  let el = $("wishAi");
+  if (!a || a.text !== S.form.notes || (!a.want.length && !a.skip.length)) { el?.remove(); return; }
+  if (!el) { out.insertAdjacentHTML("beforeend", `<div id="wishAi" class="wishai"></div>`); el = $("wishAi"); }
+  const nm = x => esc(x.he || x.name);
+  el.innerHTML = `<small>${ic("sparkle", 2.2)} המדריך החכם הבין:</small>` +
+    (a.want.length ? `<p><b>נכניס:</b> ${a.want.map(nm).join(", ")}</p>` : "") +
+    (a.skip.length ? `<p><b>לא נכניס:</b> ${a.skip.map(nm).join(", ")}</p>` : "");
 }
 function showAsks(asks, found) {
   const el = $("wishPlaces");
@@ -672,14 +794,16 @@ async function translateStop(s) {
 function openFeedback() { S.prev = S.screen === "settings" ? S.prev : S.screen; S.openFeedback = true; go("settings"); }
 
 async function build() {
+  if (wishAiWanted() && S.form.aiWish?.text !== S.form.notes) {
+    clearTimeout(wishAiT);
+    await Promise.race([guideWish().catch(() => null), new Promise(r => setTimeout(r, 6000))]);
+  }
   go("loading");
   buildCtl = new AbortController();
   const step = i => document.querySelectorAll("#lsteps div").forEach((d, k) => d.className = k < i ? "on" : k === i ? "now" : "");
   const onGeo = g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.3, reduced ? 0 : 5200); };
   try {
-    const self = S.form.mode === "self";
-    const P2 = (S.form.mode === "pick" || self) && S.pick?.sel?.size ? { picks: [...S.pick.sel], pickObjs: S.pick.all.filter(x => S.pick.sel.has(x.id)), onlyPicks: !S.pick.fill,
-      ...(self ? { pickDays: Object.fromEntries([...S.pick.sel].map(id => [id, S.pick.day[id] ?? -1]).filter(([, d]) => d >= 0 && d < S.form.days)) } : {}) } : {};
+    const P2 = S.form.mode === "mine" ? { mine: (S.form.mine || []).slice(0, 20) } : {};
     const trip = await planner.build({ query: S.dest.q, ...S.form, ...memoryOpts(), ...P2, onGeo }, step, buildCtl.signal);
     rememberForm(S.form);
     saveTrip(trip);
@@ -692,95 +816,6 @@ async function build() {
     if (e?.code !== "cancelled") $("buildStatus").textContent = buildErr(e?.code);
   }
 }
-
-/* ================= "I'll choose": the city's best places, the traveler marks what they want ================= */
-async function startPick() {
-  const q = S.dest.q;
-  if (S.pick?.q !== q) S.pick = { q, status: "loading", groups: [], all: [], sel: new Set(), fill: true, day: {}, active: 0 };
-  // building alone: the days hold only what the traveler put in them (meals still come in), unless they ask us to fill
-  const self = S.form.mode === "self";
-  if (S.pick.self !== self) { S.pick.self = self; S.pick.fill = !self; }
-  S.pick.active = Math.min(S.pick.active, S.form.days - 1);
-  go("pick");
-  if (S.pick.status === "ready") return;
-  try {
-    const r = await planner.candidates({ query: q, ...S.form, onGeo: g => { S.dest.lat = g.lat; S.dest.lng = g.lng; flyCenter(g, 12.6, reduced ? 0 : 3200); } }, null);
-    if (S.pick?.q !== q) return;
-    // what was named in the wishes box is already marked
-    const w = Masa.intent.parse(S.form.notes || "");
-    const all = r.groups.flatMap(g => g.items);
-    if (!w.empty) Masa.intent.findPlaces(S.form.notes || "", all.map(it => ({ it, names: [it.name, it.local, it._he], fame: it.fame })), [S.dest.he], { skip: w.ruleWords }).forEach(o => S.pick.sel.add(o.it.id));
-    // the groups the traveler said they like come first
-    const order = { must: 0, art: S.form.interests.includes("art") ? 1 : 5, view: S.form.interests.includes("view") ? 1 : 5, history: S.form.interests.includes("history") ? 1 : 5, nature: S.form.interests.includes("nature") ? 1 : 5,
-      taste: S.form.interests.includes("food") ? 2 : 6, food: S.form.interests.includes("food") ? 2 : 6, shop: S.form.interests.includes("shopping") ? 2 : 6, night: S.form.interests.includes("night") ? 2 : 7 };
-    Object.assign(S.pick, { status: "ready", groups: r.groups.sort((a, b) => (order[a.key] ?? 5) - (order[b.key] ?? 5)), all });
-  } catch (e) {
-    if (S.pick?.q === q) { S.pick.status = "error"; S.pick.err = buildErr(e?.code); }
-  }
-  if (S.screen === "pick") { rerenderKeepScroll(); renderMap(); }
-}
-const pickById = id => S.pick?.all.find(x => x.id === id);
-/* unmarked places close to the ones marked: "while you are there" */
-function nearPicks(p) {
-  return S.pick.all.filter(x => !S.pick.sel.has(x.id) && x.id !== p.id && km(x, p) < 0.6).sort((a, b) => (b.q - km(b, p) * 4) - (a.q - km(a, p) * 4)).slice(0, 3);
-}
-function pickRow(p, small) {
-  const on = S.pick.sel.has(p.id);
-  return `<button type="button" class="pickrow${small ? " small" : ""}" data-pick="${esc(p.id)}" aria-pressed="${on}"><span class="ic">${ic(on ? "check" : "plus", 2.4)}</span><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")}${p.signals?.[0] ? `, ${esc(p.signals[0])}` : ""}</small></span></button>`;
-}
-/* "I'll build it myself": a tab per day; what is marked goes into the open day, with our suggestions for that day */
-const dayItems = d => [...S.pick.sel].filter(id => S.pick.day[id] === d).map(pickById).filter(Boolean);
-function daySuggest(d) {
-  const items = dayItems(d), recs = S.pick.all.filter(x => !S.pick.sel.has(x.id));
-  const c = items.length ? { lat: items.reduce((a, p) => a + p.lat, 0) / items.length, lng: items.reduce((a, p) => a + p.lng, 0) / items.length } : null;
-  const score = (x, w) => x.q - (c ? km(x, c) * w : 0);
-  const eat = recs.filter(x => x.kind === "restaurant" && (!c || km(x, c) < 1.6)).sort((a, b) => score(b, 5) - score(a, 5)).slice(0, 3);
-  const near = c ? recs.filter(x => x.kind !== "restaurant" && km(x, c) < 0.8).sort((a, b) => score(b, 6) - score(a, 6)).slice(0, 4) : [];
-  return { eat, near };
-}
-function selfView(P3) {
-  const n = S.form.days, a = P3.active, items = dayItems(a), sug = daySuggest(a);
-  const loose = [...P3.sel].filter(id => !(P3.day[id] >= 0 && P3.day[id] < n)).map(pickById).filter(Boolean);
-  const moveBtns = p => n > 1 ? `<div class="daymove">${Array.from({ length: n }, (_, d) => d === a ? "" : `<button type="button" class="chip" data-pickday="${esc(p.id)}" data-to="${d}">ליום ${d + 1}</button>`).join("")}</div>` : "";
-  return `<div class="seg selfdays" role="tablist">${Array.from({ length: n }, (_, d) => `<button type="button" role="tab" data-sd="${d}" aria-selected="${d === a}" aria-pressed="${d === a}">יום ${d + 1}${dayItems(d).length ? `<small class="cnt" aria-label="${dayItems(d).length} מקומות">${dayItems(d).length}</small>` : ""}</button>`).join("")}</div>
-    <div class="card selfday"><div class="section-label">ביום ${a + 1} ${items.length ? `(${items.length})` : ""}</div>
-      ${items.length ? items.map(p => pickRow(p) + moveBtns(p)).join("") : `<p class="lead">עוד אין כלום ביום הזה. בוחרים למטה, או מתוך ההמלצות.</p>`}
-      ${sug.near.length ? `<div class="nearpicks"><small>קרוב למה שכבר ביום הזה:</small>${sug.near.map(x => pickRow(x, true)).join("")}</div>` : ""}
-      ${sug.eat.length ? `<div class="nearpicks"><small>${items.length ? "המסעדות שאנחנו ממליצים ליד היום הזה:" : "המסעדות שאנחנו ממליצים בעיר:"}</small>${sug.eat.map(x => pickRow(x, true)).join("")}</div>` : ""}
-    </div>
-    ${loose.length ? `<div class="picked"><div class="section-label">בלי יום (נשבץ איפה שמתאים)</div>${loose.map(p => pickRow(p) + moveBtns(p)).join("")}</div>` : ""}`;
-}
-SCREENS.pick = {
-  view() {
-    const P3 = S.pick;
-    const head = `<div class="topnav"><button class="iconbtn" id="backGoals" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 3 מתוך 3</span><span style="width:38px"></span></div>
-      <div><h1>${S.pick?.self ? `בונים את ${esc(S.dest?.he || "")} לבד` : `מה בא לכם לראות ב${esc(S.dest?.he || "")}?`}</h1><p class="lead" style="margin-top:6px">${S.pick?.self ? "בוחרים יום, ומוסיפים אליו מקומות מהרשימה. לכל יום אנחנו מציעים מה קרוב ואיפה כדאי לאכול, ובסוף מסדרים כל יום לפי מרחק ושעות." : "מסמנים את מה שרוצים. ליד כל מקום שמסמנים מופיעים דברים טובים שקרובים אליו."}</p></div>`;
-    if (!P3 || P3.status === "loading") return `<div class="screen">${head}<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>`;
-    if (P3.status === "error") return `<div class="screen">${head}<div class="status">${esc(P3.err)}</div><button type="button" class="btn soft" id="pickRetry">לנסות שוב</button></div>`;
-    const sel = [...P3.sel].map(pickById).filter(Boolean);
-    return `<div class="screen">${head}
-      ${P3.self ? selfView(P3) : sel.length ? `<div class="picked"><div class="section-label">בחרתם ${sel.length === 1 ? "מקום אחד" : sel.length + " מקומות"}</div>
-        ${sel.map(p => { const nb = nearPicks(p); return pickRow(p) + (nb.length ? `<div class="nearpicks"><small>קרוב לזה:</small>${nb.map(x => pickRow(x, true)).join("")}</div>` : ""); }).join("")}</div>` : ""}
-      ${P3.groups.map(g => `<details class="pickgroup" ${g.key === "must" ? "open" : ""}><summary>${esc(g.he)} <small>${g.items.length}</small></summary>${g.items.filter(p => !P3.sel.has(p.id)).map(p => pickRow(p)).join("")}</details>`).join("")}
-      <label class="switchrow"><input type="checkbox" id="pickFill" ${P3.fill ? "checked" : ""}><span>להשלים את הימים בהמלצות שלנו (ארוחות תמיד נכנסות)</span></label>
-      <button class="btn coral block" id="pickBuild" type="button">${P3.self ? (sel.length ? "סדרו לי את הימים שבניתי" : "בנו לי טיול בלי לבחור") : sel.length ? `בנו לי טיול עם ${sel.length === 1 ? "המקום שבחרתי" : "ה-" + sel.length + " שבחרתי"}` : "בנו לי טיול בלי לבחור"}</button>
-      <div class="status" id="buildStatus"></div></div>`;
-  },
-  bind() {
-    $("backGoals").onclick = () => go("goals");
-    $("pickRetry") && ($("pickRetry").onclick = () => { S.pick = null; startPick(); });
-    document.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => {
-      const id = b.dataset.pick;
-      if (S.pick.sel.has(id)) { S.pick.sel.delete(id); delete S.pick.day[id]; }
-      else { S.pick.sel.add(id); if (S.pick.self) S.pick.day[id] = S.pick.active; }
-      rerenderKeepScroll(); renderMap();
-    });
-    document.querySelectorAll("[data-sd]").forEach(b => b.onclick = () => { S.pick.active = +b.dataset.sd; rerenderKeepScroll(); renderMap(); });
-    document.querySelectorAll("[data-pickday]").forEach(b => b.onclick = () => { S.pick.day[b.dataset.pickday] = +b.dataset.to; toast(`הועבר ליום ${+b.dataset.to + 1}`); rerenderKeepScroll(); renderMap(); });
-    $("pickFill") && ($("pickFill").onchange = e => { S.pick.fill = e.target.checked; });
-    $("pickBuild") && ($("pickBuild").onclick = build);
-  }
-};
 
 /* ---------- plan ---------- */
 function peakWord(s) { if (!s.busy) return ""; const open = s.busy.filter(v => v > 0); const avg = open.length ? open.reduce((a, b) => a + b, 0) / open.length : 0; return avg > 75 ? "עמוס מאוד" : avg > 55 ? "עמוס בצהריים" : "בדרך כלל רגוע"; }
@@ -800,7 +835,8 @@ function wishCard(t) {
   const w = t.wish, rows = [];
   (w.places || []).forEach(p => rows.push(`<li>${ic("check", 2.6)}<span>${esc(p.name)} <small>· ${esc(t.days[p.day]?.label || "")}</small></span></li>`));
   if (w.hotel) rows.push(`<li>${ic("check", 2.6)}<span>המלון שלכם: ${esc(w.hotel)}</span></li>`);
-  (w.labels || []).slice(0, 6).forEach(l => rows.push(`<li>${ic("check", 2.6)}<span>${esc(l)}</span></li>`));
+  (w.labels || []).filter(l => !l.startsWith("לא נכניס")).slice(0, 6).forEach(l => rows.push(`<li>${ic("check", 2.6)}<span>${esc(l)}</span></li>`));
+  if (w.skipped?.length) rows.push(`<li class="skip">${ic("minus", 2.6)}<span>לא במסלול, כמו שכתבתם: ${w.skipped.map(esc).join(", ")}</span></li>`);
   const miss = [...(w.missed || []).map(m => `לא מצאנו את „${esc(m)}" במפה של ${esc(t.city)}. אפשר לחפש אותו בשורת החיפוש למעלה ולהוסיף למסלול.`),
     ...(w.hotelMissed ? [`לא מצאנו מלון בשם „${esc(w.hotelMissed)}". אפשר לבחור אותו בכרטיס המלון.`] : [])];
   if (!rows.length && !miss.length) return "";

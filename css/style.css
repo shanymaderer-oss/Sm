@@ -551,6 +551,8 @@ html.ul a{text-decoration:underline}
 .wishout ul,.wishcard ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
 .wishout li,.wishcard li{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}
 .wishout li svg,.wishcard li svg{width:15px;height:15px;flex:none;color:var(--teal);margin-top:4px}
+.wishout li.skip svg,.wishcard li.skip svg{color:var(--coral)}
+.wishai{margin-top:8px;padding:8px 10px;border-radius:12px;background:var(--surface2,#f4f0fb)}.wishai small{display:flex;gap:6px;align-items:center;font-weight:700}.wishai small svg{width:14px;height:14px}
 .wishout p{font-size:.88rem;margin-top:6px}
 .wishout .muted,.wishcard small{color:var(--muted)}
 .tile.fromtext,.seg.fromtext button[aria-pressed="true"]{box-shadow:0 0 0 2px color-mix(in srgb,var(--teal) 55%,transparent)}
@@ -863,10 +865,10 @@ textarea:focus{border-color:var(--primary)}
 .chipbtn,.filters button{border-width:2px;border-radius:999px}
 .tag{border-radius:999px}
 /* goals: the basics first, extras folded */
-.modechoice{grid-template-columns:repeat(3,1fr);gap:6px}
+.modechoice{grid-template-columns:1fr 1fr;gap:6px}
 .modechoice button{padding:10px 6px;align-items:center;text-align:center;justify-content:center;min-height:52px}
 .modechoice button b{font-size:.95rem;line-height:1.2}
-@media (max-width:380px){.modechoice{grid-template-columns:repeat(3,1fr)}.modechoice button b{font-size:.85rem}}
+@media (max-width:380px){.modechoice{grid-template-columns:1fr 1fr}.modechoice button b{font-size:.85rem}}
 .modehint{margin:-6px 2px 0;color:var(--muted);font-size:.88rem}
 .hotelfield{padding:10px 14px;margin-top:6px}
 .hotelfield svg{width:18px;height:18px;color:var(--muted);flex:none}
@@ -882,3 +884,22 @@ textarea:focus{border-color:var(--primary)}
 .fbcard .select{width:100%}
 .fbcard .btn{justify-self:start}
 .legal .linkbtn{font:inherit;font-size:inherit;padding:0}
+/* "I have places" */
+.myplaces{display:flex;flex-direction:column;gap:8px}
+.myplaces[hidden]{display:none}
+.mylist{display:flex;flex-wrap:wrap;gap:6px}
+.mylist:empty{display:none}
+.mychip{display:inline-flex;align-items:center;gap:4px;padding:6px 6px 6px 12px;border-radius:999px;background:var(--coral);color:#fff;font-weight:600;font-size:.9rem}
+.mychip button{border:0;background:rgba(255,255,255,.25);color:#fff;width:24px;height:24px;border-radius:50%;font-size:1rem;line-height:1;cursor:pointer}
+.myfield .chip{flex:none;margin-inline-start:auto}
+.sugs{display:flex;flex-direction:column;gap:2px}
+.sugs:empty{display:none}
+.sugs button{display:flex;gap:8px;align-items:center;text-align:start;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--ink);font:inherit}
+.sugs button svg{width:16px;height:16px;flex:none;color:var(--coral)}
+.sugs button small{color:var(--muted);margin-inline-start:auto;font-size:.8rem}
+.hotelok{font-size:.88rem;margin-top:-4px}
+.hotelok:empty{display:none}
+.hotelok .ok{display:flex;gap:6px;align-items:flex-start;color:var(--ink)}
+.hotelok .ok svg{width:16px;height:16px;flex:none;color:var(--teal);margin-top:3px}
+.sugs button span{display:flex;flex-direction:column;gap:1px;min-width:0}
+.sugs button span small{margin:0}

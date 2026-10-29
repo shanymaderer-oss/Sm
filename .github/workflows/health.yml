@@ -40,14 +40,14 @@ jobs:
         run: python tools/qa/test_sec.py
       - name: Wishes test
         run: python tools/qa/test_wish.py 0 2 4
-      - name: Choose and change the day
-        run: python tools/qa/test_pick_edit.py
+      - name: My places, and changing the day
+        run: python tools/qa/test_mine_edit.py
+      - name: Wishes by what was written (been there, the guide's reading)
+        run: python tools/qa/test_wish_ai.py
       - name: Offline test
         run: python tools/qa/test_offline.py
       - name: Now card during the trip
         run: python tools/qa/test_now.py
-      - name: Building alone, day by day
-        run: python tools/qa/test_self.py
       - name: The trip kit (everything a trip needs)
         run: python tools/qa/test_kit.py
       - name: Where we sleep shapes the trip

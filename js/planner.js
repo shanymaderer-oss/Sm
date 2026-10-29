@@ -810,7 +810,8 @@ Masa.planner = (() => {
     const opt = { skip: w.ruleWords };
     /* famous places and neighborhoods by the Hebrew names travelers write (data/he-names.json), matched first; their words
        are then taken out of the text, so "מגדל טוקיו" does not also pick some other tower */
-    let text = Masa.intent.norm(w.text);
+    // only the part of the text with what they want: "כבר היינו בסגרדה פמיליה" must not put it in the trip
+    let text = Masa.intent.norm([w.wantText ?? w.text, ...(w.aiWant || [])].join(" , "));
     const byAlias = [];
     const al = aliases.map(([he, local, kind, lat, lng, area, tag]) => ({ names: he.split("|"), local, kind: KIND[kind] ? kind : "attraction", lat, lng, area: !!area, tag, fame: 60 }));
     const useAlias = a => {
@@ -827,7 +828,21 @@ Masa.planner = (() => {
     const reEsc = x => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const phrase = v => new RegExp(`(?:^| )(?:את )?[ובלהמש]{0,2}${reEsc(v)}(?= |$)`);
     const cand = al.flatMap(a => a.names.map(n => ({ a, v: Masa.intent.norm(n) }))).filter(x => x.v.length >= 2).sort((x, y) => y.v.length - x.v.length);
-    for (const { a, v } of cand) if (!byAlias.some(p => p._alias === a.names) && phrase(v).test(text) && !w.avoid.includes(a.kind)) useAlias(a);
+    /* what they have already seen or do not want: out of the pool, with its twins on the map (the basilica and its
+       museum, two objects for one tower), so no day, swap or suggestion brings it back */
+    const skipped = [];
+    const skipNames = [...(w.skips || []), ...(w.aiSkip || [])];
+    if (skipNames.length) {
+      const st = Masa.intent.norm(skipNames.join(" , "));
+      const out = new Set();
+      const drop = p => { if (!p || out.has(p)) return; out.add(p); };
+      for (const { a, v } of cand) if (phrase(v).test(st)) pool.filter(p => km(p, a) < 0.3 && !["food", "sleep"].includes(p.cat)).forEach(drop), skipped.push(a.names[0]);
+      for (const n of skipNames) { const o = Masa.intent.findPlaces(n, items, cityNames)[0]; if (o) { drop(o.it.p); skipped.push(o.it.p.name); } }
+      for (const p of [...out]) if (!["food", "sleep", "night"].includes(p.cat)) pool.filter(x => x !== p && !["food", "sleep"].includes(x.cat) && (km(x, p) < 0.12 || (km(x, p) < 0.6 && similar(x.local, p.local)))).forEach(drop);
+      for (let i = pool.length - 1; i >= 0; i--) if (out.has(pool[i])) pool.splice(i, 1);
+      for (let i = items.length - 1; i >= 0; i--) if (out.has(items[i].p)) items.splice(i, 1);
+    }
+    for (const { a, v } of cand) if (!byAlias.some(p => p._alias === a.names) && phrase(v).test(text) && !w.avoid.includes(a.kind) && !skipped.includes(a.names[0])) useAlias(a);
     // football without a stadium's name: the city's main stadium
     const footballMiss = w.football && !byAlias.some(p => p._tag === "football" || /stadi|στάδιο|arena|אצטדיון|ארנה/i.test(`${p.local} ${p.name}`)) && !(() => { const a = al.find(x => x.tag === "football"); if (a) useAlias(a); return a; })();
     // a kind they said they do not want is not picked by its name alone ("Montmartre" is the hill, not the Montmartre Museum)
@@ -858,7 +873,11 @@ Masa.planner = (() => {
       else hotelMissed = w.hotelName;
     }
     if (footballMiss) missed.push("אצטדיון כדורגל");
-    return { places: found, missed, hotel, hotelMissed };
+    // said back as they wrote it, plus the names we found for them
+    const N = Masa.intent.norm, said = [];
+    for (const n of [...(w.skips || []), ...(w.aiSkipShow || [])]) if (!said.some(x => N(x).includes(N(n)) || N(n).includes(N(x)))) said.push(n);
+    const skippedSaid = [...new Set([...said, ...skipped.filter(n => ![...said, ...skipNames].some(k => Masa.intent.norm(n).includes(Masa.intent.norm(k)) || Masa.intent.norm(k).includes(Masa.intent.norm(n))))])].slice(0, 8);
+    return { places: found, missed, hotel, hotelMissed, skipped: skippedSaid };
   }
   /* ---------- "I'll choose": the city's best places by kind, for the traveler to pick from ---------- */
   const PICK_GROUPS = [
@@ -913,6 +932,15 @@ Masa.planner = (() => {
   let HEN = null;
   const heNames = () => HEN || (HEN = svc.getJSON("data/he-names.json", {}, 8000).then(d => d || {}).catch(() => { HEN = null; return {}; }));
   const wishIdx = {};
+  /* the city's hotels from its ready data, for the "where do you sleep" field */
+  const hotelIdx = {};
+  function hotelIndex(slug) {
+    if (!slug) return Promise.resolve([]);
+    return hotelIdx[slug] || (hotelIdx[slug] = readyCity(slug).then(d => (d.els || []).filter(e => e.tags?.name && KIND[kindFromTags(e.tags)]?.cat === "sleep").map(e => {
+      const t = e.tags, c = e.center || e;
+      return { id: `${e.type}/${e.id}`, name: t["name:he"] || t.name, local: t.name, kind: kindFromTags(t), lat: +c.lat, lng: +c.lon, address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" "), stars: +t.stars || null };
+    }).filter(h => Number.isFinite(h.lat) && Number.isFinite(h.lng))).catch(() => []));
+  }
   function wishIndex(slug) {
     if (!slug) return Promise.resolve(null);
     return wishIdx[slug] || (wishIdx[slug] = Promise.all([readyCity(slug), heNames()]).then(([d, hen]) => {
@@ -972,7 +1000,19 @@ Masa.planner = (() => {
     }
     if (opts.likeCuisines?.length) pool.forEach(p => { if (p.kind === "restaurant" && opts.likeCuisines.some(c => (p.cuisine || "").includes(c))) p.q += 1; });
     /* what the traveler wrote in their own words */
-    const wish = Masa.intent ? Masa.intent.parse(opts.notes || "") : null;
+    /* "I have places": each one is read like "חייבים לראות את ..." in the wishes box, so it is found the same way
+       (Hebrew names, the map, Wikipedia) and said back if it was not found; the rest of the trip is our recommendations */
+    const mine = (opts.mine || []).map(n => String(n).replace(/[,.;!?\n]/g, " ").trim()).filter(n => n.length >= 2).slice(0, 20);
+    const wish = Masa.intent ? Masa.intent.parse([opts.notes || "", ...mine.map(n => `חייבים לראות את ${n}`)].filter(Boolean).join(", ")) : null;
+    /* what the smart guide read in the same words (only when it read exactly this text) */
+    if (wish && opts.aiWish && opts.aiWish.text === opts.notes) {
+      const names = a => (a || []).flatMap(x => [x.name, x.he]).filter(Boolean);
+      wish.aiSkip = names(opts.aiWish.skip);
+      wish.aiSkipShow = (opts.aiWish.skip || []).map(x => x.he || x.name).filter(Boolean);
+      const sk = new Set([...wish.aiSkip, ...wish.skips].map(Masa.intent.norm));
+      wish.aiWant = names(opts.aiWish.want).filter(n => !sk.has(Masa.intent.norm(n)));
+      if (wish.aiSkip.length || wish.aiWant.length) wish.empty = false;
+    }
     const avoid = new Set(wish?.avoid || []);
     /* shopping means shopping streets and markets: a specific shop, a department store or a mall only when the traveler
        asked for one (a mall, outlet, brands) or named it */
@@ -994,6 +1034,14 @@ Masa.planner = (() => {
     const onlyPicks = !!(opts.picks?.length && opts.onlyPicks);
     /* the hotel written in "where do you sleep": first among the city's hotels, otherwise on the whole map (name or address) */
     const hotelName = String(opts.hotelName || "").trim().slice(0, 120);
+    // picked from the suggestions on the goals screen: that exact place, no search needed
+    const hp = opts.hotelPick;
+    if (hotelName && hp && hp.name === hotelName && Number.isFinite(+hp.lat) && Number.isFinite(+hp.lng) && km(geo, { lat: +hp.lat, lng: +hp.lng }) < 40 && !wishOut?.hotel) {
+      wishOut = wishOut || { places: [], missed: [], hotel: null };
+      const p = pool.find(x => x.cat === "sleep" && km(x, { lat: +hp.lat, lng: +hp.lng }) < 0.05);
+      wishOut.hotel = p ? { id: p.id, name: p.name, local: p.local, kind: p.kind, lat: p.lat, lng: p.lng, stars: p.stars, priceClass: p.priceClass, website: p.website, phone: p.phone, address: p.address, signals: p.signals || [], q: p.q }
+        : { id: String(hp.id || "pick").slice(0, 60), name: String(hp.name).slice(0, 120), local: String(hp.local || hp.name).slice(0, 120), kind: ["hotel", "hostel", "apartment", "guest_house", "motel"].includes(hp.kind) ? hp.kind : "hotel", lat: +hp.lat, lng: +hp.lng, address: String(hp.address || "").slice(0, 160), signals: [] };
+    }
     if (hotelName && !hotel && !wishOut?.hotel) {
       const hs = pool.filter(p => p.cat === "sleep").map(p => ({ p, names: [p.name, p.local], fame: p.fame || 0 }));
       const h = Masa.intent ? Masa.intent.findPlaces(hotelName, hs, [geo.name, geo.local, geo.en].filter(Boolean))[0] : null;
@@ -1310,7 +1358,7 @@ Masa.planner = (() => {
     const trip = {
       city: geo.name, slug: geo.slug || null, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
       source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,
-      opts: { query, days, budget, pace, diet: opts.diet || "הכול", mobility: opts.mobility || "", move, notes: opts.notes || "", interests, start: opts.start || null, people: opts.people || 2,
+      opts: { query, days, budget, pace, diet: opts.diet || "הכול", mobility: opts.mobility || "", move, notes: opts.notes || "", ...(mine.length ? { mine } : {}), interests, start: opts.start || null, people: opts.people || 2,
         ...(opts.picks?.length ? { picks: opts.picks, onlyPicks: !!opts.onlyPicks, pickDays: opts.pickDays || null, pickObjs: (opts.pickObjs || []).map(o => ({ id: o.id, name: o.name, local: o.local, kind: o.kind, cat: o.cat, lat: o.lat, lng: o.lng, q: o.q, signals: o.signals || [] })) } : {}) },
       hotel: hotel ? { ...hotel } : null,
       summary: "",
@@ -1351,7 +1399,7 @@ Masa.planner = (() => {
     if (wishOut) trip.wish = {
       labels: wish.labels.filter(l => !(noBath && l.startsWith("מרחצאות")) && !(wishOut.missed.includes("אצטדיון כדורגל") && l.startsWith("כדורגל"))),
       places: trip.days.flatMap((d, di) => d.stops.filter(s => s.asked || (s.meal && wishOut.places.some(p => p.id === s.osm))).map(s => ({ name: s.name, day: di }))),
-      missed: wishOut.missed, hotel: wishOut.hotel ? wishOut.hotel.name : null, hotelMissed: wishOut.hotelMissed || null
+      missed: wishOut.missed, hotel: wishOut.hotel ? wishOut.hotel.name : null, hotelMissed: wishOut.hotelMissed || null, skipped: wishOut.skipped || []
     };
     const moveWord = { walk: "מסלול הליכה", transit: "מסלול עם תחבורה ציבורית", car: "מסלול ברכב" }[move] || "מסלול";
     trip.summary = `${moveWord} לכל יום, ${meals ? "עם ארוחות בדרך, " : ""}לפי מה שבחרתם: ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;
@@ -1442,5 +1490,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { candidates, optimizeDay, prefetch, wishIndex, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
+  return { candidates, optimizeDay, prefetch, wishIndex, hotelIndex, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

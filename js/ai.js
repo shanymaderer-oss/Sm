@@ -152,6 +152,25 @@ Masa.ai = (() => {
     if (!Array.isArray(out) || out.length !== texts.length) throw Object.assign(new Error("bad"), { code: "ai_error" });
     return out.map(x => String(x || "").slice(0, 3000));
   }
+  /* the wishes box in the traveler's own words: which named places they want, and which they have seen or do not want.
+     Only places: everything else is understood on the device (intent.js), and shown back to them. */
+  async function understand(text, city) {
+    const body = {
+      contents: [{ role: "user", parts: [{ text: `A traveler planning a trip to ${city} wrote this (usually in Hebrew):
+"""${String(text).slice(0, 1500)}"""
+
+List only specific named places in or near ${city} (not kinds of places like "museums" or "parks").
+"want": places they ask to see, visit or eat at.
+"skip": places they already visited or saw, or say they do not want.
+When they refer to a group ("all of Gaudí's buildings", "the big museums"), list those specific places.
+For each place give "name": its common English or local name (e.g. "Sagrada Família"), and "he": the Hebrew name they used, if any.
+Never add a place they did not refer to. Answer JSON only: {"want":[{"name":"","he":""}],"skip":[{"name":"","he":""}]}` }] }],
+      generationConfig: { responseMimeType: "application/json", temperature: 0.1, maxOutputTokens: 600 }
+    };
+    const j = parseJSON(await generate(body));
+    const list = a => (Array.isArray(a) ? a : []).slice(0, 10).map(x => ({ name: String(x?.name || "").replace(/[<>"`]/g, "").slice(0, 80).trim(), he: String(x?.he || "").replace(/[<>"`]/g, "").slice(0, 80).trim() })).filter(x => x.name || x.he);
+    return { want: list(j?.want), skip: list(j?.skip) };
+  }
   const hasSearch = () => !!SHARED;
-  return { enabled, shared, own, model, json, chat, events, translate, hasSearch, lastSources: () => sources, saveKey, errText };
+  return { enabled, shared, own, model, json, chat, events, translate, understand, hasSearch, lastSources: () => sources, saveKey, errText };
 })();
