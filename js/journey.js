@@ -39,7 +39,22 @@ Masa.journey = (() => {
     const around = (month?.flights || []).filter(ok).filter(x => x.back && Math.round((new Date(x.back.slice(0, 10)) - new Date(x.depart.slice(0, 10))) / 864e5) === nights)
       .filter(x => Math.abs(new Date(x.depart.slice(0, 10)) - new Date(depart)) <= 7 * 864e5 && x.price < best * 0.92)
       .sort((a, b) => a.price - b.price).filter(x => !seen.has(x.depart.slice(0, 10)) && seen.add(x.depart.slice(0, 10))).slice(0, 4);
-    return { list: list.slice(0, 5), around };
+    // "the cheapest" is the price; "the best value" also counts what a stop and a flight at night cost a traveler
+    const hour = t => +(String(t || "").match(/T(\d\d)/) || [])[1];
+    const bad = h => Number.isFinite(h) && (h < 6 || h >= 23) ? 90 : 0;
+    const value = x => x.price + 110 * (x.stops || 0) + 110 * (x.backStops || 0) + bad(hour(x.depart)) + bad(hour(x.back)) + Math.max(0, (x.minutes || 0) - 300) * 0.4;
+    const top = list.slice(0, 8);
+    if (top.length) {
+      top[0].tag = "cheap";
+      const best = [...top].sort((a, b) => value(a) - value(b))[0];
+      if (best !== top[0] && value(best) < value(top[0])) best.tag = "value";
+      else if (top[0].stops === 0) top[0].tag = "both";
+      const fast = top.filter(x => x.minutes > 0).sort((a, b) => a.minutes - b.minutes)[0];
+      if (fast && !fast.tag && fast.minutes < (top[0].minutes || 1e9) - 60) fast.tag = "fast";
+    }
+    // the best-value one is shown first, then the rest from the cheapest
+    const shown = [...top.filter(x => x.tag === "value"), ...top.filter(x => x.tag !== "value")].slice(0, 5);
+    return { list: shown, around };
   }
   /* the same search, ready, on the big sites (no prices needed from us) */
   function searchLinks(to, depart, back, people) {
@@ -84,7 +99,7 @@ Masa.journey = (() => {
   function stayLinks(b, city, checkin, checkout, people) {
     const n = Math.max(1, Math.min(9, people || 2)), where = b.center ? city : `${b.name.replace(/^האזור של /, "")}, ${city}`, d = 0.012;
     return [
-      { name: "Booking", url: `https://www.booking.com/searchresults.he.html?ss=${encodeURIComponent(where)}&latitude=${b.lat}&longitude=${b.lng}&dest_type=latlong&radius=1.5&checkin=${checkin}&checkout=${checkout}&group_adults=${n}&no_rooms=1&order=distance_from_search` },
+      { name: "Booking: הכי זול עם ציון 8+", url: `https://www.booking.com/searchresults.he.html?ss=${encodeURIComponent(where)}&latitude=${b.lat}&longitude=${b.lng}&dest_type=latlong&radius=1.5&checkin=${checkin}&checkout=${checkout}&group_adults=${n}&no_rooms=1&order=price&nflt=${encodeURIComponent("review_score=80")}` },
       { name: "Airbnb", url: `https://www.airbnb.com/s/homes?query=${encodeURIComponent(where)}&checkin=${checkin}&checkout=${checkout}&adults=${n}&search_by_map=true&ne_lat=${(b.lat + d).toFixed(4)}&ne_lng=${(b.lng + d).toFixed(4)}&sw_lat=${(b.lat - d).toFixed(4)}&sw_lng=${(b.lng - d).toFixed(4)}` },
       { name: "מלונות במפה", url: `https://www.google.com/maps/search/hotels/@${b.lat},${b.lng},16z` }
     ];
@@ -177,8 +192,9 @@ Masa.journey = (() => {
       if (!F || F.loading) return `${head}<div class="skeleton" style="height:64px"></div><div class="skeleton" style="height:64px"></div>`;
       const per = p => f.people > 1 ? `<small>₪${p.toLocaleString("he-IL")} לאדם · ₪${(p * f.people).toLocaleString("he-IL")} ל-${f.people}</small>` : `<small>לאדם, הלוך ושוב</small>`;
       const stops = n => n === 0 ? "ישירה" : n === 1 ? "עצירה אחת" : `${n} עצירות`;
-      const row = x => `<div class="flrow"><span class="flprice"><b>₪${x.price.toLocaleString("he-IL")}</b>${per(x.price)}</span>
-          <span class="flmain"><b>${esc(J.airline(x.airline))}</b><small>${stops(x.stops)}${J.hhmm(x.depart) ? ` · יוצאת ${esc(J.hhmm(x.depart))}` : ""}${x.back && J.hhmm(x.back) ? ` · חוזרת ${esc(J.hhmm(x.back))}` : ""}</small></span>
+      const TAG = { cheap: `<span class="tag free">הכי זול</span>`, value: `<span class="tag new">הכי משתלם</span>`, both: `<span class="tag new">הכי זול וגם ישירה</span>`, fast: `<span class="tag">הכי קצרה</span>` };
+      const row = x => `<div class="flrow${x.tag === "value" || x.tag === "both" ? " best" : ""}"><span class="flprice"><b>₪${x.price.toLocaleString("he-IL")}</b>${per(x.price)}</span>
+          <span class="flmain">${TAG[x.tag] || ""}<b>${esc(J.airline(x.airline))}</b><small>${stops(x.stops)}${J.hhmm(x.depart) ? ` · יוצאת ${esc(J.hhmm(x.depart))}` : ""}${x.back && J.hhmm(x.back) ? ` · חוזרת ${esc(J.hhmm(x.back))}` : ""}</small></span>
           ${x.link ? `<a class="btn small" href="${esc(x.link)}" target="_blank" rel="noopener sponsored">להזמנה</a>` : ""}</div>`;
       const list = F.list?.length ? F.list.map(row).join("") : `<p class="lead">לא מצאנו מחירים שמורים לתאריכים האלה בדיוק. אפשר לחפש אותם עכשיו באתרים למטה.</p>`;
       const around = F.around?.length ? `<div class="flaround"><small>זול יותר בימים קרובים (אותו מספר ימים):</small>${F.around.map(x => { const d = x.depart.slice(0, 10); return `<button type="button" class="chip" data-fld="${esc(d)}">${J.dayName(d)} ${J.short(d)} · ₪${x.price.toLocaleString("he-IL")}</button>`; }).join("")}</div>` : "";

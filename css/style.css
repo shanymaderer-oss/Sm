@@ -920,3 +920,5 @@ textarea:focus{border-color:var(--primary)}
 .card.base .btn{align-self:flex-start}
 #whenSkip{align-self:center;margin-top:-4px}
 a.btn{text-decoration:none}
+.flrow.best{background:color-mix(in srgb,var(--teal) 7%,transparent);border-radius:12px;padding-inline:8px;margin-inline:-8px}
+.flmain .tag{align-self:flex-start;margin-bottom:2px}

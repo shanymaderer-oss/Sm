@@ -30,7 +30,8 @@ async def main():
                 body = json.loads(route.request.post_data or "{}"); asked.append(body)
                 if mode["off"]: return await route.fulfill(status=503, json={"error": "no flights"})
                 d, bk = body["depart"], body["back"]
-                if len(d) == 10: return await route.fulfill(json={"flights": [fl(412, d, bk), fl(530, d, bk, 1, "LY")]})
+                if len(d) == 10: return await route.fulfill(json={"flights": [fl(412, d, bk), fl(530, d, bk, 1, "LY")] if not mode.get("night") else [
+                    {**fl(380, d, bk, 1, "PC"), "depart": d + "T02:30:00+02:00"}, fl(415, d, bk, 0, "IZ"), fl(520, d, bk, 1, "LY")]})
                 # the whole month: a cheaper day with the same number of nights, and one with a different length (ignored)
                 return await route.fulfill(json={"flights": [fl(289, "2026-11-17", "2026-11-20"), fl(199, "2026-11-10", "2026-11-25")]})
             if u.startswith(URL): return await route.continue_()
@@ -50,6 +51,14 @@ async def main():
         a = pg.locator("#flights a.btn").first
         check("marker=12345" in (await a.get_attribute("href") or "") and "sponsored" in (await a.get_attribute("rel") or ""), "the booking link carries our marker and says it is a partner link")
         check("Aviasales" in txt and "עמלה" in txt, "it says where the prices are from and that a booking may earn us a commission")
+        check("הכי זול וגם ישירה" in txt, "the cheapest, when it is also direct, says so")
+        # a cheap flight with a stop at 02:30 against a direct one a little dearer: the direct one is the best value, shown first
+        mode["night"] = True
+        await pg.click("#pplus"); await pg.wait_for_timeout(1300)
+        rows = await pg.locator("#flights .flrow").all_inner_texts()
+        check(len(rows) == 3 and "הכי משתלם" in rows[0] and "ארקיע" in rows[0] and "הכי זול" in rows[1] and "פגסוס" in rows[1], f"best value first, then the cheapest ({[r[:40] for r in rows]})")
+        mode["night"] = False
+        await pg.click("#pminus"); await pg.wait_for_timeout(1300)
         last = asked[-2:]
         check(any(x["depart"] == "2026-11-19" and x["back"] == "2026-11-22" and x["to"] == "ROM" for x in last) and any(x["depart"] == "2026-11" for x in last), f"it asks for the exact dates and for the month ({last})")
         chips = await pg.locator("[data-fld]").all_inner_texts()
@@ -76,6 +85,7 @@ async def main():
         links = await pg.eval_on_selector_all(".card.base >> nth=0 >> a", "a => a.map(x => x.href)")
         bk = next((h for h in links if "booking.com" in h), ""); ab = next((h for h in links if "airbnb.com" in h), "")
         check("checkin=2026-11-17" in bk and "checkout=2026-11-20" in bk and "group_adults=3" in bk and "latitude=" in bk, "Booking opens on that area with the dates and travelers")
+        check("order=price" in bk and "review_score%3D80" in bk, "Booking shows the cheapest first, only places rated 8 and up")
         check("checkin=2026-11-17" in ab and "adults=3" in ab and "ne_lat=" in ab, "Airbnb opens on that area with the dates and travelers")
         check("₪" in cards[0] and "ללילה" in cards[0], "a rough price for a night there")
         await pg.click("[data-base='0']"); await pg.wait_for_timeout(400)
