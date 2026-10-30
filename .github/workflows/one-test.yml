@@ -1,0 +1,24 @@
+name: One test on the live site
+# Run by hand: one QA script against the live site; each line that failed (and the summary) is shown as a note on the run.
+on:
+  workflow_dispatch:
+    inputs:
+      test: { description: "script in tools/qa, e.g. test_hotel.py", required: true }
+permissions: { contents: read }
+jobs:
+  one:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env: { QA_URL: "https://shanymaderer-oss.github.io/Sm", QA_OUT: "qa-out/" }
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with: { python-version: "3.12" }
+      - run: pip install playwright==1.55.0 && python -m playwright install --with-deps chromium
+      - name: Run it
+        env: { T: "${{ inputs.test }}" }
+        run: |
+          case "$T" in *[!a-z0-9_.]*|"") echo "bad name"; exit 1;; esac
+          set +e; python "tools/qa/$T" > out.txt 2>&1; code=$?
+          grep -E "^(FAIL|Traceback|  File|[A-Za-z]*Error)" out.txt | head -15 | while read -r l; do echo "::notice title=$T::$l"; done
+          echo "::notice title=$T::$(tail -1 out.txt | cut -c1-300)"; exit $code
