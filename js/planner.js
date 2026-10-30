@@ -123,9 +123,12 @@ Masa.planner = (() => {
 
   /* thermal baths, hammams and spas open to visitors (Budapest's fürdő, Istanbul's hamam, Tbilisi's abanotubani) */
   const BATH = t => t.amenity === "public_bath" || t.leisure === "spa" || !!t["bath:type"] || /gyógyfürdő|fürdő|hamam|hammam|აბანო/i.test(t.name || "");
+  const LATIN = /\p{Script=Latin}/u;
   function fromOSM(e, cc) {
     const t = e.tags || {};
-    const name = t["name:he"] || t.name;
+    /* a name the traveler can read: Hebrew, else the local name if it is in Latin letters, else its English/Latin form
+       (Tokyo, Athens, Tbilisi, Bangkok and Belgrade have most names in their own script) */
+    const name = t["name:he"] || (t.name && !LATIN.test(t.name) && [t["name:en"], t.int_name, t["name:sr-Latn"]].find(n => n && LATIN.test(n))) || t.name;
     if (!name) return null;
     const kind = kindFromTags(t);
     return {

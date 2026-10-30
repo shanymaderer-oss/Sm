@@ -1,4 +1,4 @@
-import asyncio, sys, json
+import asyncio, sys, json, re
 from playwright.async_api import async_playwright
 import os; HERE=os.path.dirname(os.path.abspath(__file__)); SP=os.environ.get("QA_OUT", "/tmp/masa-qa/"); os.makedirs(SP, exist_ok=True)
 ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "../../vendor/maplibre-gl-5.24.0/"))
@@ -68,6 +68,12 @@ async def main():
       silent=[s["name"] for s in meals if "כשר" not in (s.get("signals") or []) and not s.get("notKosher")]
       ok=not silent; print("KOSHER","ok " if ok else "BAD",city,"not kosher and not marked:",silent)
       if not ok: FAILS.append("kosher "+city)
+    # readable names: in cities with their own script, stops with an English/Latin name show it (Tokyo was 7 of 14 in Japanese, Belgrade 10 in Cyrillic)
+    for city,most in [("טוקיו",3),("בלגרד",4),("אתונה",3)]:
+      t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:2, interests:["history","food"], budget:"בינוני", pace:"מאוזן", diet:"הכול", move:"walk", notes:"", start:"2026-12-01", people:2 }, ()=>{}, null)""",city)
+      bad=[s["name"] for d in t["days"] for s in d["stops"] if not re.search(r"[A-Za-zÀ-ɏ֐-׿]",s["name"])]
+      ok=len(bad)<=most; print("NAMES","ok " if ok else "BAD",city,"unreadable:",bad)
+      if not ok: FAILS.append("names "+city)
     await pg.close()
     for i in sel:
       city,txt=CASES[i]
