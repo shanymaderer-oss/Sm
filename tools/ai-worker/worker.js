@@ -10,7 +10,10 @@
    guide first searches the web through Tavily and answers from those results, with links. Tavily's terms allow using
    results to answer the question being asked, never storing them: nothing is kept here or in the app.
    Searches are capped (per address and per day) so the free 1,000 a month last.
-   Settings (Cloudflare → the Worker → Settings → Variables): GEMINI_KEY (secret, required), TAVILY_KEY (secret, optional), MODEL (optional). */
+   Flights (optional, TP_TOKEN + TP_MARKER): the cheapest flights from Israel through Travelpayouts / Aviasales, with our
+   partner marker on the booking links.
+   Settings (Cloudflare → the Worker → Settings → Variables): GEMINI_KEY (secret, required), TAVILY_KEY (secret, optional),
+   TP_TOKEN (secret, optional), TP_MARKER (optional), MODEL (optional). */
 const ORIGINS = ["https://shanymaderer-oss.github.io", "http://localhost:8790"];
 // the fast "lite" models: tested 28.10.2026, they answer in about a second while the big Flash models were overloaded
 // (503) or took over 25s on the free tier. When one is busy, slow or retired, the next one answers.
@@ -104,20 +107,63 @@ async function tavily(env, query) {
 }
 const today = () => new Date().toISOString().slice(0, 10);
 
+/* the cheapest flights from Israel, through Travelpayouts (Aviasales) with our partner token (secret TP_TOKEN).
+   Their prices come from a cache of recent searches: each answer is kept here a little while too, so one route asked by
+   many travelers is one call. Only what the page shows goes back: price, dates, stops, airline, and the booking link. */
+const IATA = /^[A-Z]{3}$/, YM = /^\d{4}-\d{2}(-\d{2})?$/;
+const flightCache = new Map();
+async function flights(env, q) {
+  const key = JSON.stringify(q);
+  const hit = flightCache.get(key);
+  if (hit && Date.now() - hit.at < 30 * 60000) return hit.out;
+  const u = new URL("https://api.travelpayouts.com/aviasales/v3/prices_for_dates");
+  Object.entries({ origin: q.from, destination: q.to, departure_at: q.depart, currency: "ils", sorting: "price", limit: "30", unique: "false", one_way: q.back ? "false" : "true", market: "il" })
+    .forEach(([k, v]) => u.searchParams.set(k, v));
+  if (q.back) u.searchParams.set("return_at", q.back);
+  if (q.direct) u.searchParams.set("direct", "true");
+  let r;
+  try { r = await fetch(u, { headers: { "X-Access-Token": env.TP_TOKEN, "Accept-Encoding": "gzip" } }); } catch { return null; }
+  if (!r.ok) return null;
+  const j = await r.json().catch(() => null);
+  const marker = text(env.TP_MARKER, 20).replace(/[^0-9a-z]/gi, "");
+  const out = (Array.isArray(j?.data) ? j.data : []).slice(0, 30).map(x => ({
+    price: Math.round(+x.price) || 0,
+    airline: text(x.airline, 3).replace(/[^A-Z0-9]/g, ""),
+    depart: text(x.departure_at, 25), back: text(x.return_at, 25),
+    stops: Math.max(0, Math.min(5, +x.transfers || 0)), backStops: Math.max(0, Math.min(5, +x.return_transfers || 0)),
+    minutes: Math.max(0, Math.min(5000, +(x.duration_to || x.duration) || 0)),
+    from: text(x.origin_airport || x.origin, 3), to: text(x.destination_airport || x.destination, 3),
+    link: /^\/[A-Za-z0-9/?&=._%-]{1,300}$/.test(x.link || "") ? `https://www.aviasales.com${x.link}${marker ? `${x.link.includes("?") ? "&" : "?"}marker=${marker}` : ""}` : ""
+  })).filter(x => x.price > 0);
+  flightCache.set(key, { at: Date.now(), out });
+  if (flightCache.size > 500) flightCache.delete(flightCache.keys().next().value);
+  return out;
+}
+
 export default {
   async fetch(req, env) {
     const origin = req.headers.get("Origin") || "";
     const url = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { status: ORIGINS.includes(origin) ? 204 : 403, headers: cors(origin) });
-    if (!["/generate", "/fresh", "/translate"].includes(url.pathname) || req.method !== "POST") return reply(404, { error: "not found" }, origin);
+    if (!["/generate", "/fresh", "/translate", "/flights"].includes(url.pathname) || req.method !== "POST") return reply(404, { error: "not found" }, origin);
     if (!ORIGINS.includes(origin)) return reply(403, { error: "origin" }, origin);
-    if (!env.GEMINI_KEY) return reply(503, { error: "not configured" }, origin);
+    if (!env.GEMINI_KEY && url.pathname !== "/flights") return reply(503, { error: "not configured" }, origin);
     const ip = req.headers.get("CF-Connecting-IP") || "?";
     const lim = limited(ip);
     if (lim) return reply(429, { error: "busy", scope: lim === "day" ? "you" : "minute" }, origin);
     const raw = await req.text();
     if (raw.length > MAX_BODY) return reply(413, { error: "too big" }, origin);
     let parsed; try { parsed = JSON.parse(raw); } catch { parsed = null; }
+
+    // the cheapest flights for the trip's dates
+    if (url.pathname === "/flights") {
+      if (!env.TP_TOKEN) return reply(503, { error: "no flights" }, origin);
+      const q = { from: text(parsed?.from, 3) || "TLV", to: text(parsed?.to, 3), depart: text(parsed?.depart, 10), back: text(parsed?.back, 10), direct: !!parsed?.direct };
+      if (!IATA.test(q.from) || !IATA.test(q.to) || !YM.test(q.depart) || (q.back && !YM.test(q.back))) return reply(400, { error: "bad request" }, origin);
+      const list = await flights(env, q);
+      if (!list) return reply(502, { error: "upstream" }, origin);
+      return reply(200, { flights: list, via: "Aviasales" }, origin);
+    }
 
     // descriptions from Wikivoyage and Wikipedia that exist only in English, into plain Hebrew
     if (url.pathname === "/translate") {

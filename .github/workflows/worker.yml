@@ -1,7 +1,7 @@
 name: Deploy the guide server
 # Puts tools/ai-worker/worker.js on Cloudflare (the masa-ai Worker) and sets its secret keys.
 # Needs the repository secret CLOUDFLARE_API_TOKEN (Cloudflare → My Profile → API Tokens → "Edit Cloudflare Workers").
-# GEMINI_KEY and TAVILY_KEY, when set as repository secrets, are copied into the Worker's own secrets;
+# GEMINI_KEY, TAVILY_KEY, TP_TOKEN and TP_MARKER, when set as repository secrets, are copied into the Worker's own secrets;
 # they never appear in the code, the logs or the site.
 on:
   workflow_dispatch:
@@ -32,9 +32,13 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
           TAVILY_KEY: ${{ secrets.TAVILY_KEY }}
+          TP_TOKEN: ${{ secrets.TP_TOKEN }}
+          TP_MARKER: ${{ secrets.TP_MARKER }}
         run: |
           if [ -n "$GEMINI_KEY" ]; then printf '%s' "$GEMINI_KEY" | npx --yes wrangler@4.149.0 secret put GEMINI_KEY; echo "::notice::GEMINI_KEY set"; else echo "::warning::GEMINI_KEY is not set in the repository secrets"; fi
           if [ -n "$TAVILY_KEY" ]; then printf '%s' "$TAVILY_KEY" | npx --yes wrangler@4.149.0 secret put TAVILY_KEY; echo "::notice::TAVILY_KEY set"; fi
+          if [ -n "$TP_TOKEN" ]; then printf '%s' "$TP_TOKEN" | npx --yes wrangler@4.149.0 secret put TP_TOKEN; echo "::notice::TP_TOKEN set"; fi
+          if [ -n "$TP_MARKER" ]; then printf '%s' "$TP_MARKER" | npx --yes wrangler@4.149.0 secret put TP_MARKER; echo "::notice::TP_MARKER set"; fi
       - name: The server answers our site only
         run: |
           A=$(curl -s -o /dev/null -w '%{http_code}' -X POST https://masa-ai.sivanmad7.workers.dev/generate -H 'Origin: https://evil.example' -d '{}')

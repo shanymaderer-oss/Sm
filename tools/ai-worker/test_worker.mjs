@@ -57,4 +57,24 @@ upstream = (u, o) => { const b = JSON.parse(o.body); const arr = JSON.parse(b.co
 r = await tcall({ texts: ["Great views", "x".repeat(5000), 7] }, "tr1", "/translate"); j = await r.json();
 ok(r.status === 200 && j.texts.length === 2 && j.texts[0] === "עב: Great views" && j.texts[1].length <= 3000, "texts are translated in order, long ones cut");
 r = await tcall({ texts: [] }, "tr2", "/translate"); ok(r.status === 400, "nothing to translate is refused");
+// flights through Travelpayouts
+const envF = { TP_TOKEN: "tp", TP_MARKER: "12345" };
+const fcall = (body, ip, env = envF) => w.fetch(new Request("https://x.workers.dev/flights", { method: "POST", headers: { Origin: O, "CF-Connecting-IP": ip, "Content-Type": "application/json" }, body: JSON.stringify(body) }), env);
+let fq = [];
+upstream = (u, o) => { fq.push({ u: String(u), h: o?.headers || {} }); return new Response(JSON.stringify({ success: true, data: [
+  { origin: "TLV", destination: "ROM", origin_airport: "TLV", destination_airport: "FCO", price: 412.6, airline: "W6", flight_number: "1", departure_at: "2026-11-19T06:10:00+02:00", return_at: "2026-11-22T21:40:00+01:00", transfers: 0, return_transfers: 0, duration_to: 230, link: "/search/TLV1911ROM22111?t=W617635" },
+  { origin: "TLV", destination: "ROM", price: 0, link: "/x" },
+  { origin: "TLV", destination: "ROM", price: 500, airline: "<b>", link: "javascript:alert(1)", transfers: 9 }], currency: "ils" }), { status: 200 }); };
+r = await fcall({ to: "ROM", depart: "2026-11-19", back: "2026-11-22" }, "f1"); j = await r.json();
+const f0 = j.flights?.[0] || {};
+ok(r.status === 200 && j.flights.length === 2 && f0.price === 413 && f0.to === "FCO" && f0.stops === 0 && f0.minutes === 230, "the cheapest flights come back, cleaned");
+ok(f0.link === "https://www.aviasales.com/search/TLV1911ROM22111?t=W617635&marker=12345", "the booking link carries our partner marker");
+ok(j.flights[1].link === "" && j.flights[1].airline === "" && j.flights[1].stops === 5, "a bad link is dropped and odd values are bounded");
+const fu = new URL(fq[0].u);
+ok(fu.host === "api.travelpayouts.com" && fu.searchParams.get("origin") === "TLV" && fu.searchParams.get("currency") === "ils" && fu.searchParams.get("return_at") === "2026-11-22" && !fq[0].u.includes("token") && fq[0].h["X-Access-Token"] === "tp", "the token goes in a header, the trip in the address");
+fq = []; await fcall({ to: "ROM", depart: "2026-11-19", back: "2026-11-22" }, "f2"); ok(fq.length === 0, "the same route again comes from the short cache");
+r = await fcall({ to: "rome", depart: "2026-11-19" }, "f3"); ok(r.status === 400, "a city that is not an airport code is refused");
+r = await fcall({ to: "ROM", depart: "next week" }, "f4"); ok(r.status === 400, "a date that is not a date is refused");
+r = await fcall({ to: "ROM", depart: "2026-11-19" }, "f5", { GEMINI_KEY: "k" }); ok(r.status === 503, "without a Travelpayouts token, flights say so");
+r = await w.fetch(new Request("https://x/flights", { method: "POST", headers: { Origin: "https://evil.example" }, body: "{}" }), envF); ok(r.status === 403, "flights answer our site only");
 console.log(fails.length ? "FAILED: " + fails : "ALL PASSED"); process.exit(fails.length ? 1 : 0);
