@@ -27,9 +27,13 @@ async def main():
     print("offline reload ok, saved trips:", saved)
     await pg.click(".savedtrip >> nth=0"); await pg.wait_for_timeout(1200)
     print("offline trip:", (await pg.evaluate("document.querySelector('.triphero h1')?.innerText")), "| stops:", await pg.evaluate("document.querySelectorAll('button.stop').length"))
-    await pg.fill("#gq", "וינה"); await pg.press("#gq", "Enter"); await Q.to_goals(pg)
+    await pg.fill("#gq", "וינה"); await pg.press("#gq", "Enter")
+    await pg.wait_for_selector("#whenNext, #buildBtn", timeout=15000)
+    steps = await pg.locator("#whenNext").count() > 0
+    print("offline, the flights step opens:", steps)
+    await Q.to_goals(pg)
     print("errors:", errs)
-    global OK; OK = not errs and saved >= 1
+    global OK; OK = not errs and saved >= 1 and steps
     await b.close()
 OK = False
 asyncio.run(main())
