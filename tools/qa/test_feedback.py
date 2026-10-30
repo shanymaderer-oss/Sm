@@ -2,6 +2,7 @@
 in settings turns them off. Firestore is mocked: we check exactly what would be sent."""
 import asyncio, os, sys, json
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -25,7 +26,7 @@ async def main():
             return await route.abort()
         await pg.route("**/*", r)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
-        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(600)
         ev = [w for x in sent for w in x["writes"] if "/events/" in w["update"]["name"]]
         check(len(ev) == 1, f"building a trip is counted once ({len(ev)})")

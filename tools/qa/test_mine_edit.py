@@ -3,6 +3,7 @@ Add places (a suggestion, typed names, a neighborhood) -> the trip is built arou
 edit the day: move a stop, remove one, replace one with a nearby alternative, move one to another day, re-order by distance."""
 import asyncio, os, sys
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -22,7 +23,7 @@ async def main():
             return await route.abort()
         await pg.route("**/*", r)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
-        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
         await pg.click("[data-mode=mine]")
         check(await pg.locator("#myPlaces").is_visible() and "סביבם" in await pg.inner_text("#modeHint"), "'I have places' opens a places field and says what it does")
         check(await pg.locator("[data-mode]").count() == 2, "two ways to build: 'build for me' and 'I have places'")

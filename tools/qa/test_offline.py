@@ -1,6 +1,7 @@
 """Offline check: open the site, build a trip, go offline, reload, and open the saved trip."""
 import asyncio, os
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 async def main():
   async with async_playwright() as p:
@@ -18,7 +19,7 @@ async def main():
     await pg.evaluate("navigator.serviceWorker.ready.then(()=>1)")
     await pg.reload(); await pg.wait_for_timeout(800)
     print("controlled:", await pg.evaluate("!!navigator.serviceWorker.controller"))
-    await pg.fill("#gq", "פראג"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+    await pg.fill("#gq", "פראג"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
     await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=25000); await pg.wait_for_timeout(1500)
     await ctx.set_offline(True)
     await pg.reload(); await pg.wait_for_timeout(1500)
@@ -26,7 +27,7 @@ async def main():
     print("offline reload ok, saved trips:", saved)
     await pg.click(".savedtrip >> nth=0"); await pg.wait_for_timeout(1200)
     print("offline trip:", (await pg.evaluate("document.querySelector('.triphero h1')?.innerText")), "| stops:", await pg.evaluate("document.querySelectorAll('button.stop').length"))
-    await pg.fill("#gq", "וינה"); await pg.press("#gq", "Enter")
+    await pg.fill("#gq", "וינה"); await pg.press("#gq", "Enter"); await Q.to_goals(pg)
     print("errors:", errs)
     global OK; OK = not errs and saved >= 1
     await b.close()

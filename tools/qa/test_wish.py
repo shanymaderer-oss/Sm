@@ -1,5 +1,6 @@
 import asyncio, sys, json, re
 from playwright.async_api import async_playwright
+import flow as Q
 import os; HERE=os.path.dirname(os.path.abspath(__file__)); SP=os.environ.get("QA_OUT", "/tmp/masa-qa/"); os.makedirs(SP, exist_ok=True)
 ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "../../vendor/maplibre-gl-5.24.0/"))
 CASES=[("רומא","אנחנו זוג עם ילד בן 6, לא אוכלים בשר, חייבים לראות את הקולוסיאום ואת מזרקת טרווי, ובערב שקיעה יפה"),
@@ -87,7 +88,7 @@ async def main():
         return await route.abort()
       await pg.route("**/*",r)
       await pg.goto(""+os.environ.get("QA_URL","http://localhost:8790")+"/index.html"); await pg.wait_for_timeout(900)
-      await pg.fill("#gq",city); await pg.press("#gq","Enter"); await pg.wait_for_timeout(500)
+      await pg.fill("#gq",city); await pg.press("#gq","Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
       await pg.fill("#notes",txt); await pg.wait_for_timeout(1500)
       print("\n=====",city,"|",txt)
       print("PREVIEW:",(await pg.inner_text("#wishOut")).replace("\n"," / "))

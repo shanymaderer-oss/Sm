@@ -4,6 +4,7 @@ Mallory cannot read the trip -> Bob leaves -> Alice deletes her account.
 Run inside: firebase emulators:exec --only auth,firestore --project demo-masa "python3 ../qa/test_cloud.py" (see .github/workflows/services.yml)."""
 import asyncio, os, sys, json
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -38,7 +39,7 @@ async def main():
         # Alice, first device: sign in and build a trip
         _, a1 = await user(b, "alice")
         await a1.goto(URL + "/index.html"); await signed_in(a1)
-        await a1.fill("#gq", "פראג"); await a1.press("#gq", "Enter"); await a1.wait_for_timeout(400)
+        await a1.fill("#gq", "פראג"); await a1.press("#gq", "Enter"); await a1.wait_for_timeout(400); await Q.to_goals(a1)
         await a1.click("#buildBtn"); await a1.wait_for_selector(".triphero", timeout=25000)
         await a1.wait_for_function("JSON.parse(localStorage.getItem('masa-trips')||'[]')[0]?.cloudId", timeout=15000)
         t = (await trips(a1))[0]

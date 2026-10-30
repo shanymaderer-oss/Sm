@@ -1,5 +1,6 @@
 import asyncio, sys
 from playwright.async_api import async_playwright
+import flow as Q
 import os; HERE=os.path.dirname(os.path.abspath(__file__)); SP=os.environ.get("QA_OUT", "/tmp/masa-qa/"); os.makedirs(SP, exist_ok=True)
 ML=os.environ.get("MAPLIBRE_DIST", os.path.join(HERE, "../../vendor/maplibre-gl-5.24.0/"))
 TAG=sys.argv[1] if len(sys.argv)>1 else "d"
@@ -21,7 +22,7 @@ async def main():
     await pg.route("**/*",r)
     await pg.goto(""+os.environ.get("QA_URL","http://localhost:8790")+"/index.html"); await pg.wait_for_timeout(1500)
     await pg.screenshot(path=SP+f"{TAG}_1home.png")
-    await pg.fill("#gq","ליסבון"); await pg.press("#gq","Enter"); await pg.wait_for_timeout(700)
+    await pg.fill("#gq","ליסבון"); await pg.press("#gq","Enter"); await pg.wait_for_timeout(700); await Q.to_goals(pg)
     await pg.screenshot(path=SP+f"{TAG}_2goals.png")
     await pg.fill("#notes","עם ילדים, שקיעה יפה, חייבים לראות את מגדל בלם"); await pg.wait_for_timeout(1200)
     await pg.click("#buildBtn"); await pg.wait_for_timeout(600); await pg.screenshot(path=SP+f"{TAG}_3loading.png")

@@ -903,3 +903,20 @@ textarea:focus{border-color:var(--primary)}
 .hotelok .ok svg{width:16px;height:16px;flex:none;color:var(--teal);margin-top:3px}
 .sugs button span{display:flex;flex-direction:column;gap:1px;min-width:0}
 .sugs button span small{margin:0}
+/* the start of a trip: flights and where to sleep */
+.backday{margin-top:-6px;font-size:.88rem}
+.flights h2 small{display:block;font-weight:500;font-size:.82rem;margin-top:2px}
+.flrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.flrow:first-of-type{border-top:0}
+.flprice{display:flex;flex-direction:column;min-width:76px}
+.flprice b{font-family:var(--display);font-size:1.25rem;color:var(--ink)}
+.flprice small,.flmain small{color:var(--muted);font-size:.78rem;line-height:1.35}
+.flmain{display:flex;flex-direction:column;min-width:0}
+.flaround{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 4px}
+.flaround small{width:100%;color:var(--muted)}
+.disclaim.small{font-size:.78rem;margin:10px 0 6px}
+.card.base{display:flex;flex-direction:column;gap:6px}
+.card.base.on{border-color:var(--primary,var(--coral));box-shadow:0 0 0 2px color-mix(in srgb,var(--coral) 35%,transparent)}
+.card.base .btn{align-self:flex-start}
+#whenSkip{align-self:center;margin-top:-4px}
+a.btn{text-decoration:none}

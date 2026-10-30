@@ -2,6 +2,7 @@
 Also checks the simpler goals screen: the extras are folded and the mode is explained in one line."""
 import asyncio, os, sys, math
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -27,17 +28,14 @@ async def main():
         async def build(hotel):
             await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(700)
             await pg.evaluate("localStorage.removeItem('masa-trips')")
-            await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+            await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_stay(pg)
             if hotel: await pg.fill("#hotelInput", hotel)
+            await Q.to_goals(pg)
             await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(500)
             return await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(700)
-        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
-        check(await pg.locator("details.moreprefs:not([open])").count() == 1, "budget, food, transport, access and pace are folded under 'more'")
-        check(await pg.locator("#hotelInput").is_visible(), "'where do you sleep' is on the goals screen")
-        await pg.click("[data-mode=mine]")
-        check("סביבם" in await pg.inner_text("#modeHint"), "the chosen way to build is explained in one line")
-        await pg.click("[data-mode=auto]")
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_stay(pg)
+        check(await pg.locator("#hotelInput").is_visible(), "'where do you sleep' is its own step")
         # the hotel field is a search: the city's hotels as you type, pick one, and it says it found it
         await pg.fill("#hotelInput", "Concilia"); await pg.wait_for_timeout(600)
         opts = await pg.locator("#hotelSug [data-h]").all_inner_texts()
@@ -49,6 +47,11 @@ async def main():
             await pg.fill("#hotelInput", "Concilia"); await pg.wait_for_timeout(300)
             check("מצאנו" not in await pg.inner_text("#hotelOk"), "changing the text takes the confirmation away")
             await pg.click("#hotelSug [data-h] >> nth=0")
+            await Q.to_goals(pg)
+            check(await pg.locator("details.moreprefs:not([open])").count() == 1, "budget, food, transport, access and pace are folded under 'more'")
+            await pg.click("[data-mode=mine]")
+            check("סביבם" in await pg.inner_text("#modeHint"), "the chosen way to build is explained in one line")
+            await pg.click("[data-mode=auto]")
             await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(400)
             tp = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
             check("Conciliazione" in (tp.get("hotel") or {}).get("name", ""), "the chosen hotel is the trip's hotel")
@@ -56,9 +59,10 @@ async def main():
         HR = [{"osm_type": "node", "osm_id": 77, "category": "tourism", "type": "hotel", "lat": "41.9009", "lon": "12.4935", "name": "Hotel Artemide", "display_name": "Hotel Artemide, 22, Via Nazionale, Roma", "address": {"road": "Via Nazionale", "house_number": "22"}, "namedetails": {"name": "Hotel Artemide"}}]
         await pg.route("**/nominatim.openstreetmap.org/search**", lambda rt: rt.fulfill(json=HR if "artemide" in rt.request.url.lower() else []))
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(700)
-        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_stay(pg)
         await pg.fill("#hotelInput", "Hotel Artemide"); await pg.wait_for_timeout(1500)
         await pg.locator("#hotelSug [data-h]", has_text="Artemide").first.click()
+        await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(400)
         tp = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
         check("Artemide" in (tp.get("hotel") or {}).get("name", ""), f"a hotel picked from the map is the trip's hotel, not the one next door ({(tp.get('hotel') or {}).get('name')})")

@@ -2,6 +2,7 @@
 and a café typed by hand is looked up on the map when building. Both end up in the trip (the map search is simulated)."""
 import asyncio, os, sys, json, urllib.parse
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -29,7 +30,7 @@ async def main():
             return await route.abort()
         await pg.route("**/*", r)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
-        await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+        await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
         await pg.click("[data-mode=mine]")
         # a restaurant from the map search
         await pg.fill("#myIn", "Le Petit"); await pg.wait_for_timeout(1500)
@@ -53,7 +54,7 @@ async def main():
         # a restaurant on our own list, by part of its name: in English, with an apostrophe, and in Hebrew letters
         for typed, how in [("Le Entrecote", "typed in English"), ("לה אנטריקוט", "typed in Hebrew")]:
             await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
-            await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+            await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
             await pg.click("[data-mode=mine]")
             await pg.fill("#myIn", typed); await pg.wait_for_timeout(1200)
             opts = await pg.locator("#mySug [data-mysug]").all_inner_texts()

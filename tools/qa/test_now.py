@@ -1,6 +1,7 @@
 """'Now' card during the trip: shows the next stop of today, walking time from the traveler, done/skip, end of day, and nothing when not traveling."""
 import asyncio, os, sys
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 OUT = os.environ.get("QA_OUT", "/tmp/masa-qa/")
 async def main():
@@ -18,7 +19,7 @@ async def main():
     pg.on("pageerror", lambda e: errs.append(str(e)))
     await pg.clock.install(time="2026-11-03T10:50:00+01:00")
     await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(500)
-    await pg.fill("#gq", "פראג"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+    await pg.fill("#gq", "פראג"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
     await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=25000); await pg.wait_for_timeout(1000)
     card = lambda: pg.evaluate("document.getElementById('nowCard')?.innerText || ''")
     async def reopen(start=None):

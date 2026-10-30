@@ -2,6 +2,7 @@
 the smart guide's reading for what the rules cannot catch), and places they want are in."""
 import asyncio, os, sys, json
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -31,7 +32,7 @@ async def main():
         trip = lambda: pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
         names = lambda t: " | ".join(f"{s['name']} {s.get('local') or ''}" for d in t["days"] for s in d["stops"]).lower()
         # 1. on the device only: "כבר היינו ב..." is out, "חייבים לראות" is in
-        await pg.fill("#gq", "ברצלונה"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+        await pg.fill("#gq", "ברצלונה"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
         await pg.fill("#notes", "כבר היינו בסגרדה פמיליה ובפארק גואל, חייבים לראות את קאסה בטלו"); await pg.wait_for_timeout(900)
         prev = await pg.inner_text("#wishOut")
         check("לא נכניס למסלול: סגרדה פמיליה, פארק גואל" in prev and "סגרדה" not in prev.split("נכניס למסלול:")[-1].split("לא נכניס")[0] if "נכניס למסלול:" in prev else False, f"the preview says what is out and what is in: {prev!r}")
@@ -43,7 +44,7 @@ async def main():
         check(await pg.locator(".wishcard li.skip").count() == 1, "the 'what you asked for' card shows it")
         # 2. with the smart guide: a group ("all of Gaudí") becomes the specific places
         await pg.evaluate("localStorage.setItem('masa-ai-test','1')"); await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
-        await pg.fill("#gq", "ברצלונה"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
+        await pg.fill("#gq", "ברצלונה"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
         await pg.fill("#notes", "בפעם הקודמת עשינו את כל המבנים של גאודי, הפעם משהו אחר"); await pg.wait_for_timeout(2200)
         ai = await pg.locator("#wishAi").inner_text() if await pg.locator("#wishAi").count() else ""
         check("לא נכניס" in ai and "סגרדה פמיליה" in ai and len(asked) == 1, f"the guide's reading is shown under the box: {ai!r}")

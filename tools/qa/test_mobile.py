@@ -4,6 +4,7 @@ site with the real network. Each phone: the home screen fits the screen, a trip 
 shared as a picture, it is installable (manifest, icons), and it opens again with no internet. Screenshots in QA_OUT."""
 import asyncio, os, sys, json, time
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "https://shanymaderer-oss.github.io/Sm")
 OUT = os.environ.get("QA_OUT", "/tmp/masa-qa/"); os.makedirs(OUT, exist_ok=True)
 FAILS = []; NOTES = []
@@ -32,21 +33,28 @@ async def run(p, phone, engine, device):
     check(await pg.evaluate("!!document.querySelector('link[rel=apple-touch-icon]')"), "has an iPhone home-screen icon", phone)
     # build a trip
     await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(1200)
-    await shot("2-goals")
-    # 'I have places': suggestions as you type
-    await pg.tap("[data-mode=mine]")
-    await pg.fill("#myIn", "פנתא"); await pg.wait_for_timeout(2500)
-    sug = await pg.locator("#mySug [data-mysug]").all_inner_texts()
-    check(any("פנתאון" in s for s in sug), f"'I have places' suggests as you type ({sug[:2]})", phone)
-    if sug: await pg.locator("#mySug [data-mysug]").first.tap()
-    # hotel search on the real map
+    await pg.wait_for_selector("#flights"); await pg.wait_for_timeout(6000)
+    fl = await pg.inner_text("#flights")
+    check("טיסות מתל אביב" in fl and ("₪" in fl or "Kayak" in fl), "the flights step shows prices or ready searches", phone)
+    await shot("2-flights")
+    await Q.to_stay(pg); await pg.wait_for_timeout(2500)
+    check(await pg.locator(".card.base").count() >= 1, "where to sleep: a recommended area", phone)
+    await shot("3-stay")
+    # the hotel search on the real map
     await pg.fill("#hotelInput", "Hotel Artemide"); await pg.wait_for_timeout(4000)
     hs = await pg.locator("#hotelSug [data-h]").all_inner_texts()
     check(any("Artemide" in h for h in hs), f"the hotel search finds the hotel ({hs[:2]})", phone)
     if hs:
         await pg.locator("#hotelSug [data-h]").first.tap(); await pg.wait_for_timeout(300)
         check("מצאנו" in await pg.inner_text("#hotelOk"), "it says the hotel was found", phone)
-    await shot("3-mine-hotel")
+    await Q.to_goals(pg)
+    # 'I have places': suggestions as you type
+    await pg.tap("[data-mode=mine]")
+    await pg.fill("#myIn", "פנתא"); await pg.wait_for_timeout(2500)
+    sug = await pg.locator("#mySug [data-mysug]").all_inner_texts()
+    check(any("פנתאון" in s for s in sug), f"'I have places' suggests as you type ({sug[:2]})", phone)
+    if sug: await pg.locator("#mySug [data-mysug]").first.tap()
+    await shot("4-goals")
     t0 = time.time()
     await pg.tap("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=90000); await pg.wait_for_timeout(1500)
     NOTES.append(f"{phone}: trip built in {time.time()-t0:.1f}s")

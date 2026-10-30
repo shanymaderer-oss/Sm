@@ -205,6 +205,11 @@ function renderMap() {
   const inTrip = S.trip && TRIP_SCREENS.includes(S.screen);
   if (!inTrip) {
     setRoute([]);
+    if (S.screen === "stay" && S.bases?.list?.length) {
+      S.bases.list.forEach((b, i) => addMarker(b, dotNode(C(i ? "--sky" : "--coral"), b.name, "destmk sel"), { offset: [0, 7] }));
+      fitPoints(S.bases.list, 14);
+      return;
+    }
     DESTS.forEach(d => addMarker(d, dotNode(C("--coral"), d.he, "destmk" + (S.dest?.q === d.q ? " sel" : "")), { offset: [0, 7] }, () => pickDest(d)));
     if (S.dest && hasXY(S.dest) && !DESTS.some(d => d.q === S.dest.q)) addMarker(S.dest, dotNode(C("--coral"), S.dest.he, "destmk sel"), { offset: [0, 7] });
     if (S.me) addMarker(S.me, node("me-dot", ""), { anchor: "center" });
@@ -450,7 +455,7 @@ SCREENS.home = {
       S.dest = known || { q: v, he: v.split(",")[0].trim() };
       if (known) flyCenter(known, 11);
       planner.prefetch(S.dest.q);
-      go("goals");
+      startJourney();
     };
     $("sampleBtn").onclick = loadSample;
     $("homeFb") && ($("homeFb").onclick = openFeedback);
@@ -459,13 +464,25 @@ SCREENS.home = {
   }
 };
 
+/* ================= the start of a trip: flights, then where to sleep, then what they like ================= */
+let journeyLoad = null;
+const loadJourney = () => journeyLoad || (journeyLoad = new Promise(res => {
+  const el = document.createElement("script"); el.src = "js/min/journey.js"; el.onload = el.onerror = () => res(); document.head.append(el);
+}));
+/* the two screens live in js/journey.js; they get what they need from here */
+let journeyIn = false;
+async function startJourney() {
+  await loadJourney();
+  if (Masa.journey && !journeyIn) { Masa.journey.install({ S, SCREENS, $, esc, ic, go, toast, track, partnerUrl, COST, planner, hasXY, rerenderKeepScroll, renderMap, svc, km }); journeyIn = true; }
+  S.fl = null; S.bases = null; go(journeyIn ? "when" : "goals");
+}
 const MODE_HINT = { auto: "אתם מסמנים מה אתם אוהבים, ואנחנו בונים את כל המסלול.", mine: "כתבו מקומות שאתם מכירים או רוצים, ונבנה את הטיול סביבם, עם ההמלצות שלנו מסביב." };
 SCREENS.goals = {
   view() {
     const f = S.form;
     if (f.mode && !MODE_HINT[f.mode]) f.mode = "auto"; // the old "pick" and "self" modes are now "I have places"
     return `<div class="screen">
-    <div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 2 מתוך 3</span><span style="width:38px"></span></div>
+    <div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 4 מתוך 4</span><span style="width:38px"></span></div>
     <div><h1>מה בא לכם לעשות ב${esc(S.dest?.he || "יעד")}?</h1></div>
     <div class="modechoice" role="radiogroup" aria-label="איך לבנות את המסלול">
       <button type="button" role="radio" data-mode="auto" aria-checked="${(f.mode || "auto") === "auto"}"><b>תבנו לי</b></button>
@@ -478,16 +495,6 @@ SCREENS.goals = {
       <span class="search myfield">${ic("search")}<input id="myIn" type="text" placeholder="למשל: ${esc(myExample())}" autocomplete="off" aria-label="הוספת מקום" aria-controls="mySug" aria-autocomplete="list"><button type="button" class="chip" id="myAdd">הוספה</button></span>
       <div class="sugs" id="mySug" role="listbox"></div>
     </div>
-    <div class="section-label">כמה ימים</div>
-    <div class="stepper"><button type="button" class="iconbtn" id="dminus" aria-label="פחות ימים" style="background:var(--surface)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><output id="dval">${f.days === 1 ? "יום אחד" : f.days + " ימים"}</output><button type="button" class="iconbtn" id="dplus" aria-label="יותר ימים" style="background:var(--surface)">${ic("plus", 2.4)}</button></div>
-    <div class="twocol">
-      <label class="field"><span class="section-label">תאריך הגעה</span><input type="date" id="startDate" class="select" value="${esc(f.start || "")}"></label>
-      <label class="field"><span class="section-label">מטיילים</span><span class="stepper small"><button type="button" class="iconbtn" id="pminus" aria-label="פחות מטיילים" style="background:var(--surface)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button><output id="pval">${f.people}</output><button type="button" class="iconbtn" id="pplus" aria-label="יותר מטיילים" style="background:var(--surface)">${ic("plus", 2.4)}</button></span></label>
-    </div>
-    <label class="field"><span class="section-label">איפה ישנים? <small class="muted">לא חובה. המסלול יתחיל ויסתיים קרוב למלון</small></span>
-      <span class="search hotelfield">${ic("bed")}<input id="hotelInput" type="text" value="${esc(f.hotelName || "")}" placeholder="שם המלון או הכתובת" autocomplete="off" aria-label="שם המלון או הכתובת" aria-controls="hotelSug" aria-autocomplete="list"></span></label>
-    <div class="sugs" id="hotelSug" role="listbox"></div>
-    <p class="hotelok" id="hotelOk" aria-live="polite">${hotelOkText()}</p>
     <div class="section-label">מה הכי חשוב לכם? <small class="muted">נבנה תמהיל, והדברים שבחרתם יקבלו את רוב הזמן</small></div>
     <div class="tiles">${INTERESTS.map(k => `<button type="button" class="tile" data-k="${k}" aria-pressed="${f.interests.includes(k)}"><span class="ic" style="background:${cv(CATS[k].c)}">${ic(k)}</span>${CATS[k].he}</button>`).join("")}</div>
     <div class="wishbox">
@@ -513,13 +520,9 @@ SCREENS.goals = {
   </div>`;
   },
   bind() {
-    bindHotel();
     const f = S.form;
-    $("backHome").onclick = () => go("home");
+    $("backHome").onclick = () => go("stay");
     const touched = f.touched = f.touched || new Set();
-    const setD = v => { f.days = Math.min(5, Math.max(1, v)); $("dval").textContent = f.days === 1 ? "יום אחד" : f.days + " ימים"; };
-    $("dminus").onclick = () => { touched.add("days"); setD(f.days - 1); };
-    $("dplus").onclick = () => { touched.add("days"); setD(f.days + 1); };
     document.querySelectorAll(".tile").forEach(t => t.onclick = () => { const k = t.dataset.k, on = f.interests.includes(k); touched.add("i:" + k); f.interests = on ? f.interests.filter(x => x !== k) : [...f.interests, k]; t.setAttribute("aria-pressed", !on); });
     ["budget", "pace", "diet"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.onclick = () => { touched.add(id); f[id] = b.textContent; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); }));
     $("moveForm").querySelectorAll("button").forEach(b => b.onclick = () => { touched.add("move"); f.move = b.dataset.v; $("moveForm").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
@@ -533,10 +536,6 @@ SCREENS.goals = {
       if (b.dataset.h.endsWith("…")) { el.value = el.value.replace(/…$/, " "); f.notes = el.value; el.setSelectionRange(el.value.length, el.value.length); }
     });
     syncWish();
-    $("startDate").onchange = e => { f.start = e.target.value; };
-    const setP = v => { f.people = Math.min(8, Math.max(1, v)); $("pval").textContent = f.people; };
-    $("pminus").onclick = () => { touched.add("people"); setP(f.people - 1); };
-    $("pplus").onclick = () => { touched.add("people"); setP(f.people + 1); };
     $("buildBtn").onclick = () => build();
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
       f.mode = b.dataset.mode;
@@ -550,60 +549,6 @@ SCREENS.goals = {
   }
 };
 
-/* ================= where they sleep: a search like the one at the top, with a clear "found it" ================= */
-function hotelOkText() {
-  const f = S.form, h = f.hotelPick;
-  if (h && h.name === f.hotelName) return `<span class="ok">${ic("check", 2.6)}מצאנו: <b>${esc(h.name)}</b>${h.address ? ` · ${esc(h.address)}` : ""}. המסלול יתחיל ויסתיים כאן.</span>`;
-  if (f.hotelState === "searching") return `<span class="muted">מחפשים…</span>`;
-  if (f.hotelState === "none") return `<span class="muted">לא מצאנו בשם הזה. אפשר לכתוב את הכתובת, או להשאיר כך ונחפש שוב כשנבנה את המסלול.</span>`;
-  if ((f.hotelName || "").trim().length >= 3 && f.hotelState === "list") return `<span class="muted">בחרו מהרשימה כדי שנדע בדיוק איפה זה.</span>`;
-  return "";
-}
-let hotelT = null, hotelSeq = 0;
-function bindHotel() {
-  const f = S.form, inp = $("hotelInput"), sug = $("hotelSug");
-  if (!inp) return;
-  const city = Masa.cities.findCity(S.dest?.q || "");
-  const at = city ? { lat: city.lat, lng: city.lng } : hasXY(S.dest || {}) ? S.dest : null;
-  const show = () => { const el = $("hotelOk"); if (el) el.innerHTML = hotelOkText(); };
-  const choose = h => { f.hotelPick = h; f.hotelName = h.name; inp.value = h.name; sug.innerHTML = ""; f.hotelState = ""; show(); };
-  const row = (h, i) => `<button type="button" role="option" data-h="${i}">${ic(h.kind === "apartment" ? "pin" : "bed", 2.2)}<span>${esc(h.name)}${h.address ? `<small>${esc(h.address)}</small>` : ""}</span></button>`;
-  const draw = list => {
-    if (!sug.isConnected) return;
-    sug.innerHTML = list.map(row).join("");
-    sug.querySelectorAll("[data-h]").forEach(b => b.onclick = () => choose(list[+b.dataset.h]));
-  };
-  inp.oninput = () => {
-    f.hotelName = inp.value.slice(0, 120);
-    if (f.hotelPick && f.hotelPick.name !== f.hotelName) f.hotelPick = null;
-    const q = f.hotelName.trim(), seq = ++hotelSeq;
-    clearTimeout(hotelT);
-    if (q.length < 2) { sug.innerHTML = ""; f.hotelState = ""; return show(); }
-    // the city's own hotels at once
-    const N = Masa.intent.norm, nq = N(q);
-    const local = city ? planner.hotelIndex(city.slug) : Promise.resolve([]);
-    local.then(hs => {
-      if (seq !== hotelSeq) return;
-      const mine = hs.filter(h => [h.name, h.local].some(n => N(n).includes(nq) || N(n).split(" ").some(w => w.startsWith(nq)))).slice(0, 5);
-      if (mine.length) { f.hotelState = "list"; draw(mine); show(); }
-      // and the whole map, a moment after they stop typing (the map's search asks for one request a second)
-      if (q.length < 3 || !at) return;
-      hotelT = setTimeout(async () => {
-        if (!mine.length) { f.hotelState = "searching"; show(); }
-        let r = [];
-        try { r = await svc.searchNear(q, at.lat, at.lng); } catch {}
-        if (seq !== hotelSeq) return;
-        const stay = x => x.category === "tourism" && /hotel|hostel|guest_house|apartment|motel/.test(x.type);
-        const more = r.filter(x => km(at, x) < 25).sort((a, b) => stay(b) - stay(a)).map(x => ({ id: `${x.osmType}/${x.osmId}`, name: stay(x) ? x.name : q, local: x.local, kind: stay(x) ? (x.type === "hostel" ? "hostel" : "hotel") : "apartment", lat: x.lat, lng: x.lng, address: x.address }))
-          .filter(x => !mine.some(m => km(m, x) < 0.05)).slice(0, 6 - Math.min(3, mine.length));
-        const all = [...mine.slice(0, 3), ...more];
-        f.hotelState = all.length ? "list" : "none";
-        draw(all); show();
-      }, 700);
-    });
-  };
-  inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); sug.querySelector("[data-h]")?.click(); } };
-}
 /* ================= "I have places": the places the traveler knows or wants; the trip is built around them ================= */
 const buildLabel = () => S.form.mode === "mine" && S.form.mine?.length ? `בנו טיול סביב ${S.form.mine.length === 1 ? "המקום שלי" : "ה-" + S.form.mine.length + " מקומות שלי"}` : "בנו לי טיול";
 const myChips = () => (S.form.mine || []).map((n, i) => `<span class="mychip">${esc(n)}<button type="button" data-myrm="${i}" aria-label="להסיר את ${esc(n)}">×</button></span>`).join("");
@@ -699,8 +644,8 @@ function syncWish() {
   f.interests = [...f.interests.filter(x => !drop.includes(x)), ...add];
   f.autoI = { add, drop };
   // show the choices as they are now
-  $("dval").textContent = f.days === 1 ? "יום אחד" : f.days + " ימים";
-  $("pval").textContent = f.people;
+  $("dval") && ($("dval").textContent = f.days === 1 ? "יום אחד" : f.days + " ימים");
+  $("pval") && ($("pval").textContent = f.people);
   document.querySelectorAll(".tile").forEach(t => t.setAttribute("aria-pressed", f.interests.includes(t.dataset.k)));
   ["budget", "pace", "diet"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.textContent === f[id])));
   $("moveForm").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === (f.move || "walk")));
@@ -2038,7 +1983,7 @@ SCREENS.list = {
     document.querySelectorAll("[data-pickhotel]").forEach(b => b.onclick = () => chooseHotel(items[+b.dataset.pickhotel]));
     document.querySelectorAll("[data-diet]").forEach(b => b.onclick = () => { L2.diet = L2.diet === b.dataset.diet ? null : b.dataset.diet; refresh(true); });
     document.querySelectorAll("[data-cu]").forEach(b => b.onclick = () => { L2.cuisine = L2.cuisine === b.dataset.cu ? null : b.dataset.cu; refresh(true); });
-    $("asDest") && ($("asDest").onclick = () => { S.dest = { q: L2.q, he: L2.q.split(",")[0].trim() }; go("goals"); });
+    $("asDest") && ($("asDest").onclick = () => { S.dest = { q: L2.q, he: L2.q.split(",")[0].trim() }; startJourney(); });
     $("more") && ($("more").onclick = () => { L2.page++; rerenderKeepScroll(); renderMap(); });
     const items = listItems();
     document.querySelectorAll("[data-open]").forEach(b => b.onclick = () => { S.poi = items[+b.dataset.open]; go("poi"); });
@@ -2159,7 +2104,7 @@ $("gsearch").onsubmit = e => {
   const known = DESTS.find(d => v.includes(d.he));
   S.dest = known || { q: v, he: v.split(",")[0].trim() };
   if (known) flyCenter(known, 11);
-  go("goals");
+  startJourney();
 };
 
 /* ================= broker links: one tap to the site that books it ================= */

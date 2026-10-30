@@ -2,6 +2,7 @@
 marking an item closed is kept; a partner id from settings is added to that site's links only, and a bad one is ignored."""
 import asyncio, os, sys, re
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -22,7 +23,7 @@ async def main():
             return await route.abort()
         await pg.route("**/*", r)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
-        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(600)
         start = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0].opts.start")
         await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector(".kit")

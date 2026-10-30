@@ -3,6 +3,7 @@ to swap the stops that are outside for indoor places close to them; after the sw
 A dry forecast shows nothing. Runs against the local server only; the forecast is answered here, never fetched."""
 import asyncio, os, sys, json, datetime
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -30,6 +31,7 @@ async def run(b, rain):
     start = (datetime.date.today() + datetime.timedelta(days=2)).isoformat()
     await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500)
     await pg.fill("#startDate", start); await pg.dispatch_event("#startDate", "change")
+    await Q.to_goals(pg)
     await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(1500)
     outdoor = "i => JSON.parse(localStorage.getItem('masa-trips'))[0].days[i].stops.filter(s => !s.meal && ['park','view','beach','street','square','bridge'].includes(s.kind)).length"
     tip = await pg.evaluate("document.querySelector('.rainbox')?.innerText || ''")

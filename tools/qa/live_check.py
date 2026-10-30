@@ -10,6 +10,7 @@ import asyncio, json, os, sys, time, urllib.request, urllib.error, ssl
 from collections import defaultdict
 from urllib.parse import urlparse
 from playwright.async_api import async_playwright
+import flow as Q
 
 URL = os.environ.get("QA_URL", "https://shanymaderer-oss.github.io/Sm")
 OUT = os.environ.get("QA_OUT", "qa-out/")
@@ -39,7 +40,7 @@ async def browse():
         await grab("home")
         for city, notes in [("רומא", "עם ילדים, חייבים לראות את הקולוסיאום"), ("סלוניקי, יוון", "")]:
             await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(2500)
-            await pg.fill("#gq", city); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(800)
+            await pg.fill("#gq", city); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(800); await Q.to_goals(pg)
             if notes: await pg.fill("#notes", notes)
             t0 = time.time()
             await pg.click("#buildBtn")

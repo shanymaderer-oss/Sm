@@ -3,11 +3,11 @@
    City data is served from the cache and refreshed in the background. Map tiles of places already seen stay
    available offline (a limited number). Everything else (Wikipedia, routing, weather, AI) goes straight to the network.
    VERSION is written by tools/stamp-sw.py from a hash of the shell files; a new version refreshes the saved copy. */
-const VERSION = "45acf361f0";
+const VERSION = "8f32a647e9";
 const SHELL_CACHE = "masa-shell-" + VERSION, DATA_CACHE = "masa-data-v1", TILE_CACHE = "masa-tiles-v1";
 const SHELL = [
   "./", "index.html", "privacy.html", "accessibility.html", "terms.html", "manifest.webmanifest", "css/style.css", "css/fonts.css",
-  "js/min/tt.js", "js/min/data.js", "js/min/sources.js", "js/min/cities.js", "js/min/services.js", "js/min/cost.js", "js/min/transport.js", "js/min/ai.js", "js/min/intent.js", "js/cloud-config.js", "js/min/cloud.js", "js/min/planner.js", "js/min/app.js",
+  "js/min/tt.js", "js/min/data.js", "js/min/sources.js", "js/min/cities.js", "js/min/services.js", "js/min/cost.js", "js/min/transport.js", "js/min/ai.js", "js/min/intent.js", "js/cloud-config.js", "js/min/cloud.js", "js/min/planner.js", "js/min/app.js", "js/min/journey.js",
   "vendor/maplibre-gl-5.24.0/maplibre-gl.js", "vendor/maplibre-gl-5.24.0/maplibre-gl.css",
   "fonts/ibm-plex-sans-hebrew-hebrew-400-normal.woff2", "fonts/ibm-plex-sans-hebrew-hebrew-500-normal.woff2", "fonts/ibm-plex-sans-hebrew-hebrew-600-normal.woff2",
   "fonts/fredoka-hebrew-600-normal.woff2", "fonts/fredoka-hebrew-700-normal.woff2", "icons/icon-192.png"

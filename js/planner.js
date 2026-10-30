@@ -968,11 +968,17 @@ Masa.planner = (() => {
       return (d.els || []).filter(e => e.tags?.name).map(e => {
         const t = e.tags, c = e.center || e, kind = kindFromTags(t);
         if (!KIND[kind] || KIND[kind].cat === "sleep") return null;
-        const he = t["name:he"] || (t.wikidata && F.he?.[t.wikidata]) || "";
-        return { id: `${e.type}/${e.id}`, names: [t.name, t["name:en"], he], he: he || t.name, name: he || t.name, local: t.name, kind, cat: KIND[kind].cat, lat: +c.lat, lng: +(c.lon ?? c.lng), fame: (t.wikidata && F.n?.[t.wikidata]) || 0, address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") };
+        // a statue or a memorial borrows its fame from the person it shows: not a place to plan around
+        const statue = /^(memorial|monument|statue|tomb|grave)$/.test(t.historic || "") || t.memorial || t.tourism === "artwork";
+        const he = t["name:he"] || (!statue && t.wikidata && F.he?.[t.wikidata]) || "";
+        // a name in a script the traveler cannot read (天守台, Χατζής) is shown in Latin letters when there is one
+        const shown = he || (/^[\u0000-\u024F\s\p{P}\d]+$/u.test(t.name) ? t.name : t["name:en"] || t["name:latin"] || t.name);
+        return { id: `${e.type}/${e.id}`, names: [t.name, t["name:en"], he], he: shown, name: shown, statue: !!statue, local: t.name, kind, cat: KIND[kind].cat, lat: +c.lat, lng: +(c.lon ?? c.lng), fame: (!statue && t.wikidata && F.n?.[t.wikidata]) || 0, address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") };
       }).filter(x => x && Number.isFinite(x.lat) && Number.isFinite(x.lng));
     }).catch(() => []));
   }
+  /* the neighborhoods travelers know by a Hebrew name (data/he-names.json), to name a place to sleep */
+  const heAreas = slug => heNames().then(d => (d[slug] || []).filter(r => r[5] && Number.isFinite(+r[3]) && Number.isFinite(+r[4])).map(r => ({ name: r[0].split("|")[0], lat: +r[3], lng: +r[4] }))).catch(() => []);
   function wishIndex(slug) {
     if (!slug) return Promise.resolve(null);
     return wishIdx[slug] || (wishIdx[slug] = Promise.all([readyCity(slug), heNames()]).then(([d, hen]) => {
@@ -1528,5 +1534,5 @@ Write everything in natural Hebrew. Reply with only JSON:
     trip.ai = true;
   }
 
-  return { candidates, optimizeDay, prefetch, wishIndex, hotelIndex, placeIndex, searchKind, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
+  return { candidates, optimizeDay, prefetch, wishIndex, hotelIndex, placeIndex, heAreas, searchKind, legMinutes, MOVE, build, hydrate, computeRoute, assignTimes, km, isOpen, KIND, PRICE_SIGN, MEAL, rate };
 })();

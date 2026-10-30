@@ -4,6 +4,7 @@ the rating shows with Tripadvisor's image, and no rating is stored in the browse
 import asyncio, os, sys, json, math
 from urllib.parse import urlparse, parse_qs
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -47,7 +48,7 @@ async def main():
             return await route.abort()
         await pg.route("**/*", r)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
-        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000)
         await pg.wait_for_timeout(6000)
         t = json.loads(await pg.evaluate("localStorage.getItem('masa-trips')"))[0]

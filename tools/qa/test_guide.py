@@ -2,6 +2,7 @@
 (add a place, swap outdoor stops when it rains, remove a stop, a lighter day)."""
 import asyncio, os, sys, json
 from playwright.async_api import async_playwright
+import flow as Q
 URL = os.environ.get("QA_URL", "http://localhost:8790")
 FAILS = []
 def check(ok, what):
@@ -27,7 +28,7 @@ async def main():
             return await route.abort()
         await pg.route("**/*", r)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
-        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_goals(pg)
         await pg.click(".tile[data-k=nature]")
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(800)
         await pg.click("#nav button[data-k=guide]"); await pg.wait_for_selector("#askInput")
