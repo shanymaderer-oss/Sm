@@ -544,19 +544,19 @@
   ]
  },
  "porto": {
-  "at": "2026-10-31T11:57:29.134Z",
-  "seconds": 422,
+  "at": "2026-10-23T17:57:36.930Z",
+  "seconds": 569,
   "osm": {
    "sights": 141,
-   "sights2": 165,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 238,
-   "diet": 15,
+   "diet": 14,
    "extra": 78,
-   "landmarks": 43,
-   "streets": 13
+   "streets": 13,
+   "sights2": 165,
+   "landmarks": 43
   },
   "voyage": {
    "eat": 21,
@@ -568,7 +568,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 13,
    "en": 100
   },
   "streetsV": 2,
@@ -576,14 +576,7 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "Rua de Santa Catarina (69)",
@@ -593,18 +586,11 @@
    "Rua Formosa (15)"
   ],
   "log": [
-   "overpass-api.de ok 141 37608ms",
-   "overpass-api.de ok 165 39369ms",
-   "overpass-api.de ok 450 44860ms",
-   "overpass-api.de ok 300 31554ms",
-   "overpass-api.de ok 350 29516ms",
-   "overpass-api.de ok 238 24605ms",
-   "overpass-api.de ok 15 26108ms",
-   "overpass-api.de ok 78 33127ms",
-   "overpass-api.de ok 43 31910ms",
-   "overpass-api.de ok 347 33288ms",
-   "streets: 347 shops",
-   "fame: 204 of 204"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 141 28814ms",
+   "overpass-api.de ok 165 36519ms",
+   "overpass-api.de ok 43 42214ms",
+   "fame: 214 of 214"
   ]
  },
  "madrid": {
@@ -1263,19 +1249,19 @@
   ]
  },
  "larnaca": {
-  "at": "2026-10-23T21:19:23.819Z",
-  "seconds": 589,
+  "at": "2026-10-31T12:06:33.260Z",
+  "seconds": 430,
   "osm": {
    "sights": 11,
+   "sights2": 13,
    "restaurants": 73,
    "cafes": 85,
    "hotels": 61,
    "shopping": 27,
    "diet": 1,
    "extra": 9,
-   "streets": 5,
-   "sights2": 13,
-   "landmarks": 2
+   "landmarks": 2,
+   "streets": 5
   },
   "voyage": {
    "eat": 10,
@@ -1295,7 +1281,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Ermou (48)",
@@ -1305,12 +1298,19 @@
    "Archiepiskopou Kyprianou Avenue (6)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 11 29903ms",
-   "overpass-api.de ok 13 40848ms",
-   "overpass-api.de HTTP 504 52770ms",
-   "overpass-api.de ok 2 36648ms",
-   "fame: 25 of 25"
+   "overpass-api.de ok 11 25347ms",
+   "overpass-api.de ok 13 22127ms",
+   "overpass-api.de ok 73 39153ms",
+   "overpass-api.de ok 85 45354ms",
+   "overpass-api.de ok 61 30158ms",
+   "overpass-api.de ok 27 29847ms",
+   "overpass-api.de ok 1 38945ms",
+   "overpass-api.de HTTP 502 301ms",
+   "overpass-api.de ok 9 30594ms",
+   "overpass-api.de ok 2 31350ms",
+   "overpass-api.de ok 172 42779ms",
+   "streets: 172 shops",
+   "fame: 22 of 22"
   ]
  },
  "limassol": {
