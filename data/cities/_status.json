@@ -3230,5 +3230,68 @@
    "wikidata HTTP 429",
    "fame: 125 of 125"
   ]
+ },
+ "bruges": {
+  "at": "2026-10-31T16:25:30.077Z",
+  "seconds": 425,
+  "osm": {
+   "sights": 97,
+   "sights2": 45,
+   "restaurants": 258,
+   "cafes": 97,
+   "hotels": 129,
+   "shopping": 91,
+   "diet": 2,
+   "extra": 42,
+   "landmarks": 40,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 20,
+   "drink": 4,
+   "buy": 6,
+   "see": 17,
+   "sleep": 30,
+   "withCoords": 78,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 38
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Steenstraat (12)",
+   "Noordzandstraat (9)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 406ms",
+   "overpass-api.de ok 97 36464ms",
+   "overpass-api.de ok 45 27394ms",
+   "overpass-api.de ok 258 25118ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de ok 97 37769ms",
+   "overpass-api.de ok 129 27403ms",
+   "overpass-api.de ok 91 28378ms",
+   "overpass-api.de ok 2 40848ms",
+   "overpass-api.de ok 42 26774ms",
+   "overpass-api.de ok 40 39707ms",
+   "overpass-api.de ok 86 27171ms",
+   "streets: 86 shops",
+   "fame: 151 of 151"
+  ]
  }
 }
