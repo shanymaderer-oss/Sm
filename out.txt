@@ -1,0 +1,7 @@
+NOTE start-here button box: {'x': 217.484375, 'y': 454.609375, 'width': 136.515625, 'height': 34}
+NOTE what is under the middle of the button: BUTTON.btn soft small #
+NOTE after tap, pressed: true | hotel: 1
+NOTE Booking tap did NOT open a page: Timeout 8000ms exceeded while waiting for event "page" | on top: the link itself
+NOTE Airbnb tap did NOT open a page: Timeout 8000ms exceeded while waiting for event "page" | on top: the link itself
+NOTE מלונות במפה tap opened: https://www.google.com/maps/search/hotels/@48.86115,2.33586,16z | on top: the link itself
+NOTE errors: []
