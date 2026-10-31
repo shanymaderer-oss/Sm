@@ -1,0 +1,31 @@
+[36m[1mi  emulators:[22m[39m Starting emulators: auth, firestore
+[36m[1mi  emulators:[22m[39m Detected demo project ID "demo-masa", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+[33m[1m⚠ [22m[39m It appears you are running in a CI environment. You can avoid downloading the Firestore Emulator repeatedly by caching the /home/runner/.cache/firebase/emulators directory.
+[36m[1mi  firestore:[22m[39m downloading cloud-firestore-emulator-v1.22.0.jar...
+
+[36m[1mi  firestore:[22m[39m Firestore Emulator logging to [1mfirestore-debug.log[22m
+[32m[1m✔  firestore:[22m[39m Firestore Emulator was started in standard edition.
+[32m[1m✔  firestore:[22m[39m Firestore Emulator UI websocket is running on 9150.
+[36m[1mi [22m[39m Running script: [1mpython tools/qa/test_cloud.py[22m
+PASS a new trip is saved to the account
+PASS the trip appears on her second device
+PASS an invite link is created
+PASS Bob sees the invite card
+PASS Bob joined and the trip opened
+PASS Alice receives Bob's note live
+PASS a stranger cannot read the trip (permission-denied)
+PASS Bob left the trip
+PASS after deleting the account Alice is signed out
+PASS no page errors for alice []
+PASS no page errors for alice-2 []
+PASS no page errors for bob []
+PASS no page errors for mallory []
+PASS signed out: the 'keep your trip' card shows after the build
+PASS after signing in from the card: still on the trip, the card gone, the trip saved to the account
+ALL PASSED []
+[32m[1m✔ [22m[39m Script exited successfully (code 0)
+[36m[1mi  emulators:[22m[39m Shutting down emulators.
+[36m[1mi  firestore:[22m[39m Stopping Firestore Emulator
+[36m[1mi  auth:[22m[39m Stopping Authentication Emulator
+[36m[1mi  hub:[22m[39m Stopping emulator hub
+[36m[1mi  logging:[22m[39m Stopping Logging Emulator
