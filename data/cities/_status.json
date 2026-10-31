@@ -3839,5 +3839,62 @@
    "streets: 13 shops",
    "fame: 37 of 37"
   ]
+ },
+ "abu-dhabi": {
+  "at": "2026-10-31T19:09:32.817Z",
+  "seconds": 436,
+  "osm": {
+   "sights": 0,
+   "sights2": 25,
+   "restaurants": 196,
+   "cafes": 121,
+   "hotels": 108,
+   "shopping": 78,
+   "diet": 7,
+   "extra": 11,
+   "landmarks": 0,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 21,
+   "drink": 15,
+   "buy": 7,
+   "see": 20,
+   "sleep": 12,
+   "withCoords": 74,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 5,
+   "en": 62
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 0 43532ms",
+   "overpass-api.de ok 25 27010ms",
+   "overpass-api.de ok 196 25584ms",
+   "overpass-api.de ok 121 30783ms",
+   "overpass-api.de ok 108 33684ms",
+   "overpass-api.de ok 78 28167ms",
+   "overpass-api.de HTTP 502 470ms",
+   "overpass-api.de ok 7 39445ms",
+   "overpass-api.de ok 11 28244ms",
+   "overpass-api.de ok 0 34685ms",
+   "overpass-api.de ok 65 39576ms",
+   "streets: 65 shops",
+   "fame: 2 of 2"
+  ]
  }
 }
