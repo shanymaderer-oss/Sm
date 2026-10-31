@@ -2080,5 +2080,76 @@
    "wikidata HTTP 429",
    "fame: 176 of 176"
   ]
+ },
+ "los-angeles": {
+  "at": "2026-10-31T11:06:23.957Z",
+  "seconds": 532,
+  "osm": {
+   "sights": 58,
+   "sights2": 129,
+   "restaurants": 345,
+   "cafes": 96,
+   "hotels": 174,
+   "shopping": 116,
+   "diet": 68,
+   "extra": 46,
+   "landmarks": 0,
+   "streets": 5
+  },
+  "voyage": {
+   "eat": 79,
+   "drink": 32,
+   "buy": 28,
+   "see": 85,
+   "sleep": 28,
+   "withCoords": 274,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Melrose Avenue (25)",
+   "Hollywood Boulevard (9)",
+   "Sunset Boulevard (7)",
+   "West 3rd Street (6)",
+   "Santa Monica Boulevard (6)"
+  ],
+  "log": [
+   "overpass-api.de ok 58 35847ms",
+   "overpass-api.de ok 129 31160ms",
+   "overpass-api.de ok 345 24948ms",
+   "overpass-api.de ok 96 27603ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de ok 174 46045ms",
+   "overpass-api.de HTTP 502 482ms",
+   "overpass-api.de ok 116 41067ms",
+   "overpass-api.de ok 68 35173ms",
+   "overpass-api.de HTTP 502 481ms",
+   "overpass-api.de ok 46 35725ms",
+   "overpass-api.de ok 0 31497ms",
+   "overpass-api.de ok 144 31577ms",
+   "streets: 144 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 49 of 99"
+  ]
  }
 }
