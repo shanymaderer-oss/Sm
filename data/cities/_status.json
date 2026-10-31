@@ -53,27 +53,27 @@
   ]
  },
  "rome": {
-  "at": "2026-10-23T16:27:13.159Z",
-  "seconds": 667,
+  "at": "2026-10-31T14:31:16.933Z",
+  "seconds": 549,
   "osm": {
    "sights": 499,
+   "sights2": 119,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 231,
-   "diet": 26,
+   "shopping": 233,
+   "diet": 27,
    "extra": 200,
-   "streets": 14,
    "landmarks": 92,
-   "sights2": 116
+   "streets": 14
   },
   "voyage": {
-   "eat": 58,
-   "drink": 16,
+   "eat": 62,
+   "drink": 12,
    "buy": 15,
-   "see": 168,
-   "sleep": 136,
-   "withCoords": 364,
+   "see": 148,
+   "sleep": 132,
+   "withCoords": 346,
    "districts": 8
   },
   "wiki": {
@@ -84,7 +84,15 @@
   "fameV": 3,
   "qv": {
    "sights": 2,
-   "sights2": 1
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
   },
   "streets": [
    "Via Nazionale (71)",
@@ -94,12 +102,27 @@
    "Via del Tritone (18)"
   ],
   "log": [
-   "(updated: )",
+   "overpass-api.de HTTP 502 673ms",
+   "overpass-api.de ok 499 27556ms",
+   "overpass-api.de ok 119 30386ms",
+   "overpass-api.de ok 450 40842ms",
+   "overpass-api.de ok 300 31634ms",
+   "overpass-api.de HTTP 502 380ms",
+   "overpass-api.de ok 350 31240ms",
+   "overpass-api.de ok 233 42970ms",
+   "overpass-api.de ok 27 40314ms",
+   "overpass-api.de ok 200 32136ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 92 18383ms",
+   "overpass-api.de ok 880 49275ms",
+   "streets: 880 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 750 of 750"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 682 of 682"
   ]
  },
  "barcelona": {
