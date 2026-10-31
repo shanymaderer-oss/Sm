@@ -1,47 +1,67 @@
 {
  "paris": {
-  "at": "2026-10-23T16:32:39.468Z",
-  "seconds": 828,
+  "at": "2026-10-31T14:33:17.682Z",
+  "seconds": 649,
   "osm": {
    "sights": 739,
+   "sights2": 250,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 200,
+   "diet": 250,
    "extra": 200,
-   "streets": 14,
    "landmarks": 150,
-   "sights2": 250
+   "streets": 14
   },
   "voyage": {
-   "eat": 69,
-   "drink": 38,
-   "buy": 45,
-   "see": 112,
-   "sleep": 101,
-   "withCoords": 247,
+   "eat": 75,
+   "drink": 40,
+   "buy": 39,
+   "see": 96,
+   "sleep": 90,
+   "withCoords": 216,
    "districts": 8
   },
   "wiki": {
-   "he": 100,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
   "fameV": 3,
   "qv": {
    "sights": 2,
-   "sights2": 1
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
   },
   "streets": [
    "Rue du Faubourg Saint-Antoine (47)",
-   "Rue Saint-Antoine (29)",
    "Avenue d'Italie (24)",
+   "Rue Saint-Antoine (29)",
    "Rue Montmartre (25)",
    "Rue de Rivoli (20)"
   ],
   "log": [
-   "(updated: )",
+   "overpass-api.de ok 739 43855ms",
+   "overpass-api.de ok 250 35333ms",
+   "overpass-api.de ok 450 31542ms",
+   "overpass-api.de ok 300 33092ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de ok 350 38592ms",
+   "overpass-api.de ok 300 44409ms",
+   "overpass-api.de HTTP 504 47379ms",
+   "overpass-api.de ok 250 23511ms",
+   "overpass-api.de ok 200 29283ms",
+   "overpass-api.de ok 150 29134ms",
+   "overpass-api.de ok 1913 33291ms",
+   "streets: 1913 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -49,7 +69,10 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 1124 of 1124"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 1111 of 1111"
   ]
  },
  "rome": {
