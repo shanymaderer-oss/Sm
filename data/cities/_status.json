@@ -355,39 +355,46 @@
   ]
  },
  "vienna": {
-  "at": "2026-10-23T17:26:47.825Z",
-  "seconds": 1104,
+  "at": "2026-10-31T11:51:32.292Z",
+  "seconds": 547,
   "osm": {
    "sights": 658,
+   "sights2": 157,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 0,
+   "diet": 115,
    "extra": 200,
-   "streets": 14,
-   "sights2": 158,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 14
   },
   "voyage": {
-   "eat": 113,
-   "drink": 91,
-   "buy": 51,
-   "see": 110,
-   "sleep": 55,
-   "withCoords": 416,
+   "eat": 125,
+   "drink": 101,
+   "buy": 56,
+   "see": 120,
+   "sleep": 59,
+   "withCoords": 461,
    "districts": 8
   },
   "wiki": {
    "he": 100,
-   "en": 100
+   "en": 0
   },
   "streetsV": 2,
   "fameV": 3,
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Mariahilfer Straße (66)",
@@ -397,15 +404,26 @@
    "Kärntner Straße (25)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 658 6235ms",
-   "overpass-api.de ok 158 30425ms",
-   "overpass-api.de ok 150 34205ms",
+   "overpass-api.de ok 658 35977ms",
+   "overpass-api.de ok 157 30138ms",
+   "overpass-api.de ok 450 30866ms",
+   "overpass-api.de ok 300 32264ms",
+   "overpass-api.de ok 350 36111ms",
+   "overpass-api.de ok 300 32813ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de ok 115 32751ms",
+   "overpass-api.de ok 200 33849ms",
+   "overpass-api.de ok 150 38442ms",
+   "overpass-api.de ok 1218 31007ms",
+   "streets: 1218 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 933 of 933"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 898 of 898"
   ]
  },
  "berlin": {
@@ -1628,19 +1646,19 @@
   ]
  },
  "sofia": {
-  "at": "2026-10-23T22:12:48.306Z",
-  "seconds": 490,
+  "at": "2026-10-31T12:15:19.433Z",
+  "seconds": 521,
   "osm": {
-   "sights": 334,
+   "sights": 336,
+   "sights2": 110,
    "restaurants": 323,
    "cafes": 300,
    "hotels": 146,
    "shopping": 247,
    "diet": 11,
    "extra": 31,
-   "streets": 1,
-   "sights2": 110,
-   "landmarks": 44
+   "landmarks": 45,
+   "streets": 1
   },
   "voyage": {
    "eat": 12,
@@ -1648,7 +1666,7 @@
    "buy": 12,
    "see": 55,
    "sleep": 18,
-   "withCoords": 91,
+   "withCoords": 94,
    "districts": 0
   },
   "wiki": {
@@ -1660,17 +1678,36 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Георги С. Раковски (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 334 33404ms",
-   "overpass-api.de ok 110 32208ms",
-   "overpass-api.de ok 44 37090ms",
-   "fame: 435 of 435"
+   "overpass-api.de ok 336 36036ms",
+   "overpass-api.de ok 110 35577ms",
+   "overpass-api.de ok 323 25810ms",
+   "overpass-api.de ok 300 36581ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de ok 146 38247ms",
+   "overpass-api.de ok 247 45949ms",
+   "overpass-api.de ok 11 36136ms",
+   "overpass-api.de ok 31 32959ms",
+   "overpass-api.de ok 45 40328ms",
+   "overpass-api.de ok 95 34538ms",
+   "streets: 95 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 416 of 416"
   ]
  },
  "bucharest": {
