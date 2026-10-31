@@ -3139,5 +3139,75 @@
    "wikidata HTTP 429",
    "fame: 33 of 33"
   ]
+ },
+ "sydney": {
+  "at": "2026-10-31T13:39:11.356Z",
+  "seconds": 484,
+  "osm": {
+   "sights": 74,
+   "sights2": 168,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 225,
+   "shopping": 300,
+   "diet": 32,
+   "extra": 111,
+   "landmarks": 11,
+   "streets": 3
+  },
+  "voyage": {
+   "eat": 45,
+   "drink": 34,
+   "buy": 19,
+   "see": 81,
+   "sleep": 45,
+   "withCoords": 168,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 60,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Oxford Street (11)",
+   "King Street (8)",
+   "Hay Street (6)"
+  ],
+  "log": [
+   "overpass-api.de ok 74 27884ms",
+   "overpass-api.de ok 168 35972ms",
+   "overpass-api.de ok 450 23627ms",
+   "overpass-api.de ok 300 25266ms",
+   "overpass-api.de ok 225 25873ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 300 20014ms",
+   "overpass-api.de ok 32 29350ms",
+   "overpass-api.de HTTP 502 351ms",
+   "overpass-api.de ok 111 31735ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 11 46923ms",
+   "overpass-api.de ok 101 25851ms",
+   "streets: 101 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 192 of 192"
+  ]
  }
 }
