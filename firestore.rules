@@ -83,7 +83,7 @@ service cloud.firestore {
     // Anonymous counts: what happened (a trip built, a picture shared), the city and the day. No user, no device id.
     match /events/{id} {
       allow create: if request.resource.data.keys().hasOnly(['e', 'city', 'n', 'at'])
-        && request.resource.data.e in ['build', 'share_image', 'share_link', 'kit_open', 'signin', 'guide_ai', 'feedback']
+        && request.resource.data.e in ['build', 'share_image', 'share_link', 'kit_open', 'signin', 'guide_ai', 'feedback', 'flights', 'prompt_show', 'prompt_tap', 'prompt_no']
         && optStr(request.resource.data, 'city', 40)
         && (!('n' in request.resource.data) || (request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 30))
         && request.resource.data.at == request.time;

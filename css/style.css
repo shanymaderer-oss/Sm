@@ -922,3 +922,8 @@ textarea:focus{border-color:var(--primary)}
 a.btn{text-decoration:none}
 .flrow.best{background:color-mix(in srgb,var(--teal) 7%,transparent);border-radius:12px;padding-inline:8px;margin-inline:-8px}
 .flmain .tag{align-self:flex-start;margin-bottom:2px}
+/* the "keep your trip" card under the trip header */
+.card.nudge{margin-top:10px;padding:12px 14px;border:1px solid var(--line);background:var(--surface)}
+.card.nudge p{display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;font-size:.92rem;line-height:1.5}
+.card.nudge p svg{flex:none;width:18px;height:18px;margin-top:2px;color:var(--primary)}
+.card.nudge .chiprow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}

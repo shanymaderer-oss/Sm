@@ -341,6 +341,37 @@ function rerenderKeepScroll() { const k = $("scroll").scrollTop; renderPanel(); 
 
 /* ---------- saved trips ---------- */
 const savedTrips = () => store.get("masa-trips", []);
+/* an edit by the traveler: saved here, and the "keep it" card may say their changes live only in this browser */
+function saveEdit() {
+  if (!S.trip || S.trip.source === "sample") return;
+  saveTrip(S.trip);
+  if (!S.edited) { S.edited = true; if (S.screen === "plan" && nudgeKind(S.trip)) rerenderKeepScroll(); }
+}
+/* ---------- asking to sign in, at the moment of value (see the masa-conversion skill) ----------
+   After a trip is built: keep it on every device. After an edit: the changes live only in this browser.
+   Never for the sample, never when signed in, one tap to dismiss and it stays away for the session. */
+const sget = k => { try { return sessionStorage.getItem(k); } catch { return null; } };
+const sset = (k, v) => { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch {} };
+function nudgeKind(t) {
+  if (!t || t.source === "sample" || !cloud.configured() || ["in", "loading"].includes(cloud.state.status) || t.cloudId) return null;
+  if (sget("masa-nudge") === "no") return null;
+  return S.edited ? "edit" : "built";
+}
+function saveNudge(t) {
+  const k = nudgeKind(t);
+  if (!k) return "";
+  track("prompt_show", null, k === "edit" ? 2 : 1, "nudge:" + k);
+  const txt = k === "edit" ? "השינויים שלכם נשמרים רק בדפדפן הזה. התחברו כדי לא לאבד אותם."
+    : "לשמור את הטיול בכל המכשירים? התחברו עם Google, ותוכלו לפתוח אותו גם מהטלפון בטיסה.";
+  return `<div class="card nudge" id="nudge" data-k="${k}"><p>${ic("shield")}<span>${txt}</span></p>
+    <div class="chiprow"><button type="button" class="btn small" id="nudgeIn">התחברות עם Google</button><button type="button" class="chipbtn" id="nudgeNo">לא עכשיו</button></div></div>`;
+}
+function bindNudge() {
+  const el = $("nudge"); if (!el) return;
+  const n = el.dataset.k === "edit" ? 2 : 1;
+  $("nudgeIn").onclick = () => { track("prompt_tap", null, n); if (S.trip?.id) sset("masa-return-trip", S.trip.id); cloud.signIn(); };
+  $("nudgeNo").onclick = () => { track("prompt_no", null, n); sset("masa-nudge", "no"); el.remove(); };
+}
 function saveTrip(t) {
   if (t.source === "sample") return;
   const list = savedTrips().filter(x => x.id !== t.id);
@@ -359,7 +390,7 @@ function storeTripLocal(t, keepPlace) {
   store.set("masa-trips", list.slice(0, 8));
 }
 function openTrip(t) {
-  S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = [];
+  S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = []; S.edited = false;
   const live = liveDay(t); if (live > 0) S.day = live; // traveling now: open on today
   COST.loadFX(COUNTRY_CUR[t.cc] || "EUR").then(() => { if (S.trip === t && TRIP_SCREENS.includes(S.screen) && S.screen !== "guide") rerenderKeepScroll(); }).catch(() => {});
   go("plan");
@@ -852,7 +883,7 @@ function afterEdit(d, reorder = true) {
   if (reorder && !d.manualOrder) planner.optimizeDay(d);
   planner.assignTimes(d);
   d.route = null; d.legs = null;
-  if (S.trip.source !== "sample") saveTrip(S.trip);
+  saveEdit();
   renderMap(); rerenderKeepScroll();
   planner.computeRoute(d).then(() => { if (S.trip?.days.includes(d)) { renderMap(); if (["plan", "place"].includes(S.screen)) rerenderKeepScroll(); } });
 }
@@ -943,6 +974,7 @@ SCREENS.plan = {
     <div class="triphero" style="${cityColor(t.city).style}"><button type="button" class="sharetrip" id="shareTrip">${ic("share")}שיתוף</button><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
       <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
       <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}</div></div>
+    ${saveNudge(t)}
     ${t.wish ? wishCard(t) : ""}${t.wish?.fitness ? fitnessCard(t) : ""}
     ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
     <div class="duo">
@@ -999,6 +1031,7 @@ SCREENS.plan = {
     document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
     bindFamily();
     bindNow();
+    bindNudge();
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
   }
 };
@@ -1021,7 +1054,7 @@ function addToDay(item, dayIdx = S.day, after = null) {
   toast(`${item.name} נוסף ל${d.label}`);
   renderMap();
   planner.computeRoute(d).then(() => { if (S.trip?.days.includes(d)) { renderMap(); if (S.screen === "plan") rerenderKeepScroll(); } });
-  if (S.trip.source !== "sample") saveTrip(S.trip);
+  saveEdit();
 }
 
 /* ---------- place ---------- */
@@ -1139,7 +1172,7 @@ async function genHistory(s) {
     if (r.fact) s.fact = r.fact;
     if (r.best) s.best = r.best;
     if (Array.isArray(r.busy) && r.busy.length >= 12) { s.busy = Array.from({ length: 16 }, (_, k) => Math.max(0, Math.min(100, Math.round(+r.busy[k] || 0)))); s.busySrc = "ai"; }
-    if (S.trip.source !== "sample") saveTrip(S.trip);
+    saveEdit();
     rerenderKeepScroll();
   } catch (e) {
     if (st) st.textContent = ai.errText(e.code);
@@ -2044,7 +2077,7 @@ function replaceStopOld(p) {
   d.route = null; d.legs = null;
   planner.assignTimes(d);
   S.replace = null;
-  if (S.trip.source !== "sample") saveTrip(S.trip);
+  saveEdit();
   S.day = R2.day; S.stop = R2.stop;
   toast(`${p.name} נכנס/ה במקום ${old.name}`);
   go("place");
@@ -2748,6 +2781,11 @@ cloud.init({
 });
 cloud.on(st => {
   if (st.status === "in") track("signin", null, null, "signin");
+  if (st.status === "in" && sget("masa-return-trip")) {
+    const id = sget("masa-return-trip"); sset("masa-return-trip", null);
+    const t = savedTrips().find(x => x.id === id);
+    if (t && S.trip !== t) { openTrip(t); toast("התחברתם. הטיול שמור עכשיו בחשבון."); return; }
+  }
   // the avatar in the search bar
   const g = $("gearBtn");
   if (g) g.innerHTML = st.status === "in" && st.user?.photo ? `<img class="avatar" src="${esc(safeUrl(st.user.photo))}" alt="" referrerpolicy="no-referrer">` : GEAR_SVG;

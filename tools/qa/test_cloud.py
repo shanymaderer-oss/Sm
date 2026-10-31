@@ -95,6 +95,17 @@ async def main():
         check(await a1.evaluate("Masa.cloud.state.status") != "in", "after deleting the account Alice is signed out")
         for pg, who in [(a1, "alice"), (a2, "alice-2"), (bob, "bob"), (mal, "mallory")]:
             check(not pg.errs, f"no page errors for {who} {pg.errs[:2]}")
+        # Carol builds a trip without an account, then taps 'sign in' on the card under the trip: she stays on her trip, and it is saved
+        _, c = await user(b, "carol")
+        await c.goto(URL + "/index.html"); await c.wait_for_timeout(1500)
+        await c.fill("#gq", "פראג"); await c.press("#gq", "Enter"); await c.wait_for_timeout(400); await Q.to_goals(c)
+        await c.click("#buildBtn"); await c.wait_for_selector(".triphero", timeout=25000); await c.wait_for_timeout(800)
+        check(await c.locator("#nudge").count() == 1, "signed out: the 'keep your trip' card shows after the build")
+        await c.click("#nudgeIn")
+        try:
+            await c.wait_for_function("Masa.cloud.state.status === 'in' && JSON.parse(localStorage.getItem('masa-trips')||'[]')[0]?.cloudId", timeout=20000)
+            check(await c.locator(".triphero").count() == 1 and await c.locator("#nudge").count() == 0, "after signing in from the card: still on the trip, the card gone, the trip saved to the account")
+        except Exception: check(False, "signing in from the card saves the trip to the account")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS)
     sys.exit(1 if FAILS else 0)
