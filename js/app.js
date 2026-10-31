@@ -1460,6 +1460,7 @@ function localAnswer(q) {
   if (/(ערב|לילה|לצאת|לבלות)/.test(q) && !/מסעד|לאכול/.test(q)) {
     const last = d.stops[d.stops.length - 1];
     const list = [...placesNear(last, ["bar", "club"], 1.2, 2), ...placesNear(last, ["view"], 1.5, 1)];
+    if (!list.length && ai.enabled()) return null;
     if (!list.length) return out("לא מצאנו בילוי ערב קרוב לסוף היום.");
     return out(`ליד ${last.name}, בסוף היום:\n${list.map(x => "• " + placeLineShort(x.p, x.k)).join("\n")}`, list.map(x => act(`להוסיף: ${x.p.name}`, () => addPlace(x.p, S.day))));
   }
@@ -1475,8 +1476,13 @@ function localAnswer(q) {
   }
   // food, coffee, something sweet, or any other kind of place near here
   const kinds = kindsIn(q);
-  if (kinds || /(קרוב|ליד|בסביבה|באזור)/.test(q)) {
+  const nearby = /(קרוב|ליד|בסביבה|באזור|כאן|פה)/.test(q);
+  // "good restaurants in Miami" is about the whole city: the smart guide answers that, not a list of what is near this stop
+  if (kinds && !nearby && ai.enabled()) return null;
+  if (kinds || nearby) {
     const list = placesNear(ref.p, kinds || ["restaurant"], 1.2, 3);
+    // nothing of that kind near here in our list: the smart guide knows more places than our map does
+    if (!list.length && ai.enabled()) return null;
     if (!list.length) return out(`לא מצאנו ${kinds ? "מקום כזה" : "מסעדה"} פתוח קרוב ${ref.where}.`);
     return out(`הכי טובים קרוב ${ref.where}:\n${list.map(x => "• " + placeLineShort(x.p, x.k)).join("\n")}`,
       list.flatMap(x => [act(`להוסיף: ${x.p.name}`, () => addPlace(x.p, S.day))]).concat([act("ניווט לראשון", () => window.open(gmDir(ref.p, list[0].p), "_blank", "noopener"))]));

@@ -731,9 +731,10 @@ Masa.planner = (() => {
           else data.els.push(...SRC.slim(j.elements || []));
           done[k] = true; onStep?.(k);
         }
-        catch { if (signal?.aborted) return; }
+        catch { if (signal?.aborted) return; failed[k] = true; }
       }
     };
+    const failed = {};
     const jobs = [
       worker(), worker(),
       svc.voyage(geo.en || geo.local, signal).then(v => { data.voyage = v; done.voyage = true; }),
@@ -748,7 +749,9 @@ Masa.planner = (() => {
       const tick = setInterval(() => {
         if (signal?.aborted) { clearInterval(tick); resolve(); return; }
         const el = Date.now() - t0;
-        if ((el > 9000 && enough()) || (el > 9000 && (data.els.length || data.voyage.length || data.wiki.he.length)) || el > 28000) { clearInterval(tick); resolve(); }
+        // meals make the days: wait for the restaurants (the slow servers often answer them after 10–20 seconds)
+        const meals = done.restaurants || failed.restaurants;
+        if ((el > 9000 && enough() && meals) || (el > 22000 && (data.els.length || data.voyage.length || data.wiki.he.length)) || el > 30000) { clearInterval(tick); resolve(); }
       }, 300);
       all.then(() => clearInterval(tick));
     });
@@ -1114,7 +1117,9 @@ Masa.planner = (() => {
       for (const [i, a] of wishOut.missed.slice(0, many).entries()) {
         if (Date.now() - t0 > budgetMs) break;
         if (i) await new Promise(ok => setTimeout(ok, 1100));
-        const r = await Promise.race([svc.searchNear(a, geo.lat, geo.lng, signal).catch(() => []), new Promise(ok => setTimeout(() => ok([]), Math.max(1500, budgetMs + 1500 - (Date.now() - t0))))]);
+        // "וינווד" is found on the map as "Wynwood": the name the smart guide read for it, when there is one
+        const en = (opts.aiWish?.want || []).find(x => x.name && x.he && (Masa.intent.norm(x.he) === Masa.intent.norm(a) || Masa.intent.norm(a).includes(Masa.intent.norm(x.he))))?.name;
+        const r = await Promise.race([svc.searchNear(en || a, geo.lat, geo.lng, signal).catch(() => []), new Promise(ok => setTimeout(() => ok([]), Math.max(1500, budgetMs + 1500 - (Date.now() - t0))))]);
         res.push({ a, r });
         if (signal?.aborted) break;
       }

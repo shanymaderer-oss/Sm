@@ -5,7 +5,7 @@ on:
     inputs:
       test: { description: "script in tools/qa, e.g. test_hotel.py", required: true }
       city: { description: "for diag_city.py", required: false, default: "מיאמי" }
-permissions: { contents: read }
+permissions: { contents: write }
 jobs:
   one:
     runs-on: ubuntu-latest
@@ -23,3 +23,13 @@ jobs:
           set +e; python "tools/qa/$T" > out.txt 2>&1; code=$?
           grep -E "^(FAIL|NOTE|Traceback|  File|[A-Za-z]*Error)" out.txt | head -40 | while read -r l; do echo "::notice title=$T::$l"; done
           echo "::notice title=$T::$(tail -1 out.txt | cut -c1-300)"; exit $code
+      - name: Save the full output to the qa-report-one branch
+        if: always()
+        run: |
+          mkdir -p /tmp/rep && cp -r out.txt qa-out /tmp/rep/ 2>/dev/null || true
+          git config user.name "masa-bot"; git config user.email "actions@users.noreply.github.com"
+          git switch --orphan report-tmp
+          git rm -rqf --cached . 2>/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r /tmp/rep/. .
+          git add -A && git commit -qm "one $(date -u +%F-%H%M)" && git push -qf origin HEAD:refs/heads/qa-report-one
