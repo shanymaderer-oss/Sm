@@ -2277,5 +2277,74 @@
    "wikidata HTTP 429",
    "fame: 241 of 241"
   ]
+ },
+ "chicago": {
+  "at": "2026-10-31T11:30:25.823Z",
+  "seconds": 484,
+  "osm": {
+   "sights": 83,
+   "sights2": 58,
+   "restaurants": 450,
+   "cafes": 230,
+   "hotels": 163,
+   "shopping": 298,
+   "diet": 22,
+   "extra": 83,
+   "landmarks": 36,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 99,
+   "drink": 55,
+   "buy": 38,
+   "see": 118,
+   "sleep": 53,
+   "withCoords": 291,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "North Michigan Avenue (74)",
+   "East Oak Street (25)",
+   "West North Avenue (12)",
+   "West Randolph Street (14)",
+   "North Rush Street (14)"
+  ],
+  "log": [
+   "overpass-api.de ok 83 47665ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de ok 58 31202ms",
+   "overpass-api.de ok 450 24546ms",
+   "overpass-api.de ok 230 31842ms",
+   "overpass-api.de ok 163 32068ms",
+   "overpass-api.de ok 298 35000ms",
+   "overpass-api.de ok 22 32363ms",
+   "overpass-api.de ok 83 31207ms",
+   "overpass-api.de ok 36 34642ms",
+   "overpass-api.de ok 378 31630ms",
+   "streets: 378 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 223 of 223"
+  ]
  }
 }
