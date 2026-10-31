@@ -3896,5 +3896,69 @@
    "streets: 65 shops",
    "fame: 2 of 2"
   ]
+ },
+ "seoul": {
+  "at": "2026-10-31T19:18:06.015Z",
+  "seconds": 509,
+  "osm": {
+   "sights": 123,
+   "sights2": 250,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 12,
+   "extra": 25,
+   "landmarks": 16,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 128,
+   "drink": 116,
+   "buy": 39,
+   "see": 117,
+   "sleep": 61,
+   "withCoords": 457,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "삼청로 (8)",
+   "인사동길 (8)"
+  ],
+  "log": [
+   "overpass-api.de ok 123 32657ms",
+   "overpass-api.de ok 250 32864ms",
+   "overpass-api.de ok 450 36978ms",
+   "overpass-api.de ok 300 42447ms",
+   "overpass-api.de ok 350 33559ms",
+   "overpass-api.de ok 300 41861ms",
+   "overpass-api.de ok 12 49984ms",
+   "overpass-api.de ok 25 50126ms",
+   "overpass-api.de ok 16 36678ms",
+   "overpass-api.de ok 85 34448ms",
+   "streets: 85 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 149 of 149"
+  ]
  }
 }
