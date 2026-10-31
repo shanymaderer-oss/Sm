@@ -124,6 +124,7 @@ Masa.planner = (() => {
   /* thermal baths, hammams and spas open to visitors (Budapest's fürdő, Istanbul's hamam, Tbilisi's abanotubani) */
   const BATH = t => t.amenity === "public_bath" || t.leisure === "spa" || !!t["bath:type"] || /gyógyfürdő|fürdő|hamam|hammam|აბანო/i.test(t.name || "");
   const LATIN = /\p{Script=Latin}/u;
+  const isVegan = p => !!p.vegan || /vegan/.test(p.cuisine || "");
   function fromOSM(e, cc) {
     const t = e.tags || {};
     /* a name the traveler can read: Hebrew, else the local name if it is in Latin letters, else its English/Latin form
@@ -135,7 +136,7 @@ Masa.planner = (() => {
       id: `${e.type}/${e.id}`, src: "osm", name, local: t.name || name, en: t["name:en"] || null, kind, cat: KIND[kind].cat, lat: e.lat, lng: e.lon,
       wikidata: t.wikidata || null, wikiTag: t.wikipedia || null, website: t.website || t["contact:website"] || t.url || null,
       phone: t.phone || t["contact:phone"] || null, hours: t.opening_hours || null, cuisine: t.cuisine || null,
-      fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || "") || /vegetarian|vegan/.test(t.cuisine || ""),
+      fee: t.fee || null, charge: t.charge || null, outdoor: t.outdoor_seating === "yes", veg: /yes|only/.test(t["diet:vegetarian"] || "") || /yes|only/.test(t["diet:vegan"] || "") || /vegetarian|vegan/.test(t.cuisine || ""), vegan: /yes|only/.test(t["diet:vegan"] || "") || /vegan/.test(t.cuisine || ""),
       kosher: /yes|only/.test(t["diet:kosher"] || "") || /kosher/.test(t.cuisine || "") || /kosher|cacher|casher|כשר/i.test(t.name || ""), michelin: +t["michelin:stars"] || 0, brand: !!t.brand, heritage: !!t.heritage, hasHe: !!t["name:he"],
       address: [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" ") || null, reservation: t.reservation || null,
       tourism: t.tourism || null, historic: t.historic || null, bath: BATH(t), stars: parseFloat(t.stars) || 0, jewish: t.religion === "jewish", wheel: t.wheelchair || null
@@ -341,7 +342,7 @@ Masa.planner = (() => {
         else q -= 0.6;
       }
       if (p.outdoor) sig.push("ישיבה בחוץ");
-      if (p.veg) sig.push("אפשרויות צמחוניות");
+      if (p.vegan) sig.push("אפשרויות טבעוניות"); else if (p.veg) sig.push("אפשרויות צמחוניות");
       if (p.kosher) sig.push("כשר");
     }
     if (p.brand || CHAIN.test(p.local || "")) { q -= p.kind === "mall" || p.kind === "store" ? 0 : 6; }
@@ -1140,6 +1141,7 @@ Masa.planner = (() => {
     pool.forEach(p => { p.out = Math.max(0, p.dist - core); p.cpen = p.dist * (move === "car" ? 0.15 : 0.6) + M.out * p.out; });
     if (opts.diet === "כשר") pool.forEach(p => { if (p.cat === "food") p.q += p.kosher ? 8 : -1; });
     if (opts.diet === "צמחוני") pool.forEach(p => { if (p.cat === "food") p.q += p.veg ? 3 : /vegetarian|vegan/.test(p.cuisine || "") ? 4 : 0; });
+    if (opts.diet === "טבעוני") pool.forEach(p => { if (p.cat === "food") p.q += isVegan(p) ? 4 : 0; });
     const by = kinds => pool.filter(p => kinds.includes(p.kind) && (!avoid.has(p.kind) || p.userMust)).sort((a, b) => (b.q - b.cpen) - (a.q - a.cpen));
 
     /* The perfect mix: chosen interests get most of the day, the rest still appear a little,
@@ -1199,7 +1201,7 @@ Masa.planner = (() => {
     const quotaFor = d => shares.map((x, ci) => ({ c: x.c, n: Math.floor(x.n / anchors.length) + ((d + ci) % anchors.length < x.n % anchors.length ? 1 : 0) }));
     const kindCount = {};
     /* diet first: kosher or vegetarian travelers get a matching restaurant even if it is a bit farther */
-    const dietOk = p => opts.diet === "כשר" ? p.kosher : opts.diet === "צמחוני" ? (p.veg || /vegetarian|vegan/.test(p.cuisine || "")) : true;
+    const dietOk = p => opts.diet === "כשר" ? p.kosher : opts.diet === "טבעוני" ? isVegan(p) : opts.diet === "צמחוני" ? (p.veg || /vegetarian|vegan/.test(p.cuisine || "")) : true;
     let dietRest = null;
     const mealPick = (anchor, near, far, extra) => {
       if (opts.diet && opts.diet !== "הכול") {
@@ -1412,7 +1414,7 @@ Masa.planner = (() => {
           if (p._sunset) { s.tip = "הגיעו בערך 20 דקות לפני השקיעה. זה המקום לסיים בו את היום."; s.sunset = true; }
           if (p._dietMiss && (meal === "breakfast" || meal === "treat") && opts.diet === "כשר") { s.tip = "המקום הזה לא מסומן ככשר: לא מצאנו כשר מסומן קרוב. אפשר לעצור כאן רק לשתייה, או לאכול במלון."; s.notKosher = true; }
           if (p._dietMiss && (meal === "lunch" || meal === "dinner") && opts.diet === "כשר") s.notKosher = true;
-          if (p._dietMiss && (meal === "lunch" || meal === "dinner")) s.tip = opts.diet === "כשר" ? kosherMissTip(p) : "לא מצאנו מסעדה צמחונית מסומנת קרוב למסלול. רוב המסעדות מציעות מנות צמחוניות, כדאי לשאול.";
+          if (p._dietMiss && (meal === "lunch" || meal === "dinner")) s.tip = opts.diet === "כשר" ? kosherMissTip(p) : opts.diet === "טבעוני" ? "לא מצאנו מסעדה טבעונית מסומנת קרוב למסלול. כדאי לשאול על מנות טבעוניות." : "לא מצאנו מסעדה צמחונית מסומנת קרוב למסלול. רוב המסעדות מציעות מנות צמחוניות, כדאי לשאול.";
           s.nearby = (nearbyOf.get(p.id) || []).map(idea); return s; });
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
         const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null, move };

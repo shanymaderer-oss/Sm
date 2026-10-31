@@ -27,7 +27,8 @@ Masa.intent = (() => {
     T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("לא הרבה הליכה"), word("הורים מבוגרים"), word("אנשים מבוגרים"), word("קשישים"), word("גיל הזהב"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
     T([word("ירח דבש"), word("רומנטי"), word("יום נישואין"), word("זוגי"), /\b(honeymoon|romantic|anniversary)\b/], { romantic: true, boost: { view: 3, dessert: 2 }, label: "טיול זוגי: תצפיות, שקיעות וארוחת ערב טובה" }),
     // food and diet
-    T([word("צמחוני"), word("טבעוני"), word("ויגן"), /\b(vegan|vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
+    T([word("צמחוני"), /\b(vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
+    T([word("טבעוני"), word("ויגן"), /\bvegan\b/], { diet: "טבעוני", label: "אוכל טבעוני" }),
     T([word("כשר"), word("כשרות"), /\bkosher\b/], { diet: "כשר", label: "אוכל כשר, ובית הכנסת הקרוב בכל יום" }),
     T([word("שומר\\S* שבת"), word("שבת"), /\bshabbat|sabbath\b/], { shabbat: true, label: "שומרים שבת: נסמן את השבת במסלול" }),
     T([word("אוכל(?!ים|ת)(?!\\s+(?:ללא|בלי|לא|חריף|חריפ))"), word("קולינרי"), word("לטעום"), word("טעימות"), word("מסעדות טובות"), word("פודי"), /\b(food|foodie|eat well|restaurants)\b/], { add: ["food"], label: "אוכל טוב בכל יום" }, { drop: ["food"], label: "פחות עצירות אוכל" }),
@@ -144,7 +145,7 @@ Masa.intent = (() => {
         (eff.drop || []).forEach(x => { w.drop.add(x); w.add.delete(x); });
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
-        for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null) w[k] = eff[k];
+        for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
         for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "football"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);

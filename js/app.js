@@ -2641,7 +2641,7 @@ function cleanShared(d) {
     cityLocal: str(d.cityLocal, 60), cityEn: str(d.cityEn, 60), country: str(d.country, 60), cc: /^[a-z]{2}$/.test(d.cc) ? d.cc : "", tz: /^[A-Za-z_]+\/[A-Za-z_\/-]+$/.test(d.tz) ? d.tz : null,
     lat: num(d.lat, -90, 90), lng: num(d.lng, -180, 180), summary: str(d.summary, 400),
     opts: { query: str(o.query, 100), days: num(o.days, 1, 7) || d.days.length, budget: one(o.budget, ["חסכוני", "בינוני", "מפנק"], "בינוני"), pace: one(o.pace, ["רגוע", "מאוזן", "אינטנסיבי"], "מאוזן"),
-      diet: one(o.diet, ["הכול", "צמחוני", "כשר"], "הכול"), mobility: one(o.mobility, ["", "wheelchair", "stroller", "walking"], ""), move: one(o.move, ["walk", "transit", "car"], "walk"),
+      diet: one(o.diet, ["הכול", "צמחוני", "טבעוני", "כשר"], "הכול"), mobility: one(o.mobility, ["", "wheelchair", "stroller", "walking"], ""), move: one(o.move, ["walk", "transit", "car"], "walk"),
       notes: str(o.notes, 500), interests: arr(o.interests, 8, x => x).filter(x => INTERESTS.includes(x)), start: /^\d{4}-\d{2}-\d{2}$/.test(o.start) ? o.start : null, people: num(o.people, 1, 12) || 2 },
     hotel: d.hotel && num(d.hotel.lat, -90, 90) != null ? { ...stop(d.hotel), id: str(d.hotel.id, 40) } : null,
     days: d.days.slice(0, 7).map(x => ({ label: str(x.label, 30), theme: str(x.theme, 80), stops: arr(x.stops, 16, stop).filter(s => s.lat != null && s.lng != null) })).filter(x => x.stops.length),

@@ -27,6 +27,9 @@ FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths'
 # words that only look like a rule: (text, a piece of a label that must or must not show)
 LABELS=[("אוהבים שוקולד","שווקים",False),("שוקולד בלגי","קינוחים",True),("שוק פשפשים","שווקים",True),("שוקי איכרים","שווקים",True),
         ("נוסעים באוטובוס","ברכב",False),("נוסעים באוטובוס","ציבורית",True),("שוכרים אוטו","ברכב",True)]
+# diet: vegan is its own diet, not vegetarian ("טבעונים, בלי בשר" stays vegan)
+DIET=[("אנחנו טבעונים","טבעוני"),("אוכלים טבעוני","טבעוני"),("vegan food","טבעוני"),("טבעונים, בלי בשר","טבעוני"),
+      ("אנחנו צמחוניים","צמחוני"),("בלי בשר","צמחוני"),("אוהבים טבע ונופים",None)]
 async def main():
   async with async_playwright() as p:
     b=await p.chromium.launch(args=["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"])
@@ -49,6 +52,10 @@ async def main():
       got=await pg.evaluate("([t,l])=>Masa.intent.parse(t).labels.some(x=>x.includes(l))",[txt,lab])
       ok=got==want; print("LABEL","ok " if ok else "BAD",txt,lab,"->",got)
       if not ok: FAILS.append(txt)
+    for txt,want in DIET:
+      got=await pg.evaluate("t=>Masa.intent.parse(t).diet||null",txt)
+      ok=got==want; print("DIET","ok " if ok else "BAD",txt,"->",got)
+      if not ok: FAILS.append(txt)
     await pg.close()
     pg=await b.new_page()
     async def only_local(route):
@@ -69,6 +76,12 @@ async def main():
       silent=[s["name"] for s in meals if "כשר" not in (s.get("signals") or []) and not s.get("notKosher")]
       ok=not silent; print("KOSHER","ok " if ok else "BAD",city,"not kosher and not marked:",silent)
       if not ok: FAILS.append("kosher "+city)
+    # vegan: lunch and dinner are vegan places (Paris has 141), or say a vegan one was not found
+    t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:3, interests:["food","history"], budget:"בינוני", pace:"מאוזן", diet:"טבעוני", move:"walk", notes:"", start:"2026-12-01", people:2 }, ()=>{}, null)""","פריז")
+    meals=[s for d in t["days"] for s in d["stops"] if s.get("meal") in ("lunch","dinner")]
+    silent=[s["name"] for s in meals if "אפשרויות טבעוניות" not in (s.get("signals") or []) and "טבעונית" not in (s.get("tip") or "") and "vegan" not in (s.get("cuisine") or "")]
+    ok=bool(meals) and not silent; print("VEGAN","ok " if ok else "BAD","פריז",len(meals),"meals, not vegan:",silent)
+    if not ok: FAILS.append("vegan")
     # readable names: in cities with their own script, stops with an English/Latin name show it (Tokyo was 7 of 14 in Japanese, Belgrade 10 in Cyrillic)
     for city,most in [("טוקיו",3),("בלגרד",4),("אתונה",3)]:
       t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:2, interests:["history","food"], budget:"בינוני", pace:"מאוזן", diet:"הכול", move:"walk", notes:"", start:"2026-12-01", people:2 }, ()=>{}, null)""",city)
