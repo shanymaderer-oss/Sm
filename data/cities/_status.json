@@ -3960,5 +3960,73 @@
    "wikidata HTTP 429",
    "fame: 149 of 149"
   ]
+ },
+ "mexico-city": {
+  "at": "2026-10-31T19:26:06.125Z",
+  "seconds": 476,
+  "osm": {
+   "sights": 72,
+   "sights2": 75,
+   "restaurants": 407,
+   "cafes": 188,
+   "hotels": 295,
+   "shopping": 300,
+   "diet": 22,
+   "extra": 25,
+   "landmarks": 6,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 116,
+   "drink": 44,
+   "buy": 86,
+   "see": 180,
+   "sleep": 57,
+   "withCoords": 423,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Calle Donceles (13)",
+   "Avenida Juárez (7)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 468ms",
+   "overpass-api.de HTTP 502 467ms",
+   "overpass-api.de ok 72 33326ms",
+   "overpass-api.de ok 75 20634ms",
+   "overpass-api.de ok 407 32793ms",
+   "overpass-api.de ok 188 41111ms",
+   "overpass-api.de ok 295 26544ms",
+   "overpass-api.de ok 300 26999ms",
+   "overpass-api.de ok 22 33261ms",
+   "overpass-api.de ok 25 30631ms",
+   "overpass-api.de HTTP 502 470ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 6 22287ms",
+   "overpass-api.de ok 144 30698ms",
+   "streets: 144 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 100 of 100"
+  ]
  }
 }
