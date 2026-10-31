@@ -2008,5 +2008,77 @@
    "overpass-api.de ok 32 38312ms",
    "fame: 193 of 193"
   ]
+ },
+ "miami": {
+  "at": "2026-10-31T10:57:24.025Z",
+  "seconds": 691,
+  "osm": {
+   "sights": 0,
+   "sights2": 59,
+   "restaurants": 86,
+   "cafes": 8,
+   "hotels": 325,
+   "shopping": 111,
+   "diet": 14,
+   "extra": 75,
+   "landmarks": 1,
+   "streets": 8
+  },
+  "voyage": {
+   "eat": 17,
+   "drink": 9,
+   "buy": 11,
+   "see": 21,
+   "sleep": 17,
+   "withCoords": 57,
+   "districts": 7
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Lincoln Road (76)",
+   "Northeast 39th Street (37)",
+   "Northeast 41st Street (22)",
+   "Northeast 40th Street (18)",
+   "Collins Avenue (14)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 759ms",
+   "overpass-api.de HTTP 502 486ms",
+   "overpass-api.de HTTP 502 482ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de HTTP 502 482ms",
+   "overpass-api.de ok 59 33065ms",
+   "overpass-api.de ok 86 29434ms",
+   "overpass-api.de ok 8 25725ms",
+   "overpass-api.de ok 325 27569ms",
+   "overpass-api.de ok 111 33572ms",
+   "overpass-api.de ok 14 27623ms",
+   "overpass-api.de ok 75 35045ms",
+   "overpass-api.de ok 1 33343ms",
+   "overpass-api.de ok 305 24896ms",
+   "streets: 305 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 176 of 176"
+  ]
  }
 }
