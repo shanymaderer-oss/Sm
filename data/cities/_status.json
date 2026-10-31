@@ -4431,5 +4431,65 @@
    "wikidata HTTP 429",
    "fame: 254 of 254"
   ]
+ },
+ "havana": {
+  "at": "2026-10-31T20:33:43.077Z",
+  "seconds": 444,
+  "osm": {
+   "sights": 42,
+   "sights2": 162,
+   "restaurants": 311,
+   "cafes": 118,
+   "hotels": 350,
+   "shopping": 195,
+   "diet": 4,
+   "extra": 13,
+   "landmarks": 12,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 10,
+   "drink": 4,
+   "buy": 0,
+   "see": 16,
+   "sleep": 47,
+   "withCoords": 63,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 11,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Obispo (10)"
+  ],
+  "log": [
+   "overpass-api.de ok 42 33534ms",
+   "overpass-api.de ok 162 36042ms",
+   "overpass-api.de ok 311 31438ms",
+   "overpass-api.de ok 118 25531ms",
+   "overpass-api.de ok 350 25844ms",
+   "overpass-api.de ok 195 46211ms",
+   "overpass-api.de ok 4 41925ms",
+   "overpass-api.de ok 13 51008ms",
+   "overpass-api.de ok 12 32650ms",
+   "overpass-api.de ok 149 34149ms",
+   "streets: 149 shops",
+   "fame: 59 of 59"
+  ]
  }
 }
