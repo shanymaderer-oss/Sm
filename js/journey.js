@@ -10,7 +10,8 @@ Masa.journey = (() => {
     batumi: "BUS", belgrade: "BEG", berlin: "BER", bucharest: "BUH", budapest: "BUD", copenhagen: "CPH", dubai: "DXB", dublin: "DUB", edinburgh: "EDI",
     florence: "FLR", istanbul: "IST", krakow: "KRK", larnaca: "LCA", limassol: "LCA", lisbon: "LIS", madrid: "MAD", milan: "MIL", munich: "MUC",
     naples: "NAP", "new-york": "NYC", nice: "NCE", paphos: "PFO", porto: "OPO", seville: "SVQ", sofia: "SOF", tbilisi: "TBS", thessaloniki: "SKG",
-    tokyo: "TYO", valencia: "VLC", venice: "VCE", vienna: "VIE", warsaw: "WAW" };
+    tokyo: "TYO", valencia: "VLC", venice: "VCE", vienna: "VIE", warsaw: "WAW",
+    miami: "MIA", "los-angeles": "LAX", "las-vegas": "LAS", "san-francisco": "SFO", chicago: "CHI", toronto: "YTO", stockholm: "STO", oslo: "OSL", helsinki: "HEL", reykjavik: "REK", zurich: "ZRH", geneva: "GVA", salzburg: "SZG", innsbruck: "INN", hamburg: "HAM", frankfurt: "FRA", cologne: "CGN", brussels: "BRU", riga: "RIX", vilnius: "VNO", tallinn: "TLL", ljubljana: "LJU", zagreb: "ZAG", split: "SPU", dubrovnik: "DBV", bratislava: "BTS", bologna: "BLQ", verona: "VRN", palermo: "PMO", malaga: "AGP", granada: "GRX", rhodes: "RHO", heraklion: "HER", antalya: "AYT", "abu-dhabi": "AUH", phuket: "HKT", "chiang-mai": "CNX", singapore: "SIN", seoul: "SEL", kyoto: "OSA", osaka: "OSA", hanoi: "HAN", "mexico-city": "MEX", marrakech: "RAK", tirana: "TIA", yerevan: "EVN", baku: "BAK" };
   const AIRLINE = { LY: "אל על", IZ: "ארקיע", "6H": "ישראייר", H4: "הייסקיי", W6: "וויז אייר", W4: "וויז אייר", W9: "וויז אייר", "5W": "וויז אייר",
     FR: "ריינאייר", RK: "ריינאייר", U2: "איזיג׳ט", EC: "איזיג׳ט", DS: "איזיג׳ט", VY: "ווולינג", AZ: "ITA", LH: "לופטהנזה", A3: "אגאיין", OA: "אולימפיק",
     TK: "טורקיש", PC: "פגסוס", BA: "בריטיש איירווייז", AF: "אייר פראנס", KL: "KLM", OS: "אוסטריאן", LX: "סוויס", LO: "LOT", OK: "צ׳כיה", RO: "טארום",
