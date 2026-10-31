@@ -3015,5 +3015,75 @@
    "streets: 17 shops",
    "fame: 18 of 18"
   ]
+ },
+ "montreal": {
+  "at": "2026-10-31T15:55:10.454Z",
+  "seconds": 486,
+  "osm": {
+   "sights": 59,
+   "sights2": 88,
+   "restaurants": 450,
+   "cafes": 281,
+   "hotels": 164,
+   "shopping": 250,
+   "diet": 78,
+   "extra": 92,
+   "landmarks": 21,
+   "streets": 9
+  },
+  "voyage": {
+   "eat": 75,
+   "drink": 38,
+   "buy": 26,
+   "see": 33,
+   "sleep": 33,
+   "withCoords": 173,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 16,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Avenue du Mont-Royal Est (38)",
+   "Rue Saint-Denis (29)",
+   "Avenue du Parc (14)",
+   "Rue Sainte-Catherine Ouest (8)",
+   "Boulevard Saint-Laurent (9)"
+  ],
+  "log": [
+   "overpass-api.de ok 59 33180ms",
+   "overpass-api.de ok 88 24258ms",
+   "overpass-api.de ok 450 39585ms",
+   "overpass-api.de ok 281 31453ms",
+   "overpass-api.de ok 164 29733ms",
+   "overpass-api.de ok 250 31553ms",
+   "overpass-api.de ok 78 34293ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de ok 92 31810ms",
+   "overpass-api.de ok 21 29689ms",
+   "overpass-api.de HTTP 502 388ms",
+   "overpass-api.de ok 269 39810ms",
+   "streets: 269 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 175 of 175"
+  ]
  }
 }
