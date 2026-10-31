@@ -4700,5 +4700,68 @@
    "wikidata HTTP 429",
    "fame: 131 of 131"
   ]
+ },
+ "marseille": {
+  "at": "2026-10-31T21:08:43.440Z",
+  "seconds": 450,
+  "osm": {
+   "sights": 68,
+   "sights2": 50,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 139,
+   "shopping": 269,
+   "diet": 23,
+   "extra": 63,
+   "landmarks": 7,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 31,
+   "drink": 17,
+   "buy": 0,
+   "see": 30,
+   "sleep": 10,
+   "withCoords": 66,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 13,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Rue Saint-Ferréol (7)"
+  ],
+  "log": [
+   "overpass-api.de ok 68 34707ms",
+   "overpass-api.de ok 50 21558ms",
+   "overpass-api.de ok 450 30083ms",
+   "overpass-api.de ok 300 30550ms",
+   "overpass-api.de HTTP 502 481ms",
+   "overpass-api.de ok 139 24368ms",
+   "overpass-api.de ok 269 32052ms",
+   "overpass-api.de ok 23 40040ms",
+   "overpass-api.de ok 63 34421ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de HTTP 502 465ms",
+   "overpass-api.de ok 7 27821ms",
+   "overpass-api.de ok 110 45999ms",
+   "streets: 110 shops",
+   "fame: 127 of 127"
+  ]
  }
 }
