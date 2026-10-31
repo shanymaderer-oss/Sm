@@ -3523,5 +3523,71 @@
    "overpass.kumi.systems timeout 60001ms",
    "fame: 178 of 178"
   ]
+ },
+ "cologne": {
+  "at": "2026-10-31T18:32:40.225Z",
+  "seconds": 420,
+  "osm": {
+   "sights": 165,
+   "sights2": 80,
+   "restaurants": 371,
+   "cafes": 210,
+   "hotels": 222,
+   "shopping": 300,
+   "diet": 41,
+   "extra": 90,
+   "landmarks": 51,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 17,
+   "drink": 16,
+   "buy": 13,
+   "see": 80,
+   "sleep": 21,
+   "withCoords": 163,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 16,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Sülzburgstraße (15)",
+   "Ehrenstraße (13)",
+   "Severinstraße (13)",
+   "Deutzer Freiheit (11)",
+   "Schildergasse (11)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 517ms",
+   "overpass-api.de ok 165 30578ms",
+   "overpass-api.de ok 80 26356ms",
+   "overpass-api.de ok 371 40955ms",
+   "overpass-api.de ok 210 28813ms",
+   "overpass-api.de ok 222 19118ms",
+   "overpass-api.de ok 300 24733ms",
+   "overpass-api.de ok 41 24442ms",
+   "overpass-api.de ok 90 32072ms",
+   "overpass-api.de ok 51 48302ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de ok 343 27599ms",
+   "streets: 343 shops",
+   "fame: 302 of 302"
+  ]
  }
 }
