@@ -699,19 +699,19 @@
   ]
  },
  "athens": {
-  "at": "2026-10-23T18:14:43.491Z",
-  "seconds": 829,
+  "at": "2026-10-31T12:03:11.078Z",
+  "seconds": 713,
   "osm": {
    "sights": 187,
+   "sights2": 0,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 0,
+   "diet": 43,
    "extra": 56,
-   "streets": 14,
-   "sights2": 101,
-   "landmarks": 14
+   "landmarks": 14,
+   "streets": 14
   },
   "voyage": {
    "eat": 24,
@@ -731,7 +731,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Πατησίων (83)",
@@ -741,12 +748,25 @@
    "Πανεπιστημίου (30)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de HTTP 504 34428ms",
-   "overpass-api.de ok 187 30595ms",
-   "overpass-api.de ok 101 26502ms",
-   "overpass-api.de ok 14 33325ms",
-   "fame: 363 of 363"
+   "overpass-api.de ok 187 38260ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de HTTP 502 355ms",
+   "overpass-api.de HTTP 502 426ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de ok 450 25073ms",
+   "overpass-api.de ok 300 32175ms",
+   "overpass-api.de ok 350 25202ms",
+   "overpass-api.de ok 300 29062ms",
+   "overpass-api.de ok 43 31993ms",
+   "overpass-api.de ok 56 47472ms",
+   "overpass-api.de ok 14 37189ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 1466 39539ms",
+   "streets: 1466 shops",
+   "fame: 341 of 341"
   ]
  },
  "milan": {
