@@ -175,27 +175,27 @@
   ]
  },
  "london": {
-  "at": "2026-10-23T16:43:17.509Z",
-  "seconds": 1017,
+  "at": "2026-10-31T14:32:27.982Z",
+  "seconds": 559,
   "osm": {
    "sights": 593,
+   "sights2": 222,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 152,
+   "diet": 192,
    "extra": 200,
-   "streets": 14,
-   "sights2": 221,
-   "landmarks": 80
+   "landmarks": 81,
+   "streets": 14
   },
   "voyage": {
-   "eat": 86,
-   "drink": 150,
-   "buy": 52,
-   "see": 136,
-   "sleep": 70,
-   "withCoords": 513,
+   "eat": 94,
+   "drink": 153,
+   "buy": 58,
+   "see": 142,
+   "sleep": 83,
+   "withCoords": 554,
    "districts": 8
   },
   "wiki": {
@@ -207,7 +207,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "New Bond Street (69)",
@@ -217,15 +224,28 @@
    "Marylebone High Street (56)"
   ],
   "log": [
-   "(updated: )",
+   "overpass-api.de ok 593 32115ms",
+   "overpass-api.de HTTP 502 357ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 222 32263ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 450 50925ms",
+   "overpass-api.de HTTP 502 346ms",
+   "overpass-api.de ok 300 31488ms",
+   "overpass-api.de ok 350 31256ms",
+   "overpass-api.de ok 300 40896ms",
+   "overpass-api.de ok 192 24661ms",
+   "overpass-api.de ok 200 25763ms",
+   "overpass-api.de ok 81 26820ms",
+   "overpass-api.de ok 2448 29325ms",
+   "streets: 2448 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 939 of 939"
+   "fame: 875 of 875"
   ]
  },
  "prague": {
