@@ -3589,5 +3589,71 @@
    "streets: 343 shops",
    "fame: 302 of 302"
   ]
+ },
+ "tallinn": {
+  "at": "2026-10-31T18:39:33.094Z",
+  "seconds": 408,
+  "osm": {
+   "sights": 93,
+   "sights2": 81,
+   "restaurants": 262,
+   "cafes": 153,
+   "hotels": 118,
+   "shopping": 163,
+   "diet": 9,
+   "extra": 50,
+   "landmarks": 31,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 36,
+   "drink": 29,
+   "buy": 23,
+   "see": 35,
+   "sleep": 43,
+   "withCoords": 182,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Viru väljak (49)",
+   "Endla (46)",
+   "Estonia pst (23)",
+   "Viru (24)",
+   "Pärnu mnt (12)"
+  ],
+  "log": [
+   "overpass-api.de ok 93 29434ms",
+   "overpass-api.de ok 81 29623ms",
+   "overpass-api.de ok 262 33432ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 153 34326ms",
+   "overpass-api.de ok 118 24648ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 163 17953ms",
+   "overpass-api.de ok 9 28752ms",
+   "overpass-api.de ok 50 36220ms",
+   "overpass-api.de ok 31 39403ms",
+   "overpass-api.de ok 338 25200ms",
+   "streets: 338 shops",
+   "fame: 159 of 159"
+  ]
  }
 }
