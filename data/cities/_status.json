@@ -3395,5 +3395,73 @@
    "wikidata HTTP 429",
    "fame: 463 of 463"
   ]
+ },
+ "reykjavik": {
+  "at": "2026-10-31T18:14:57.263Z",
+  "seconds": 507,
+  "osm": {
+   "sights": 23,
+   "sights2": 36,
+   "restaurants": 123,
+   "cafes": 59,
+   "hotels": 103,
+   "shopping": 68,
+   "diet": 5,
+   "extra": 15,
+   "landmarks": 6,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 26,
+   "drink": 9,
+   "buy": 5,
+   "see": 25,
+   "sleep": 24,
+   "withCoords": 100,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 7,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Laugavegur (18)",
+   "Skólavörðustígur (9)"
+  ],
+  "log": [
+   "overpass-api.de ok 23 36123ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de ok 36 35238ms",
+   "overpass-api.de HTTP 502 526ms",
+   "overpass-api.de HTTP 502 516ms",
+   "overpass-api.de ok 123 38431ms",
+   "overpass-api.de ok 59 31960ms",
+   "overpass-api.de ok 103 25108ms",
+   "overpass-api.de ok 68 32913ms",
+   "overpass-api.de ok 5 40883ms",
+   "overpass-api.de HTTP 502 524ms",
+   "overpass-api.de ok 15 28958ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de HTTP 502 517ms",
+   "overpass-api.de ok 6 32568ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 63 25634ms",
+   "streets: 63 shops",
+   "fame: 75 of 75"
+  ]
  }
 }
