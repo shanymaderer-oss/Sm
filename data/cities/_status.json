@@ -429,19 +429,19 @@
   ]
  },
  "vienna": {
-  "at": "2026-10-23T17:26:47.825Z",
-  "seconds": 1104,
+  "at": "2026-10-31T14:38:20.508Z",
+  "seconds": 852,
   "osm": {
    "sights": 658,
+   "sights2": 0,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 0,
+   "diet": 115,
    "extra": 200,
-   "streets": 14,
-   "sights2": 158,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 14
   },
   "voyage": {
    "eat": 113,
@@ -453,7 +453,7 @@
    "districts": 8
   },
   "wiki": {
-   "he": 100,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -461,7 +461,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Mariahilfer Straße (66)",
@@ -471,15 +478,34 @@
    "Kärntner Straße (25)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 658 6235ms",
-   "overpass-api.de ok 158 30425ms",
-   "overpass-api.de ok 150 34205ms",
+   "overpass-api.de HTTP 502 614ms",
+   "overpass-api.de ok 658 33423ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de HTTP 502 347ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 356ms",
+   "overpass-api.de ok 450 35004ms",
+   "overpass-api.de ok 300 42692ms",
+   "overpass-api.de ok 350 31574ms",
+   "overpass-api.de ok 300 39116ms",
+   "overpass-api.de ok 115 38165ms",
+   "overpass-api.de ok 200 30770ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass-api.de ok 150 37784ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 1218 30615ms",
+   "streets: 1218 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 933 of 933"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 848 of 898"
   ]
  },
  "berlin": {
