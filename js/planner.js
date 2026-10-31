@@ -1208,16 +1208,18 @@ Masa.planner = (() => {
     /* diet first: kosher or vegetarian travelers get a matching restaurant even if it is a bit farther */
     const dietOk = p => opts.diet === "כשר" ? p.kosher : opts.diet === "טבעוני" ? isVegan(p) : opts.diet === "צמחוני" ? (p.veg || /vegetarian|vegan/.test(p.cuisine || "")) : true;
     let dietRest = null;
+    // a day is never left without lunch or dinner: when nothing is close, look a little farther (a short ride, the route says so)
+    const wider = (anchor, far, extra) => nearBest(anyRestaurants, anchor, far * 2.5, extra) || nearBest(anyRestaurants, anchor, far * 5, extra);
     const mealPick = (anchor, near, far, extra) => {
       if (opts.diet && opts.diet !== "הכול") {
         dietRest = dietRest || anyRestaurants.filter(dietOk);
         const d = nearBest(dietRest, anchor, opts.diet === "כשר" ? 3.5 : 1.5, extra);
         if (d) return d;
-        const any = nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra);
+        const any = nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra) || wider(anchor, far, extra);
         if (any) any._dietMiss = true;
         return any;
       }
-      return nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra) || nearBest(anyRestaurants, anchor, far, extra);
+      return nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra) || nearBest(anyRestaurants, anchor, far, extra) || wider(anchor, far, extra);
     };
     // named places that did not get a day of their own join the day whose main place is nearest
     const extraOf = anchors.map(() => []);
@@ -1269,6 +1271,25 @@ Masa.planner = (() => {
         }
         if (!best) break;
         used.add(best.id); markTwins(best); dayPick.push(best); budget--;
+      }
+      // still room (a neighborhood with little around it): the best place worth a visit a short ride away, of any kind,
+      // so the afternoon is not empty until dinner
+      const actMin = () => dayPick.reduce((a, p) => a + (KIND[p.kind]?.min || 60), 0);
+      const wantMin = onlyPicks ? 0 : pace === "רגוע" ? 240 : pace === "אינטנסיבי" ? 420 : 330;
+      let added = 0;
+      for (const far of [1, 2, 3.5]) {
+        while ((budget > 0 || actMin() < wantMin) && added < 4) {
+          let best = null, bv = -Infinity;
+          for (const p of pool) {
+            if (["food", "sleep", "night"].includes(p.cat) || ["shop", "store", "deli"].includes(p.kind) || avoid.has(p.kind) || used.has(p.id) || tooFar(p)) continue;
+            const dk = km(anchor, p);
+            if (dk > reachToday * far || dayPick.some(o => km(o, p) < 0.12)) continue;
+            const v = p.q - M.dk * 0.6 * dk - outCost(p) - 3 * dayPick.filter(o => o.kind === p.kind).length;
+            if (v > bv) { bv = v; best = p; }
+          }
+          if (!best) break;
+          used.add(best.id); markTwins(best); dayPick.push(best); budget--; added++;
+        }
       }
       const ordered = orderDay(dayPick, hotel);
       // a sunset: end the day's sights at a viewpoint
