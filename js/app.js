@@ -2180,7 +2180,7 @@ async function searchMyHotel(q) {
   // 2. the whole map (any hotel, apartment or address)
   let far = [];
   try {
-    const r = await svc.searchNear(q, +t.lat, +t.lng);
+    const r = await svc.searchPlace(q, +t.lat, +t.lng, t.cityEn || t.cityLocal || t.city);
     // places to sleep, or a plain address (some booked apartments have no name on the map); not restaurants or shops
     far = r.filter(x => km(t, x) < 40 && !local.some(l => km(l, x) < 0.05) && (x.category === "tourism" ? /hotel|hostel|guest_house|apartment|motel|chalet/.test(x.type) : ["building", "place", "highway", "boundary"].includes(x.category)))
       .map(x => ({ id: `${x.osmType}/${x.osmId}`, name: x.name, local: x.local, kind: x.type === "hostel" ? "hostel" : x.type === "apartment" ? "apartment" : x.type === "guest_house" ? "guesthouse" : "hotel", cat: "sleep", lat: x.lat, lng: x.lng, address: x.address, src: "map", isAddress: x.category !== "tourism" }));

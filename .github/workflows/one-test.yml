@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       test: { description: "script in tools/qa, e.g. test_hotel.py", required: true }
+      city: { description: "for diag_city.py", required: false, default: "מיאמי" }
 permissions: { contents: read }
 jobs:
   one:
@@ -16,9 +17,9 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install playwright==1.55.0 && python -m playwright install --with-deps chromium
       - name: Run it
-        env: { T: "${{ inputs.test }}" }
+        env: { T: "${{ inputs.test }}", CITY: "${{ inputs.city }}" }
         run: |
           case "$T" in *[!a-z0-9_.]*|"") echo "bad name"; exit 1;; esac
           set +e; python "tools/qa/$T" > out.txt 2>&1; code=$?
-          grep -E "^(FAIL|Traceback|  File|[A-Za-z]*Error)" out.txt | head -15 | while read -r l; do echo "::notice title=$T::$l"; done
+          grep -E "^(FAIL|NOTE|Traceback|  File|[A-Za-z]*Error)" out.txt | head -40 | while read -r l; do echo "::notice title=$T::$l"; done
           echo "::notice title=$T::$(tail -1 out.txt | cut -c1-300)"; exit $code

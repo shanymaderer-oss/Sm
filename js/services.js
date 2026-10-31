@@ -186,6 +186,19 @@ Masa.svc = (() => {
     });
   }
 
+  /* a hotel, an apartment or an address the traveler typed: as written, then with the house number apart from the
+     direction ("11NE 6th st" is "11 NE 6th St"), then with the city's name. Nominatim asks for one request a second. */
+  async function searchPlace(q, lat, lng, city, signal) {
+    const fixed = String(q).replace(/\b(\d+)\s*(NE|NW|SE|SW|N|S|E|W)\b/gi, (m, n, d) => `${n} ${d.toUpperCase()}`).replace(/\b(st|str)\.?$/i, "Street").replace(/\s+/g, " ").trim();
+    const tries = [...new Set([q, fixed, city && !String(q).toLowerCase().includes(String(city).toLowerCase()) ? `${fixed}, ${city}` : ""].filter(Boolean))];
+    for (const [i, t] of tries.entries()) {
+      if (i) await new Promise(ok => setTimeout(ok, 1100));
+      const r = await searchNear(t, lat, lng, signal).catch(() => []);
+      if (r.length) return r;
+    }
+    return [];
+  }
+
   /* how famous each sight is (number of Wikipedia languages), see sources.js */
   async function fame(els, signal, voyage) {
     const S = Masa.sources, ids = S.fameIds(els, 600, voyage), out = { n: {}, he: {} };
@@ -222,5 +235,5 @@ Masa.svc = (() => {
     } catch { return null; }
   }
 
-  return { searchNear, fame, getJSON, mapLimit, geocode, overpass, voyage, weather, rateToILS, wikiGeo, wikidata, wikiSummary, walkRoute };
+  return { searchNear, searchPlace, fame, getJSON, mapLimit, geocode, overpass, voyage, weather, rateToILS, wikiGeo, wikidata, wikiSummary, walkRoute };
 })();

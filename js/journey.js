@@ -151,7 +151,7 @@ Masa.journey = (() => {
           hotelT = setTimeout(async () => {
             if (!mine.length) { f.hotelState = "searching"; show(); }
             let r = [];
-            try { r = await svc.searchNear(q, at.lat, at.lng); } catch {}
+            try { r = await svc.searchPlace(q, at.lat, at.lng, S.dest?.q); } catch {}
             if (seq !== hotelSeq) return;
             const stay = x => x.category === "tourism" && /hotel|hostel|guest_house|apartment|motel/.test(x.type);
             const more = r.filter(x => km(at, x) < 25).sort((a, b) => stay(b) - stay(a)).map(x => ({ id: `${x.osmType}/${x.osmId}`, name: stay(x) ? x.name : q, local: x.local, kind: stay(x) ? (x.type === "hostel" ? "hostel" : "hotel") : "apartment", lat: x.lat, lng: x.lng, address: x.address }))
