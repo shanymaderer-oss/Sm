@@ -178,7 +178,7 @@ Masa.journey = (() => {
       const f = S.form, touched = f.touched = f.touched || new Set();
       const redo = () => { $("dval").textContent = dayWord(f.days); $("pval").textContent = f.people; $("backDay").textContent = `חוזרים ביום ${J.dayName(backDate(f))}, ${J.short(backDate(f))}`; onChange?.(); };
       $("dminus").onclick = () => { touched.add("days"); f.days = Math.max(1, f.days - 1); redo(); };
-      $("dplus").onclick = () => { touched.add("days"); f.days = Math.min(5, f.days + 1); redo(); };
+      $("dplus").onclick = () => { touched.add("days"); f.days = Math.min(14, f.days + 1); redo(); };
       $("pminus").onclick = () => { touched.add("people"); f.people = Math.max(1, f.people - 1); redo(); };
       $("pplus").onclick = () => { touched.add("people"); f.people = Math.min(8, f.people + 1); redo(); };
       $("startDate").onchange = e => { if (/^\d{4}-\d\d-\d\d$/.test(e.target.value)) { f.start = e.target.value; redo(); } };

@@ -255,5 +255,25 @@ Masa.transport = (() => {
     const road = kmv * 1.35;
     return Math.max(flag + perKm * road, flag * 2);
   }
-  return { AIR, CITY, airport, taxi, MODE_HE, MODE_IC, city: slug => CITY[slug] || null };
+  /* the apps worth downloading before the flight: taxis that show the price up front, and public transport in English */
+  const RIDE_APP = { uber: ["Uber", "https://www.uber.com/"], bolt: ["Bolt", "https://bolt.eu/"], freenow: ["FREENOW", "https://www.free-now.com/"],
+    lyft: ["Lyft", "https://www.lyft.com/"], grab: ["Grab", "https://www.grab.com/"], careem: ["Careem", "https://www.careem.com/"], kakao: ["Kakao T", "https://www.kakaomobility.com/"],
+    go: ["GO Taxi", "https://go.goinc.jp/"], didi: ["DiDi", "https://web.didiglobal.com/"], bitaksi: ["BiTaksi", "https://www.bitaksi.com/"], yandex: ["Yandex Go", "https://go.yandex/"],
+    cabify: ["Cabify", "https://cabify.com/"], cargo: ["CarGo", "https://cargo.rs/"], indrive: ["inDrive", "https://indrive.com/"] };
+  const RIDE = { us: ["uber", "lyft"], ca: ["uber", "lyft"], gb: ["uber", "bolt", "freenow"], ie: ["freenow", "uber", "bolt"], fr: ["uber", "bolt", "freenow"],
+    es: ["cabify", "uber", "freenow"], pt: ["uber", "bolt"], it: ["freenow", "uber"], de: ["freenow", "uber", "bolt"], at: ["uber", "bolt", "freenow"], ch: ["uber"],
+    nl: ["uber", "bolt"], be: ["uber", "bolt"], dk: ["uber", "bolt"], se: ["bolt", "uber"], no: ["uber", "bolt"], fi: ["bolt", "uber"], is: ["uber"],
+    cz: ["bolt", "uber"], hu: ["bolt"], pl: ["bolt", "uber", "freenow"], sk: ["bolt", "uber"], si: ["bolt", "uber"], hr: ["uber", "bolt"], ro: ["bolt", "uber"],
+    bg: ["bolt", "uber"], rs: ["cargo", "yandex"], al: ["indrive"], gr: ["freenow", "uber", "bolt"], cy: ["bolt"], tr: ["bitaksi", "uber"], ge: ["bolt", "yandex"],
+    am: ["yandex", "indrive"], az: ["bolt", "uber"], lv: ["bolt", "uber"], lt: ["bolt", "uber"], ee: ["bolt", "uber"], ae: ["careem", "uber"], th: ["grab", "bolt"],
+    sg: ["grab"], vn: ["grab"], kr: ["kakao"], jp: ["go", "uber"], mx: ["uber", "didi"], ma: ["indrive"] };
+  /* Citymapper covers the big cities; everywhere else Google Maps and Moovit show buses, trains and times in English */
+  const CITYMAPPER = new Set(["london", "paris", "berlin", "barcelona", "madrid", "rome", "milan", "amsterdam", "lisbon", "brussels", "vienna", "prague", "copenhagen",
+    "stockholm", "dublin", "hamburg", "munich", "istanbul", "new-york", "chicago", "los-angeles", "san-francisco", "miami", "toronto", "singapore", "tokyo", "seoul"]);
+  function apps(cc, slug) {
+    const ride = (RIDE[cc] || ["uber"]).map(k => ({ n: RIDE_APP[k][0], url: RIDE_APP[k][1] }));
+    const transit = [{ n: "Google Maps", url: "https://www.google.com/maps" }, ...(CITYMAPPER.has(slug) ? [{ n: "Citymapper", url: "https://citymapper.com/" }] : []), { n: "Moovit", url: "https://moovitapp.com/" }];
+    return { ride, transit };
+  }
+  return { apps, AIR, CITY, airport, taxi, MODE_HE, MODE_IC, city: slug => CITY[slug] || null };
 })();

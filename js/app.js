@@ -1,7 +1,7 @@
 /* מסע · app: Leaflet map + app screens */
 (() => {
 "use strict";
-const { P, CATS, INTERESTS, DAYC, DESTS, PHRASES, ETIQUETTE_GENERIC, COUNTRY_INFO } = window.MASA_DATA;
+const { P, CATS, INTERESTS, DAYC, DESTS, ETIQUETTE_GENERIC, COUNTRY_INFO } = window.MASA_DATA;
 const svc = Masa.svc, ai = Masa.ai, planner = Masa.planner;
 
 /* ---------- helpers ---------- */
@@ -813,6 +813,22 @@ function legInfo(d, i) {
 function totalWalk(t) { let w = 0; t.days.forEach(d => d.stops.forEach((s, i) => { if (i) { const L = legInfo(d, i); if (L.mode === "walk") w += L.kmv; } })); return w; }
 function totalDrive(t) { let w = 0; t.days.forEach(d => d.stops.forEach((s, i) => { if (i) { const L = legInfo(d, i); if (L.mode !== "walk") w += L.kmv; } })); return w; }
 /* what the traveler asked for in their own words, and what the trip did with it */
+/* workouts on the trip: gyms, classes and a morning run, close to where they sleep (asked for in the wishes box) */
+function fitnessCard(t) {
+  if (!t.wish?.fitness) return "";
+  const at = t.hotel && hasXY(t.hotel) ? t.hotel : t.days[0]?.stops[0] || t;
+  const near = q => `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${(+at.lat).toFixed(5)},${(+at.lng).toFixed(5)},15z`;
+  const park = (t.places || []).filter(p => ["park", "beach"].includes(p.kind) && hasXY(p)).map(p => ({ p, k: km(at, p) })).filter(x => x.k < 2.5).sort((a, b) => a.k - b.k)[0];
+  const USC = ["de", "fr", "es", "it", "pt", "nl", "at", "be"].includes(t.cc);
+  const kinds = [["חדר כושר", "gym"], ["יוגה", "yoga studio"], ["פילאטיס", "pilates studio"], ["קרוספיט", "crossfit"], ["בריכה", "swimming pool"]];
+  return `<div class="card"><h2>${ic("heart")} אימונים בטיול</h2>
+    <p class="lead">${t.hotel ? "ליד המלון שלכם" : "ליד תחילת המסלול"}: מכונים וסטודיואים, עם שעות ודירוגים בגוגל מפות.</p>
+    <div class="chiprow">${kinds.map(([he, q]) => `<a class="chipbtn" href="${near(q)}" target="_blank" rel="noopener">${ic("pin")}${he}</a>`).join("")}</div>
+    <p class="lead" style="margin-top:10px">שיעורים בכרטיסייה אחת, בלי מנוי מקומי:</p>
+    <div class="chiprow"><a class="chipbtn" href="https://classpass.com/" target="_blank" rel="noopener">${ic("ext")}ClassPass</a>${USC ? `<a class="chipbtn" href="https://urbansportsclub.com/" target="_blank" rel="noopener">${ic("ext")}Urban Sports Club</a>` : ""}</div>
+    ${park ? `<div class="tipbox">${ic("nav")}<span>ריצת בוקר: ${esc(park.p.name)}, ${fmtDist(park.k)} מכם. <a href="${gmDir(at, park.p)}" target="_blank" rel="noopener">ניווט</a></span></div>` : ""}
+  </div>`;
+}
 function wishCard(t) {
   const w = t.wish, rows = [];
   (w.places || []).forEach(p => rows.push(`<li>${ic("check", 2.6)}<span>${esc(p.name)} <small>· ${esc(t.days[p.day]?.label || "")}</small></span></li>`));
@@ -921,8 +937,8 @@ SCREENS.plan = {
     return `<div class="screen">${nowCard(t)}
     <div class="triphero" style="${cityColor(t.city).style}"><button type="button" class="sharetrip" id="shareTrip">${ic("share")}שיתוף</button><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
       <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
-      <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}${t.cc || t.slug ? `<button type="button" id="costStat"><b>${money(COST.ils(COST.trip(t).total))}</b><small>עלות משוערת</small></button>` : ""}</div></div>
-    ${t.wish ? wishCard(t) : ""}
+      <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}</div></div>
+    ${t.wish ? wishCard(t) : ""}${t.wish?.fitness ? fitnessCard(t) : ""}
     ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
     <div class="duo">
       ${t.source === "sample" ? "" : t.hotel ? `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>המלון שלכם</small><b>${esc(t.hotel.name)}</b></span></button>`
@@ -946,7 +962,6 @@ SCREENS.plan = {
     }).join("")}</div>
     ${ideas.length ? `<div class="ideas"><h2>נשאר לכם זמן היום? רעיונות בדרך</h2>
       ${ideas.map(n => `<div class="idea"><span class="ic" style="background:${cv(CATS[catOf(n)].c)}">${ic(catOf(n))}</span><span><b>${esc(n.name)}</b><small>ליד ${esc(n._near)} · ${esc(n.why)}</small></span><button type="button" class="btn small soft" data-add="${esc(n.name)}">${ic("plus")}הוספה</button></div>`).join("")}</div>` : ""}
-    ${t.cc || t.slug ? costCard(t) : ""}
     ${t.source === "sample" ? "" : familyCard(t)}
     <button type="button" class="btn soft block" id="toDiscover">${ic("compass")} עוד דברים מיוחדים לעשות ב${esc(t.city)}</button>
     <div class="disclaim">${ic("info")}<span>שעות, מחירים ועומסים הם הערכה. לפני שמזמינים, בדקו באתר הרשמי של המקום.</span></div>
@@ -971,7 +986,6 @@ SCREENS.plan = {
     });
     $("toDiscover").onclick = () => go("discover");
     $("shareTrip") && ($("shareTrip").onclick = () => shareTripImage(S.trip));
-    $("costStat") && ($("costStat").onclick = () => $("costCard")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     const setPeople = v => { const t = S.trip; t.opts = t.opts || {}; t.opts.people = Math.min(12, Math.max(1, v)); saveTrip(t); rerenderKeepScroll(); };
     $("cpMinus") && ($("cpMinus").onclick = () => setPeople((S.trip.opts?.people || 2) - 1));
     $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
@@ -1135,7 +1149,6 @@ SCREENS.discover = {
   view() {
     const t = S.trip, D = t.discover || {};
     const dayOpts = t.days.map((d, i) => `<option value="${i}" ${i === S.day ? "selected" : ""}>${esc(d.label)}</option>`).join("");
-    const phrases = D.phrases || PHRASES.en;
     const etiq = D.etiquette?.length ? D.etiquette : ETIQUETTE_GENERIC;
     return `<div class="screen">
     <div><div class="eyebrow">גלו עוד ב${esc(t.city)}</div><h1 style="margin-top:4px">מה עוד אפשר לעשות?</h1><p class="lead" style="margin-top:6px">רעיונות מעבר למסלול. רעיון עם מיקום אפשר להוסיף ליום שתבחרו, והוא מסומן גם על המפה.</p></div>
@@ -1150,8 +1163,6 @@ SCREENS.discover = {
     ${(D.dishes || []).length ? `<section class="dsec"><h2><span class="chipic" style="background:var(--sun)">${ic("food")}</span>מה חייבים לטעום</h2>
       <div class="dishes">${D.dishes.map((x, i) => `<div class="dish" style="background:linear-gradient(145deg,${cv(["--sun", "--coral", "--rose", "--violet", "--teal", "--sky"][i % 6])},${cv(["--coral", "--rose", "--violet", "--primary", "--sky", "--teal"][i % 6])})"><b>${esc(x.name)}</b><small>${esc(x.local || "")}</small><p>${esc(x.why)}</p></div>`).join("")}</div></section>`
       : ai.enabled() ? "" : `<div class="upsell"><span>רוצים גם מנות מקומיות, חוויות וטיולי יום? הפעילו את המדריך החכם בחינם.</span><button type="button" class="btn small" data-settings>להפעלה</button></div>`}
-    <section class="dsec"><h2><span class="chipic" style="background:var(--primary)">${ic("speech")}</span>משפטים שימושיים</h2>
-      ${phrases.items.map((x, i) => `<div class="phrase"><span><b>${esc(x.local)}</b><small>${esc(x.he)} · ${esc(x.say || "")}</small></span>${canSpeak ? `<button type="button" data-say="${i}" aria-label="השמעה">${ic("sound")}</button>` : ""}</div>`).join("")}</section>
     <section class="dsec"><h2><span class="chipic" style="background:var(--teal)">${ic("info")}</span>כדאי לדעת</h2><ul class="etiq">${etiq.map(x => `<li>${ic("check")}<span>${esc(x)}</span></li>`).join("")}</ul></section>
     <div class="disclaim">${ic("info")}<span>בדקו שעות פתיחה ומחירים לפני שיוצאים.</span></div>
   </div>`;
@@ -1161,8 +1172,6 @@ SCREENS.discover = {
     document.querySelectorAll(".catgrid [data-chip]").forEach(b => b.onclick = () => openList(b.dataset.chip));
     $("addDay").onchange = e => { S.day = +e.target.value; renderMap(); };
     document.querySelectorAll("[data-dadd]").forEach(b => b.onclick = () => { const it = discItems().find(x => x.name === b.dataset.dadd); if (it) { addToDay(it, +$("addDay").value); rerenderKeepScroll(); } });
-    const ph = D.phrases || PHRASES.en;
-    document.querySelectorAll("[data-say]").forEach(b => b.onclick = () => { const x = ph.items[+b.dataset.say]; if (!speak(x.local, ph.lang, "ph")) toast("הדפדפן הזה לא תומך בהשמעה"); else if (!voiceFor(ph.lang)) toast("לא נמצא בדפדפן קול בשפה הזו"); });
     document.querySelectorAll("[data-settings]").forEach(b => b.onclick = () => { S.prev = S.screen; go("settings"); });
   }
 };
@@ -1716,21 +1725,6 @@ function stopCost(s) {
   if (i) return `${COST.ilsRange(i.lo, i.hi)} ${i.unit}`;
   return ticketLabel(s) || s.cost || "";
 }
-function costCard(t) {
-  const c = COST.trip(t);
-  const max = Math.max(...c.rows.map(r => r.eur));
-  const cur = tripCur();
-  return `<div class="card costcard" id="costCard"><h2>${ic("coin")} כמה הטיול יעלה?</h2>
-    <div class="costtop">
-      <div class="main"><small>לכל ${c.people === 1 ? "המטייל" : `${c.people} המטיילים`}</small><b>${money(COST.ils(c.total))}</b>${cur !== "ILS" ? `<span>${money(COST.local(c.total, cur))}</span>` : ""}</div>
-      <div><small>לאדם</small><b>${money(COST.ils(c.perPerson))}</b></div>
-      <div><small>ליום</small><b>${money(COST.ils(c.perDay))}</b></div>
-    </div>
-    <div class="keyrow costpeople"><span>מטיילים</span><span class="stepper small"><button type="button" class="iconbtn" id="cpMinus" aria-label="פחות מטיילים" style="background:var(--surface)">${ic("minus", 2.4)}</button><output>${c.people}</output><button type="button" class="iconbtn" id="cpPlus" aria-label="יותר מטיילים" style="background:var(--surface)">${ic("plus", 2.4)}</button></span></div>
-    <div class="costrows">${c.rows.map(r => `<div class="crow"><span class="cl"><b>${esc(r.he)}</b><small>${esc(r.note)}</small></span><b class="cv">${money(COST.ils(r.eur))}</b><span class="bar"><i style="width:${Math.max(3, Math.round(r.eur / max * 100))}%"></i></span></div>`).join("")}</div>
-    <div class="disclaim">${ic("info")}<span>הערכה לפי המקומות במסלול, ${t.hotel ? "המלון שבחרתם" : "התקציב שבחרתם"} ומחירים מקובלים ב${esc(t.city)}. לא כולל טיסות וקניות.${COST.FX.live ? ` שער: €1 = ₪${COST.FX.eurILS.toFixed(2)}.` : ""}</span></div>
-  </div>`;
-}
 /* local time in the trip's city, so "open now" is right even when planning from home */
 function cityNow() {
   if (S.me && S.trip && km(S.me, S.trip) < 50) return new Date();
@@ -2279,12 +2273,10 @@ SCREENS.info = {
     const { start } = tripDates();
     const off = t.tz ? tzOffsetHours(t.tz) : null;
     let wx = "";
-    if (c.weather === undefined) wx = `<div class="skeleton"></div>`;
-    else if (!c.weather) wx = `<p class="lead">לא הצלחנו לטעון תחזית כרגע.</p>`;
-    else {
+    if (c.weather) {
       const inRange = c.weather.filter(d => d.date >= isoDate(start)).slice(0, t.days.length || 3);
-      const days = inRange.length ? inRange : c.weather.slice(0, 7);
-      wx = `${inRange.length ? "" : `<p class="lead">התחזית לימי הטיול תופיע כשבועיים לפני. בינתיים, השבוע הקרוב ב${esc(t.city)}:</p>`}
+      const days = inRange;
+      wx = !days.length ? "" : `
         <div class="wx">${days.map(d => `<div><small>${fmtDay(new Date(d.date + "T12:00:00"))}</small><b>${Math.round(d.max)}°</b><span>${Math.round(d.min)}°</span><em>${WCODE(d.code)}</em>${d.rain != null ? `<i>${d.rain}% גשם</i>` : ""}</div>`).join("")}</div>`;
     }
     let money = "";
@@ -2299,7 +2291,7 @@ SCREENS.info = {
     <h1 style="font-size:1.5rem">מה צריך לדעת ב${esc(t.country || t.city)}</h1>
     <div class="card"><h2>${ic("nav")} טיסות</h2><p>חיפוש טיסות מתל אביב ל${esc(t.city)} בתאריכים של הטיול, בהשוואת מחירים של גוגל.</p>
       <div class="chiprow"><a class="chipbtn" href="${flightsUrl()}" target="_blank" rel="noopener">${ic("ext")}טיסות ב-Google Flights</a><a class="chipbtn" href="https://www.skyscanner.co.il/" target="_blank" rel="noopener">${ic("ext")}Skyscanner</a></div></div>
-    <div class="card"><h2>${ic("sun")} מזג אוויר</h2>${wx}</div>
+    ${wx ? `<div class="card"><h2>${ic("sun")} מזג אוויר בימי הטיול</h2>${wx}</div>` : ""}
     ${ci ? `<div class="card"><h2>${ic("coin")} כסף: ${esc(ci.curHe)}</h2>${money}<p>${esc(ci.pay)}</p></div>` : ""}
     ${esimCard(t)}
     <div class="factgrid">
@@ -2311,7 +2303,6 @@ SCREENS.info = {
     </div>
     ${ci?.extra ? `<div class="tipbox">${ic("bulb")}<span>${esc(ci.extra)}</span></div>` : ""}
     ${ci?.plug && !/H/.test(ci.plug) ? `<div class="tipbox">${ic("plug")}<span>התקע הישראלי לא תמיד נכנס לשקעים כאן. קחו מתאם${/C/.test(ci.plug) ? " (תקע עגול דק מסוג C מתאים לרוב המכשירים)" : ""}.</span></div>` : ""}
-    <div class="card"><h2>${ic("speech")} משפטים בשפה המקומית</h2><p class="lead">בלשונית "גלו" יש משפטים שימושיים עם השמעה.</p><button type="button" class="btn small soft" id="toPhr">${ic("compass")} למשפטים</button></div>
     <div class="disclaim">${ic("info")}<span>המידע כללי ונכון לזמן הכתיבה. לפני הטיסה בדקו גם את המלצות משרד החוץ ואת דרישות הכניסה למדינה.</span></div>
   </div>`;
   },
@@ -2372,6 +2363,9 @@ SCREENS.move = {
         <div><b>${ic("coin")}הכי זול</b><span>${esc(c?.pass || "תחבורה ציבורית עם כרטיס יומי או כרטיס נטען. בהרבה ערים אפשר לשלם בכרטיס אשראי ישירות בשער.")}</span></div>
         ${c?.km ? `<div><b>${ic("car")}כמה עולה מונית</b><span>כ-${money(COST.ils(c.flag + c.km * 3))} לנסיעה של 3 ק״מ בעיר. במסלול שלכם, כשתחנה רחוקה להליכה, מופיעה הערכה למונית ולתחבורה ציבורית.</span></div>` : ""}
       </div></div>
+    ${(() => { const A = TR.apps(t.cc, t.slug); return `<div class="card"><h2>${ic("car")} אפליקציות להוריד לפני הטיסה</h2>
+      <p class="lead">מוניות שמראות את המחיר מראש, בלי לדבר בשפה המקומית:</p><div class="chiprow">${A.ride.map(a => `<a class="chipbtn" href="${esc(a.url)}" target="_blank" rel="noopener">${ic("car")}${esc(a.n)}</a>`).join("")}</div>
+      <p class="lead" style="margin-top:10px">תחבורה ציבורית, קווים וזמנים באנגלית:</p><div class="chiprow">${A.transit.map(a => `<a class="chipbtn" href="${esc(a.url)}" target="_blank" rel="noopener">${ic("bus")}${esc(a.n)}</a>`).join("")}</div></div>`; })()}
     ${mob ? `<div class="tipbox">${ic("access")}<span>${mob === "stroller" ? "עם עגלה: בהרבה תחנות מטרו ישנות אין מעלית. אוטובוסים וחשמליות בדרך כלל נוחים יותר." : "בהרבה תחנות מטרו ישנות אין מעלית. אוטובוסים וחשמליות חדשים בדרך כלל נגישים. מונית עם רמפה כדאי להזמין יום מראש דרך המלון."} באפליקציה של התחבורה בעיר אפשר לסנן מסלול בלי מדרגות.</span></div>` : ""}
     <div class="disclaim">${ic("info")}<span>רוב המחירים נבדקו מול מקורות עדכניים באוקטובר 2026, אבל הם משתנים. לפני הטיסה כדאי לבדוק באתר של שדה התעופה או של חברת התחבורה.</span></div>
   </div>`;
@@ -2670,14 +2664,14 @@ async function importShared() {
     toast(r.added ? `${r.added === 1 ? "נוספה הערה חדשה" : `נוספו ${r.added} הערות חדשות`}${d.from ? ` מ${d.from}` : ""}` : "הטיול עודכן");
     return true;
   }
-  const t = { ...d, source: "shared", pending: true, createdAt: Date.now(), places: [], voyageNoGeo: [], discover: { gems: [], experiences: [], free: [], daytrips: [], dishes: [], phrases: PHRASES[MASA_DATA.COUNTRY_LANG?.[d.cc] || "en"] || PHRASES.en, etiquette: ETIQUETTE_GENERIC },
+  const t = { ...d, source: "shared", pending: true, createdAt: Date.now(), places: [], voyageNoGeo: [], discover: { gems: [], experiences: [], free: [], daytrips: [], dishes: [], etiquette: ETIQUETTE_GENERIC },
     days: d.days.map(x => ({ ...x, route: null, legs: null, stops: x.stops.map(s => ({ history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], image: null, booking: { needed: false, steps: [] }, why: "", ...s })) })) };
   delete t.v; delete t.from;
   saveTrip(t); openTrip(t);
   toast(`${d.from ? d.from + " שיתף/ה" : "קיבלתם"} טיול ל${d.city}`);
   // bring back the lists of restaurants, hotels and ideas for this city
   planner.build({ ...t.opts, query: t.opts?.query || t.city, hotel: t.hotel || null }, () => {}, null).then(full => {
-    t.places = full.places; t.voyageNoGeo = full.voyageNoGeo; t.discover = { ...full.discover, phrases: t.discover.phrases };
+    t.places = full.places; t.voyageNoGeo = full.voyageNoGeo; t.discover = { ...full.discover };
     saveTrip(t); if (S.trip === t) refreshSoon();
   }).catch(() => {});
   return true;
@@ -2723,7 +2717,7 @@ cloud.init({
       if (live) { if (changed) { if (S.day >= t.days.length) S.day = 0; runHydrate(t); } refreshSoon(); }
     } else {
       t = { ...d, cloudId: r.id, cloud: meta, source: "shared", pending: true, createdAt: Date.now(), places: [], voyageNoGeo: [], fam: mergeFam({}, fam).fam,
-        discover: { gems: [], experiences: [], free: [], daytrips: [], dishes: [], phrases: PHRASES[MASA_DATA.COUNTRY_LANG?.[d.cc] || "en"] || PHRASES.en, etiquette: ETIQUETTE_GENERIC },
+        discover: { gems: [], experiences: [], free: [], daytrips: [], dishes: [], etiquette: ETIQUETTE_GENERIC },
         days: d.days.map(x => ({ ...x, route: null, legs: null, stops: x.stops.map(s => ({ history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], image: null, booking: { needed: false, steps: [] }, ...s })) })) };
       delete t.from;
       storeTripLocal(t);
@@ -2733,7 +2727,7 @@ cloud.init({
       planner.build({ ...t.opts, query: t.opts?.query || t.city, hotel: t.hotel || null }, () => {}, null).then(full => {
         const cur = S.trip?.cloudId === r.id ? S.trip : savedTrips().find(x => x.cloudId === r.id);
         if (!cur) return;
-        cur.places = full.places; cur.voyageNoGeo = full.voyageNoGeo; cur.discover = { ...full.discover, phrases: cur.discover.phrases };
+        cur.places = full.places; cur.voyageNoGeo = full.voyageNoGeo; cur.discover = { ...full.discover };
         storeTripLocal(cur, true); if (S.trip === cur) refreshSoon();
       }).catch(() => {});
     }

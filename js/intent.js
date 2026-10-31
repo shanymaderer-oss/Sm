@@ -54,6 +54,7 @@ Masa.intent = (() => {
     T([word("גג(?:ות)?(?=\\s|$)"), word("רופטופ"), /\brooftops?\b/], { rooftop: true, label: "ברים ומקומות על הגג" }),
     T([word("מרחצ"), word("ספא(?=\\s|$)"), word("ח(?:א)?מאם"), word("מעיינות חמ"), word("בריכות תרמ"), /\b(spa|thermal baths?|hammam|bath ?house|hot springs)\b/], { baths: true, label: "מרחצאות: מרחץ תרמי או חמאם במסלול" }),
     T([word("גשם"), word("גשום"), word("מקומות סגורים"), word("מקור(?:ה|ים|ות)(?=\\s|$)"), /\b(rain(?:s|y|ing)?|indoors?)\b/], { indoor: true, boost: { museum: 2, gallery: 2, market: 2 }, label: "גשם: נעדיף מקומות מקורים, וכשיש גשם בתחזית נציע להחליף תחנות שבחוץ" }),
+    T([word("להתאמן"), word("אימו(?:ן|נים)"), word("כושר"), word("חדר כושר"), word("מכון כושר"), word("יוגה"), word("פילאטיס"), word("קרוספיט"), word("ריצ(?:ה|ות)"), word("לרוץ"), word("שחי(?:ה|יה)"), word("לשחות"), /\b(gym|fitness|yoga|pilates|workout|crossfit|running|swim(?:ming)?)\b/], { fitness: true, label: "אימונים: מכוני כושר, שיעורים ומסלול ריצה ליד המלון" }),
     T([word("כדורגל"), word("אצטדיו"), word("סטדיו"), /\b(football|soccer|stadium)\b/], { football: true, label: "כדורגל: האצטדיון המפורסם של העיר במסלול" }),
     T([word("גן חיות"), word("אקווריום"), /\b(zoo|aquarium)\b/], { add: ["family"], boost: { zoo: 8 }, label: "גן חיות או אקווריום" }),
     T([word("פארק שעשועים"), word("לונה פארק"), word("דיסני"), /\b(theme park|disney|amusement)\b/], { add: ["family"], boost: { themepark: 8 }, label: "פארק שעשועים" }),
@@ -146,7 +147,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "football"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "football", "fitness"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }
@@ -174,8 +175,11 @@ Masa.intent = (() => {
       w.people = 2 + kids;
       if (kids) say(`${w.people} מטיילים`);
     }
-    const days = w.text.match(/(\d)\s*(?:ימים|days)/i);
-    if (days && +days[1] >= 1 && +days[1] <= 5) { w.days = +days[1]; say(`${w.days} ימים`); }
+    // "5 ימים", "10 days", "שבוע", "שבועיים", "סופ״ש": up to two weeks
+    const days = w.text.match(/(\d{1,2})\s*(?:ימים|days|לילות|nights)/i);
+    const words = /שבועיים|two weeks/i.test(w.text) ? 14 : /(?:^|\s)ה?שבוע(?=\s|$|[,.])|\ba week\b/i.test(w.text) && !/בשבוע הבא|השבוע ה/.test(w.text) ? 7 : /סופ[״"']?ש|סוף שבוע|weekend/i.test(w.text) ? 2 : null;
+    const nDays = days ? +days[1] : words;
+    if (nDays && nDays >= 1 && nDays <= 14) { w.days = nDays; say(nDays === 1 ? "יום אחד" : `${nDays} ימים`); }
     // a place they want, written after "לראות", "לבקר ב", "חייבים", "לא לפספס"
     w.asks = [];
     const ASK = /(?:רוצ\S* לראות|לראות את|חייבי\S*(?: לראות| לבקר ב| להגיע ל)?|לבקר ב|להגיע ל|לא לפספס(?: את)?|חובה(?: לראות)?|ללכת ל|לאכול ב|must see|want to see|visit)\s+([^,.;!?\n]{2,80})/gi;

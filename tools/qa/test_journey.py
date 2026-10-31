@@ -98,7 +98,24 @@ async def main():
         h = t.get("hotel") or {}
         check(h.get("name", "").startswith("ליד") and all(d["stops"][0].get("meal") == "hotel" for d in t["days"]), f"the trip starts each day from the chosen area ({h.get('name')})")
         check(t["opts"].get("start") == "2026-11-17" and t["opts"].get("people") == 3, "the trip has the chosen dates and travelers")
-        # back from 'what you like' goes to 'where to sleep', and from there to the flights
+        check(await pg.locator("#costCard, #costStat").count() == 0, "no trip cost card or number")
+        await pg.click("#nav button[data-k=discover]"); await pg.wait_for_timeout(500)
+        check("משפטים שימושיים" not in await pg.inner_text(".screen"), "no 'useful phrases' in discover")
+        # a week, with workouts
+        await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
+        await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_selector("#dplus")
+        for _ in range(12): await pg.click("#dplus")
+        check(await pg.inner_text("#dval") == "14 ימים", "up to 14 days")
+        for _ in range(7): await pg.click("#dminus")
+        await Q.to_goals(pg)
+        await pg.fill("#notes", "אני רוצה להתאמן כל בוקר, ריצה או יוגה"); await pg.wait_for_timeout(800)
+        check("אימונים" in await pg.inner_text("#wishOut"), "'להתאמן' is understood as workouts")
+        await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=60000); await pg.wait_for_timeout(500)
+        t = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
+        check(len(t["days"]) == 7 and all(len(d["stops"]) >= 4 for d in t["days"]), f"a 7-day trip, every day full ({[len(d['stops']) for d in t['days']]})")
+        card = await pg.locator(".card:has-text('אימונים בטיול')").inner_text() if await pg.locator(".card:has-text('אימונים בטיול')").count() else ""
+        hrefs = await pg.eval_on_selector_all(".card:has-text('אימונים בטיול') a", "a => a.map(x => x.href)")
+        check("חדר כושר" in card and "יוגה" in card and any("google.com/maps/search/gym" in h for h in hrefs) and any("classpass" in h for h in hrefs), "the trip has a workouts card: gyms and studios near by, classes")
         await pg.click("#nav button[data-k=plan]")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()

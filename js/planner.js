@@ -4,7 +4,7 @@
    Data: OpenStreetMap + Wikivoyage recommendations + Wikipedia. The optional AI adds stories on top. */
 window.Masa = window.Masa || {};
 Masa.planner = (() => {
-  const { CATS, PHRASES, COUNTRY_LANG, ETIQUETTE_GENERIC } = window.MASA_DATA;
+  const { CATS, COUNTRY_LANG, ETIQUETTE_GENERIC } = window.MASA_DATA;
   const svc = Masa.svc, SRC = Masa.sources, CITIES = Masa.cities;
   const hasXY = p => p && p.lat != null && p.lng != null && isFinite(+p.lat) && isFinite(+p.lng);
 
@@ -1434,7 +1434,7 @@ Masa.planner = (() => {
       voyageNoGeo: noGeo.filter(v => ["eat", "drink", "buy"].includes(v.type)).slice(0, 60).map(v => ({ name: v.name, kind: v.kind, cat: v.cat, price: v.price, priceClass: v.priceClass, vtext: v.content, website: v.url, hours: v.hours, address: v.address })),
       discover: {
         gems: disc.gems.map(idea), experiences: disc.experiences.map(idea), free: disc.free.map(idea), daytrips: [],
-        dishes: [], phrases: PHRASES[COUNTRY_LANG[geo.cc] || "en"], etiquette: ETIQUETTE_GENERIC
+        dishes: [], etiquette: ETIQUETTE_GENERIC
       }
     };
     function kosherMissTip(p) {
@@ -1450,7 +1450,7 @@ Masa.planner = (() => {
     if (wishOut) trip.wish = {
       labels: wish.labels.filter(l => !(noBath && l.startsWith("מרחצאות")) && !(wishOut.missed.includes("אצטדיון כדורגל") && l.startsWith("כדורגל"))),
       places: trip.days.flatMap((d, di) => d.stops.filter(s => s.asked || (s.meal && wishOut.places.some(p => p.id === s.osm))).map(s => ({ name: s.name, day: di }))),
-      missed: wishOut.missed, hotel: wishOut.hotel ? wishOut.hotel.name : null, hotelMissed: wishOut.hotelMissed || null, skipped: wishOut.skipped || []
+      missed: wishOut.missed, hotel: wishOut.hotel ? wishOut.hotel.name : null, hotelMissed: wishOut.hotelMissed || null, skipped: wishOut.skipped || [], fitness: !!wish.fitness
     };
     const moveWord = { walk: "מסלול הליכה", transit: "מסלול עם תחבורה ציבורית", car: "מסלול ברכב" }[move] || "מסלול";
     trip.summary = `${moveWord} לכל יום, ${meals ? "עם ארוחות בדרך, " : ""}לפי מה שבחרתם: ${interests.map(i => CATS[i]?.he).filter(Boolean).join(", ")}.`;

@@ -85,6 +85,13 @@ async def main():
         d = await dl.value; path = await d.path()
         size = os.path.getsize(path)
         check(d.suggested_filename.endswith(".png") and size > 30000, f"the trip becomes a picture to share ({d.suggested_filename}, {size // 1000}KB)")
+        # how to get around: taxi and transport apps for the country
+        await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(400)
+        if await pg.locator("#moveCard").count():
+            await pg.click("#moveCard"); await pg.wait_for_timeout(600)
+            txt = await pg.inner_text(".screen"); hrefs = await pg.eval_on_selector_all(".screen a", "a => a.map(x => x.href)")
+            check("אפליקציות להוריד" in txt and any("free-now.com" in h or "uber.com" in h for h in hrefs) and any("moovitapp" in h for h in hrefs), "taxi and transport apps to download")
+            await pg.click("#backMove"); await pg.wait_for_timeout(300)
         # a city that is not one of our ready cities (Miami, built live) has no slug: every trip screen still opens
         await pg.evaluate("(() => { const a = JSON.parse(localStorage.getItem('masa-trips')); a[0].slug = null; a[0].city = 'מיאמי'; a[0].cityEn = 'Miami'; a[0].cc = 'us'; localStorage.setItem('masa-trips', JSON.stringify(a)); })()")
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
