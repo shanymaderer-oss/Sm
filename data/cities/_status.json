@@ -2744,5 +2744,71 @@
    "streets: 4 shops",
    "fame: 2 of 2"
   ]
+ },
+ "hanoi": {
+  "at": "2026-10-31T15:12:49.471Z",
+  "seconds": 473,
+  "osm": {
+   "sights": 25,
+   "sights2": 28,
+   "restaurants": 421,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 168,
+   "diet": 28,
+   "extra": 22,
+   "landmarks": 9,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 38,
+   "drink": 13,
+   "buy": 5,
+   "see": 36,
+   "sleep": 37,
+   "withCoords": 86,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 7,
+   "en": 80
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Phố Phạm Ngọc Thạch (96)",
+   "Phố Xã Đàn (45)",
+   "Phố Mai Hắc Đế (34)",
+   "Phố Bà Triệu (35)",
+   "Phố Triệu Việt Vương (23)"
+  ],
+  "log": [
+   "overpass-api.de ok 25 33464ms",
+   "overpass-api.de ok 28 34241ms",
+   "overpass-api.de ok 421 29178ms",
+   "overpass-api.de HTTP 502 383ms",
+   "overpass-api.de ok 300 43064ms",
+   "overpass-api.de ok 350 24853ms",
+   "overpass-api.de ok 168 45443ms",
+   "overpass-api.de ok 28 36284ms",
+   "overpass-api.de ok 22 53242ms",
+   "overpass-api.de ok 9 28825ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 490 39671ms",
+   "streets: 490 shops",
+   "fame: 50 of 50"
+  ]
  }
 }
