@@ -4896,5 +4896,69 @@
    "streets: 18 shops",
    "fame: 61 of 61"
   ]
+ },
+ "funchal": {
+  "at": "2026-10-31T21:33:05.165Z",
+  "seconds": 466,
+  "osm": {
+   "sights": 39,
+   "sights2": 40,
+   "restaurants": 232,
+   "cafes": 131,
+   "hotels": 139,
+   "shopping": 112,
+   "diet": 0,
+   "extra": 28,
+   "landmarks": 7,
+   "streets": 6
+  },
+  "voyage": {
+   "eat": 8,
+   "drink": 6,
+   "buy": 0,
+   "see": 11,
+   "sleep": 21,
+   "withCoords": 51,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 2,
+   "en": 42
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Rua Doutor João Brito Câmara (37)",
+   "Rua do Visconde Anadia (10)",
+   "Rua Doutor Fernão de Ornelas (9)",
+   "Avenida Arriaga (10)",
+   "Rua dos Ferreiros (7)"
+  ],
+  "log": [
+   "overpass-api.de ok 39 39779ms",
+   "overpass-api.de ok 40 42915ms",
+   "overpass-api.de ok 232 26179ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de ok 131 36098ms",
+   "overpass-api.de ok 139 30210ms",
+   "overpass-api.de ok 112 38214ms",
+   "overpass-api.de ok 0 33606ms",
+   "overpass-api.de ok 28 36822ms",
+   "overpass-api.de ok 7 34182ms",
+   "overpass-api.de ok 124 50423ms",
+   "streets: 124 shops",
+   "fame: 113 of 113"
+  ]
  }
 }
