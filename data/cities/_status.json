@@ -3655,5 +3655,63 @@
    "streets: 338 shops",
    "fame: 159 of 159"
   ]
+ },
+ "dubrovnik": {
+  "at": "2026-10-31T18:46:45.262Z",
+  "seconds": 428,
+  "osm": {
+   "sights": 18,
+   "sights2": 24,
+   "restaurants": 98,
+   "cafes": 42,
+   "hotels": 63,
+   "shopping": 44,
+   "diet": 3,
+   "extra": 13,
+   "landmarks": 7,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 22,
+   "drink": 10,
+   "buy": 2,
+   "see": 33,
+   "sleep": 23,
+   "withCoords": 29,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 29
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 18 30068ms",
+   "overpass-api.de ok 24 34215ms",
+   "overpass-api.de ok 98 20201ms",
+   "overpass-api.de ok 42 35262ms",
+   "overpass-api.de ok 63 33699ms",
+   "overpass-api.de ok 44 32649ms",
+   "overpass-api.de ok 3 36517ms",
+   "overpass-api.de ok 13 31836ms",
+   "overpass-api.de ok 7 35460ms",
+   "overpass-api.de HTTP 502 470ms",
+   "overpass-api.de ok 5 44785ms",
+   "streets: 5 shops",
+   "fame: 33 of 33"
+  ]
  }
 }
