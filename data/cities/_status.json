@@ -1,26 +1,26 @@
 {
  "paris": {
-  "at": "2026-10-31T11:51:17.562Z",
-  "seconds": 631,
+  "at": "2026-10-23T16:32:39.468Z",
+  "seconds": 828,
   "osm": {
    "sights": 739,
-   "sights2": 250,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 250,
+   "diet": 200,
    "extra": 200,
+   "streets": 14,
    "landmarks": 150,
-   "streets": 14
+   "sights2": 250
   },
   "voyage": {
-   "eat": 75,
-   "drink": 40,
-   "buy": 39,
-   "see": 96,
-   "sleep": 90,
-   "withCoords": 216,
+   "eat": 69,
+   "drink": 38,
+   "buy": 45,
+   "see": 112,
+   "sleep": 101,
+   "withCoords": 247,
    "districts": 8
   },
   "wiki": {
@@ -31,38 +31,17 @@
   "fameV": 3,
   "qv": {
    "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "landmarks": 1,
-   "streets": 1
+   "sights2": 1
   },
   "streets": [
    "Rue du Faubourg Saint-Antoine (47)",
-   "Avenue d'Italie (24)",
    "Rue Saint-Antoine (29)",
+   "Avenue d'Italie (24)",
    "Rue Montmartre (25)",
    "Rue de Rivoli (20)"
   ],
   "log": [
-   "overpass-api.de ok 739 28841ms",
-   "overpass-api.de HTTP 502 492ms",
-   "overpass-api.de ok 250 27046ms",
-   "overpass-api.de HTTP 502 492ms",
-   "overpass-api.de ok 450 36916ms",
-   "overpass-api.de ok 300 28010ms",
-   "overpass-api.de ok 350 31178ms",
-   "overpass-api.de ok 300 38082ms",
-   "overpass-api.de ok 250 41276ms",
-   "overpass-api.de ok 200 33832ms",
-   "overpass-api.de HTTP 502 487ms",
-   "overpass-api.de ok 150 33191ms",
-   "overpass-api.de ok 1913 42198ms",
-   "streets: 1913 shops",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -70,11 +49,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 1111 of 1111"
+   "fame: 1124 of 1124"
   ]
  },
  "rome": {
@@ -128,27 +103,27 @@
   ]
  },
  "barcelona": {
-  "at": "2026-10-31T11:50:19.295Z",
-  "seconds": 554,
+  "at": "2026-10-23T16:37:49.867Z",
+  "seconds": 603,
   "osm": {
    "sights": 336,
-   "sights2": 96,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 68,
+   "diet": 66,
    "extra": 163,
+   "streets": 14,
    "landmarks": 150,
-   "streets": 14
+   "sights2": 100
   },
   "voyage": {
-   "eat": 94,
-   "drink": 36,
-   "buy": 47,
-   "see": 98,
-   "sleep": 126,
-   "withCoords": 345,
+   "eat": 118,
+   "drink": 49,
+   "buy": 66,
+   "see": 116,
+   "sleep": 120,
+   "withCoords": 409,
    "districts": 8
   },
   "wiki": {
@@ -159,15 +134,7 @@
   "fameV": 3,
   "qv": {
    "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "landmarks": 1,
-   "streets": 1
+   "sights2": 1
   },
   "streets": [
    "Avinguda Diagonal (92)",
@@ -177,52 +144,35 @@
    "Rambla de Catalunya (18)"
   ],
   "log": [
-   "overpass-api.de ok 336 28070ms",
-   "overpass-api.de HTTP 502 300ms",
-   "overpass-api.de ok 96 42307ms",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de ok 450 20515ms",
-   "overpass-api.de ok 300 28445ms",
-   "overpass-api.de ok 350 27326ms",
-   "overpass-api.de ok 300 29438ms",
-   "overpass-api.de ok 68 51772ms",
-   "overpass-api.de HTTP 502 347ms",
-   "overpass-api.de ok 163 38547ms",
-   "overpass-api.de ok 150 35748ms",
-   "overpass-api.de ok 1177 32989ms",
-   "streets: 1177 shops",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 605 of 605"
+   "fame: 641 of 641"
   ]
  },
  "london": {
-  "at": "2026-10-31T11:50:33.264Z",
-  "seconds": 547,
+  "at": "2026-10-23T16:43:17.509Z",
+  "seconds": 1017,
   "osm": {
    "sights": 593,
-   "sights2": 222,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 192,
+   "diet": 152,
    "extra": 200,
-   "landmarks": 81,
-   "streets": 14
+   "streets": 14,
+   "sights2": 221,
+   "landmarks": 80
   },
   "voyage": {
-   "eat": 94,
-   "drink": 158,
-   "buy": 59,
-   "see": 151,
-   "sleep": 87,
-   "withCoords": 571,
+   "eat": 86,
+   "drink": 150,
+   "buy": 52,
+   "see": 136,
+   "sleep": 70,
+   "withCoords": 513,
    "districts": 8
   },
   "wiki": {
@@ -234,14 +184,7 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "New Bond Street (69)",
@@ -251,51 +194,39 @@
    "Marylebone High Street (56)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 803ms",
-   "overpass-api.de ok 593 28522ms",
-   "overpass-api.de ok 222 39453ms",
-   "overpass-api.de ok 450 28567ms",
-   "overpass-api.de ok 300 29840ms",
-   "overpass-api.de ok 350 27929ms",
-   "overpass-api.de ok 300 34763ms",
-   "overpass-api.de HTTP 502 516ms",
-   "overpass-api.de ok 192 40446ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de ok 200 29235ms",
-   "overpass-api.de ok 81 34987ms",
-   "overpass-api.de ok 2447 40932ms",
-   "streets: 2447 shops",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 875 of 875"
+   "wikidata HTTP 429",
+   "fame: 939 of 939"
   ]
  },
  "prague": {
-  "at": "2026-10-31T11:51:10.785Z",
-  "seconds": 566,
+  "at": "2026-10-23T16:48:24.887Z",
+  "seconds": 667,
   "osm": {
    "sights": 836,
-   "sights2": 115,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 75,
+   "diet": 63,
    "extra": 200,
-   "landmarks": 150,
-   "streets": 9
+   "streets": 9,
+   "sights2": 114,
+   "landmarks": 150
   },
   "voyage": {
-   "eat": 163,
-   "drink": 53,
-   "buy": 12,
-   "see": 148,
-   "sleep": 96,
-   "withCoords": 477,
+   "eat": 188,
+   "drink": 59,
+   "buy": 10,
+   "see": 150,
+   "sleep": 102,
+   "withCoords": 512,
    "districts": 8
   },
   "wiki": {
@@ -307,14 +238,7 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "Pařížská (33)",
@@ -324,17 +248,7 @@
    "Na Příkopě (8)"
   ],
   "log": [
-   "overpass-api.de ok 836 22215ms",
-   "overpass-api.de ok 115 36065ms",
-   "overpass-api.de ok 450 30996ms",
-   "overpass-api.de ok 300 29941ms",
-   "overpass-api.de ok 350 27001ms",
-   "overpass-api.de ok 300 26359ms",
-   "overpass-api.de ok 75 34070ms",
-   "overpass-api.de ok 200 38967ms",
-   "overpass-api.de ok 150 30676ms",
-   "overpass-api.de ok 392 35315ms",
-   "streets: 392 shops",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -342,11 +256,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 1037 of 1037"
+   "fame: 1061 of 1061"
   ]
  },
  "budapest": {
@@ -891,19 +801,19 @@
   ]
  },
  "florence": {
-  "at": "2026-10-23T18:29:04.299Z",
-  "seconds": 675,
+  "at": "2026-10-31T11:59:18.197Z",
+  "seconds": 458,
   "osm": {
    "sights": 297,
+   "sights2": 43,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 213,
-   "diet": 12,
+   "diet": 15,
    "extra": 128,
-   "streets": 5,
-   "sights2": 43,
-   "landmarks": 64
+   "landmarks": 64,
+   "streets": 5
   },
   "voyage": {
    "eat": 20,
@@ -923,7 +833,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Ponte Vecchio (46)",
@@ -933,11 +850,23 @@
    "Via dei Pecori (6)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 297 36624ms",
-   "overpass-api.de ok 43 36494ms",
-   "overpass-api.de ok 64 30456ms",
-   "fame: 495 of 495"
+   "overpass-api.de ok 297 28530ms",
+   "overpass-api.de ok 43 32797ms",
+   "overpass-api.de ok 450 21589ms",
+   "overpass-api.de ok 300 26242ms",
+   "overpass-api.de ok 350 24853ms",
+   "overpass-api.de ok 213 37191ms",
+   "overpass-api.de ok 15 38276ms",
+   "overpass-api.de ok 128 32398ms",
+   "overpass-api.de HTTP 502 347ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 64 34371ms",
+   "overpass-api.de ok 259 20276ms",
+   "streets: 259 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 492 of 492"
   ]
  },
  "venice": {
