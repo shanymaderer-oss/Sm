@@ -4233,5 +4233,70 @@
    "wikidata HTTP 429",
    "fame: 74 of 74"
   ]
+ },
+ "kathmandu": {
+  "at": "2026-10-31T20:08:25.186Z",
+  "seconds": 736,
+  "osm": {
+   "sights": 7,
+   "sights2": 35,
+   "restaurants": 450,
+   "cafes": 198,
+   "hotels": 350,
+   "shopping": 120,
+   "diet": 4,
+   "extra": 8,
+   "landmarks": 2
+  },
+  "voyage": {
+   "eat": 12,
+   "drink": 17,
+   "buy": 22,
+   "see": 56,
+   "sleep": 49,
+   "withCoords": 101,
+   "districts": 3
+  },
+  "wiki": {
+   "he": 5,
+   "en": 100
+  },
+  "streetsV": 0,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 7 35260ms",
+   "overpass-api.de ok 35 31133ms",
+   "overpass-api.de HTTP 502 478ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 450 34952ms",
+   "overpass-api.de ok 198 30903ms",
+   "overpass-api.de HTTP 502 765ms",
+   "overpass-api.de ok 350 17489ms",
+   "overpass-api.de ok 120 22080ms",
+   "overpass-api.de HTTP 502 465ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 4 45126ms",
+   "overpass-api.de ok 8 41053ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 2 38640ms",
+   "overpass-api.de HTTP 502 528ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de HTTP 502 467ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "fame: 12 of 12"
+  ]
  }
 }
