@@ -3085,5 +3085,79 @@
    "wikidata HTTP 429",
    "fame: 175 of 175"
   ]
+ },
+ "lima": {
+  "at": "2026-10-31T16:05:19.992Z",
+  "seconds": 605,
+  "osm": {
+   "sights": 17,
+   "sights2": 29,
+   "restaurants": 450,
+   "cafes": 204,
+   "hotels": 350,
+   "shopping": 130,
+   "diet": 28,
+   "extra": 28,
+   "landmarks": 1,
+   "streets": 9
+  },
+  "voyage": {
+   "eat": 85,
+   "drink": 19,
+   "buy": 18,
+   "see": 199,
+   "sleep": 78,
+   "withCoords": 144,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 1,
+   "en": 74
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Avenida José Larco (26)",
+   "Avenida Los Conquistadores (28)",
+   "Avenida La Paz (18)",
+   "Avenida Petit Thouars (9)",
+   "Avenida Ignacio Merino (9)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de ok 17 39809ms",
+   "overpass-api.de ok 29 48379ms",
+   "overpass-api.de ok 450 42018ms",
+   "overpass-api.de ok 204 29563ms",
+   "overpass-api.de ok 350 33880ms",
+   "overpass-api.de ok 130 36765ms",
+   "overpass-api.de HTTP 502 399ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 28 41071ms",
+   "overpass-api.de HTTP 502 399ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 28 36710ms",
+   "overpass-api.de ok 1 39188ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 332 41082ms",
+   "streets: 332 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 33 of 33"
+  ]
  }
 }
