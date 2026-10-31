@@ -149,38 +149,46 @@
   ]
  },
  "barcelona": {
-  "at": "2026-10-23T16:37:49.867Z",
-  "seconds": 603,
+  "at": "2026-10-31T14:35:25.910Z",
+  "seconds": 758,
   "osm": {
-   "sights": 336,
+   "sights": 0,
+   "sights2": 96,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 66,
+   "diet": 68,
    "extra": 163,
-   "streets": 14,
    "landmarks": 150,
-   "sights2": 100
+   "streets": 14
   },
   "voyage": {
-   "eat": 118,
-   "drink": 49,
-   "buy": 66,
-   "see": 116,
-   "sleep": 120,
-   "withCoords": 409,
+   "eat": 115,
+   "drink": 54,
+   "buy": 64,
+   "see": 123,
+   "sleep": 134,
+   "withCoords": 412,
    "districts": 8
   },
   "wiki": {
-   "he": 80,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
   "fameV": 3,
   "qv": {
    "sights": 2,
-   "sights2": 1
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
   },
   "streets": [
    "Avinguda Diagonal (92)",
@@ -190,11 +198,30 @@
    "Rambla de Catalunya (18)"
   ],
   "log": [
-   "(updated: )",
+   "overpass-api.de HTTP 502 707ms",
+   "overpass-api.de HTTP 502 366ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 96 27540ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de HTTP 502 365ms",
+   "overpass-api.de ok 450 21416ms",
+   "overpass-api.de ok 300 26093ms",
+   "overpass-api.de HTTP 502 365ms",
+   "overpass-api.de ok 350 34977ms",
+   "overpass-api.de ok 300 28752ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de ok 68 41479ms",
+   "overpass-api.de ok 163 35157ms",
+   "overpass-api.de ok 150 36828ms",
+   "overpass-api.de ok 1177 35975ms",
+   "streets: 1177 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 641 of 641"
+   "wikidata HTTP 429",
+   "fame: 365 of 365"
   ]
  },
  "london": {
