@@ -891,19 +891,19 @@
   ]
  },
  "new-york": {
-  "at": "2026-10-31T12:11:12.542Z",
-  "seconds": 825,
+  "at": "2026-10-23T18:42:13.154Z",
+  "seconds": 550,
   "osm": {
    "sights": 214,
-   "sights2": 188,
    "restaurants": 450,
-   "cafes": 0,
+   "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 222,
+   "diet": 156,
    "extra": 200,
-   "landmarks": 25,
-   "streets": 14
+   "streets": 14,
+   "sights2": 187,
+   "landmarks": 25
   },
   "voyage": {
    "eat": 0,
@@ -915,7 +915,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 100,
    "en": 100
   },
   "streetsV": 2,
@@ -923,47 +923,21 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "restaurants": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "Broadway (40)",
    "5th Avenue (30)",
    "West 34th Street (25)",
-   "Prince Street (29)",
-   "Columbus Circle (24)"
+   "Columbus Circle (24)",
+   "Prince Street (28)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 214 25977ms",
-   "overpass-api.de ok 188 32259ms",
-   "overpass-api.de HTTP 502 360ms",
-   "overpass-api.de ok 450 31456ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de HTTP 502 447ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 350 34225ms",
-   "overpass-api.de HTTP 502 443ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 300 57501ms",
-   "overpass-api.de ok 222 41035ms",
-   "overpass-api.de ok 200 36917ms",
-   "overpass-api.de ok 25 48147ms",
-   "overpass-api.de HTTP 502 426ms",
-   "overpass-api.de ok 1270 34101ms",
-   "streets: 1270 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 482 of 482"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 214 21387ms",
+   "overpass-api.de ok 187 30194ms",
+   "overpass-api.de ok 25 36611ms",
+   "fame: 472 of 472"
   ]
  },
  "bangkok": {
@@ -1487,19 +1461,19 @@
   ]
  },
  "dubai": {
-  "at": "2026-10-23T21:54:46.991Z",
-  "seconds": 459,
+  "at": "2026-10-31T12:22:09.520Z",
+  "seconds": 405,
   "osm": {
    "sights": 12,
+   "sights2": 14,
    "restaurants": 182,
    "cafes": 90,
    "hotels": 112,
    "shopping": 58,
    "diet": 13,
    "extra": 12,
-   "streets": 4,
-   "sights2": 14,
-   "landmarks": 1
+   "landmarks": 1,
+   "streets": 4
   },
   "voyage": {
    "eat": 59,
@@ -1511,7 +1485,7 @@
    "districts": 5
   },
   "wiki": {
-   "he": 15,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -1519,7 +1493,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Al Satwa Road (37)",
@@ -1528,13 +1509,19 @@
    "Jumeira Street (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 12 23346ms",
-   "overpass-api.de HTTP 502 298ms",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 14 29983ms",
-   "overpass-api.de ok 1 37500ms",
-   "fame: 91 of 91"
+   "overpass-api.de ok 12 30255ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de ok 14 26959ms",
+   "overpass-api.de ok 182 34092ms",
+   "overpass-api.de ok 90 27102ms",
+   "overpass-api.de ok 112 30102ms",
+   "overpass-api.de ok 58 36476ms",
+   "overpass-api.de ok 13 32498ms",
+   "overpass-api.de ok 12 21942ms",
+   "overpass-api.de ok 1 37268ms",
+   "overpass-api.de ok 196 33524ms",
+   "streets: 196 shops",
+   "fame: 67 of 67"
   ]
  },
  "krakow": {
