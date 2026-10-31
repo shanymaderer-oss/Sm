@@ -646,31 +646,31 @@
   ]
  },
  "madrid": {
-  "at": "2026-10-23T18:04:35.196Z",
-  "seconds": 629,
+  "at": "2026-10-31T12:03:19.623Z",
+  "seconds": 759,
   "osm": {
    "sights": 405,
+   "sights2": 88,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 60,
-   "extra": 106,
-   "streets": 14,
-   "sights2": 87,
-   "landmarks": 76
+   "diet": 61,
+   "extra": 107,
+   "landmarks": 0,
+   "streets": 14
   },
   "voyage": {
-   "eat": 44,
-   "drink": 20,
-   "buy": 43,
-   "see": 51,
-   "sleep": 28,
-   "withCoords": 208,
+   "eat": 46,
+   "drink": 21,
+   "buy": 44,
+   "see": 63,
+   "sleep": 29,
+   "withCoords": 231,
    "districts": 8
   },
   "wiki": {
-   "he": 55,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -678,24 +678,47 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Calle de Fuencarral (79)",
    "Gran Vía (44)",
    "Calle de Serrano (22)",
    "Calle Preciados (22)",
-   "Calle de Goya (20)"
+   "Calle del Arenal (21)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 405 42201ms",
-   "overpass-api.de HTTP 502 295ms",
-   "overpass-api.de ok 87 40493ms",
-   "overpass-api.de ok 76 19877ms",
+   "overpass-api.de ok 405 28151ms",
+   "overpass-api.de ok 88 37908ms",
+   "overpass-api.de ok 450 40465ms",
+   "overpass-api.de HTTP 502 464ms",
+   "overpass-api.de ok 300 22785ms",
+   "overpass-api.de ok 350 24740ms",
+   "overpass-api.de ok 300 26941ms",
+   "overpass-api.de ok 61 38681ms",
+   "overpass-api.de ok 107 40422ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de HTTP 502 511ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 1262 34204ms",
+   "streets: 1262 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 611 of 611"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 522 of 522"
   ]
  },
  "athens": {
