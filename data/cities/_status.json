@@ -2874,5 +2874,67 @@
    "wikidata HTTP 429",
    "fame: 357 of 357"
   ]
+ },
+ "shanghai": {
+  "at": "2026-10-31T13:02:05.085Z",
+  "seconds": 459,
+  "osm": {
+   "sights": 55,
+   "sights2": 118,
+   "restaurants": 304,
+   "cafes": 204,
+   "hotels": 278,
+   "shopping": 226,
+   "diet": 6,
+   "extra": 30,
+   "landmarks": 11,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 48,
+   "drink": 17,
+   "buy": 22,
+   "see": 80,
+   "sleep": 79,
+   "withCoords": 120,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 22,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "南京西路 (9)"
+  ],
+  "log": [
+   "overpass-api.de ok 55 39101ms",
+   "overpass-api.de ok 118 35766ms",
+   "overpass-api.de ok 304 25623ms",
+   "overpass-api.de ok 204 31125ms",
+   "overpass-api.de ok 278 46262ms",
+   "overpass-api.de ok 226 44160ms",
+   "overpass-api.de ok 6 21750ms",
+   "overpass-api.de HTTP 502 350ms",
+   "overpass-api.de ok 30 29948ms",
+   "overpass-api.de ok 11 47923ms",
+   "overpass-api.de ok 92 36309ms",
+   "streets: 92 shops",
+   "wikidata HTTP 429",
+   "fame: 99 of 99"
+  ]
  }
 }
