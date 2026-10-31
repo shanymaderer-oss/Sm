@@ -4298,5 +4298,72 @@
    "overpass.kumi.systems timeout 60001ms",
    "fame: 12 of 12"
   ]
+ },
+ "cairo": {
+  "at": "2026-10-31T20:18:10.041Z",
+  "seconds": 581,
+  "osm": {
+   "sights": 53,
+   "sights2": 43,
+   "restaurants": 111,
+   "cafes": 79,
+   "hotels": 123,
+   "shopping": 34,
+   "diet": 4,
+   "extra": 50,
+   "landmarks": 11,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 50,
+   "drink": 22,
+   "buy": 24,
+   "see": 79,
+   "sleep": 29,
+   "withCoords": 151,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 53 34846ms",
+   "overpass-api.de ok 43 42542ms",
+   "overpass-api.de HTTP 502 470ms",
+   "overpass-api.de HTTP 502 527ms",
+   "overpass-api.de ok 111 44107ms",
+   "overpass-api.de ok 79 32980ms",
+   "overpass-api.de ok 123 36473ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de ok 34 38678ms",
+   "overpass-api.de HTTP 502 528ms",
+   "overpass-api.de ok 4 28652ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 50 31437ms",
+   "overpass-api.de ok 11 45525ms",
+   "overpass-api.de HTTP 502 516ms",
+   "overpass-api.de ok 37 34936ms",
+   "streets: 37 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 105 of 105"
+  ]
  }
 }
