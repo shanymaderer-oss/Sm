@@ -53,27 +53,27 @@
   ]
  },
  "rome": {
-  "at": "2026-10-23T16:27:13.159Z",
-  "seconds": 667,
+  "at": "2026-10-31T11:49:22.252Z",
+  "seconds": 537,
   "osm": {
    "sights": 499,
+   "sights2": 119,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 231,
-   "diet": 26,
+   "shopping": 233,
+   "diet": 27,
    "extra": 200,
-   "streets": 14,
    "landmarks": 92,
-   "sights2": 116
+   "streets": 14
   },
   "voyage": {
-   "eat": 58,
-   "drink": 16,
-   "buy": 15,
-   "see": 168,
-   "sleep": 136,
-   "withCoords": 364,
+   "eat": 72,
+   "drink": 17,
+   "buy": 16,
+   "see": 180,
+   "sleep": 131,
+   "withCoords": 387,
    "districts": 8
   },
   "wiki": {
@@ -84,7 +84,15 @@
   "fameV": 3,
   "qv": {
    "sights": 2,
-   "sights2": 1
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
   },
   "streets": [
    "Via Nazionale (71)",
@@ -94,12 +102,29 @@
    "Via del Tritone (18)"
   ],
   "log": [
-   "(updated: )",
+   "overpass-api.de HTTP 502 615ms",
+   "overpass-api.de ok 499 23445ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 119 30730ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 450 43823ms",
+   "overpass-api.de ok 300 27539ms",
+   "overpass-api.de ok 350 26855ms",
+   "overpass-api.de ok 233 23838ms",
+   "overpass-api.de ok 27 29987ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 200 32905ms",
+   "overpass-api.de ok 92 37894ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 880 34546ms",
+   "streets: 880 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 750 of 750"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 682 of 682"
   ]
  },
  "barcelona": {
@@ -311,39 +336,46 @@
   ]
  },
  "vienna": {
-  "at": "2026-10-23T17:26:47.825Z",
-  "seconds": 1104,
+  "at": "2026-10-31T11:51:32.292Z",
+  "seconds": 547,
   "osm": {
    "sights": 658,
+   "sights2": 157,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 0,
+   "diet": 115,
    "extra": 200,
-   "streets": 14,
-   "sights2": 158,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 14
   },
   "voyage": {
-   "eat": 113,
-   "drink": 91,
-   "buy": 51,
-   "see": 110,
-   "sleep": 55,
-   "withCoords": 416,
+   "eat": 125,
+   "drink": 101,
+   "buy": 56,
+   "see": 120,
+   "sleep": 59,
+   "withCoords": 461,
    "districts": 8
   },
   "wiki": {
    "he": 100,
-   "en": 100
+   "en": 0
   },
   "streetsV": 2,
   "fameV": 3,
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Mariahilfer Straße (66)",
@@ -353,15 +385,26 @@
    "Kärntner Straße (25)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 658 6235ms",
-   "overpass-api.de ok 158 30425ms",
-   "overpass-api.de ok 150 34205ms",
+   "overpass-api.de ok 658 35977ms",
+   "overpass-api.de ok 157 30138ms",
+   "overpass-api.de ok 450 30866ms",
+   "overpass-api.de ok 300 32264ms",
+   "overpass-api.de ok 350 36111ms",
+   "overpass-api.de ok 300 32813ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de ok 115 32751ms",
+   "overpass-api.de ok 200 33849ms",
+   "overpass-api.de ok 150 38442ms",
+   "overpass-api.de ok 1218 31007ms",
+   "streets: 1218 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 933 of 933"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 898 of 898"
   ]
  },
  "berlin": {
@@ -422,19 +465,19 @@
   ]
  },
  "amsterdam": {
-  "at": "2026-10-23T17:44:32.683Z",
-  "seconds": 917,
+  "at": "2026-10-31T11:57:20.179Z",
+  "seconds": 473,
   "osm": {
    "sights": 172,
+   "sights2": 187,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 60,
+   "diet": 69,
    "extra": 84,
-   "streets": 14,
-   "sights2": 186,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 14
   },
   "voyage": {
    "eat": 50,
@@ -454,7 +497,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Kalverstraat (80)",
@@ -464,12 +514,21 @@
    "Ferdinand Bolstraat (26)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de timeout 60001ms",
-   "overpass-api.de ok 172 40141ms",
-   "overpass-api.de ok 186 32096ms",
-   "overpass-api.de ok 150 30218ms",
-   "fame: 464 of 464"
+   "overpass-api.de ok 172 32765ms",
+   "overpass-api.de ok 187 37334ms",
+   "overpass-api.de ok 450 34772ms",
+   "overpass-api.de ok 300 28103ms",
+   "overpass-api.de ok 350 42454ms",
+   "overpass-api.de ok 300 24529ms",
+   "overpass-api.de ok 69 26687ms",
+   "overpass-api.de ok 84 48074ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de ok 150 38293ms",
+   "overpass-api.de ok 1088 35371ms",
+   "streets: 1088 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 430 of 430"
   ]
  },
  "lisbon": {
@@ -1224,17 +1283,17 @@
   ]
  },
  "paphos": {
-  "at": "2026-10-23T21:36:31.316Z",
-  "seconds": 1005,
+  "at": "2026-10-31T12:18:52.701Z",
+  "seconds": 455,
   "osm": {
    "sights": 18,
+   "sights2": 24,
    "restaurants": 90,
    "cafes": 51,
-   "hotels": 99,
+   "hotels": 100,
    "shopping": 86,
    "diet": 1,
    "extra": 14,
-   "sights2": 24,
    "landmarks": 2,
    "streets": 0
   },
@@ -1256,14 +1315,31 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
   },
   "streets": [],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 380ms",
-   "overpass-api.de ok 17 37182ms",
-   "streets: 17 shops"
+   "overpass-api.de HTTP 502 678ms",
+   "overpass-api.de ok 18 41425ms",
+   "overpass-api.de ok 24 44151ms",
+   "overpass-api.de ok 90 27841ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de HTTP 502 451ms",
+   "overpass-api.de ok 51 32218ms",
+   "overpass-api.de ok 100 25136ms",
+   "overpass-api.de ok 86 35374ms",
+   "overpass-api.de ok 1 29781ms",
+   "overpass-api.de ok 14 31653ms",
+   "overpass-api.de ok 2 33956ms",
+   "overpass-api.de ok 17 28568ms",
+   "streets: 17 shops",
+   "fame: 28 of 28"
   ]
  },
  "nice": {
@@ -1367,19 +1443,19 @@
   ]
  },
  "dubai": {
-  "at": "2026-10-23T21:54:46.991Z",
-  "seconds": 459,
+  "at": "2026-10-31T12:22:09.520Z",
+  "seconds": 405,
   "osm": {
    "sights": 12,
+   "sights2": 14,
    "restaurants": 182,
    "cafes": 90,
    "hotels": 112,
    "shopping": 58,
    "diet": 13,
    "extra": 12,
-   "streets": 4,
-   "sights2": 14,
-   "landmarks": 1
+   "landmarks": 1,
+   "streets": 4
   },
   "voyage": {
    "eat": 59,
@@ -1391,7 +1467,7 @@
    "districts": 5
   },
   "wiki": {
-   "he": 15,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -1399,7 +1475,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Al Satwa Road (37)",
@@ -1408,13 +1491,19 @@
    "Jumeira Street (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 12 23346ms",
-   "overpass-api.de HTTP 502 298ms",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 14 29983ms",
-   "overpass-api.de ok 1 37500ms",
-   "fame: 91 of 91"
+   "overpass-api.de ok 12 30255ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de ok 14 26959ms",
+   "overpass-api.de ok 182 34092ms",
+   "overpass-api.de ok 90 27102ms",
+   "overpass-api.de ok 112 30102ms",
+   "overpass-api.de ok 58 36476ms",
+   "overpass-api.de ok 13 32498ms",
+   "overpass-api.de ok 12 21942ms",
+   "overpass-api.de ok 1 37268ms",
+   "overpass-api.de ok 196 33524ms",
+   "streets: 196 shops",
+   "fame: 67 of 67"
   ]
  },
  "krakow": {
@@ -1521,19 +1610,19 @@
   ]
  },
  "sofia": {
-  "at": "2026-10-23T22:12:48.306Z",
-  "seconds": 490,
+  "at": "2026-10-31T12:15:19.433Z",
+  "seconds": 521,
   "osm": {
-   "sights": 334,
+   "sights": 336,
+   "sights2": 110,
    "restaurants": 323,
    "cafes": 300,
    "hotels": 146,
    "shopping": 247,
    "diet": 11,
    "extra": 31,
-   "streets": 1,
-   "sights2": 110,
-   "landmarks": 44
+   "landmarks": 45,
+   "streets": 1
   },
   "voyage": {
    "eat": 12,
@@ -1541,7 +1630,7 @@
    "buy": 12,
    "see": 55,
    "sleep": 18,
-   "withCoords": 91,
+   "withCoords": 94,
    "districts": 0
   },
   "wiki": {
@@ -1553,17 +1642,36 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Георги С. Раковски (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 334 33404ms",
-   "overpass-api.de ok 110 32208ms",
-   "overpass-api.de ok 44 37090ms",
-   "fame: 435 of 435"
+   "overpass-api.de ok 336 36036ms",
+   "overpass-api.de ok 110 35577ms",
+   "overpass-api.de ok 323 25810ms",
+   "overpass-api.de ok 300 36581ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de ok 146 38247ms",
+   "overpass-api.de ok 247 45949ms",
+   "overpass-api.de ok 11 36136ms",
+   "overpass-api.de ok 31 32959ms",
+   "overpass-api.de ok 45 40328ms",
+   "overpass-api.de ok 95 34538ms",
+   "streets: 95 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 416 of 416"
   ]
  },
  "bucharest": {
@@ -1617,19 +1725,19 @@
   ]
  },
  "thessaloniki": {
-  "at": "2026-10-23T22:24:30.383Z",
-  "seconds": 484,
+  "at": "2026-10-31T12:30:44.733Z",
+  "seconds": 707,
   "osm": {
    "sights": 151,
-   "restaurants": 232,
+   "sights2": 22,
+   "restaurants": 0,
    "cafes": 300,
    "hotels": 100,
    "shopping": 166,
    "diet": 12,
    "extra": 60,
-   "streets": 8,
-   "sights2": 22,
-   "landmarks": 12
+   "landmarks": 12,
+   "streets": 8
   },
   "voyage": {
    "eat": 33,
@@ -1649,7 +1757,13 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Ιωάννη Τσιμισκή (30)",
@@ -1659,11 +1773,24 @@
    "Φράγκων (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 151 33938ms",
-   "overpass-api.de ok 22 20081ms",
-   "overpass-api.de ok 12 27649ms",
-   "fame: 245 of 245"
+   "overpass-api.de ok 151 28809ms",
+   "overpass-api.de ok 22 33391ms",
+   "overpass-api.de HTTP 504 36258ms",
+   "overpass-api.de HTTP 502 359ms",
+   "overpass-api.de HTTP 502 359ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de ok 300 33902ms",
+   "overpass-api.de ok 100 29586ms",
+   "overpass-api.de ok 166 29748ms",
+   "overpass-api.de ok 12 28548ms",
+   "overpass-api.de HTTP 502 447ms",
+   "overpass-api.de ok 60 29084ms",
+   "overpass-api.de ok 12 38248ms",
+   "overpass-api.de ok 213 36186ms",
+   "streets: 213 shops",
+   "fame: 240 of 240"
   ]
  },
  "naples": {
@@ -1911,19 +2038,19 @@
   ]
  },
  "seville": {
-  "at": "2026-10-23T23:07:29.639Z",
-  "seconds": 488,
+  "at": "2026-10-31T12:23:39.591Z",
+  "seconds": 495,
   "osm": {
-   "sights": 88,
+   "sights": 89,
+   "sights2": 53,
    "restaurants": 450,
    "cafes": 264,
-   "hotels": 282,
+   "hotels": 283,
    "shopping": 300,
    "diet": 4,
-   "extra": 72,
-   "streets": 10,
-   "sights2": 53,
-   "landmarks": 50
+   "extra": 70,
+   "landmarks": 50,
+   "streets": 10
   },
   "voyage": {
    "eat": 10,
@@ -1935,7 +2062,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 15,
+   "he": 0,
    "en": 90
   },
   "streetsV": 2,
@@ -1943,7 +2070,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Calle Gonzalo Jiménez de Quesada (15)",
@@ -1953,12 +2087,22 @@
    "Calle Monte Carmelo (10)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 88 21478ms",
-   "overpass-api.de HTTP 502 477ms",
-   "overpass-api.de ok 53 24966ms",
-   "overpass-api.de ok 50 32267ms",
-   "fame: 250 of 250"
+   "overpass-api.de ok 89 28952ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 53 30837ms",
+   "overpass-api.de ok 450 31792ms",
+   "overpass-api.de ok 264 27250ms",
+   "overpass-api.de ok 283 33389ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 300 28923ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de ok 4 32245ms",
+   "overpass-api.de HTTP 504 48921ms",
+   "overpass-api.de ok 70 38851ms",
+   "overpass-api.de ok 50 28952ms",
+   "overpass-api.de ok 283 33602ms",
+   "streets: 283 shops",
+   "fame: 245 of 245"
   ]
  },
  "valencia": {
