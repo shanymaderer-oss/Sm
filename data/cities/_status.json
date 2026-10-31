@@ -2672,33 +2672,33 @@
    "fame: 105 of 105"
   ]
  },
- "dubrovnik": {
-  "at": "2026-10-31T13:10:08.804Z",
-  "seconds": 454,
+ "granada": {
+  "at": "2026-10-31T12:57:26.726Z",
+  "seconds": 477,
   "osm": {
-   "sights": 18,
-   "sights2": 24,
-   "restaurants": 98,
-   "cafes": 42,
-   "hotels": 63,
-   "shopping": 44,
-   "diet": 3,
-   "extra": 13,
-   "landmarks": 7,
-   "streets": 0
+   "sights": 114,
+   "sights2": 59,
+   "restaurants": 352,
+   "cafes": 234,
+   "hotels": 236,
+   "shopping": 300,
+   "diet": 4,
+   "extra": 49,
+   "landmarks": 41,
+   "streets": 4
   },
   "voyage": {
-   "eat": 22,
-   "drink": 10,
-   "buy": 2,
-   "see": 33,
-   "sleep": 23,
-   "withCoords": 29,
+   "eat": 8,
+   "drink": 0,
+   "buy": 3,
+   "see": 44,
+   "sleep": 28,
+   "withCoords": 65,
    "districts": 0
   },
   "wiki": {
    "he": 0,
-   "en": 29
+   "en": 60
   },
   "streetsV": 2,
   "fameV": 3,
@@ -2711,27 +2711,30 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "streets": 1
   },
-  "streets": [],
+  "streets": [
+   "Calle Mesones (25)",
+   "Calle Recogidas (16)",
+   "Calle Puentezuelas (15)",
+   "Calle Alhóndiga (7)"
+  ],
   "log": [
-   "overpass-api.de ok 18 31561ms",
-   "overpass-api.de ok 24 25264ms",
-   "overpass-api.de HTTP 502 358ms",
-   "overpass-api.de ok 98 38536ms",
-   "overpass-api.de ok 42 30844ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 63 25404ms",
-   "overpass-api.de HTTP 502 429ms",
-   "overpass-api.de ok 44 24308ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 3 27863ms",
-   "overpass-api.de HTTP 502 361ms",
-   "overpass-api.de ok 13 25717ms",
-   "overpass-api.de ok 7 41851ms",
-   "overpass-api.de ok 5 48108ms",
-   "streets: 5 shops",
-   "fame: 33 of 33"
+   "overpass-api.de ok 114 35195ms",
+   "overpass-api.de ok 59 37641ms",
+   "overpass-api.de ok 352 50882ms",
+   "overpass-api.de ok 234 32984ms",
+   "overpass-api.de ok 236 33721ms",
+   "overpass-api.de ok 300 40297ms",
+   "overpass-api.de ok 4 36177ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de HTTP 502 343ms",
+   "overpass-api.de ok 49 36748ms",
+   "overpass-api.de ok 41 27239ms",
+   "overpass-api.de ok 164 24839ms",
+   "streets: 164 shops",
+   "fame: 239 of 239"
   ]
  },
  "heraklion": {
@@ -2858,6 +2861,75 @@
    "overpass-api.de ok 148 34683ms",
    "streets: 148 shops",
    "fame: 72 of 72"
+  ]
+ },
+ "delhi": {
+  "at": "2026-10-31T13:26:19.356Z",
+  "seconds": 540,
+  "osm": {
+   "sights": 82,
+   "sights2": 64,
+   "restaurants": 171,
+   "cafes": 88,
+   "hotels": 226,
+   "shopping": 34,
+   "diet": 23,
+   "extra": 23,
+   "landmarks": 6,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 22,
+   "drink": 1,
+   "buy": 44,
+   "see": 231,
+   "sleep": 69,
+   "withCoords": 379,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 21,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Chandni Chowk (15)",
+   "Saraswati Marg (7)"
+  ],
+  "log": [
+   "overpass-api.de ok 82 40188ms",
+   "overpass-api.de ok 64 33725ms",
+   "overpass-api.de ok 171 36928ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 88 30222ms",
+   "overpass-api.de ok 226 32111ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 34 41080ms",
+   "overpass-api.de ok 23 25041ms",
+   "overpass-api.de ok 23 39125ms",
+   "overpass-api.de ok 6 38828ms",
+   "overpass-api.de HTTP 502 343ms",
+   "overpass-api.de ok 56 33019ms",
+   "streets: 56 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 110 of 110"
   ]
  }
 }
