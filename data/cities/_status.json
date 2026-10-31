@@ -498,31 +498,31 @@
   ]
  },
  "berlin": {
-  "at": "2026-10-23T17:34:13.596Z",
-  "seconds": 727,
+  "at": "2026-10-31T11:53:15.551Z",
+  "seconds": 630,
   "osm": {
    "sights": 900,
+   "sights2": 245,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 200,
+   "diet": 212,
    "extra": 200,
-   "streets": 14,
-   "sights2": 245,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 14
   },
   "voyage": {
-   "eat": 132,
-   "drink": 91,
-   "buy": 65,
-   "see": 134,
-   "sleep": 70,
-   "withCoords": 509,
+   "eat": 173,
+   "drink": 116,
+   "buy": 74,
+   "see": 189,
+   "sleep": 118,
+   "withCoords": 693,
    "districts": 8
   },
   "wiki": {
-   "he": 100,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -530,7 +530,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Rosenthaler Straße (56)",
@@ -540,10 +547,25 @@
    "Friedrichstraße (21)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 900 31031ms",
-   "overpass-api.de ok 245 17615ms",
-   "overpass-api.de ok 150 49374ms",
+   "overpass-api.de ok 900 33196ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de ok 245 29719ms",
+   "overpass-api.de ok 450 32785ms",
+   "overpass-api.de ok 300 28326ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de ok 350 32592ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 300 32355ms",
+   "overpass-api.de HTTP 502 366ms",
+   "overpass-api.de ok 212 37976ms",
+   "overpass-api.de ok 200 39138ms",
+   "overpass-api.de ok 150 34534ms",
+   "overpass-api.de ok 1301 29422ms",
+   "streets: 1301 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
