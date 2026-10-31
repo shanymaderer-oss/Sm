@@ -78,27 +78,27 @@
   ]
  },
  "rome": {
-  "at": "2026-10-31T11:49:22.252Z",
-  "seconds": 537,
+  "at": "2026-10-23T16:27:13.159Z",
+  "seconds": 667,
   "osm": {
    "sights": 499,
-   "sights2": 119,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 233,
-   "diet": 27,
+   "shopping": 231,
+   "diet": 26,
    "extra": 200,
+   "streets": 14,
    "landmarks": 92,
-   "streets": 14
+   "sights2": 116
   },
   "voyage": {
-   "eat": 72,
-   "drink": 17,
-   "buy": 16,
-   "see": 180,
-   "sleep": 131,
-   "withCoords": 387,
+   "eat": 58,
+   "drink": 16,
+   "buy": 15,
+   "see": 168,
+   "sleep": 136,
+   "withCoords": 364,
    "districts": 8
   },
   "wiki": {
@@ -109,15 +109,7 @@
   "fameV": 3,
   "qv": {
    "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "landmarks": 1,
-   "streets": 1
+   "sights2": 1
   },
   "streets": [
    "Via Nazionale (71)",
@@ -127,29 +119,12 @@
    "Via del Tritone (18)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 615ms",
-   "overpass-api.de ok 499 23445ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 119 30730ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 450 43823ms",
-   "overpass-api.de ok 300 27539ms",
-   "overpass-api.de ok 350 26855ms",
-   "overpass-api.de ok 233 23838ms",
-   "overpass-api.de ok 27 29987ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de ok 200 32905ms",
-   "overpass-api.de ok 92 37894ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 880 34546ms",
-   "streets: 880 shops",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 682 of 682"
+   "fame: 750 of 750"
   ]
  },
  "barcelona": {
@@ -695,19 +670,19 @@
   ]
  },
  "porto": {
-  "at": "2026-10-23T17:57:36.930Z",
-  "seconds": 569,
+  "at": "2026-10-31T11:57:29.134Z",
+  "seconds": 422,
   "osm": {
    "sights": 141,
+   "sights2": 165,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 238,
-   "diet": 14,
+   "diet": 15,
    "extra": 78,
-   "streets": 13,
-   "sights2": 165,
-   "landmarks": 43
+   "landmarks": 43,
+   "streets": 13
   },
   "voyage": {
    "eat": 21,
@@ -719,7 +694,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 13,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -727,7 +702,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Rua de Santa Catarina (69)",
@@ -737,11 +719,18 @@
    "Rua Formosa (15)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 141 28814ms",
-   "overpass-api.de ok 165 36519ms",
-   "overpass-api.de ok 43 42214ms",
-   "fame: 214 of 214"
+   "overpass-api.de ok 141 37608ms",
+   "overpass-api.de ok 165 39369ms",
+   "overpass-api.de ok 450 44860ms",
+   "overpass-api.de ok 300 31554ms",
+   "overpass-api.de ok 350 29516ms",
+   "overpass-api.de ok 238 24605ms",
+   "overpass-api.de ok 15 26108ms",
+   "overpass-api.de ok 78 33127ms",
+   "overpass-api.de ok 43 31910ms",
+   "overpass-api.de ok 347 33288ms",
+   "streets: 347 shops",
+   "fame: 204 of 204"
   ]
  },
  "madrid": {
