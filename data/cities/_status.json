@@ -4098,5 +4098,74 @@
    "streets: 284 shops",
    "fame: 94 of 94"
   ]
+ },
+ "kuala-lumpur": {
+  "at": "2026-10-31T19:44:07.589Z",
+  "seconds": 519,
+  "osm": {
+   "sights": 32,
+   "sights2": 76,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 228,
+   "diet": 25,
+   "extra": 20,
+   "landmarks": 5,
+   "streets": 13
+  },
+  "voyage": {
+   "eat": 57,
+   "drink": 9,
+   "buy": 43,
+   "see": 57,
+   "sleep": 82,
+   "withCoords": 218,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 5,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Jalan Petaling (36)",
+   "Jalan Tun H.S. Lee (17)",
+   "Jalan Bukit Bintang (13)",
+   "Jalan Tuanku Abdul Rahman (17)",
+   "Jalan Hang Kasturi (12)"
+  ],
+  "log": [
+   "overpass-api.de ok 32 29029ms",
+   "overpass-api.de ok 76 31074ms",
+   "overpass-api.de ok 450 39315ms",
+   "overpass-api.de ok 300 29246ms",
+   "overpass-api.de HTTP 502 477ms",
+   "overpass-api.de HTTP 502 526ms",
+   "overpass-api.de ok 350 53483ms",
+   "overpass-api.de ok 228 44958ms",
+   "overpass-api.de ok 25 49937ms",
+   "overpass-api.de ok 20 27415ms",
+   "overpass-api.de ok 5 37175ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 295 35368ms",
+   "streets: 295 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 57 of 57"
+  ]
  }
 }
