@@ -2810,5 +2810,82 @@
    "streets: 490 shops",
    "fame: 50 of 50"
   ]
+ },
+ "hong-kong": {
+  "at": "2026-10-31T15:26:16.575Z",
+  "seconds": 803,
+  "osm": {
+   "sights": 82,
+   "sights2": 42,
+   "restaurants": 450,
+   "cafes": 173,
+   "hotels": 350,
+   "shopping": 240,
+   "diet": 25,
+   "extra": 0,
+   "landmarks": 6,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 89,
+   "drink": 43,
+   "buy": 51,
+   "see": 103,
+   "sleep": 86,
+   "withCoords": 247,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 50,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "彌敦道 Nathan Road (48)",
+   "廣東道 Canton Road (27)",
+   "莊士敦道 Johnston Road (23)",
+   "駱克道 Lockhart Road (21)",
+   "加拿分道 Carnarvon Road (15)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 388ms",
+   "overpass-api.de HTTP 502 394ms",
+   "overpass-api.de ok 82 25426ms",
+   "overpass-api.de ok 42 32504ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 450 38685ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 173 43745ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 350 35731ms",
+   "overpass-api.de ok 240 44221ms",
+   "overpass-api.de ok 25 42106ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 6 22753ms",
+   "overpass-api.de ok 646 29176ms",
+   "streets: 646 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 167 of 167"
+  ]
  }
 }
