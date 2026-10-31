@@ -3713,5 +3713,70 @@
    "streets: 5 shops",
    "fame: 33 of 33"
   ]
+ },
+ "verona": {
+  "at": "2026-10-31T18:54:11.935Z",
+  "seconds": 442,
+  "osm": {
+   "sights": 84,
+   "sights2": 35,
+   "restaurants": 224,
+   "cafes": 183,
+   "hotels": 94,
+   "shopping": 83,
+   "diet": 5,
+   "extra": 61,
+   "landmarks": 19,
+   "streets": 6
+  },
+  "voyage": {
+   "eat": 14,
+   "drink": 2,
+   "buy": 4,
+   "see": 20,
+   "sleep": 12,
+   "withCoords": 52,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 76
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Via Giuseppe Mazzini (19)",
+   "Via Roma (16)",
+   "Corso Sant'Anastasia (11)",
+   "Corso Porta Borsari (10)",
+   "Via Guglielmo Oberdan (10)"
+  ],
+  "log": [
+   "overpass-api.de ok 84 22899ms",
+   "overpass-api.de ok 35 21178ms",
+   "overpass-api.de ok 224 28893ms",
+   "overpass-api.de ok 183 48094ms",
+   "overpass-api.de ok 94 41876ms",
+   "overpass-api.de ok 83 43008ms",
+   "overpass-api.de ok 5 35531ms",
+   "overpass-api.de HTTP 502 478ms",
+   "overpass-api.de ok 61 28105ms",
+   "overpass-api.de ok 19 29430ms",
+   "overpass-api.de ok 177 44317ms",
+   "streets: 177 shops",
+   "fame: 154 of 154"
+  ]
  }
 }
