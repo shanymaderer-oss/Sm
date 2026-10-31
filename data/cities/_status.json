@@ -4563,5 +4563,74 @@
    "wikidata HTTP 429",
    "fame: 500 of 550"
   ]
+ },
+ "santiago": {
+  "at": "2026-10-31T20:52:23.329Z",
+  "seconds": 516,
+  "osm": {
+   "sights": 161,
+   "sights2": 60,
+   "restaurants": 450,
+   "cafes": 296,
+   "hotels": 244,
+   "shopping": 224,
+   "diet": 22,
+   "extra": 64,
+   "landmarks": 15,
+   "streets": 12
+  },
+  "voyage": {
+   "eat": 37,
+   "drink": 15,
+   "buy": 8,
+   "see": 36,
+   "sleep": 38,
+   "withCoords": 142,
+   "districts": 5
+  },
+  "wiki": {
+   "he": 6,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Estado (15)",
+   "Moneda (17)",
+   "Avenida Independencia (11)",
+   "Agustinas (13)",
+   "Sazié (9)"
+  ],
+  "log": [
+   "overpass-api.de ok 161 33749ms",
+   "overpass-api.de ok 60 23615ms",
+   "overpass-api.de ok 450 37363ms",
+   "overpass-api.de HTTP 502 520ms",
+   "overpass-api.de ok 296 43768ms",
+   "overpass-api.de ok 244 47341ms",
+   "overpass-api.de ok 224 33976ms",
+   "overpass-api.de ok 22 45134ms",
+   "overpass-api.de ok 64 38859ms",
+   "overpass-api.de ok 15 28747ms",
+   "overpass-api.de ok 293 30804ms",
+   "streets: 293 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 245 of 245"
+  ]
  }
 }
