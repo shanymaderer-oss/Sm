@@ -28,8 +28,11 @@ async def main():
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
         await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(600)
-        ev = [w for x in sent for w in x["writes"] if "/events/" in w["update"]["name"]]
+        allev = [w for x in sent for w in x["writes"] if "/events/" in w["update"]["name"]]
+        ev = [w for w in allev if w["update"]["fields"]["e"]["stringValue"] == "build"]
         check(len(ev) == 1, f"building a trip is counted once ({len(ev)})")
+        names = sorted(w["update"]["fields"]["e"]["stringValue"] for w in allev)
+        check(set(names) <= {"build", "flights", "prompt_show"} and names.count("prompt_show") <= 1, f"only known events are counted, the sign-in card at most once ({names})")
         if ev:
             f = ev[0]["update"]["fields"]
             check(set(f) <= {"e", "city", "n"} and f["e"]["stringValue"] == "build" and f["city"]["stringValue"] == "rome" and f["n"]["integerValue"] == "3", f"the count has only the event, city and days: {f}")
