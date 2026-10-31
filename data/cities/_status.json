@@ -3274,5 +3274,64 @@
    "streets: 86 shops",
    "fame: 151 of 151"
   ]
+ },
+ "santorini": {
+  "at": "2026-10-31T13:58:02.043Z",
+  "seconds": 421,
+  "osm": {
+   "sights": 4,
+   "sights2": 11,
+   "restaurants": 85,
+   "cafes": 45,
+   "hotels": 169,
+   "shopping": 24,
+   "diet": 2,
+   "extra": 3,
+   "landmarks": 1,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 0,
+   "drink": 0,
+   "buy": 0,
+   "see": 0,
+   "sleep": 0,
+   "withCoords": 0,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 3,
+   "en": 15
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 4 45880ms",
+   "overpass-api.de ok 11 28952ms",
+   "overpass-api.de HTTP 502 358ms",
+   "overpass-api.de ok 85 26226ms",
+   "overpass-api.de ok 45 32319ms",
+   "overpass-api.de ok 169 21869ms",
+   "overpass-api.de ok 24 32883ms",
+   "overpass-api.de ok 2 35503ms",
+   "overpass-api.de ok 3 33475ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 1 27338ms",
+   "overpass-api.de ok 2 32723ms",
+   "streets: 2 shops",
+   "fame: 15 of 15"
+  ]
  }
 }
