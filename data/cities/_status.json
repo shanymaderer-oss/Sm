@@ -933,19 +933,19 @@
   ]
  },
  "new-york": {
-  "at": "2026-10-23T18:42:13.154Z",
-  "seconds": 550,
+  "at": "2026-10-31T12:11:12.542Z",
+  "seconds": 825,
   "osm": {
    "sights": 214,
+   "sights2": 188,
    "restaurants": 450,
-   "cafes": 300,
+   "cafes": 0,
    "hotels": 350,
    "shopping": 300,
-   "diet": 156,
+   "diet": 222,
    "extra": 200,
-   "streets": 14,
-   "sights2": 187,
-   "landmarks": 25
+   "landmarks": 25,
+   "streets": 14
   },
   "voyage": {
    "eat": 0,
@@ -957,7 +957,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 100,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -965,21 +965,47 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Broadway (40)",
    "5th Avenue (30)",
    "West 34th Street (25)",
-   "Columbus Circle (24)",
-   "Prince Street (28)"
+   "Prince Street (29)",
+   "Columbus Circle (24)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 214 21387ms",
-   "overpass-api.de ok 187 30194ms",
-   "overpass-api.de ok 25 36611ms",
-   "fame: 472 of 472"
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 214 25977ms",
+   "overpass-api.de ok 188 32259ms",
+   "overpass-api.de HTTP 502 360ms",
+   "overpass-api.de ok 450 31456ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de HTTP 502 447ms",
+   "overpass-api.de HTTP 502 366ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 350 34225ms",
+   "overpass-api.de HTTP 502 443ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 300 57501ms",
+   "overpass-api.de ok 222 41035ms",
+   "overpass-api.de ok 200 36917ms",
+   "overpass-api.de ok 25 48147ms",
+   "overpass-api.de HTTP 502 426ms",
+   "overpass-api.de ok 1270 34101ms",
+   "streets: 1270 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 482 of 482"
   ]
  },
  "bangkok": {
