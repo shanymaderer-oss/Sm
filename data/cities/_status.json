@@ -2346,5 +2346,78 @@
    "wikidata HTTP 429",
    "fame: 223 of 223"
   ]
+ },
+ "toronto": {
+  "at": "2026-10-31T14:09:18.122Z",
+  "seconds": 526,
+  "osm": {
+   "sights": 77,
+   "sights2": 45,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 92,
+   "shopping": 300,
+   "diet": 42,
+   "extra": 120,
+   "landmarks": 16,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 111,
+   "drink": 27,
+   "buy": 55,
+   "see": 172,
+   "sleep": 31,
+   "withCoords": 409,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Queen Street West (68)",
+   "Spadina Avenue (35)",
+   "Yonge Street (24)",
+   "Bloor Street West (18)",
+   "College Street (17)"
+  ],
+  "log": [
+   "overpass-api.de ok 77 33844ms",
+   "overpass-api.de ok 45 31858ms",
+   "overpass-api.de HTTP 502 428ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 450 40648ms",
+   "overpass-api.de ok 300 36404ms",
+   "overpass-api.de ok 92 29423ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de ok 300 15534ms",
+   "overpass-api.de ok 42 19331ms",
+   "overpass-api.de ok 120 41228ms",
+   "overpass-api.de HTTP 502 407ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 16 39018ms",
+   "overpass-api.de ok 620 26248ms",
+   "streets: 620 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 234 of 234"
+  ]
  }
 }
