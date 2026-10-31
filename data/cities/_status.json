@@ -4763,5 +4763,74 @@
    "streets: 110 shops",
    "fame: 127 of 127"
   ]
+ },
+ "valletta": {
+  "at": "2026-10-31T21:16:51.413Z",
+  "seconds": 484,
+  "osm": {
+   "sights": 80,
+   "sights2": 36,
+   "restaurants": 214,
+   "cafes": 89,
+   "hotels": 153,
+   "shopping": 116,
+   "diet": 2,
+   "extra": 52,
+   "landmarks": 11,
+   "streets": 6
+  },
+  "voyage": {
+   "eat": 16,
+   "drink": 4,
+   "buy": 6,
+   "see": 20,
+   "sleep": 12,
+   "withCoords": 62,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Pjazza Tigné (21)",
+   "Triq it-Tiġrija (20)",
+   "Triq ir-Repubblika (8)",
+   "Triq il-Merkanti (7)",
+   "Triq Manwel Dimech (6)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 80 27206ms",
+   "overpass-api.de ok 36 28104ms",
+   "overpass-api.de ok 214 41061ms",
+   "overpass-api.de HTTP 502 469ms",
+   "overpass-api.de ok 89 25042ms",
+   "overpass-api.de HTTP 502 520ms",
+   "overpass-api.de ok 153 31130ms",
+   "overpass-api.de ok 116 29088ms",
+   "overpass-api.de ok 2 39099ms",
+   "overpass-api.de HTTP 502 467ms",
+   "overpass-api.de HTTP 502 520ms",
+   "overpass-api.de ok 52 31552ms",
+   "overpass-api.de ok 11 34728ms",
+   "overpass-api.de ok 111 45716ms",
+   "streets: 111 shops",
+   "fame: 165 of 165"
+  ]
  }
 }
