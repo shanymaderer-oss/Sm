@@ -2671,5 +2671,70 @@
    "streets: 417 shops",
    "fame: 105 of 105"
   ]
+ },
+ "granada": {
+  "at": "2026-10-31T12:57:26.726Z",
+  "seconds": 477,
+  "osm": {
+   "sights": 114,
+   "sights2": 59,
+   "restaurants": 352,
+   "cafes": 234,
+   "hotels": 236,
+   "shopping": 300,
+   "diet": 4,
+   "extra": 49,
+   "landmarks": 41,
+   "streets": 4
+  },
+  "voyage": {
+   "eat": 8,
+   "drink": 0,
+   "buy": 3,
+   "see": 44,
+   "sleep": 28,
+   "withCoords": 65,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 60
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Calle Mesones (25)",
+   "Calle Recogidas (16)",
+   "Calle Puentezuelas (15)",
+   "Calle Alhóndiga (7)"
+  ],
+  "log": [
+   "overpass-api.de ok 114 35195ms",
+   "overpass-api.de ok 59 37641ms",
+   "overpass-api.de ok 352 50882ms",
+   "overpass-api.de ok 234 32984ms",
+   "overpass-api.de ok 236 33721ms",
+   "overpass-api.de ok 300 40297ms",
+   "overpass-api.de ok 4 36177ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de HTTP 502 343ms",
+   "overpass-api.de ok 49 36748ms",
+   "overpass-api.de ok 41 27239ms",
+   "overpass-api.de ok 164 24839ms",
+   "streets: 164 shops",
+   "fame: 239 of 239"
+  ]
  }
 }
