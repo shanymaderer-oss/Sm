@@ -1699,19 +1699,19 @@
   ]
  },
  "thessaloniki": {
-  "at": "2026-10-31T12:30:44.733Z",
-  "seconds": 707,
+  "at": "2026-10-23T22:24:30.383Z",
+  "seconds": 484,
   "osm": {
    "sights": 151,
-   "sights2": 22,
-   "restaurants": 0,
+   "restaurants": 232,
    "cafes": 300,
    "hotels": 100,
    "shopping": 166,
    "diet": 12,
    "extra": 60,
-   "landmarks": 12,
-   "streets": 8
+   "streets": 8,
+   "sights2": 22,
+   "landmarks": 12
   },
   "voyage": {
    "eat": 33,
@@ -1731,13 +1731,7 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "Ιωάννη Τσιμισκή (30)",
@@ -1747,24 +1741,11 @@
    "Φράγκων (7)"
   ],
   "log": [
-   "overpass-api.de ok 151 28809ms",
-   "overpass-api.de ok 22 33391ms",
-   "overpass-api.de HTTP 504 36258ms",
-   "overpass-api.de HTTP 502 359ms",
-   "overpass-api.de HTTP 502 359ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de HTTP 502 361ms",
-   "overpass-api.de ok 300 33902ms",
-   "overpass-api.de ok 100 29586ms",
-   "overpass-api.de ok 166 29748ms",
-   "overpass-api.de ok 12 28548ms",
-   "overpass-api.de HTTP 502 447ms",
-   "overpass-api.de ok 60 29084ms",
-   "overpass-api.de ok 12 38248ms",
-   "overpass-api.de ok 213 36186ms",
-   "streets: 213 shops",
-   "fame: 240 of 240"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 151 33938ms",
+   "overpass-api.de ok 22 20081ms",
+   "overpass-api.de ok 12 27649ms",
+   "fame: 245 of 245"
   ]
  },
  "naples": {
@@ -2532,6 +2513,78 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "fame: 463 of 463"
+  ]
+ },
+ "hamburg": {
+  "at": "2026-10-31T12:42:11.483Z",
+  "seconds": 579,
+  "osm": {
+   "sights": 412,
+   "sights2": 94,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 256,
+   "shopping": 300,
+   "diet": 60,
+   "extra": 85,
+   "landmarks": 75,
+   "streets": 12
+  },
+  "voyage": {
+   "eat": 47,
+   "drink": 36,
+   "buy": 13,
+   "see": 117,
+   "sleep": 53,
+   "withCoords": 278,
+   "districts": 5
+  },
+  "wiki": {
+   "he": 17,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Neuer Wall (22)",
+   "Mönckebergstraße (18)",
+   "Osterstraße (17)",
+   "Schanzenstraße (14)",
+   "Schulterblatt (13)"
+  ],
+  "log": [
+   "overpass-api.de ok 412 30422ms",
+   "overpass-api.de ok 94 34150ms",
+   "overpass-api.de ok 450 40379ms",
+   "overpass-api.de ok 300 47137ms",
+   "overpass-api.de ok 256 37707ms",
+   "overpass-api.de ok 300 31232ms",
+   "overpass-api.de ok 60 37965ms",
+   "overpass-api.de ok 85 35560ms",
+   "overpass-api.de HTTP 502 347ms",
+   "overpass-api.de ok 75 34529ms",
+   "overpass-api.de HTTP 502 346ms",
+   "overpass-api.de HTTP 502 342ms",
+   "overpass-api.de ok 345 47904ms",
+   "streets: 345 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 601 of 601"
   ]
  }
 }
