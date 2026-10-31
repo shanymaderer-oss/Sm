@@ -3333,5 +3333,67 @@
    "streets: 2 shops",
    "fame: 15 of 15"
   ]
+ },
+ "stockholm": {
+  "at": "2026-10-31T18:06:25.797Z",
+  "seconds": 483,
+  "osm": {
+   "sights": 180,
+   "sights2": 111,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 160,
+   "shopping": 295,
+   "diet": 30,
+   "extra": 190,
+   "landmarks": 99,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 113,
+   "drink": 71,
+   "buy": 76,
+   "see": 118,
+   "sleep": 85,
+   "withCoords": 472,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 35,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 180 39472ms",
+   "overpass-api.de ok 111 25542ms",
+   "overpass-api.de ok 450 33194ms",
+   "overpass-api.de ok 300 33461ms",
+   "overpass-api.de ok 160 34825ms",
+   "overpass-api.de ok 295 32220ms",
+   "overpass-api.de HTTP 502 467ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de ok 30 33428ms",
+   "overpass-api.de ok 190 28244ms",
+   "overpass-api.de ok 99 26890ms",
+   "overpass-api.de ok 20 32470ms",
+   "streets: 20 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 463 of 463"
+  ]
  }
 }
