@@ -2602,5 +2602,76 @@
    "streets: 35 shops",
    "fame: 41 of 41"
   ]
+ },
+ "malaga": {
+  "at": "2026-10-31T12:25:15.896Z",
+  "seconds": 497,
+  "osm": {
+   "sights": 218,
+   "sights2": 48,
+   "restaurants": 347,
+   "cafes": 219,
+   "hotels": 149,
+   "shopping": 172,
+   "diet": 8,
+   "extra": 53,
+   "landmarks": 49,
+   "streets": 5
+  },
+  "voyage": {
+   "eat": 17,
+   "drink": 3,
+   "buy": 1,
+   "see": 19,
+   "sleep": 17,
+   "withCoords": 44,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 40
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Calle Cristo de la Epidemia (18)",
+   "Calle Nueva (15)",
+   "Calle Victoria (8)",
+   "Calle Marqués de Larios (7)",
+   "Alameda Capuchinos (6)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 352ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 218 40907ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 48 30559ms",
+   "overpass-api.de ok 347 24006ms",
+   "overpass-api.de ok 219 31755ms",
+   "overpass-api.de ok 149 24720ms",
+   "overpass-api.de HTTP 502 357ms",
+   "overpass-api.de ok 172 32954ms",
+   "overpass-api.de ok 8 31241ms",
+   "overpass-api.de ok 53 29466ms",
+   "overpass-api.de HTTP 502 357ms",
+   "overpass-api.de HTTP 502 353ms",
+   "overpass-api.de ok 49 31002ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 167 34005ms",
+   "streets: 167 shops",
+   "fame: 323 of 323"
+  ]
  }
 }
