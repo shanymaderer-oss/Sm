@@ -2151,5 +2151,62 @@
    "wikidata HTTP 429",
    "fame: 49 of 99"
   ]
+ },
+ "las-vegas": {
+  "at": "2026-10-31T11:13:50.532Z",
+  "seconds": 442,
+  "osm": {
+   "sights": 12,
+   "sights2": 33,
+   "restaurants": 251,
+   "cafes": 73,
+   "hotels": 137,
+   "shopping": 124,
+   "diet": 2,
+   "extra": 9,
+   "landmarks": 0,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 28,
+   "drink": 19,
+   "buy": 16,
+   "see": 41,
+   "sleep": 83,
+   "withCoords": 253,
+   "districts": 5
+  },
+  "wiki": {
+   "he": 18,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 12 28064ms",
+   "overpass-api.de HTTP 502 484ms",
+   "overpass-api.de ok 33 43519ms",
+   "overpass-api.de ok 251 31997ms",
+   "overpass-api.de ok 73 35869ms",
+   "overpass-api.de ok 137 30895ms",
+   "overpass-api.de ok 124 52386ms",
+   "overpass-api.de ok 2 28352ms",
+   "overpass-api.de ok 9 29466ms",
+   "overpass-api.de ok 0 37326ms",
+   "overpass-api.de ok 49 29084ms",
+   "streets: 49 shops",
+   "fame: 57 of 57"
+  ]
  }
 }
