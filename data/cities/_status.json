@@ -4491,5 +4491,77 @@
    "streets: 149 shops",
    "fame: 59 of 59"
   ]
+ },
+ "buenos-aires": {
+  "at": "2026-10-31T20:43:42.583Z",
+  "seconds": 595,
+  "osm": {
+   "sights": 368,
+   "sights2": 72,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 350,
+   "shopping": 300,
+   "diet": 58,
+   "extra": 187,
+   "landmarks": 6,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 119,
+   "drink": 64,
+   "buy": 43,
+   "see": 122,
+   "sleep": 188,
+   "withCoords": 354,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 28,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Avenida Córdoba (55)",
+   "Avenida Santa Fe (35)",
+   "Avenida José María Moreno (22)",
+   "Avenida Raúl Scalabrini Ortiz (17)",
+   "Avenida Corrientes (17)"
+  ],
+  "log": [
+   "overpass-api.de ok 368 34333ms",
+   "overpass-api.de ok 72 38701ms",
+   "overpass-api.de ok 450 44498ms",
+   "overpass-api.de ok 300 36841ms",
+   "overpass-api.de ok 350 32847ms",
+   "overpass-api.de HTTP 502 529ms",
+   "overpass-api.de ok 300 42344ms",
+   "overpass-api.de HTTP 502 524ms",
+   "overpass-api.de ok 58 40172ms",
+   "overpass-api.de ok 187 27986ms",
+   "overpass-api.de HTTP 502 465ms",
+   "overpass-api.de ok 6 47812ms",
+   "overpass-api.de ok 934 38701ms",
+   "streets: 934 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 500 of 550"
+  ]
  }
 }
