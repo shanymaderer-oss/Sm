@@ -1178,7 +1178,7 @@ function kitToggle(k) { const all = store.get(KIT_KEY, {}), id = S.trip.id, m = 
 const enMonth = d => d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 const yymmdd = d => isoDate(d).slice(2).replace(/-/g, "");
 function kitItems(t = S.trip) {
-  const { start, end, people } = tripDates(t), city = cityName(), slug = t.slug || CITIES.findCity(t.city)?.slug;
+  const { start, end, people } = tripDates(t), city = cityName(), slug = t.slug || Masa.cities.findCity(t.city)?.slug;
   const ap = slug ? Masa.transport.airport(slug, { family: !!t.opts?.notes?.match(/ילד/), mobility: t.opts?.mobility }) : null;
   const iata = ap?.[0]?.code || "";
   const all = t.days.flatMap((d, di) => d.stops.map(s => ({ s, di })));

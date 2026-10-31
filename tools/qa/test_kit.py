@@ -85,6 +85,14 @@ async def main():
         d = await dl.value; path = await d.path()
         size = os.path.getsize(path)
         check(d.suggested_filename.endswith(".png") and size > 30000, f"the trip becomes a picture to share ({d.suggested_filename}, {size // 1000}KB)")
+        # a city that is not one of our ready cities (Miami, built live) has no slug: every trip screen still opens
+        await pg.evaluate("(() => { const a = JSON.parse(localStorage.getItem('masa-trips')); a[0].slug = null; a[0].city = 'מיאמי'; a[0].cityEn = 'Miami'; a[0].cc = 'us'; localStorage.setItem('masa-trips', JSON.stringify(a)); })()")
+        await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
+        e0 = len(errs)
+        await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero")
+        for k in ["book", "discover", "guide", "plan"]:
+            await pg.click(f"#nav button[data-k={k}]"); await pg.wait_for_timeout(600)
+        check(len(errs) == e0, f"a city that is not ready: bookings, discover and the guide open with no errors {errs[e0:e0+2]}")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS)

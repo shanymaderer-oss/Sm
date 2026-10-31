@@ -16,6 +16,14 @@ async def main():
         pg.on("pageerror", lambda e: errs.append(str(e)[:200]))
         pg.on("console", lambda m: errs.append("console: " + m.text[:160]) if m.type == "error" and "Failed to load resource" not in m.text else None)
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(1500)
+        # straight to the map servers: how many restaurants and cafés there are around the city's center, and how long it takes
+        g = await pg.evaluate(f"Masa.svc.geocode({json.dumps(CITY)}).then(g => g && {{lat: g.lat, lng: g.lng, name: g.name, bbox: g.bbox}})")
+        note("geocode:", json.dumps(g, ensure_ascii=False)[:200])
+        if g:
+            for k in ["restaurants", "cafes", "sights"]:
+                r = await pg.evaluate(f"""(async () => {{ const q = Masa.sources.buildQueries({g['lat']}, {g['lng']}, 4000)['{k}']; const t = Date.now();
+                  try {{ const j = await Masa.svc.overpass(q); return (j.elements || []).length + ' in ' + Math.round((Date.now() - t) / 1000) + 's'; }} catch (e) {{ return 'failed after ' + Math.round((Date.now() - t) / 1000) + 's: ' + e.message; }} }})()""")
+                note(f"overpass {k} (R=4000):", r)
         await pg.fill("#gq", CITY); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(1500)
         await Q.to_goals(pg)
         await pg.fill("#notes", NOTES); await pg.wait_for_timeout(2500)
