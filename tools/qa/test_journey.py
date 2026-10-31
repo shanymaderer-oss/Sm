@@ -117,6 +117,11 @@ async def main():
         hrefs = await pg.eval_on_selector_all(".card:has-text('אימונים בטיול') a", "a => a.map(x => x.href)")
         check("חדר כושר" in card and "יוגה" in card and any("google.com/maps/search/gym" in h for h in hrefs) and any("classpass" in h for h in hrefs), "the trip has a workouts card: gyms and studios near by, classes")
         await pg.click("#nav button[data-k=plan]")
+        # Paris: the area is "סן ז'רמן"; a name with an apostrophe must not take the Booking and Airbnb links away
+        await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
+        await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await Q.to_stay(pg); await pg.wait_for_timeout(2500)
+        links = await pg.eval_on_selector_all(".card.base >> nth=0 >> a", "a => a.map(x => [x.innerText.trim(), x.getAttribute('href') || ''])")
+        check(len(links) == 3 and all(h.startswith("https://") for _, h in links), f"every link on the area card works, even for a name with an apostrophe ({[(n[:10], h[:50]) for n, h in links]})")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS); sys.exit(1 if FAILS else 0)

@@ -37,7 +37,8 @@ const gmPlace = s => `https://www.google.com/maps/search/?api=1&query=${encodeUR
 const gmDir = (a, b, mode = "walking") => `https://www.google.com/maps/dir/?api=1&origin=${a.lat},${a.lng}&destination=${b.lat},${b.lng}&travelmode=${mode}`;
 /* only web links leave the site: a "javascript:" address from map data or a shared link never becomes a link */
 const safeUrl = u => {
-  u = String(u ?? "").trim();
+  // an apostrophe in a name ("סן ז'רמן", "L'As du Fallafel") is written %27, so the link stays a link
+  u = String(u ?? "").trim().replace(/'/g, "%27");
   if (/^https?:\/\/[^\s"'<>]+$/i.test(u)) return u;
   if (/^\/\/[^\s"'<>]+$/.test(u)) return "https:" + u;
   if (/^(tel|mailto):[^\s"'<>]+$/i.test(u)) return u;
