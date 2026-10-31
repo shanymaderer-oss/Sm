@@ -2956,5 +2956,64 @@
    "wikidata HTTP 429",
    "fame: 99 of 99"
   ]
+ },
+ "amman": {
+  "at": "2026-10-31T15:46:59.861Z",
+  "seconds": 464,
+  "osm": {
+   "sights": 10,
+   "sights2": 24,
+   "restaurants": 60,
+   "cafes": 65,
+   "hotels": 95,
+   "shopping": 23,
+   "diet": 0,
+   "extra": 3,
+   "landmarks": 2,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 16,
+   "drink": 5,
+   "buy": 6,
+   "see": 19,
+   "sleep": 30,
+   "withCoords": 65,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 0,
+   "en": 65
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "extra": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 10 30520ms",
+   "overpass-api.de ok 24 41053ms",
+   "overpass-api.de ok 60 27182ms",
+   "overpass-api.de ok 65 40834ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 95 36814ms",
+   "overpass-api.de ok 23 30613ms",
+   "overpass-api.de ok 0 33003ms",
+   "overpass-api.de ok 3 29213ms",
+   "overpass-api.de HTTP 502 370ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 2 38650ms",
+   "overpass-api.de ok 17 33248ms",
+   "streets: 17 shops",
+   "fame: 18 of 18"
+  ]
  }
 }
