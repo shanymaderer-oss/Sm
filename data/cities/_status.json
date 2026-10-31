@@ -592,31 +592,31 @@
   ]
  },
  "madrid": {
-  "at": "2026-10-23T18:04:35.196Z",
-  "seconds": 629,
+  "at": "2026-10-31T12:03:19.623Z",
+  "seconds": 759,
   "osm": {
    "sights": 405,
+   "sights2": 88,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 60,
-   "extra": 106,
-   "streets": 14,
-   "sights2": 87,
-   "landmarks": 76
+   "diet": 61,
+   "extra": 107,
+   "landmarks": 0,
+   "streets": 14
   },
   "voyage": {
-   "eat": 44,
-   "drink": 20,
-   "buy": 43,
-   "see": 51,
-   "sleep": 28,
-   "withCoords": 208,
+   "eat": 46,
+   "drink": 21,
+   "buy": 44,
+   "see": 63,
+   "sleep": 29,
+   "withCoords": 231,
    "districts": 8
   },
   "wiki": {
-   "he": 55,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -624,24 +624,47 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Calle de Fuencarral (79)",
    "Gran Vía (44)",
    "Calle de Serrano (22)",
    "Calle Preciados (22)",
-   "Calle de Goya (20)"
+   "Calle del Arenal (21)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 405 42201ms",
-   "overpass-api.de HTTP 502 295ms",
-   "overpass-api.de ok 87 40493ms",
-   "overpass-api.de ok 76 19877ms",
+   "overpass-api.de ok 405 28151ms",
+   "overpass-api.de ok 88 37908ms",
+   "overpass-api.de ok 450 40465ms",
+   "overpass-api.de HTTP 502 464ms",
+   "overpass-api.de ok 300 22785ms",
+   "overpass-api.de ok 350 24740ms",
+   "overpass-api.de ok 300 26941ms",
+   "overpass-api.de ok 61 38681ms",
+   "overpass-api.de ok 107 40422ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de HTTP 502 511ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 1262 34204ms",
+   "streets: 1262 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 611 of 611"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 522 of 522"
   ]
  },
  "athens": {
@@ -1858,19 +1881,19 @@
   ]
  },
  "dublin": {
-  "at": "2026-10-23T22:44:00.921Z",
-  "seconds": 510,
+  "at": "2026-10-31T12:37:40.042Z",
+  "seconds": 925,
   "osm": {
-   "sights": 80,
+   "sights": 0,
+   "sights2": 54,
    "restaurants": 408,
    "cafes": 300,
-   "hotels": 259,
+   "hotels": 258,
    "shopping": 300,
-   "diet": 16,
+   "diet": 0,
    "extra": 57,
-   "streets": 14,
-   "sights2": 55,
-   "landmarks": 24
+   "landmarks": 24,
+   "streets": 14
   },
   "voyage": {
    "eat": 25,
@@ -1890,7 +1913,13 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Grafton Street (56)",
@@ -1900,11 +1929,27 @@
    "Mary Street (12)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 80 35735ms",
-   "overpass-api.de ok 55 27283ms",
-   "overpass-api.de ok 24 21059ms",
-   "fame: 225 of 225"
+   "overpass-api.de HTTP 502 464ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 54 31737ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de ok 408 29177ms",
+   "overpass-api.de ok 300 39752ms",
+   "overpass-api.de ok 258 37259ms",
+   "overpass-api.de ok 300 33631ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 57 50062ms",
+   "overpass-api.de ok 24 32740ms",
+   "overpass-api.de ok 484 29852ms",
+   "streets: 484 shops",
+   "fame: 144 of 144"
   ]
  },
  "edinburgh": {
