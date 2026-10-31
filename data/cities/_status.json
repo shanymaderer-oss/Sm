@@ -2208,5 +2208,74 @@
    "streets: 49 shops",
    "fame: 57 of 57"
   ]
+ },
+ "san-francisco": {
+  "at": "2026-10-31T11:22:17.407Z",
+  "seconds": 501,
+  "osm": {
+   "sights": 96,
+   "sights2": 106,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 327,
+   "shopping": 300,
+   "diet": 27,
+   "extra": 83,
+   "landmarks": 8,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 93,
+   "drink": 58,
+   "buy": 41,
+   "see": 154,
+   "sleep": 94,
+   "withCoords": 467,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 0,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Grant Avenue (36)",
+   "Haight Street (41)",
+   "Hayes Street (28)",
+   "Fillmore Street (23)",
+   "Post Street (17)"
+  ],
+  "log": [
+   "overpass-api.de ok 96 38845ms",
+   "overpass-api.de HTTP 502 416ms",
+   "overpass-api.de ok 106 32641ms",
+   "overpass-api.de ok 450 37719ms",
+   "overpass-api.de ok 300 49800ms",
+   "overpass-api.de ok 327 21736ms",
+   "overpass-api.de ok 300 43070ms",
+   "overpass-api.de ok 27 31689ms",
+   "overpass-api.de ok 83 20296ms",
+   "overpass-api.de ok 8 41991ms",
+   "overpass-api.de ok 409 31646ms",
+   "streets: 409 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 241 of 241"
+  ]
  }
 }
