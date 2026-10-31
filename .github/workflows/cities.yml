@@ -6,34 +6,43 @@ on:
         description: "City slugs separated by spaces (empty = all)"
         required: false
   push:
-    paths: ["tools/fetch-cities.mjs", "js/sources.js", "js/cities.js"]
+    paths: ["tools/fetch-cities.mjs", "js/sources.js"]
   schedule:
     - cron: "17 3 * * 1"
 permissions:
   contents: write
 concurrency:
   group: city-data
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
-      - run: |
-          git config user.name "masa-bot"
-          git config user.email "actions@users.noreply.github.com"
-          # the city list comes from a form field: pass it as data, never paste it into the shell
-          CITIES=$(printf '%s' "$INPUT_CITIES" | tr -cd 'a-z -')
-          node tools/fetch-cities.mjs $CITIES
+      - name: Fetch this machine's share (135 cities do not fit in one machine's time)
         env:
           COMMIT_EACH: "1"
           INPUT_CITIES: ${{ github.event.inputs.cities }}
-      - name: Commit data
-        if: always()
+          SHARD: ${{ matrix.shard }}
         run: |
-          git add data/cities
-          git diff --cached --quiet || (git commit -m "עדכון נתוני ערים" && git push)
+          git config user.name "masa-bot"
+          git config user.email "actions@users.noreply.github.com"
+          sleep $((SHARD * 20))
+          # the city list comes from a form field: pass it as data, never paste it into the shell
+          WANT=$(printf '%s' "$INPUT_CITIES" | tr -cd 'a-z -')
+          LIST=$(WANT="$WANT" node -e '
+            const C = require("./js/cities.js");
+            const want = (process.env.WANT || "").split(/\s+/).filter(Boolean);
+            const all = want.length ? want : C.CITIES.map(c => c.slug);
+            console.log(all.filter((_, i) => i % 8 === +process.env.SHARD).join(" "));')
+          echo "this machine: $LIST"
+          [ -z "$LIST" ] && exit 0
+          node tools/fetch-cities.mjs $LIST

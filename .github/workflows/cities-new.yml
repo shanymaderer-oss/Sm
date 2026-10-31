@@ -1,0 +1,54 @@
+name: New cities data (parallel)
+# Run by hand (and after new cities are added): fetches map data only for the cities that do not have it yet, split
+# over several machines at once so a long list is ready in a few hours. Each city is committed as soon as it is ready.
+on:
+  workflow_dispatch:
+    inputs:
+      shards: { description: "machines at once (1-8)", required: false, default: "6" }
+  push:
+    paths: ["js/cities.js"]
+permissions:
+  contents: write
+concurrency:
+  group: city-data-new
+  cancel-in-progress: false
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.p.outputs.shards }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - id: p
+        env: { N: "${{ github.event.inputs.shards || '6' }}" }
+        run: |
+          n=$(printf '%s' "$N" | tr -cd '0-9'); [ -z "$n" ] && n=6; [ "$n" -gt 8 ] && n=8; [ "$n" -lt 1 ] && n=1
+          echo "shards=$(node -e "console.log(JSON.stringify([...Array($n).keys()]))")" >> "$GITHUB_OUTPUT"
+  fetch:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Fetch this machine's share of the missing cities
+        env:
+          COMMIT_EACH: "1"
+          SHARD: ${{ matrix.shard }}
+          SHARDS: ${{ strategy.job-total }}
+        run: |
+          git config user.name "masa-bot"; git config user.email "actions@users.noreply.github.com"
+          sleep $((SHARD * 20))
+          LIST=$(node -e '
+            const C = require("./js/cities.js"), fs = require("fs");
+            const miss = C.CITIES.filter(c => !fs.existsSync("data/cities/" + c.slug + ".json")).map(c => c.slug);
+            console.log(miss.filter((_, i) => i % +process.env.SHARDS === +process.env.SHARD).join(" "));')
+          echo "this machine: $LIST"
+          [ -z "$LIST" ] && exit 0
+          node tools/fetch-cities.mjs $LIST

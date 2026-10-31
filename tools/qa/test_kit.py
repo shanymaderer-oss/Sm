@@ -85,6 +85,14 @@ async def main():
         d = await dl.value; path = await d.path()
         size = os.path.getsize(path)
         check(d.suggested_filename.endswith(".png") and size > 30000, f"the trip becomes a picture to share ({d.suggested_filename}, {size // 1000}KB)")
+        # before you fly: the country's info loads when the screen opens
+        await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(400)
+        if await pg.locator("#infoCard").count():
+            await pg.click("#infoCard"); await pg.wait_for_selector(".factgrid", timeout=8000); await pg.wait_for_timeout(300)
+            txt = await pg.inner_text(".screen")
+            check("חירום" in txt and "112" in txt and "שקעים" in txt and "מי ברז" in txt, "before you fly: emergency number, plugs and tap water for the country")
+            check("משפטים" not in txt, "no phrases card")
+            await pg.click("#backInfo"); await pg.wait_for_timeout(300)
         # how to get around: taxi and transport apps for the country
         await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(400)
         if await pg.locator("#moveCard").count():

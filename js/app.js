@@ -1,7 +1,11 @@
 /* מסע · app: Leaflet map + app screens */
 (() => {
 "use strict";
-const { P, CATS, INTERESTS, DAYC, DESTS, ETIQUETTE_GENERIC, COUNTRY_INFO } = window.MASA_DATA;
+const { P, CATS, INTERESTS, DAYC, DESTS, ETIQUETTE_GENERIC, COUNTRY_CUR } = window.MASA_DATA;
+/* what to know in each country loads with the 'before you fly' screen (js/countries.js) */
+let countriesLoad = null;
+const loadCountries = () => countriesLoad || (countriesLoad = new Promise(res => { const el = document.createElement("script"); el.src = "js/min/countries.js"; el.onload = el.onerror = () => res(); document.head.append(el); }));
+const countryInfo = cc => (Masa.countries || {})[cc] || null;
 const svc = Masa.svc, ai = Masa.ai, planner = Masa.planner;
 
 /* ---------- helpers ---------- */
@@ -356,7 +360,7 @@ function storeTripLocal(t, keepPlace) {
 function openTrip(t) {
   S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = [];
   const live = liveDay(t); if (live > 0) S.day = live; // traveling now: open on today
-  COST.loadFX(COUNTRY_INFO[t.cc]?.cur || "EUR").then(() => { if (S.trip === t && TRIP_SCREENS.includes(S.screen) && S.screen !== "guide") rerenderKeepScroll(); }).catch(() => {});
+  COST.loadFX(COUNTRY_CUR[t.cc] || "EUR").then(() => { if (S.trip === t && TRIP_SCREENS.includes(S.screen) && S.screen !== "guide") rerenderKeepScroll(); }).catch(() => {});
   go("plan");
   if (t.source === "sample") hydrateSample(t);
   else if (t.pending) runHydrate(t);
@@ -989,7 +993,7 @@ SCREENS.plan = {
     const setPeople = v => { const t = S.trip; t.opts = t.opts || {}; t.opts.people = Math.min(12, Math.max(1, v)); saveTrip(t); rerenderKeepScroll(); };
     $("cpMinus") && ($("cpMinus").onclick = () => setPeople((S.trip.opts?.people || 2) - 1));
     $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
-    $("infoCard").onclick = () => go("info");
+    $("infoCard").onclick = () => loadCountries().then(() => go("info"));
     $("moveCard").onclick = () => go("move");
     document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
     bindFamily();
@@ -1697,7 +1701,7 @@ const PRICE = { budget: "זול", mid: "מחיר בינוני", splurge: "יוק
 /* ---------- prices: per person at restaurants, per night at hotels, the whole trip ---------- */
 const COST = Masa.cost;
 const FOODK = ["restaurant", "cafe", "bakery", "dessert", "market", "deli", "bar", "club"];
-const tripCur = () => COUNTRY_INFO[S.trip?.cc]?.cur || "EUR";
+const tripCur = () => COUNTRY_CUR[S.trip?.cc] || "EUR";
 const money = (html) => `<bdi dir="ltr">${html}</bdi>`;
 function priceInfo(p) {
   const t = S.trip;
@@ -2267,7 +2271,8 @@ function tzOffsetHours(tz) {
 const infoCache = {};
 SCREENS.info = {
   view() {
-    const t = S.trip, ci = COUNTRY_INFO[t.cc] || null;
+    const t = S.trip, ci = countryInfo(t.cc);
+    if (!Masa.countries) loadCountries().then(() => { if (S.screen === "info" && Masa.countries) rerenderKeepScroll(); });
     const key = `${t.lat},${t.lng}`;
     const c = infoCache[key] || {};
     const { start } = tripDates();
@@ -2307,11 +2312,11 @@ SCREENS.info = {
   </div>`;
   },
   bind() {
-    const t = S.trip, ci = COUNTRY_INFO[t.cc];
+    const t = S.trip, ci = countryInfo(t.cc);
+    if (!Masa.countries) loadCountries().then(() => { if (S.screen === "info" && Masa.countries) rerenderKeepScroll(); });
     const key = `${t.lat},${t.lng}`;
     const c = infoCache[key] = infoCache[key] || {};
     $("backInfo").onclick = () => go("plan");
-    $("toPhr").onclick = () => go("discover");
     if (c.weather === undefined && !c.wxLoading) { c.wxLoading = true; svc.weather(+t.lat, +t.lng).then(w => { c.weather = w; c.wxLoading = false; if (S.screen === "info") rerenderKeepScroll(); }); }
     if (ci && c.rate === undefined) svc.rateToILS(ci.cur).then(r => { c.rate = r; if (S.screen === "info") rerenderKeepScroll(); });
     $("convLocal") && ($("convLocal").oninput = e => { const v = parseFloat(e.target.value) || 0; $("convILS").textContent = `${(v * c.rate.rate).toFixed(1)} ₪`; });

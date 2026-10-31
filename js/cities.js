@@ -5,7 +5,8 @@
     "batumi": "Asia/Tbilisi", "tbilisi": "Asia/Tbilisi", "larnaca": "Asia/Nicosia", "limassol": "Asia/Nicosia", "paphos": "Asia/Nicosia", "nice": "Europe/Paris", "munich": "Europe/Berlin",
     "dubai": "Asia/Dubai", "krakow": "Europe/Warsaw", "warsaw": "Europe/Warsaw", "sofia": "Europe/Sofia", "bucharest": "Europe/Bucharest", "thessaloniki": "Europe/Athens", "naples": "Europe/Rome",
     "belgrade": "Europe/Belgrade", "dublin": "Europe/Dublin", "edinburgh": "Europe/London", "copenhagen": "Europe/Copenhagen", "seville": "Europe/Madrid", "valencia": "Europe/Madrid",
-    "miami": "America/New_York", "los-angeles": "America/Los_Angeles", "las-vegas": "America/Los_Angeles", "san-francisco": "America/Los_Angeles", "chicago": "America/Chicago", "toronto": "America/Toronto", "stockholm": "Europe/Stockholm", "oslo": "Europe/Oslo", "helsinki": "Europe/Helsinki", "reykjavik": "Atlantic/Reykjavik", "zurich": "Europe/Zurich", "geneva": "Europe/Zurich", "salzburg": "Europe/Vienna", "innsbruck": "Europe/Vienna", "hamburg": "Europe/Berlin", "frankfurt": "Europe/Berlin", "cologne": "Europe/Berlin", "brussels": "Europe/Brussels", "riga": "Europe/Riga", "vilnius": "Europe/Vilnius", "tallinn": "Europe/Tallinn", "ljubljana": "Europe/Ljubljana", "zagreb": "Europe/Zagreb", "split": "Europe/Zagreb", "dubrovnik": "Europe/Zagreb", "bratislava": "Europe/Bratislava", "bologna": "Europe/Rome", "verona": "Europe/Rome", "palermo": "Europe/Rome", "malaga": "Europe/Madrid", "granada": "Europe/Madrid", "rhodes": "Europe/Athens", "heraklion": "Europe/Athens", "antalya": "Europe/Istanbul", "abu-dhabi": "Asia/Dubai", "phuket": "Asia/Bangkok", "chiang-mai": "Asia/Bangkok", "singapore": "Asia/Singapore", "seoul": "Asia/Seoul", "kyoto": "Asia/Tokyo", "osaka": "Asia/Tokyo", "hanoi": "Asia/Ho_Chi_Minh", "mexico-city": "America/Mexico_City", "marrakech": "Africa/Casablanca", "tirana": "Europe/Tirane", "yerevan": "Asia/Yerevan", "baku": "Asia/Baku"};
+    "miami": "America/New_York", "los-angeles": "America/Los_Angeles", "las-vegas": "America/Los_Angeles", "san-francisco": "America/Los_Angeles", "chicago": "America/Chicago", "toronto": "America/Toronto", "stockholm": "Europe/Stockholm", "oslo": "Europe/Oslo", "helsinki": "Europe/Helsinki", "reykjavik": "Atlantic/Reykjavik", "zurich": "Europe/Zurich", "geneva": "Europe/Zurich", "salzburg": "Europe/Vienna", "innsbruck": "Europe/Vienna", "hamburg": "Europe/Berlin", "frankfurt": "Europe/Berlin", "cologne": "Europe/Berlin", "brussels": "Europe/Brussels", "riga": "Europe/Riga", "vilnius": "Europe/Vilnius", "tallinn": "Europe/Tallinn", "ljubljana": "Europe/Ljubljana", "zagreb": "Europe/Zagreb", "split": "Europe/Zagreb", "dubrovnik": "Europe/Zagreb", "bratislava": "Europe/Bratislava", "bologna": "Europe/Rome", "verona": "Europe/Rome", "palermo": "Europe/Rome", "malaga": "Europe/Madrid", "granada": "Europe/Madrid", "rhodes": "Europe/Athens", "heraklion": "Europe/Athens", "antalya": "Europe/Istanbul", "abu-dhabi": "Asia/Dubai", "phuket": "Asia/Bangkok", "chiang-mai": "Asia/Bangkok", "singapore": "Asia/Singapore", "seoul": "Asia/Seoul", "kyoto": "Asia/Tokyo", "osaka": "Asia/Tokyo", "hanoi": "Asia/Ho_Chi_Minh", "mexico-city": "America/Mexico_City", "marrakech": "Africa/Casablanca", "tirana": "Europe/Tirane", "yerevan": "Asia/Yerevan", "baku": "Asia/Baku",
+    "hong-kong": "Asia/Hong_Kong", "taipei": "Asia/Taipei", "kuala-lumpur": "Asia/Kuala_Lumpur", "ubud": "Asia/Makassar", "ho-chi-minh": "Asia/Ho_Chi_Minh", "beijing": "Asia/Shanghai", "shanghai": "Asia/Shanghai", "delhi": "Asia/Kolkata", "mumbai": "Asia/Kolkata", "kathmandu": "Asia/Kathmandu", "colombo": "Asia/Colombo", "doha": "Asia/Qatar", "amman": "Asia/Amman", "cairo": "Africa/Cairo", "new-orleans": "America/Chicago", "washington": "America/New_York", "boston": "America/New_York", "vancouver": "America/Vancouver", "montreal": "America/Toronto", "cancun": "America/Cancun", "havana": "America/Havana", "rio": "America/Sao_Paulo", "sao-paulo": "America/Sao_Paulo", "buenos-aires": "America/Argentina/Buenos_Aires", "lima": "America/Lima", "cusco": "America/Lima", "cartagena": "America/Bogota", "santiago": "America/Santiago", "cape-town": "Africa/Johannesburg", "zanzibar": "Africa/Dar_es_Salaam", "sydney": "Australia/Sydney", "melbourne": "Australia/Melbourne", "auckland": "Pacific/Auckland", "lyon": "Europe/Paris", "marseille": "Europe/Paris", "bordeaux": "Europe/Paris", "bruges": "Europe/Brussels", "luxembourg": "Europe/Luxembourg", "valletta": "Europe/Malta", "kotor": "Europe/Podgorica", "sarajevo": "Europe/Sarajevo", "corfu": "Europe/Athens", "santorini": "Europe/Athens", "mykonos": "Europe/Athens", "palma": "Europe/Madrid", "funchal": "Atlantic/Madeira", "turin": "Europe/Rome", "lucerne": "Europe/Zurich"};
   const C = (slug, he, en, local, country, cc, lat, lng, R) => ({ slug, he, en, local, country, cc, lat, lng, R, tz: TZ[slug] });
   const CITIES = [
     C("rome", "רומא", "Rome", "Roma", "איטליה", "it", 41.8986, 12.4769, 3200),
@@ -96,8 +97,62 @@
     C("marrakech", "מרקש", "Marrakech", "مراكش", "מרוקו", "ma", 31.6290, -7.9890, 2600),
     C("tirana", "טירנה", "Tirana", "Tiranë", "אלבניה", "al", 41.3280, 19.8180, 2200),
     C("yerevan", "ירוואן", "Yerevan", "Երևան", "ארמניה", "am", 40.1810, 44.5140, 2400),
-    C("baku", "באקו", "Baku", "Bakı", "אזרבייג׳ן", "az", 40.3700, 49.8370, 2600)
+    C("baku", "באקו", "Baku", "Bakı", "אזרבייג׳ן", "az", 40.3700, 49.8370, 2600),
+    // added 31.10.2026: the big cities of the world
+    C("hong-kong", "הונג קונג", "Hong Kong", "香港", "הונג קונג", "hk", 22.2850, 114.1580, 3500),
+    C("taipei", "טאיפיי", "Taipei", "臺北", "טייוואן", "tw", 25.0420, 121.5300, 3500),
+    C("kuala-lumpur", "קואלה לומפור", "Kuala Lumpur", "Kuala Lumpur", "מלזיה", "my", 3.1500, 101.7000, 3500),
+    C("ubud", "אובוד", "Ubud", "Ubud", "אינדונזיה", "id", -8.5069, 115.2625, 2500),
+    C("ho-chi-minh", "הו צ׳י מין", "Ho Chi Minh City", "Thành phố Hồ Chí Minh", "וייטנאם", "vn", 10.7760, 106.7010, 3000),
+    C("beijing", "בייג׳ינג", "Beijing", "北京", "סין", "cn", 39.9130, 116.3970, 4000),
+    C("shanghai", "שנגחאי", "Shanghai", "上海", "סין", "cn", 31.2340, 121.4750, 4000),
+    C("delhi", "דלהי", "Delhi", "दिल्ली", "הודו", "in", 28.6280, 77.2190, 4500),
+    C("mumbai", "מומבאי", "Mumbai", "मुंबई", "הודו", "in", 18.9300, 72.8330, 3500),
+    C("kathmandu", "קטמנדו", "Kathmandu", "काठमाडौं", "נפאל", "np", 27.7090, 85.3150, 2500),
+    C("colombo", "קולומבו", "Colombo", "කොළඹ", "סרי לנקה", "lk", 6.9300, 79.8500, 3000),
+    C("doha", "דוחה", "Doha", "الدوحة", "קטאר", "qa", 25.2900, 51.5300, 4000),
+    C("amman", "עמאן", "Amman", "عمان", "ירדן", "jo", 31.9520, 35.9330, 3000),
+    C("cairo", "קהיר", "Cairo", "القاهرة", "מצרים", "eg", 30.0450, 31.2400, 4500),
+    C("new-orleans", "ניו אורלינס", "New Orleans", "New Orleans", "ארה״ב", "us", 29.9560, -90.0680, 2800),
+    C("washington", "וושינגטון", "Washington", "Washington, D.C.", "ארה״ב", "us", 38.8950, -77.0300, 3500),
+    C("boston", "בוסטון", "Boston", "Boston", "ארה״ב", "us", 42.3580, -71.0600, 3000),
+    C("vancouver", "ונקובר", "Vancouver", "Vancouver", "קנדה", "ca", 49.2830, -123.1200, 3000),
+    C("montreal", "מונטריאול", "Montreal", "Montréal", "קנדה", "ca", 45.5050, -73.5650, 3000),
+    C("cancun", "קנקון", "Cancun", "Cancún", "מקסיקו", "mx", 21.1360, -86.7600, 5000),
+    C("havana", "הוואנה", "Havana", "La Habana", "קובה", "cu", 23.1360, -82.3590, 3000),
+    C("rio", "ריו דה ז׳ניירו", "Rio de Janeiro", "Rio de Janeiro", "ברזיל", "br", -22.9500, -43.1900, 5000),
+    C("sao-paulo", "סאו פאולו", "Sao Paulo", "São Paulo", "ברזיל", "br", -23.5550, -46.6400, 4500),
+    C("buenos-aires", "בואנוס איירס", "Buenos Aires", "Buenos Aires", "ארגנטינה", "ar", -34.6040, -58.3900, 4500),
+    C("lima", "לימה", "Lima", "Lima", "פרו", "pe", -12.1150, -77.0350, 4000),
+    C("cusco", "קוסקו", "Cusco", "Cusco", "פרו", "pe", -13.5170, -71.9790, 2000),
+    C("cartagena", "קרטחנה", "Cartagena", "Cartagena", "קולומביה", "co", 10.4230, -75.5480, 2500),
+    C("santiago", "סנטיאגו", "Santiago", "Santiago", "צ׳ילה", "cl", -33.4400, -70.6500, 3500),
+    C("cape-town", "קייפטאון", "Cape Town", "Cape Town", "דרום אפריקה", "za", -33.9200, 18.4200, 3500),
+    C("zanzibar", "זנזיבר", "Zanzibar", "Zanzibar", "טנזניה", "tz", -6.1630, 39.1890, 2500),
+    C("sydney", "סידני", "Sydney", "Sydney", "אוסטרליה", "au", -33.8650, 151.2100, 4000),
+    C("melbourne", "מלבורן", "Melbourne", "Melbourne", "אוסטרליה", "au", -37.8140, 144.9630, 3500),
+    C("auckland", "אוקלנד", "Auckland", "Auckland", "ניו זילנד", "nz", -36.8480, 174.7630, 3000),
+    C("lyon", "ליון", "Lyon", "Lyon", "צרפת", "fr", 45.7600, 4.8350, 2600),
+    C("marseille", "מרסיי", "Marseille", "Marseille", "צרפת", "fr", 43.2960, 5.3750, 3000),
+    C("bordeaux", "בורדו", "Bordeaux", "Bordeaux", "צרפת", "fr", 44.8400, -0.5750, 2400),
+    C("bruges", "ברוז׳", "Bruges", "Brugge", "בלגיה", "be", 51.2090, 3.2240, 1800),
+    C("luxembourg", "לוקסמבורג", "Luxembourg", "Lëtzebuerg", "לוקסמבורג", "lu", 49.6110, 6.1300, 2000),
+    C("valletta", "ולטה", "Valletta", "Il-Belt Valletta", "מלטה", "mt", 35.8990, 14.5100, 2600),
+    C("kotor", "קוטור", "Kotor", "Kotor", "מונטנגרו", "me", 42.4250, 18.7710, 1800),
+    C("sarajevo", "סרייבו", "Sarajevo", "Sarajevo", "בוסניה", "ba", 43.8590, 18.4270, 2200),
+    C("corfu", "קורפו", "Corfu", "Κέρκυρα", "יוון", "gr", 39.6240, 19.9220, 2000),
+    C("santorini", "סנטוריני", "Santorini", "Θήρα", "יוון", "gr", 36.4170, 25.4320, 2500),
+    C("mykonos", "מיקונוס", "Mykonos", "Μύκονος", "יוון", "gr", 37.4460, 25.3290, 2000),
+    C("palma", "פלמה דה מיורקה", "Palma", "Palma", "ספרד", "es", 39.5700, 2.6500, 2600),
+    C("funchal", "מדיירה", "Funchal", "Funchal", "פורטוגל", "pt", 32.6500, -16.9100, 2400),
+    C("turin", "טורינו", "Turin", "Torino", "איטליה", "it", 45.0700, 7.6860, 2600),
+    C("lucerne", "לוצרן", "Lucerne", "Luzern", "שווייץ", "ch", 47.0510, 8.3070, 1800)
   ];
+  /* the short names people write */
+  const ALT = { rio: ["ריו", "rio"], "ho-chi-minh": ["סייגון", "saigon", "הו צי מין"], palma: ["מיורקה", "mallorca", "majorca", "פלמה"], funchal: ["פונשל", "madeira"],
+    ubud: ["באלי", "bali"], "new-york": ["ניו-יורק", "nyc", "מנהטן"], "los-angeles": ["לוס אנג'לס"], "hong-kong": ["הונג-קונג"], "mexico-city": ["מקסיקו"],
+    "kuala-lumpur": ["קואלה למפור"], "cape-town": ["קייפ טאון"], washington: ["וושינגטון די סי"], "buenos-aires": ["בואנוס-איירס"],
+    heraklion: ["כרתים", "crete"], valletta: ["מלטה", "malta"], santorini: ["פירה", "fira"], "abu-dhabi": ["אבו-דאבי"] };
   /* find a popular city in free text, in Hebrew or English. Whole words only ("ניס" is not inside "ניסיון"),
      allowing a Hebrew prefix letter ("לרומא", "ברומא"). */
   const esc = x => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -110,7 +165,7 @@
     // an exact id first ("new-york" has a dash, so the name patterns below would miss it)
     const exact = CITIES.find(c => c.slug === t);
     if (exact) return exact;
-    return CITIES.find(c => [c.he, c.en.toLowerCase(), c.local.toLowerCase(), c.slug.replace("-", " ")].some(n => rx(n).test(t))) || null;
+    return CITIES.find(c => [c.he, c.en.toLowerCase(), c.local.toLowerCase(), c.slug.replace("-", " "), ...(ALT[c.slug] || [])].some(n => rx(n).test(t))) || null;
   }
   const api = { CITIES, findCity };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
