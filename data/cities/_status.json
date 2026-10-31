@@ -529,19 +529,19 @@
   ]
  },
  "lisbon": {
-  "at": "2026-10-23T17:51:12.511Z",
-  "seconds": 603,
+  "at": "2026-10-31T11:59:28.646Z",
+  "seconds": 483,
   "osm": {
    "sights": 267,
+   "sights2": 99,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 30,
+   "diet": 31,
    "extra": 110,
-   "streets": 14,
-   "sights2": 99,
-   "landmarks": 115
+   "landmarks": 115,
+   "streets": 14
   },
   "voyage": {
    "eat": 62,
@@ -561,7 +561,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Avenida da Liberdade (30)",
@@ -571,12 +578,25 @@
    "Rua da Prata (16)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de ok 267 30646ms",
-   "overpass-api.de ok 99 38200ms",
-   "overpass-api.de ok 115 43110ms",
-   "fame: 475 of 475"
+   "overpass-api.de HTTP 502 501ms",
+   "overpass-api.de ok 267 26435ms",
+   "overpass-api.de ok 99 42604ms",
+   "overpass-api.de ok 450 27732ms",
+   "overpass-api.de HTTP 502 492ms",
+   "overpass-api.de ok 300 21700ms",
+   "overpass-api.de ok 350 38696ms",
+   "overpass-api.de ok 300 33142ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de ok 31 36514ms",
+   "overpass-api.de HTTP 502 750ms",
+   "overpass-api.de ok 110 26823ms",
+   "overpass-api.de ok 115 31854ms",
+   "overpass-api.de ok 519 25110ms",
+   "streets: 519 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 444 of 444"
   ]
  },
  "porto": {
