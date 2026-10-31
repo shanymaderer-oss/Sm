@@ -4028,5 +4028,75 @@
    "wikidata HTTP 429",
    "fame: 100 of 100"
   ]
+ },
+ "yerevan": {
+  "at": "2026-10-31T19:35:23.963Z",
+  "seconds": 554,
+  "osm": {
+   "sights": 65,
+   "sights2": 33,
+   "restaurants": 296,
+   "cafes": 300,
+   "hotels": 242,
+   "shopping": 167,
+   "diet": 2,
+   "extra": 25,
+   "landmarks": 11,
+   "streets": 11
+  },
+  "voyage": {
+   "eat": 26,
+   "drink": 7,
+   "buy": 8,
+   "see": 45,
+   "sleep": 21,
+   "withCoords": 132,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 21,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Աբովյան փողոց (32)",
+   "Մեսրոպ Մաշտոցի պողոտա (25)",
+   "Տիգրան Մեծի պողոտա (20)",
+   "Պապ Թագավորի փողոց (16)",
+   "Թումանյան փողոց (14)"
+  ],
+  "log": [
+   "overpass-api.de HTTP 502 530ms",
+   "overpass-api.de ok 65 32763ms",
+   "overpass-api.de HTTP 502 478ms",
+   "overpass-api.de ok 33 28495ms",
+   "overpass-api.de ok 296 27825ms",
+   "overpass-api.de ok 300 42357ms",
+   "overpass-api.de ok 242 29616ms",
+   "overpass-api.de ok 167 51215ms",
+   "overpass-api.de ok 2 47063ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 25 44543ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 11 51343ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de ok 284 38403ms",
+   "streets: 284 shops",
+   "fame: 94 of 94"
+  ]
  }
 }
