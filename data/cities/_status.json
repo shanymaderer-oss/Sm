@@ -365,31 +365,31 @@
   ]
  },
  "berlin": {
-  "at": "2026-10-31T11:53:15.551Z",
-  "seconds": 630,
+  "at": "2026-10-23T17:34:13.596Z",
+  "seconds": 727,
   "osm": {
    "sights": 900,
-   "sights2": 245,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 212,
+   "diet": 200,
    "extra": 200,
-   "landmarks": 150,
-   "streets": 14
+   "streets": 14,
+   "sights2": 245,
+   "landmarks": 150
   },
   "voyage": {
-   "eat": 173,
-   "drink": 116,
-   "buy": 74,
-   "see": 189,
-   "sleep": 118,
-   "withCoords": 693,
+   "eat": 132,
+   "drink": 91,
+   "buy": 65,
+   "see": 134,
+   "sleep": 70,
+   "withCoords": 509,
    "districts": 8
   },
   "wiki": {
-   "he": 0,
+   "he": 100,
    "en": 100
   },
   "streetsV": 2,
@@ -397,14 +397,7 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "Rosenthaler Straße (56)",
@@ -414,25 +407,10 @@
    "Friedrichstraße (21)"
   ],
   "log": [
-   "overpass-api.de ok 900 33196ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de ok 245 29719ms",
-   "overpass-api.de ok 450 32785ms",
-   "overpass-api.de ok 300 28326ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de ok 350 32592ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de ok 300 32355ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass-api.de ok 212 37976ms",
-   "overpass-api.de ok 200 39138ms",
-   "overpass-api.de ok 150 34534ms",
-   "overpass-api.de ok 1301 29422ms",
-   "streets: 1301 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de ok 900 31031ms",
+   "overpass-api.de ok 245 17615ms",
+   "overpass-api.de ok 150 49374ms",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -444,19 +422,19 @@
   ]
  },
  "amsterdam": {
-  "at": "2026-10-31T11:57:20.179Z",
-  "seconds": 473,
+  "at": "2026-10-23T17:44:32.683Z",
+  "seconds": 917,
   "osm": {
    "sights": 172,
-   "sights2": 187,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 69,
+   "diet": 60,
    "extra": 84,
-   "landmarks": 150,
-   "streets": 14
+   "streets": 14,
+   "sights2": 186,
+   "landmarks": 150
   },
   "voyage": {
    "eat": 50,
@@ -476,14 +454,7 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "Kalverstraat (80)",
@@ -493,21 +464,12 @@
    "Ferdinand Bolstraat (26)"
   ],
   "log": [
-   "overpass-api.de ok 172 32765ms",
-   "overpass-api.de ok 187 37334ms",
-   "overpass-api.de ok 450 34772ms",
-   "overpass-api.de ok 300 28103ms",
-   "overpass-api.de ok 350 42454ms",
-   "overpass-api.de ok 300 24529ms",
-   "overpass-api.de ok 69 26687ms",
-   "overpass-api.de ok 84 48074ms",
-   "overpass-api.de HTTP 502 429ms",
-   "overpass-api.de ok 150 38293ms",
-   "overpass-api.de ok 1088 35371ms",
-   "streets: 1088 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 430 of 430"
+   "(updated: sights, sights2, landmarks)",
+   "overpass-api.de timeout 60001ms",
+   "overpass-api.de ok 172 40141ms",
+   "overpass-api.de ok 186 32096ms",
+   "overpass-api.de ok 150 30218ms",
+   "fame: 464 of 464"
   ]
  },
  "lisbon": {
@@ -1085,27 +1047,27 @@
   ]
  },
  "tokyo": {
-  "at": "2026-10-23T18:55:59.638Z",
-  "seconds": 866,
+  "at": "2026-10-31T12:06:19.519Z",
+  "seconds": 525,
   "osm": {
    "sights": 155,
+   "sights2": 148,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 47,
+   "diet": 49,
    "extra": 200,
-   "streets": 0,
-   "sights2": 148,
-   "landmarks": 66
+   "landmarks": 66,
+   "streets": 0
   },
   "voyage": {
-   "eat": 70,
-   "drink": 41,
-   "buy": 35,
-   "see": 58,
-   "sleep": 50,
-   "withCoords": 149,
+   "eat": 67,
+   "drink": 53,
+   "buy": 39,
+   "see": 60,
+   "sleep": 48,
+   "withCoords": 164,
    "districts": 8
   },
   "wiki": {
@@ -1117,13 +1079,34 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
   },
   "streets": [],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de ok 1 39882ms",
-   "streets: 1 shops"
+   "overpass-api.de ok 155 29585ms",
+   "overpass-api.de ok 148 26487ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 450 25239ms",
+   "overpass-api.de ok 300 29303ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 350 51453ms",
+   "overpass-api.de ok 300 47104ms",
+   "overpass-api.de ok 49 42144ms",
+   "overpass-api.de ok 200 33725ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 66 30949ms",
+   "overpass-api.de ok 1 46775ms",
+   "streets: 1 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 482 of 482"
   ]
  },
  "istanbul": {
