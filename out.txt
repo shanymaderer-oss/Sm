@@ -1,0 +1,45 @@
+PASS [iPhone] the home screen fits the width (no sideways scrolling)
+PASS [iPhone] installable on the home screen (מסע – מסלול טיול לפי מה שאתם אוהבים, 3 icons)
+PASS [iPhone] has an iPhone home-screen icon
+PASS [iPhone] the flights step shows prices or ready searches
+PASS [iPhone] where to sleep: a recommended area
+PASS [iPhone] the hotel search finds the hotel (['Hotel Artemide\nVia Nazionale 22\n'])
+PASS [iPhone] it says the hotel was found
+PASS [iPhone] 'I have places' suggests as you type (['הפנתאון\n'])
+PASS [iPhone] a trip is built (3 days)
+PASS [iPhone] my place is in the trip
+PASS [iPhone] the trip starts from the chosen hotel (Hotel Artemide)
+PASS [iPhone] the trip screen fits the width
+PASS [iPhone] a place opens with its story
+PASS [iPhone] the guide answers 'what's next'
+PASS [iPhone] the smart guide answers an open question ('שלום! ברוכים הבאים לרומא. אני מסע, המדריך שלכם כאן בעיר. \n\nת')
+PASS [iPhone] the trip becomes a picture to share (masa-rome.png, 115 KB)
+PASS [iPhone] the offline helper is installed (59 files kept on the phone)
+PASS [iPhone] no page errors []
+PASS [Android] the home screen fits the width (no sideways scrolling)
+PASS [Android] installable on the home screen (מסע – מסלול טיול לפי מה שאתם אוהבים, 3 icons)
+PASS [Android] has an iPhone home-screen icon
+PASS [Android] the flights step shows prices or ready searches
+PASS [Android] where to sleep: a recommended area
+PASS [Android] the hotel search finds the hotel (['Hotel Artemide\nVia Nazionale 22'])
+PASS [Android] it says the hotel was found
+PASS [Android] 'I have places' suggests as you type (['הפנתאון'])
+PASS [Android] a trip is built (3 days)
+PASS [Android] my place is in the trip
+PASS [Android] the trip starts from the chosen hotel (Hotel Artemide)
+PASS [Android] the trip screen fits the width
+PASS [Android] a place opens with its story
+PASS [Android] the guide answers 'what's next'
+PASS [Android] the smart guide answers an open question ('אהלן! אני מסע, ברוכים הבאים לרומא. תפסו רגע את האוויר מתחת ל')
+PASS [Android] the trip becomes a picture to share (masa-rome.png, 134 KB)
+PASS [Android] the offline helper is installed (93 files kept on the phone)
+PASS [Android] opens again with no internet, with the trip
+PASS [Android] no page errors []
+NOTE iPhone: home in 3.2s
+NOTE iPhone: trip built in 2.2s
+NOTE iPhone: smart guide answered in 2.1s
+NOTE iPhone: the robot's Safari cannot reload without internet (a known limit of the test browser): check this on a real iPhone
+NOTE Android: home in 4.5s
+NOTE Android: trip built in 4.2s
+NOTE Android: smart guide answered in 2.0s
+ALL PASSED []
