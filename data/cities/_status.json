@@ -177,27 +177,27 @@
   ]
  },
  "london": {
-  "at": "2026-10-31T11:50:33.264Z",
-  "seconds": 547,
+  "at": "2026-10-23T16:43:17.509Z",
+  "seconds": 1017,
   "osm": {
    "sights": 593,
-   "sights2": 222,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 192,
+   "diet": 152,
    "extra": 200,
-   "landmarks": 81,
-   "streets": 14
+   "streets": 14,
+   "sights2": 221,
+   "landmarks": 80
   },
   "voyage": {
-   "eat": 94,
-   "drink": 158,
-   "buy": 59,
-   "see": 151,
-   "sleep": 87,
-   "withCoords": 571,
+   "eat": 86,
+   "drink": 150,
+   "buy": 52,
+   "see": 136,
+   "sleep": 70,
+   "withCoords": 513,
    "districts": 8
   },
   "wiki": {
@@ -209,14 +209,7 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "streets": 1
+   "landmarks": 1
   },
   "streets": [
    "New Bond Street (69)",
@@ -226,27 +219,15 @@
    "Marylebone High Street (56)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 803ms",
-   "overpass-api.de ok 593 28522ms",
-   "overpass-api.de ok 222 39453ms",
-   "overpass-api.de ok 450 28567ms",
-   "overpass-api.de ok 300 29840ms",
-   "overpass-api.de ok 350 27929ms",
-   "overpass-api.de ok 300 34763ms",
-   "overpass-api.de HTTP 502 516ms",
-   "overpass-api.de ok 192 40446ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de ok 200 29235ms",
-   "overpass-api.de ok 81 34987ms",
-   "overpass-api.de ok 2447 40932ms",
-   "streets: 2447 shops",
+   "(updated: )",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 875 of 875"
+   "wikidata HTTP 429",
+   "fame: 939 of 939"
   ]
  },
  "prague": {
@@ -1051,27 +1032,27 @@
   ]
  },
  "istanbul": {
-  "at": "2026-10-31T12:15:18.969Z",
-  "seconds": 714,
+  "at": "2026-10-23T19:06:47.821Z",
+  "seconds": 1207,
   "osm": {
    "sights": 170,
-   "sights2": 70,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 203,
-   "diet": 0,
+   "shopping": 192,
+   "diet": 13,
    "extra": 200,
+   "sights2": 69,
    "landmarks": 14,
    "streets": 14
   },
   "voyage": {
    "eat": 53,
-   "drink": 17,
-   "buy": 32,
+   "drink": 15,
+   "buy": 26,
    "see": 120,
-   "sleep": 69,
-   "withCoords": 268,
+   "sleep": 67,
+   "withCoords": 253,
    "districts": 8
   },
   "wiki": {
@@ -1084,12 +1065,7 @@
    "sights": 2,
    "sights2": 1,
    "landmarks": 1,
-   "streets": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "extra": 1
+   "streets": 1
   },
   "streets": [
    "Fevzipaşa Caddesi (102)",
@@ -1099,26 +1075,14 @@
    "Mahmutpaşa Yokuşu (52)"
   ],
   "log": [
-   "overpass-api.de ok 170 35040ms",
-   "overpass-api.de ok 70 39644ms",
-   "overpass-api.de ok 450 22922ms",
-   "overpass-api.de ok 300 37771ms",
-   "overpass-api.de ok 350 38210ms",
-   "overpass-api.de ok 203 27823ms",
-   "overpass-api.de HTTP 502 508ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de HTTP 502 512ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 200 30689ms",
-   "overpass-api.de HTTP 502 513ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de ok 14 38460ms",
-   "overpass-api.de ok 2457 26890ms",
+   "(updated: sights, sights2, landmarks, streets)",
+   "overpass-api.de ok 170 34275ms",
+   "overpass-api.de ok 69 33248ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass-api.de ok 14 49398ms",
+   "overpass-api.de ok 2457 27553ms",
    "streets: 2457 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 418 of 418"
+   "fame: 480 of 480"
   ]
  },
  "batumi": {
@@ -1761,19 +1725,19 @@
   ]
  },
  "thessaloniki": {
-  "at": "2026-10-23T22:24:30.383Z",
-  "seconds": 484,
+  "at": "2026-10-31T12:30:44.733Z",
+  "seconds": 707,
   "osm": {
    "sights": 151,
-   "restaurants": 232,
+   "sights2": 22,
+   "restaurants": 0,
    "cafes": 300,
    "hotels": 100,
    "shopping": 166,
    "diet": 12,
    "extra": 60,
-   "streets": 8,
-   "sights2": 22,
-   "landmarks": 12
+   "landmarks": 12,
+   "streets": 8
   },
   "voyage": {
    "eat": 33,
@@ -1793,7 +1757,13 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Ιωάννη Τσιμισκή (30)",
@@ -1803,11 +1773,24 @@
    "Φράγκων (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 151 33938ms",
-   "overpass-api.de ok 22 20081ms",
-   "overpass-api.de ok 12 27649ms",
-   "fame: 245 of 245"
+   "overpass-api.de ok 151 28809ms",
+   "overpass-api.de ok 22 33391ms",
+   "overpass-api.de HTTP 504 36258ms",
+   "overpass-api.de HTTP 502 359ms",
+   "overpass-api.de HTTP 502 359ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de ok 300 33902ms",
+   "overpass-api.de ok 100 29586ms",
+   "overpass-api.de ok 166 29748ms",
+   "overpass-api.de ok 12 28548ms",
+   "overpass-api.de HTTP 502 447ms",
+   "overpass-api.de ok 60 29084ms",
+   "overpass-api.de ok 12 38248ms",
+   "overpass-api.de ok 213 36186ms",
+   "streets: 213 shops",
+   "fame: 240 of 240"
   ]
  },
  "naples": {
