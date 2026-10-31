@@ -4632,5 +4632,73 @@
    "wikidata HTTP 429",
    "fame: 245 of 245"
   ]
+ },
+ "melbourne": {
+  "at": "2026-10-31T21:01:08.904Z",
+  "seconds": 521,
+  "osm": {
+   "sights": 48,
+   "sights2": 86,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 220,
+   "shopping": 300,
+   "diet": 41,
+   "extra": 56,
+   "landmarks": 23,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 71,
+   "drink": 40,
+   "buy": 46,
+   "see": 91,
+   "sleep": 39,
+   "withCoords": 284,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 19,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Brunswick Street (35)",
+   "Collins Street (26)",
+   "Gertrude Street (30)",
+   "Smith Street (26)",
+   "Bourke Street (15)"
+  ],
+  "log": [
+   "overpass-api.de ok 48 47426ms",
+   "overpass-api.de ok 86 39524ms",
+   "overpass-api.de ok 450 42537ms",
+   "overpass-api.de ok 300 34860ms",
+   "overpass-api.de ok 220 33722ms",
+   "overpass-api.de ok 300 32971ms",
+   "overpass-api.de ok 41 42171ms",
+   "overpass-api.de ok 56 44573ms",
+   "overpass-api.de ok 23 32707ms",
+   "overpass-api.de ok 448 31412ms",
+   "streets: 448 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 131 of 131"
+  ]
  }
 }
