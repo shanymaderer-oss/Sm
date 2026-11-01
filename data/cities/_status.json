@@ -5751,6 +5751,141 @@
    "fame: 113 of 113"
   ]
  },
+ "oslo": {
+  "at": "2026-11-01T05:00:10.245Z",
+  "seconds": 507,
+  "osm": {
+   "sights": 81,
+   "sights2": 40,
+   "restaurants": 418,
+   "cafes": 202,
+   "hotels": 70,
+   "shopping": 294,
+   "diet": 16,
+   "extra": 116,
+   "landmarks": 63,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 83,
+   "drink": 58,
+   "buy": 38,
+   "see": 71,
+   "sleep": 80,
+   "withCoords": 358,
+   "districts": 6
+  },
+  "wiki": {
+   "he": 17,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 81 35244ms",
+   "overpass-api.de ok 40 38064ms",
+   "overpass-api.de ok 418 34209ms",
+   "overpass-api.de ok 202 45494ms",
+   "overpass-api.de ok 70 32392ms",
+   "overpass-api.de ok 294 49904ms",
+   "overpass-api.de ok 16 33781ms",
+   "overpass-api.de ok 116 32646ms",
+   "overpass-api.de ok 63 50173ms",
+   "overpass-api.de ok 0 46513ms",
+   "streets: 0 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 257 of 257"
+  ]
+ },
+ "frankfurt": {
+  "at": "2026-11-01T05:14:11.654Z",
+  "seconds": 830,
+  "osm": {
+   "sights": 153,
+   "sights2": 43,
+   "restaurants": 450,
+   "cafes": 281,
+   "hotels": 207,
+   "shopping": 300,
+   "diet": 32,
+   "extra": 79,
+   "landmarks": 32,
+   "streets": 4
+  },
+  "voyage": {
+   "eat": 33,
+   "drink": 16,
+   "buy": 10,
+   "see": 70,
+   "sleep": 31,
+   "withCoords": 168,
+   "districts": 5
+  },
+  "wiki": {
+   "he": 28,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Goethestraße (28)",
+   "Zeil (20)",
+   "Kaiserstraße (11)",
+   "Berger Straße (8)"
+  ],
+  "log": [
+   "overpass-api.de timeout 60001ms",
+   "overpass-api.de HTTP 504 59809ms",
+   "overpass-api.de ok 153 37803ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de ok 43 43658ms",
+   "overpass-api.de ok 450 40113ms",
+   "overpass-api.de ok 281 37164ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de ok 207 46427ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de HTTP 504 49261ms",
+   "overpass-api.de ok 300 40318ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de ok 32 37168ms",
+   "overpass-api.de ok 79 44743ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de ok 32 36248ms",
+   "overpass-api.de ok 170 31410ms",
+   "streets: 170 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 269 of 269"
+  ]
+ },
  "zurich": {
   "at": "2026-11-01T05:00:35.313Z",
   "seconds": 445,
@@ -5814,65 +5949,6 @@
    "overpass-api.de ok 546 29589ms",
    "streets: 546 shops",
    "fame: 285 of 285"
-  ]
- },
- "oslo": {
-  "at": "2026-11-01T05:00:10.245Z",
-  "seconds": 507,
-  "osm": {
-   "sights": 81,
-   "sights2": 40,
-   "restaurants": 418,
-   "cafes": 202,
-   "hotels": 70,
-   "shopping": 294,
-   "diet": 16,
-   "extra": 116,
-   "landmarks": 63,
-   "streets": 0
-  },
-  "voyage": {
-   "eat": 83,
-   "drink": 58,
-   "buy": 38,
-   "see": 71,
-   "sleep": 80,
-   "withCoords": 358,
-   "districts": 6
-  },
-  "wiki": {
-   "he": 17,
-   "en": 100
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "landmarks": 1
-  },
-  "streets": [],
-  "log": [
-   "overpass-api.de ok 81 35244ms",
-   "overpass-api.de ok 40 38064ms",
-   "overpass-api.de ok 418 34209ms",
-   "overpass-api.de ok 202 45494ms",
-   "overpass-api.de ok 70 32392ms",
-   "overpass-api.de ok 294 49904ms",
-   "overpass-api.de ok 16 33781ms",
-   "overpass-api.de ok 116 32646ms",
-   "overpass-api.de ok 63 50173ms",
-   "overpass-api.de ok 0 46513ms",
-   "streets: 0 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 257 of 257"
   ]
  },
  "hamburg": {
