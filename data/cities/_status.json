@@ -1923,19 +1923,19 @@
   ]
  },
  "dubai": {
-  "at": "2026-10-23T21:54:46.991Z",
-  "seconds": 459,
+  "at": "2026-11-01T04:40:03.240Z",
+  "seconds": 562,
   "osm": {
    "sights": 12,
+   "sights2": 14,
    "restaurants": 182,
    "cafes": 90,
    "hotels": 112,
    "shopping": 58,
    "diet": 13,
    "extra": 12,
-   "streets": 4,
-   "sights2": 14,
-   "landmarks": 1
+   "landmarks": 1,
+   "streets": 4
   },
   "voyage": {
    "eat": 59,
@@ -1955,7 +1955,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Al Satwa Road (37)",
@@ -1964,13 +1971,24 @@
    "Jumeira Street (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 12 23346ms",
-   "overpass-api.de HTTP 502 298ms",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 14 29983ms",
-   "overpass-api.de ok 1 37500ms",
-   "fame: 91 of 91"
+   "overpass-api.de HTTP 502 691ms",
+   "overpass-api.de ok 12 42664ms",
+   "overpass-api.de HTTP 502 679ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de ok 14 56927ms",
+   "overpass-api.de ok 182 33676ms",
+   "overpass-api.de ok 90 32619ms",
+   "overpass-api.de ok 112 33206ms",
+   "overpass-api.de ok 58 40497ms",
+   "overpass-api.de ok 13 35042ms",
+   "overpass-api.de HTTP 502 439ms",
+   "overpass-api.de HTTP 502 687ms",
+   "overpass-api.de ok 12 38026ms",
+   "overpass-api.de ok 1 36351ms",
+   "overpass-api.de HTTP 502 686ms",
+   "overpass-api.de ok 196 42315ms",
+   "streets: 196 shops",
+   "fame: 67 of 67"
   ]
  },
  "krakow": {
