@@ -89,6 +89,13 @@ async def main():
         say = await pg.inner_text("#agent .agentsay")
         check(gone3 not in sum(names(await trip()), []) and "הורדתי" in say and gone3 in say, f"a bare list of changes works and is described ({say[:80]!r})")
         await pg.click("#agentUndo"); await pg.wait_for_timeout(500)
+        # a move without a day takes the day they named; ids and stray letters in what it says become names
+        answer["j"] = {"say": "העברנו את s1.1 לסוף היום האחרון, קมр ליד p1.", "actions": [{"do": "move", "stop": "s1.1"}], "chips": []}
+        first = names(await trip())[0][0]
+        await pg.fill("#agentIn", "תעביר את זה ליום האחרון"); await pg.press("#agentIn", "Enter"); await pg.wait_for_selector("#agentUndo", timeout=8000); await pg.wait_for_timeout(400)
+        say = await pg.inner_text("#agent .agentsay"); last = names(await trip())[-1]
+        check(first in last and first in say and "s1.1" not in say and "p1" not in say and "ม" not in say, f"a move with no day goes to the day they named, and ids read as names ({say[:90]!r})")
+        await pg.click("#agentUndo"); await pg.wait_for_timeout(500)
         # undo (ask again with a change, then undo)
         answer["j"] = {"say": "הורדתי.", "actions": [{"do": "remove", "stop": "s1.2"}], "chips": ["א", "ב", "ג"]}
         await pg.fill("#agentIn", "תוריד משהו"); await pg.press("#agentIn", "Enter"); await pg.wait_for_selector("#agentUndo", timeout=8000); await pg.wait_for_timeout(400)

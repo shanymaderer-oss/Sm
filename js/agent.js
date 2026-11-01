@@ -96,12 +96,21 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     return out;
   }
   /* ---------- making the changes ---------- */
-  function apply(t, actions, cands) {
+  /* the day they named ("היום האחרון", "יום 2", "ביום השני"), for a change the guide gave without a day */
+  const ORD = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שביעי"];
+  function dayFromText(t, text) {
+    const q = String(text || ""), n = t.days.length;
+    if (/(האחרון|אחרון|בסוף הטיול)/.test(q)) return n;
+    const m = q.match(/יום\s*(\d{1,2})/); if (m && +m[1] >= 1 && +m[1] <= n) return +m[1];
+    const o = ORD.findIndex(w => new RegExp(`(?:היום|ביום|ליום)\\s+ה?${w}`).test(q));
+    return o >= 0 && o < n ? o + 1 : null;
+  }
+  function apply(t, actions, cands, text) {
     const stopAt = id => { const m = /^s(\d+)\.(\d+)$/.exec(String(id || "")); if (!m) return null; const d = t.days[+m[1] - 1], s = d?.stops[+m[2] - 1]; return s ? { d, s } : null; };
     const placeAt = id => { const m = /^p(\d+)$/.exec(String(id || "")); return m ? cands[+m[1] - 1] || null : null; };
-    const dayAt = n => t.days[Math.round(+n) - 1] || null;
+    const dayAt = n => t.days[Math.round(+n) - 1] || null, said = dayFromText(t, text);
     // resolve every id against the trip as the guide saw it, before anything moves
-    const plan = (Array.isArray(actions) ? actions : []).slice(0, 6).map(a => ({ a, st: stopAt(a?.stop), p: placeAt(a?.place), to: dayAt(a?.day) }));
+    const plan = (Array.isArray(actions) ? actions : []).slice(0, 6).map(a => ({ a, st: stopAt(a?.stop), p: placeAt(a?.place), to: dayAt(a?.day) || (said ? dayAt(said) : null) || (a?.do === "add" && stopAt(a?.stop) ? stopAt(a.stop).d : null) }));
     const touched = new Set(), used = new Set(), done = [];
     for (const { a, st, p, to } of plan) {
       const k = a?.do;
@@ -153,14 +162,16 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     A.busy = true; A.acts = null; refresh();
     U.track("guide_ai", t.slug || t.cityEn, 2);
     try {
-      const cands = candidates(t);
+      const cands = candidates(t), snapshot = t.days.map(d => d.stops.map(x => x.name));
       const j = await U.ai.structured(SYSTEM, prompt(t, text, cands), SHAPE);
       if (U.S.trip !== t) { A.busy = false; return; }
       // some models answer with the list of changes only: take it as the changes
       const r = Array.isArray(j) ? { actions: j } : j || {};
-      const { touched, done } = apply(t, r.actions, cands);
+      const { touched, done } = apply(t, r.actions, cands, text);
       const chips = (Array.isArray(r.chips) ? r.chips : []).map(c => String(c || "").replace(/<[^>]*>/g, "").replace(/[<>"`]/g, "").trim().slice(0, 34)).filter(Boolean).slice(0, 3);
-      let say = String(r.say || "").replace(/[<>`]/g, "").trim().slice(0, 400);
+      const idName = id => { const m = /^s(\d+)\.(\d+)$/.exec(id); if (m) return snapshot[+m[1] - 1]?.[+m[2] - 1] || ""; const k = /^p(\d+)$/.exec(id); return k ? cands[+k[1] - 1]?.name || "" : ""; };
+      let say = String(r.say || "").replace(/[<>`]/g, "").replace(/\b([sp]\d+(?:\.\d+)?)\b/g, (x, id) => idName(id))
+        .replace(/[^\u0000-\u024F\u0590-\u05FF\u2000-\u206F\u20AA]/gu, "").replace(/\s{2,}/g, " ").replace(/\s+([.,])/g, "$1").trim().slice(0, 400);
       // it said it changed something but nothing it gave could be done: say that honestly
       if (!done.length && /(הוספ|הסר|הורד|העבר|החלפ|שינית|עדכנ)/.test(say)) say = "";
       Object.assign(A, { say: say || (done.length ? describe(done) : "לא מצאתי מה לשנות. נסו לכתוב את זה אחרת, או לשאול על מקום מסוים."), chips: chips.length ? chips : startChips(t).filter(c => c !== text), undo: done.length ? before : null });
