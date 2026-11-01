@@ -34,7 +34,7 @@ async def main():
     await pg.screenshot(path=SP+f"{TAG}_6place.png")
     await pg.click("#nav button[data-k=discover]"); await pg.wait_for_timeout(1000)
     await pg.screenshot(path=SP+f"{TAG}_7disc.png")
-    await pg.click("#nav button[data-k=book]"); await pg.wait_for_timeout(800)
+    await pg.click(".folders [data-folder=book]"); await pg.wait_for_timeout(800)
     await pg.screenshot(path=SP+f"{TAG}_8book.png")
     await pg.click("#nav button[data-k=guide]"); await pg.wait_for_timeout(800)
     await pg.screenshot(path=SP+f"{TAG}_9guide.png")

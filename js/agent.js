@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   let U = null;
-  const A = { say: "", chips: null, undo: null, busy: false, acts: null, tripId: null };
+  const A = { say: "", chips: null, undo: null, busy: false, acts: null, closed: false, tripId: null };
 
   const nameOf = s => s._he && s._he !== s.name ? `${s.name} (${s._he})` : s.name;
   const walk = d => { let k = 0; for (let i = 1; i < d.stops.length; i++) k += U.km(d.stops[i - 1], d.stops[i]); return k * 1.25; };
@@ -26,25 +26,28 @@
     return out.slice(0, 4);
   }
 
-  function box(t) {
+  const reset = t => { if (A.tripId !== t.id) Object.assign(A, { say: "", chips: null, undo: null, acts: null, closed: false, tripId: t.id }); };
+  const chipsOf = t => { reset(t); return A.chips || startChips(t); };
+
+  /* the bar at the bottom of the route: the last answer, suggestions to tap, and a box to write in */
+  function bar(t) {
     if (!t || t.source === "sample") return "";
-    if (A.tripId !== t.id) Object.assign(A, { say: "", chips: null, undo: null, acts: null, tripId: t.id });
-    const chips = A.chips || startChips(t);
-    const { esc, ic } = U;
-    return `<div class="agent" id="agent">
-      <div class="agenthead"><span class="av">${ic("guide")}</span><span><b>מה לשנות במסלול?</b><small>כתבו במילים שלכם, והמסלול מתעדכן מיד</small></span></div>
-      ${A.busy ? `<div class="agentsay busy"><i></i>מסדרים את המסלול…</div>` : A.say ? `<div class="agentsay" aria-live="polite">${U.richText(A.say)}${A.acts?.length ? `<div class="msgacts">${A.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}${A.undo ? `<button type="button" class="linkbtn" id="agentUndo">${ic("back")}לבטל את השינוי</button>` : ""}</div>` : ""}
-      <div class="agentchips">${chips.map((c, i) => `<button type="button" class="chipbtn" data-ach="${i}">${esc(c)}</button>`).join("")}</div>
-      <form class="agentform" id="agentForm"><input id="agentIn" type="text" maxlength="300" autocomplete="off" placeholder="למשל: יום 2 רגוע יותר, בלי מוזיאונים" aria-label="מה לשנות במסלול"><button class="btn small" type="submit" ${A.busy ? "disabled" : ""}>${ic("nav")}</button></form>
+    reset(t);
+    const chips = chipsOf(t), { esc, ic } = U;
+    const say = A.busy ? `<div class="agentsay busy" aria-live="polite"><i></i>מסדרים את המסלול…</div>`
+      : A.say && !A.closed ? `<div class="agentsay" aria-live="polite"><button type="button" class="agentx" id="agentX" aria-label="סגירה">×</button>${U.richText(A.say)}${A.acts?.length ? `<div class="msgacts">${A.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}${A.undo ? `<button type="button" class="linkbtn" id="agentUndo">${ic("back")}לבטל את השינוי</button>` : ""}</div>` : "";
+    return `<div class="agentbar" id="agent">${say}
+      <div class="agentchips" aria-label="הצעות">${chips.map((c, i) => `<button type="button" class="chipbtn" data-ach="${i}">${esc(c)}</button>`).join("")}</div>
+      <form class="agentform" id="agentForm"><span class="sp">${ic("sparkle")}</span><input id="agentIn" type="text" maxlength="300" autocomplete="off" placeholder="מה לשנות? כתבו לסוכן…" aria-label="מה לשנות במסלול? כתבו לסוכן"><button class="btn small" type="submit" aria-label="שליחה" ${A.busy ? "disabled" : ""}>${ic("nav")}</button></form>
     </div>`;
   }
-
   function bind(t) {
     const el = U.$("agent"); if (!el) return;
-    const chips = A.chips || startChips(t);
+    const chips = chipsOf(t);
     el.querySelectorAll("[data-ach]").forEach(b => b.onclick = () => ask(U.S.trip, chips[+b.dataset.ach]));
     U.$("agentForm").onsubmit = e => { e.preventDefault(); const v = U.$("agentIn").value.trim(); if (v) ask(U.S.trip, v); };
     U.$("agentUndo") && (U.$("agentUndo").onclick = () => undo(U.S.trip));
+    U.$("agentX") && (U.$("agentX").onclick = () => { A.closed = true; U.$("agentX").parentElement.remove(); });
     U.bindGuideActs(el);
   }
 
@@ -150,13 +153,22 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     for (const d of touched) U.planner.computeRoute(d).then(() => { if (U.S.trip === t) { U.renderMap(); refresh(); } }).catch(() => {});
   }
 
+  /* from the bar on the route: the answer shows above the bar, and goes into the agent's conversation too */
   async function ask(t, text) {
     if (A.busy || !text) return;
+    const r = await run(t, text);
+    if (!r) return;
+    U.S.chatLog.push({ r: "me", t: text }, { r: "bot", t: r.say, acts: r.acts || [] });
+  }
+  /* the change itself; the agent screen calls it too. Returns {say, acts} (acts: buttons, like "undo") */
+  async function run(t, text) {
+    if (A.busy || !text) return null;
+    A.closed = false;
     if (!U.ai.enabled()) {
       // without the smart guide: the guide's answers on the device (remove, replace, a lighter day, food near by…)
       let r = null; try { r = U.localAnswer(text); } catch {}
       Object.assign(A, { say: r ? r.text : "בלי המדריך החכם אפשר לבקש: יום רגוע יותר, להוריד או להחליף תחנה, איפה לאכול קרוב, מה עושים בערב. או לשנות ידנית בכפתור 'לשנות את היום'.", acts: r?.acts || null, undo: null });
-      refresh(); return;
+      refresh(); return { say: A.say, acts: A.acts };
     }
     const before = JSON.stringify(t.days);
     A.busy = true; A.acts = null; refresh();
@@ -166,7 +178,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       // a slow answer (the guide server tries up to three models): after 25 seconds the device answers instead
       const j = await Promise.race([U.ai.structured(SYSTEM, prompt(t, text, cands), SHAPE),
         new Promise((_, no) => setTimeout(() => no(Object.assign(new Error("slow"), { code: "shared_quota" })), 25000))]);
-      if (U.S.trip !== t) { A.busy = false; return; }
+      if (U.S.trip !== t) { A.busy = false; return null; }
       // some models answer with the list of changes only: take it as the changes
       const r = Array.isArray(j) ? { actions: j } : j || {};
       const { touched, done } = apply(t, r.actions, cands, text);
@@ -179,10 +191,12 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       Object.assign(A, { say: say || (done.length ? describe(done) : "לא מצאתי מה לשנות. נסו לכתוב את זה אחרת, או לשאול על מקום מסוים."), chips: chips.length ? chips : startChips(t).filter(c => c !== text), undo: done.length ? before : null });
       A.busy = false;
       if (done.length) { finish(t, touched); U.toast("המסלול עודכן"); } else refresh();
+      return { say: A.say, acts: done.length ? [U.act("לבטל את השינוי", () => undo(U.S.trip))] : [] };
     } catch (e) {
       // the smart guide is busy or offline: the guide's answers on the device still work for the common changes
       let r = null; try { r = U.localAnswer(text); } catch {}
       Object.assign(A, { busy: false, say: r ? r.text : U.ai.errText(e.code), acts: r?.acts || null, undo: null }); refresh();
+      return { say: A.say, acts: A.acts };
     }
   }
 
@@ -192,8 +206,9 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     t.days.splice(0, t.days.length, ...days);
     Object.assign(A, { undo: null, say: "החזרתי את המסלול למה שהיה." });
     U.saveEdit(); U.renderMap(); refresh();
+    if (U.S.screen !== "plan") U.toast("המסלול חזר למה שהיה");
   }
 
   window.Masa = window.Masa || {};
-  window.Masa.agent = { install(u) { U = u; }, box, bind, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+  window.Masa.agent = { install(u) { U = u; }, bar, bind, run, undo, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();

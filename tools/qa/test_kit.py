@@ -26,7 +26,7 @@ async def main():
         await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(400); await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=30000); await pg.wait_for_timeout(600)
         start = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0].opts.start")
-        await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector(".kit")
+        await pg.click(".folders [data-folder=book]"); await pg.wait_for_selector(".kit")
         titles = await pg.evaluate("[...document.querySelectorAll('.kithead b')].map(b => b.innerText)")
         check(len(titles) >= 8, f"the kit lists what a trip needs ({titles})")
         for need in ["טיסות", "לינה", "ביטוח", "מהשדה", "eSIM", "סיורים", "כניסה"]:
@@ -44,12 +44,12 @@ async def main():
         # mark closed, kept after reload
         await pg.click("[data-kit=insurance]"); await pg.wait_for_timeout(300)
         await pg.reload(); await pg.wait_for_timeout(1000)
-        await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero"); await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector(".kit")
+        await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero"); await pg.click(".folders [data-folder=book]"); await pg.wait_for_selector(".kit")
         check(await pg.is_checked("[data-kit=insurance]"), "a closed item stays closed")
         check(await pg.evaluate("document.querySelector('[data-kit=insurance]').closest('.kit').classList.contains('done')"), "a closed item is folded")
         # partners: one line of settings adds our id to that site only; a bad value is ignored
         await pg.evaluate("""window.MASA_PARTNERS = { "booking.com": { aid: "1234567" }, "getyourguide.com": { partner_id: "bad\\"><x" } }""")
-        await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(300); await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector(".kit")
+        await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(300); await pg.click(".folders [data-folder=book]"); await pg.wait_for_selector(".kit")
         links = await pg.evaluate("[...document.querySelectorAll('.kit a.chipbtn')].map(a => a.href)")
         check(all("aid=1234567" in l for l in links if "booking.com" in l) and any("booking.com" in l for l in links), "the partner id is on every Booking link")
         check(not any("aid=" in l for l in links if "booking.com" not in l), "and only on Booking links")
@@ -63,14 +63,14 @@ async def main():
           await pg.route("**/__ai/fresh", lambda route: route.fulfill(json={"results": [{"title": "Zzyzx Winter Festival", "url": "https://www.turismoroma.it/en/xmas", "snippet": "Dec 1 to Jan 6"}], "via": "Tavily"}))
           await pg.evaluate("localStorage.setItem('masa-ai-test','1')")
           await pg.reload(); await pg.wait_for_timeout(1000)
-          await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero"); await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector(".kit")
+          await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero"); await pg.click(".folders [data-folder=book]"); await pg.wait_for_selector(".kit")
           await pg.click("#freshEvents"); await pg.wait_for_selector(".freshlist", timeout=5000)
           check("Zzyzx" in await pg.inner_text(".freshlist"), "events in the city come from a live search")
           check(await pg.evaluate("!JSON.stringify(Object.assign({}, localStorage)).includes('Zzyzx')"), "search results are never saved")
           await pg.evaluate("localStorage.removeItem('masa-ai-test')")
         await pg.screenshot(path=os.environ.get("QA_OUT", "/tmp/masa-qa/") + "kit.png", full_page=False)
         # the trip in the calendar
-        await pg.click("#nav button[data-k=book]"); await pg.wait_for_selector("#toCal")
+        await pg.click(".folders [data-folder=book]"); await pg.wait_for_selector("#toCal")
         async with pg.expect_download() as dl:
             await pg.click("#toCal")
         d = await dl.value; ics = open(await d.path(), encoding="utf-8", newline="").read()
@@ -87,6 +87,7 @@ async def main():
         check(d.suggested_filename.endswith(".png") and size > 30000, f"the trip becomes a picture to share ({d.suggested_filename}, {size // 1000}KB)")
         # before you fly: the country's info loads when the screen opens
         await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(400)
+        await pg.click(".folders [data-folder=before]"); await pg.wait_for_selector("#infoCard")
         if await pg.locator("#infoCard").count():
             await pg.click("#infoCard"); await pg.wait_for_selector(".factgrid", timeout=8000); await pg.wait_for_timeout(300)
             txt = await pg.inner_text(".screen")
@@ -94,7 +95,7 @@ async def main():
             check("משפטים" not in txt, "no phrases card")
             await pg.click("#backInfo"); await pg.wait_for_timeout(300)
         # how to get around: taxi and transport apps for the country
-        await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(400)
+        await pg.wait_for_selector("#moveCard")
         if await pg.locator("#moveCard").count():
             await pg.click("#moveCard"); await pg.wait_for_timeout(600)
             txt = await pg.inner_text(".screen"); hrefs = await pg.eval_on_selector_all(".screen a", "a => a.map(x => x.href)")
@@ -105,8 +106,8 @@ async def main():
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(800)
         e0 = len(errs)
         await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero")
-        for k in ["book", "discover", "guide", "plan"]:
-            await pg.click(f"#nav button[data-k={k}]"); await pg.wait_for_timeout(600)
+        for sel in [".folders [data-folder=book]", ".folders [data-folder=before]", ".folders [data-folder=together]", "#nav button[data-k=discover]", "#nav button[data-k=guide]", "#nav button[data-k=plan]"]:
+            await pg.click(sel); await pg.wait_for_timeout(600)
         check(len(errs) == e0, f"a city that is not ready: bookings, discover and the guide open with no errors {errs[e0:e0+2]}")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()

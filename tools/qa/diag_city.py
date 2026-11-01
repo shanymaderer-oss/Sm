@@ -56,7 +56,7 @@ async def main():
             note(f"guide '{q}':", (await pg.locator(".msg.bot").last.inner_text()).replace("\n", " ")[:220])
         # bookings
         e0 = len(errs)
-        await pg.click("#nav button[data-k=book]"); await pg.wait_for_timeout(2500)
+        await pg.click(".folders [data-folder=book]"); await pg.wait_for_timeout(2500)
         note("bookings screen:", (await pg.inner_text(".screen")).replace("\n", " / ")[:300], "| errors:", errs[e0:][:3])
         # the 'already booked' search on the hotels list
         await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(800)

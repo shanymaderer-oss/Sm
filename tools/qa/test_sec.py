@@ -28,7 +28,7 @@ async def main():
       return await route.abort()
     await pg.route("**/*",r)
     await pg.goto(""+os.environ.get("QA_URL","http://localhost:8790")+"/index.html#t="+h); await pg.wait_for_timeout(2500)
-    for sel in ["button.stop >> nth=0", "#nav button[data-k=book]", "#nav button[data-k=plan]"]:
+    for sel in ["button.stop >> nth=0", "#nav button[data-k=plan]", ".folders [data-folder=book]", ".folders [data-folder=plan]"]:
       try: await pg.click(sel); await pg.wait_for_timeout(800)
       except Exception as e: logs.append("CLICKFAIL "+sel)
     pwn=await pg.evaluate("window.__pwn||0")

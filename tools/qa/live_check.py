@@ -58,11 +58,14 @@ async def browse():
             await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(600)
             for sel, name in [("#infoCard", "info"), ("#moveCard", "move"), ("#hotelCard", "hotels")]:
                 try:
+                    await pg.click(".folders [data-folder=before]"); await pg.wait_for_timeout(500)
                     await pg.click(sel); await grab(f"{name} {city}")
                     await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(500)
                 except Exception as e: R["screens"][f"{name} {city}"] = f"FAILED {e}"[:200]
             for k in ["discover", "book", "guide"]:
-                try: await pg.click(f"#nav button[data-k={k}]"); await grab(f"{k} {city}")
+                try:
+                    if k == "book": await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(400); await pg.click(".folders [data-folder=book]"); await grab(f"{k} {city}")
+                    else: await pg.click(f"#nav button[data-k={k}]"); await grab(f"{k} {city}")
                 except Exception as e: R["screens"][f"{k} {city}"] = f"FAILED {e}"[:200]
             try:
                 await pg.click("#nav button[data-k=plan]"); await pg.wait_for_timeout(500)

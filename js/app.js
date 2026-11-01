@@ -97,7 +97,7 @@ const S = {
 };
 let checks = store.get("masa-checks", {});
 const ckey = (s, i) => `${S.trip?.city}|${s.name}|${i}`;
-const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move"];
+const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together"];
 
 /* ---------- speech (built into the browser, free) ---------- */
 const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -319,9 +319,10 @@ function setNav() {
   const show = !!S.trip && TRIP_SCREENS.includes(S.screen);
   nav.hidden = !show;
   if (!show) return;
-  const pending = S.trip.days.flatMap(d => d.stops).filter(s => s.booking?.needed && !(s.booking.steps || []).every((_, i) => checks[ckey(s, i)])).length;
-  const items = [["plan", "route", "מסלול"], ["discover", "compass", "גלו"], ["book", "ticket", "הזמנות"], ["guide", "chat", "מדריך"], ["home", "home", "בית"]];
-  nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && S.screen === "place") || (k === "discover" && (S.screen === "list" || S.screen === "poi"))}">${ic(i)}${l}${k === "book" && pending ? `<span class="badge">${pending}</span>` : ""}</button>`).join("");
+  // four places: the trip (its folders), discover, the agent, home
+  const items = [["plan", "route", "הטיול"], ["discover", "compass", "גלו"], ["guide", "sparkle", "הסוכן"], ["home", "home", "בית"]];
+  const inTrip = ["plan", "place", "before", "book", "together", "info", "move"].includes(S.screen);
+  nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && inTrip) || (k === "discover" && (S.screen === "list" || S.screen === "poi"))}">${ic(i)}${l}</button>`).join("");
   nav.querySelectorAll("button").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
     if (k === "home") { stopSpeak(); S.screen = "home"; S.dest = null; renderPanel(); renderMap(); renderChips(); flyWorld(); }
@@ -510,14 +511,15 @@ let agentLoad = null, agentIn = false;
 const loadAgent = () => agentLoad || (agentLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/agent.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
+const useAgent = () => loadAgent().then(() => {
+  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS }); agentIn = true; }
+  return agentIn ? Masa.agent : null;
+});
+/* the agent's bar sits at the bottom of the route, always in reach */
 function bindAgent(t) {
   if (!t || t.source === "sample") return;
-  if (agentIn) return Masa.agent.bind(t);
-  loadAgent().then(() => {
-    if (!Masa.agent) return;
-    if (!agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, HOTEL_KINDS }); agentIn = true; }
-    if (S.screen === "plan" && S.trip === t && $("agentSlot")) { $("agentSlot").outerHTML = Masa.agent.box(t); Masa.agent.bind(t); }
-  });
+  const put = A => { if (A && S.screen === "plan" && S.trip === t) { $("composerSlot").innerHTML = A.bar(t); harden($("composerSlot")); A.bind(t); } };
+  if (agentIn) put(Masa.agent); else useAgent().then(put);
 }
 /* the two screens live in js/journey.js; they get what they need from here */
 let journeyIn = false;
@@ -1011,19 +1013,8 @@ SCREENS.plan = {
     const d = t.days[S.day], col = cv(DAYC[S.day % 5]);
     const ideas = d.stops.flatMap(s => (s.nearby || []).map(n => ({ ...n, _near: s.name }))).filter(n => !d.stops.some(s => s.name === n.name)).slice(0, 3);
     return `<div class="screen">${nowCard(t)}
-    <div class="triphero" style="${cityColor(t.city).style}"><button type="button" class="sharetrip" id="shareTrip">${ic("share")}שיתוף</button><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
-      <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
-      <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}</div></div>
+    ${tripTop(t, "plan")}
     ${saveNudge(t)}
-    ${t.source === "sample" ? "" : Masa.agent ? Masa.agent.box(t) : `<div id="agentSlot" class="agent ghost"></div>`}
-    ${t.wish ? wishCard(t) : ""}${t.wish?.fitness ? fitnessCard(t) : ""}
-    ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
-    <div class="duo">
-      ${t.source === "sample" ? "" : t.hotel ? `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>המלון שלכם</small><b>${esc(t.hotel.name)}</b></span></button>`
-        : `<button type="button" class="duocard" id="hotelCard"><span class="ic" style="background:var(--primary)">${ic("bed")}</span><span><small>איפה לישון?</small><b>המלון שלכם, או מלונות שמתאימים למסלול</b></span></button>`}
-      <button type="button" class="duocard" id="infoCard"><span class="ic" style="background:var(--teal)">${ic("info")}</span><span><small>לפני שטסים</small><b>מזג אוויר, כסף, eSIM</b></span></button>
-      <button type="button" class="duocard" id="moveCard"><span class="ic" style="background:var(--violet)">${ic("bus")}</span><span><small>תחבורה</small><b>מהשדה לעיר ובתוך העיר</b></span></button>
-    </div>
     <div class="daytabs" role="tablist">${t.days.map((x, i) => `<button type="button" role="tab" class="daytab" data-i="${i}" aria-selected="${i === S.day}" style="${i === S.day ? `background:${cv(DAYC[i % 5])}` : ""}"><span class="dot" style="background:${i === S.day ? "#fff" : cv(DAYC[i % 5])}"></span>${esc(x.label)}</button>`).join("")}</div>
     ${d.theme ? `<div class="daytheme">${esc(d.theme)}</div>` : ""}
     ${t.source === "sample" ? "" : rainTip(t, S.day)}
@@ -1040,8 +1031,7 @@ SCREENS.plan = {
     }).join("")}</div>
     ${ideas.length ? `<div class="ideas"><h2>נשאר לכם זמן היום? רעיונות בדרך</h2>
       ${ideas.map(n => `<div class="idea"><span class="ic" style="background:${cv(CATS[catOf(n)].c)}">${ic(catOf(n))}</span><span><b>${esc(n.name)}</b><small>ליד ${esc(n._near)} · ${esc(n.why)}</small></span><button type="button" class="btn small soft" data-add="${esc(n.name)}">${ic("plus")}הוספה</button></div>`).join("")}</div>` : ""}
-    ${t.source === "sample" ? "" : familyCard(t)}
-    <button type="button" class="btn soft block" id="toDiscover">${ic("compass")} עוד דברים מיוחדים לעשות ב${esc(t.city)}</button>
+    ${t.wish ? wishCard(t) : ""}${t.wish?.fitness ? fitnessCard(t) : ""}
     <div class="disclaim">${ic("info")}<span>שעות, מחירים ועומסים הם הערכה. לפני שמזמינים, בדקו באתר הרשמי של המקום.</span></div>
   </div>`;
   },
@@ -1062,20 +1052,56 @@ SCREENS.plan = {
       const n = d.stops.flatMap(s => s.nearby || []).find(x => x.name === b.dataset.add);
       if (n) { addToDay(n); rerenderKeepScroll(); }
     });
-    $("toDiscover").onclick = () => go("discover");
-    $("shareTrip") && ($("shareTrip").onclick = () => shareTripImage(S.trip));
     const setPeople = v => { const t = S.trip; t.opts = t.opts || {}; t.opts.people = Math.min(12, Math.max(1, v)); saveTrip(t); rerenderKeepScroll(); };
     $("cpMinus") && ($("cpMinus").onclick = () => setPeople((S.trip.opts?.people || 2) - 1));
     $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
-    $("infoCard").onclick = () => loadCountries().then(() => go("info"));
-    $("moveCard").onclick = () => go("move");
-    document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
-    bindFamily();
     bindNow();
     bindNudge();
     bindAgent(t);
-    $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
+    bindTripTop();
   }
+};
+/* ---------- the trip's folders: the route, before the flight, bookings, together ----------
+   One short header (the trip, its numbers, share) and four folders, so each kind of thing has its place. */
+const FOLDERS = [["plan", "route", "המסלול"], ["before", "info", "לפני הטיסה"], ["book", "ticket", "הזמנות"], ["together", "users", "ביחד"]];
+const bookPending = t => t.days.flatMap(d => d.stops).filter(s => s.booking?.needed && !(s.booking.steps || []).every((_, i) => checks[ckey(s, i)])).length;
+function tripTop(t, active) {
+  const all = t.days.flatMap(d => d.stops), pend = bookPending(t);
+  const nums = [`${all.length} תחנות`, `${totalWalk(t).toFixed(1)} ק״מ הליכה`, (t.opts?.move || "walk") !== "walk" ? `${totalDrive(t).toFixed(0)} ${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}` : "", all.filter(s => s.booking?.needed).length ? `${all.filter(s => s.booking?.needed).length} להזמין` : ""].filter(Boolean);
+  const list = FOLDERS.filter(([k]) => !(k === "together" && t.source === "sample"));
+  return `<div class="triphero" style="${cityColor(t.city).style}"><div class="throw"><div><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
+      <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p class="thnums">${nums.map(esc).join(" · ")}</p></div>
+      <button type="button" class="sharetrip" id="shareTrip">${ic("share")}שיתוף</button></div>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}</div>
+    <div class="folders" role="tablist" aria-label="חלקי הטיול">${list.map(([k, i, l]) => `<button type="button" role="tab" data-folder="${k}" aria-selected="${k === active}">${ic(i)}<span>${l}</span>${k === "book" && pend ? `<span class="badge">${pend}</span>` : ""}</button>`).join("")}</div>`;
+}
+function bindTripTop() {
+  $("shareTrip") && ($("shareTrip").onclick = () => shareTripImage(S.trip));
+  document.querySelectorAll("[data-folder]").forEach(b => b.onclick = () => { const k = b.dataset.folder; if (k !== S.screen) go(k, { noFly: k !== "plan" }); });
+}
+SCREENS.before = {
+  view() {
+    const t = S.trip;
+    const card = (id, icon, color, small, big) => `<button type="button" class="duocard" id="${id}"><span class="ic" style="background:${color}">${ic(icon)}</span><span><small>${small}</small><b>${big}</b></span>${ic("back")}</button>`;
+    return `<div class="screen">${tripTop(t, "before")}
+    <div class="folderlist">
+      ${t.source === "sample" ? "" : t.hotel ? card("hotelCard", "bed", "var(--primary)", "המלון שלכם", esc(t.hotel.name)) : card("hotelCard", "bed", "var(--primary)", "איפה לישון?", "המלון שלכם, או מלונות שמתאימים למסלול")}
+      ${card("infoCard", "info", "var(--teal)", "מידע על היעד", "מזג אוויר, כסף, חשמל, eSIM")}
+      ${card("moveCard", "bus", "var(--violet)", "תחבורה", "מהשדה לעיר ובתוך העיר")}
+    </div>
+    ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים בטיול?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
+  </div>`;
+  },
+  bind() {
+    bindTripTop();
+    $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
+    $("infoCard").onclick = () => loadCountries().then(() => go("info"));
+    $("moveCard").onclick = () => go("move");
+    document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
+  }
+};
+SCREENS.together = {
+  view() { const t = S.trip; return `<div class="screen">${tripTop(t, "together")}${t.source === "sample" ? "" : familyCard(t)}</div>`; },
+  bind() { bindTripTop(); bindFamily(); }
 };
 /* a place from the map or the city's list as a stop of the trip */
 const stopFrom = item => ({
@@ -1386,10 +1412,10 @@ const partnerNote = () => window.MASA_PARTNERS ? `<div class="disclaim">${ic("in
 SCREENS.book = {
   view() {
     const list = allBook();
-    if (!list.length) return `<div class="screen">${kitView()}<div class="disclaim">${ic("shield")}<span>מסע לא גובה תשלום ולא שומר פרטי אשראי. ההזמנה עצמה נעשית תמיד באתר של המקום.</span></div></div>`;
+    if (!list.length) return `<div class="screen">${tripTop(S.trip, "book")}${kitView()}<div class="disclaim">${ic("shield")}<span>מסע לא גובה תשלום ולא שומר פרטי אשראי. ההזמנה עצמה נעשית תמיד באתר של המקום.</span></div></div>`;
     const stat = list.map(({ s }) => { const n = s.booking.steps.length, d = s.booking.steps.filter((_, i) => checks[ckey(s, i)]).length; return { n, d }; });
     const complete = stat.filter(x => x.d === x.n).length;
-    return `<div class="screen">${kitView()}
+    return `<div class="screen">${tripTop(S.trip, "book")}${kitView()}
     <div id="bookList"><div class="eyebrow">כרטיסים מראש</div><h2 style="margin-top:4px">${complete} מתוך ${list.length} הזמנות הושלמו</h2></div>
     <div class="progress"><i style="width:${complete / list.length * 100}%"></i></div>
     <p class="lead">סמנו כל שלב כשסיימתם. ההתקדמות נשמרת בדפדפן הזה.</p>
@@ -1403,6 +1429,7 @@ SCREENS.book = {
   </div>`;
   },
   bind() {
+    bindTripTop();
     $("freshEvents") && ($("freshEvents").onclick = loadFreshEvents);
     $("toCal") && ($("toCal").onclick = () => downloadIcs(S.trip));
     track("kit_open", S.trip?.slug || S.trip?.cityEn, null, "kit:" + S.trip?.id);
@@ -1590,10 +1617,11 @@ function localAnswer(q) {
 SCREENS.guide = {
   view() {
     const cur = S.trip.days[S.day].stops[S.stop];
-    const head = `<div class="guidehead"><span class="av">${ic("guide")}</span><div><h2>המדריך שלכם ב${esc(S.trip.city)}</h2><p>${S.me ? "יודע איפה אתם עכשיו." : `מכיר את המסלול. כרגע אתם ליד ${esc(cur?.name || "")}.`}</p></div></div>`;
-    const hello = `שלום! אני מכיר את הטיול שלכם ב${S.trip.city}. אפשר לשאול מה הבא, איפה לאכול קרוב, מה עושים בגשם או כשיש זמן פנוי, לבקש להוריד או להחליף תחנה, ולשמוע סיפור על המקום.${ai.enabled() ? " על כל שאלה אחרת עונה המדריך החכם." : ""}`;
+    const head = `<div class="guidehead"><span class="av">${ic("sparkle")}</span><div><h2>הסוכן של הטיול ב${esc(S.trip.city)}</h2><p>${S.me ? "יודע איפה אתם עכשיו." : `משנה את המסלול ועונה על שאלות. כרגע אתם ליד ${esc(cur?.name || "")}.`}</p></div></div>`;
+    const hello = `שלום! אני הסוכן של הטיול שלכם ב${S.trip.city}. אפשר לבקש שינויים במסלול ("יום 2 רגוע יותר", "בלי מוזיאונים", "תוסיפו שוק אוכל"), ולשאול מה הבא, איפה לאכול קרוב, מה עושים בגשם, או לשמוע סיפור על המקום.`;
+    const chips = S.trip.source !== "sample" && agentIn ? Masa.agent.chips(S.trip).slice(0, 3) : [];
     return `<div class="screen chatwrap">${head}
-    <div class="quick" id="quick">${GUIDE_QUICK.map(q => `<button type="button">${q}</button>`).join("")}
+    <div class="quick" id="quick">${[...chips, ...GUIDE_QUICK].map(q => `<button type="button">${esc(q)}</button>`).join("")}
       ${S.me ? "" : `<button type="button" id="shareLoc">${ic("locate")} לשתף מיקום</button>`}</div>
     <div class="log" id="log">${[{ r: "bot", t: hello }, ...S.chatLog].map(m => msgHtml(m)).join("")}</div>
     <div class="status" id="chatStatus"></div>
@@ -1601,7 +1629,8 @@ SCREENS.guide = {
   },
   bind() {
     document.querySelectorAll("[data-settings]").forEach(b => b.onclick = () => { S.prev = S.screen; go("settings"); });
-    $("composerSlot").innerHTML = `<form class="composer" id="askForm"><input id="askInput" type="text" placeholder="שאלו את המדריך..." aria-label="שאלה למדריך" autocomplete="off"><button class="btn" id="askBtn" type="submit" aria-label="שליחה" ${S.busy ? "disabled" : ""}>${ic("nav")}</button></form>`;
+    if (!agentIn && S.trip.source !== "sample") useAgent().then(A => { if (A && S.screen === "guide") rerenderKeepScroll(); });
+    $("composerSlot").innerHTML = `<form class="composer" id="askForm"><input id="askInput" type="text" placeholder="בקשו שינוי או שאלו שאלה…" aria-label="הודעה לסוכן" autocomplete="off"><button class="btn" id="askBtn" type="submit" aria-label="שליחה" ${S.busy ? "disabled" : ""}>${ic("nav")}</button></form>`;
     $("askForm").onsubmit = e => { e.preventDefault(); const v = $("askInput").value.trim(); $("askInput").value = ""; ask(v); };
     document.querySelectorAll("#quick button:not(#shareLoc)").forEach(b => b.onclick = () => ask(b.textContent.trim()));
     $("shareLoc") && ($("shareLoc").onclick = locate);
@@ -1628,9 +1657,20 @@ function addMsg(r, t, acts) {
   $("scroll").scrollTop = $("scroll").scrollHeight;
   return m;
 }
+/* a request to change the route goes to the agent; questions to the guide */
+const CHANGE_RE = /(תוסיפ|תוסיף|להוסיף|תוריד|להוריד|בלי |תעביר|להעביר|תחליפ|תחליף|להחליף|במקום|רגוע|קליל|פחות|לקצר|תקצר|לשנות|תשנ|תזיז|להזיז|יותר לאט|עייפ)/;
 async function ask(q) {
   if (!q || S.busy) return;
   addMsg("me", q);
+  if (agentIn && ai.enabled() && S.trip.source !== "sample" && CHANGE_RE.test(q)) {
+    S.busy = true; $("askBtn") && ($("askBtn").disabled = true);
+    const entry = addMsg("bot", "מסדרים את המסלול…");
+    const r = await Masa.agent.run(S.trip, q).catch(() => null);
+    S.busy = false;
+    entry.t = r?.say || ai.errText("ai_error"); entry.acts = r?.acts || [];
+    if (S.screen === "guide") rerenderKeepScroll();
+    return;
+  }
   // the trip itself answers first: instant, free and works offline
   let local = null;
   try { local = localAnswer(q); } catch (e) { console.warn("[masa] guide", e); }
@@ -2394,7 +2434,7 @@ SCREENS.info = {
     if (!Masa.countries) loadCountries().then(() => { if (S.screen === "info" && Masa.countries) rerenderKeepScroll(); });
     const key = `${t.lat},${t.lng}`;
     const c = infoCache[key] = infoCache[key] || {};
-    $("backInfo").onclick = () => go("plan");
+    $("backInfo").onclick = () => go("before", { noFly: true });
     if (c.weather === undefined && !c.wxLoading) { c.wxLoading = true; svc.weather(+t.lat, +t.lng).then(w => { c.weather = w; c.wxLoading = false; if (S.screen === "info") rerenderKeepScroll(); }); }
     if (ci && c.rate === undefined) svc.rateToILS(ci.cur).then(r => { c.rate = r; if (S.screen === "info") rerenderKeepScroll(); });
     $("convLocal") && ($("convLocal").oninput = e => { const v = parseFloat(e.target.value) || 0; $("convILS").textContent = `${(v * c.rate.rate).toFixed(1)} ₪`; });
@@ -2453,7 +2493,7 @@ SCREENS.move = {
     <div class="disclaim">${ic("info")}<span>רוב המחירים נבדקו מול מקורות עדכניים באוקטובר 2026, אבל הם משתנים. לפני הטיסה כדאי לבדוק באתר של שדה התעופה או של חברת התחבורה.</span></div>
   </div>`;
   },
-  bind() { $("backMove").onclick = () => go("plan"); }
+  bind() { $("backMove").onclick = () => go("before", { noFly: true }); }
 };
 
 /* ================= internet abroad: eSIM ================= */

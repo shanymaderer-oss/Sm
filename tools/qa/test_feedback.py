@@ -53,7 +53,7 @@ async def main():
         await pg.uncheck("#statsOn"); n1 = len(sent)
         await pg.click("#backPrev"); await pg.wait_for_timeout(300)
         await pg.click(".savedtrip >> nth=0"); await pg.wait_for_selector(".triphero")
-        await pg.click("#nav button[data-k=book]"); await pg.wait_for_timeout(500)
+        await pg.click(".folders [data-folder=book]"); await pg.wait_for_timeout(500)
         check(len(sent) == n1, "with counts off, nothing is sent")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
