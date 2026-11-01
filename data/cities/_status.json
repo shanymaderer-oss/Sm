@@ -2924,8 +2924,8 @@
   ]
  },
  "las-vegas": {
-  "at": "2026-10-31T11:13:50.532Z",
-  "seconds": 442,
+  "at": "2026-11-01T04:52:58.878Z",
+  "seconds": 415,
   "osm": {
    "sights": 12,
    "sights2": 33,
@@ -2965,17 +2965,17 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 12 28064ms",
-   "overpass-api.de HTTP 502 484ms",
-   "overpass-api.de ok 33 43519ms",
-   "overpass-api.de ok 251 31997ms",
-   "overpass-api.de ok 73 35869ms",
-   "overpass-api.de ok 137 30895ms",
-   "overpass-api.de ok 124 52386ms",
-   "overpass-api.de ok 2 28352ms",
-   "overpass-api.de ok 9 29466ms",
-   "overpass-api.de ok 0 37326ms",
-   "overpass-api.de ok 49 29084ms",
+   "overpass-api.de ok 12 26213ms",
+   "overpass-api.de ok 33 44703ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 251 36363ms",
+   "overpass-api.de ok 73 35884ms",
+   "overpass-api.de ok 137 27661ms",
+   "overpass-api.de ok 124 36103ms",
+   "overpass-api.de ok 2 38355ms",
+   "overpass-api.de ok 9 28045ms",
+   "overpass-api.de ok 0 25015ms",
+   "overpass-api.de ok 49 21659ms",
    "streets: 49 shops",
    "fame: 57 of 57"
   ]
