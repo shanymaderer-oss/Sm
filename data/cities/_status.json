@@ -2187,19 +2187,19 @@
   ]
  },
  "bucharest": {
-  "at": "2026-10-23T22:18:15.560Z",
-  "seconds": 438,
+  "at": "2026-11-01T04:43:52.425Z",
+  "seconds": 526,
   "osm": {
    "sights": 102,
+   "sights2": 77,
    "restaurants": 294,
    "cafes": 252,
    "hotels": 191,
-   "shopping": 195,
+   "shopping": 194,
    "diet": 11,
-   "extra": 68,
-   "streets": 8,
-   "sights2": 77,
-   "landmarks": 21
+   "extra": 70,
+   "landmarks": 21,
+   "streets": 8
   },
   "voyage": {
    "eat": 21,
@@ -2219,7 +2219,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Calea Vitan (58)",
@@ -2229,11 +2236,22 @@
    "Strada Lipscani (20)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 102 34051ms",
-   "overpass-api.de ok 77 21792ms",
-   "overpass-api.de ok 21 28362ms",
-   "fame: 193 of 193"
+   "overpass-api.de ok 102 40701ms",
+   "overpass-api.de ok 77 30480ms",
+   "overpass-api.de ok 294 45583ms",
+   "overpass-api.de ok 252 38258ms",
+   "overpass-api.de HTTP 502 524ms",
+   "overpass-api.de ok 191 37040ms",
+   "overpass-api.de ok 194 42960ms",
+   "overpass-api.de ok 11 26229ms",
+   "overpass-api.de ok 70 51068ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass-api.de ok 21 33944ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass-api.de ok 337 38371ms",
+   "streets: 337 shops",
+   "fame: 171 of 171"
   ]
  },
  "thessaloniki": {
