@@ -1926,27 +1926,27 @@
   ]
  },
  "warsaw": {
-  "at": "2026-10-23T22:06:55.612Z",
-  "seconds": 596,
+  "at": "2026-11-01T04:32:19.025Z",
+  "seconds": 636,
   "osm": {
-   "sights": 464,
+   "sights": 467,
+   "sights2": 184,
    "restaurants": 398,
    "cafes": 300,
    "hotels": 138,
    "shopping": 300,
    "diet": 59,
    "extra": 95,
-   "streets": 14,
-   "sights2": 182,
-   "landmarks": 81
+   "landmarks": 81,
+   "streets": 14
   },
   "voyage": {
-   "eat": 53,
-   "drink": 26,
-   "buy": 14,
-   "see": 113,
-   "sleep": 45,
-   "withCoords": 199,
+   "eat": 58,
+   "drink": 31,
+   "buy": 15,
+   "see": 122,
+   "sleep": 57,
+   "withCoords": 219,
    "districts": 8
   },
   "wiki": {
@@ -1958,7 +1958,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Mokotowska (64)",
@@ -1968,14 +1975,29 @@
    "Koszykowa (19)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 464 33660ms",
-   "overpass-api.de ok 182 30976ms",
-   "overpass-api.de ok 81 38996ms",
+   "overpass-api.de ok 467 54879ms",
+   "overpass-api.de ok 184 35584ms",
+   "overpass-api.de ok 398 36858ms",
+   "overpass-api.de ok 300 50143ms",
+   "overpass-api.de ok 138 41716ms",
+   "overpass-api.de ok 300 29540ms",
+   "overpass-api.de HTTP 502 287ms",
+   "overpass-api.de ok 59 40253ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de ok 95 41204ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 81 35522ms",
+   "overpass-api.de ok 1012 35499ms",
+   "streets: 1012 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 583 of 583"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 549 of 549"
   ]
  },
  "sofia": {
