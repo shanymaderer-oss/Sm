@@ -1029,19 +1029,19 @@
   ]
  },
  "florence": {
-  "at": "2026-10-23T18:29:04.299Z",
-  "seconds": 675,
+  "at": "2026-11-01T04:18:13.186Z",
+  "seconds": 582,
   "osm": {
    "sights": 297,
+   "sights2": 43,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 213,
-   "diet": 12,
+   "diet": 15,
    "extra": 128,
-   "streets": 5,
-   "sights2": 43,
-   "landmarks": 64
+   "landmarks": 64,
+   "streets": 5
   },
   "voyage": {
    "eat": 20,
@@ -1061,7 +1061,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Ponte Vecchio (46)",
@@ -1071,11 +1078,22 @@
    "Via dei Pecori (6)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 297 36624ms",
-   "overpass-api.de ok 43 36494ms",
-   "overpass-api.de ok 64 30456ms",
-   "fame: 495 of 495"
+   "overpass-api.de HTTP 502 353ms",
+   "overpass-api.de ok 297 46721ms",
+   "overpass-api.de ok 43 48450ms",
+   "overpass-api.de HTTP 502 347ms",
+   "overpass-api.de ok 450 40702ms",
+   "overpass-api.de HTTP 502 343ms",
+   "overpass-api.de ok 300 39648ms",
+   "overpass-api.de ok 350 32957ms",
+   "overpass-api.de ok 213 40461ms",
+   "overpass-api.de ok 15 47154ms",
+   "overpass-api.de ok 128 37606ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass-api.de ok 64 48134ms",
+   "overpass-api.de ok 259 57219ms",
+   "streets: 259 shops",
+   "fame: 492 of 492"
   ]
  },
  "venice": {
