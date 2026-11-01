@@ -2396,19 +2396,19 @@
   ]
  },
  "belgrade": {
-  "at": "2026-10-23T22:37:23.210Z",
-  "seconds": 535,
+  "at": "2026-11-01T04:45:35.361Z",
+  "seconds": 482,
   "osm": {
-   "sights": 214,
+   "sights": 215,
+   "sights2": 43,
    "restaurants": 285,
    "cafes": 300,
-   "hotels": 176,
-   "shopping": 292,
+   "hotels": 175,
+   "shopping": 291,
    "diet": 11,
    "extra": 55,
-   "streets": 9,
-   "sights2": 44,
-   "landmarks": 16
+   "landmarks": 16,
+   "streets": 10
   },
   "voyage": {
    "eat": 24,
@@ -2416,11 +2416,11 @@
    "buy": 3,
    "see": 40,
    "sleep": 27,
-   "withCoords": 89,
+   "withCoords": 95,
    "districts": 0
   },
   "wiki": {
-   "he": 30,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -2428,7 +2428,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Булевар краља Александра (29)",
@@ -2438,13 +2445,18 @@
    "Синђелићева (8)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de HTTP 502 350ms",
-   "overpass-api.de HTTP 502 350ms",
-   "overpass-api.de ok 214 29958ms",
-   "overpass-api.de ok 44 22048ms",
-   "overpass-api.de ok 16 24538ms",
-   "fame: 297 of 297"
+   "overpass-api.de ok 215 49341ms",
+   "overpass-api.de ok 43 32526ms",
+   "overpass-api.de ok 285 38471ms",
+   "overpass-api.de ok 300 24665ms",
+   "overpass-api.de ok 175 39800ms",
+   "overpass-api.de ok 291 43069ms",
+   "overpass-api.de ok 11 45431ms",
+   "overpass-api.de ok 55 46401ms",
+   "overpass-api.de ok 16 30800ms",
+   "overpass-api.de ok 284 39864ms",
+   "streets: 284 shops",
+   "fame: 292 of 292"
   ]
  },
  "dublin": {
