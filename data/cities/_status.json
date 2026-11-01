@@ -5748,6 +5748,73 @@
    "fame: 113 of 113"
   ]
  },
+ "salzburg": {
+  "at": "2026-11-01T05:02:57.317Z",
+  "seconds": 502,
+  "osm": {
+   "sights": 62,
+   "sights2": 43,
+   "restaurants": 158,
+   "cafes": 142,
+   "hotels": 140,
+   "shopping": 97,
+   "diet": 14,
+   "extra": 40,
+   "landmarks": 27,
+   "streets": 6
+  },
+  "voyage": {
+   "eat": 24,
+   "drink": 14,
+   "buy": 1,
+   "see": 24,
+   "sleep": 35,
+   "withCoords": 62,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 5,
+   "en": 54
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Linzer Gasse (15)",
+   "Getreidegasse (9)",
+   "Dreifaltigkeitsgasse (8)",
+   "Schallmooser Hauptstraße (6)",
+   "Rainerstraße (6)"
+  ],
+  "log": [
+   "overpass-api.de ok 62 33943ms",
+   "overpass-api.de ok 43 26082ms",
+   "overpass-api.de ok 158 35827ms",
+   "overpass-api.de ok 142 33200ms",
+   "overpass-api.de ok 140 38192ms",
+   "overpass-api.de HTTP 502 403ms",
+   "overpass-api.de ok 97 36868ms",
+   "overpass-api.de ok 14 45174ms",
+   "overpass-api.de ok 40 39874ms",
+   "overpass-api.de HTTP 502 445ms",
+   "overpass-api.de ok 27 54071ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 165 40481ms",
+   "streets: 165 shops",
+   "fame: 124 of 124"
+  ]
+ },
  "zurich": {
   "at": "2026-11-01T05:00:35.313Z",
   "seconds": 445,
