@@ -2475,19 +2475,19 @@
   ]
  },
  "dublin": {
-  "at": "2026-10-23T22:44:00.921Z",
-  "seconds": 510,
+  "at": "2026-11-01T04:49:27.163Z",
+  "seconds": 542,
   "osm": {
    "sights": 80,
+   "sights2": 54,
    "restaurants": 408,
    "cafes": 300,
-   "hotels": 259,
+   "hotels": 258,
    "shopping": 300,
    "diet": 16,
    "extra": 57,
-   "streets": 14,
-   "sights2": 55,
-   "landmarks": 24
+   "landmarks": 24,
+   "streets": 14
   },
   "voyage": {
    "eat": 25,
@@ -2499,7 +2499,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 27,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -2507,7 +2507,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Grafton Street (56)",
@@ -2517,11 +2524,23 @@
    "Mary Street (12)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 80 35735ms",
-   "overpass-api.de ok 55 27283ms",
-   "overpass-api.de ok 24 21059ms",
-   "fame: 225 of 225"
+   "overpass-api.de HTTP 502 687ms",
+   "overpass-api.de HTTP 502 582ms",
+   "overpass-api.de ok 80 43142ms",
+   "overpass-api.de HTTP 502 677ms",
+   "overpass-api.de ok 54 29622ms",
+   "overpass-api.de ok 408 39264ms",
+   "overpass-api.de ok 300 37510ms",
+   "overpass-api.de ok 258 32543ms",
+   "overpass-api.de HTTP 502 667ms",
+   "overpass-api.de ok 300 35559ms",
+   "overpass-api.de ok 16 49690ms",
+   "overpass-api.de ok 57 43566ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de ok 24 37432ms",
+   "overpass-api.de ok 484 40293ms",
+   "streets: 484 shops",
+   "fame: 213 of 213"
   ]
  },
  "edinburgh": {
