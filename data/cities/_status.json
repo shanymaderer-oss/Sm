@@ -1097,31 +1097,31 @@
   ]
  },
  "venice": {
-  "at": "2026-10-23T18:35:54.355Z",
-  "seconds": 589,
+  "at": "2026-11-01T04:25:25.694Z",
+  "seconds": 597,
   "osm": {
    "sights": 92,
+   "sights2": 85,
    "restaurants": 450,
    "cafes": 179,
    "hotels": 350,
    "shopping": 145,
-   "diet": 5,
+   "diet": 11,
    "extra": 116,
-   "streets": 5,
-   "sights2": 75,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 5
   },
   "voyage": {
-   "eat": 69,
-   "drink": 17,
-   "buy": 12,
-   "see": 86,
-   "sleep": 85,
-   "withCoords": 226,
+   "eat": 60,
+   "drink": 11,
+   "buy": 7,
+   "see": 71,
+   "sleep": 59,
+   "withCoords": 166,
    "districts": 8
   },
   "wiki": {
-   "he": 83,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -1129,7 +1129,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "San Marco (52)",
@@ -1139,11 +1146,26 @@
    "Cannaregio (15)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 92 27674ms",
-   "overpass-api.de ok 75 42804ms",
-   "overpass-api.de ok 150 22812ms",
-   "fame: 408 of 408"
+   "overpass-api.de ok 92 40579ms",
+   "overpass-api.de ok 85 40613ms",
+   "overpass-api.de ok 450 44455ms",
+   "overpass-api.de ok 179 39738ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de ok 350 32777ms",
+   "overpass-api.de HTTP 502 523ms",
+   "overpass-api.de ok 145 34076ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de ok 11 35480ms",
+   "overpass-api.de ok 116 41898ms",
+   "overpass-api.de ok 150 44324ms",
+   "overpass-api.de HTTP 502 768ms",
+   "overpass-api.de ok 210 53834ms",
+   "streets: 210 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 395 of 395"
   ]
  },
  "new-york": {
