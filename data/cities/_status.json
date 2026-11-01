@@ -1197,27 +1197,27 @@
   ]
  },
  "bangkok": {
-  "at": "2026-10-23T18:48:43.207Z",
-  "seconds": 611,
+  "at": "2026-11-01T04:21:31.589Z",
+  "seconds": 533,
   "osm": {
    "sights": 129,
+   "sights2": 81,
    "restaurants": 450,
    "cafes": 286,
    "hotels": 350,
    "shopping": 226,
-   "diet": 26,
+   "diet": 27,
    "extra": 200,
-   "streets": 12,
-   "sights2": 81,
-   "landmarks": 73
+   "landmarks": 73,
+   "streets": 12
   },
   "voyage": {
-   "eat": 113,
-   "drink": 42,
-   "buy": 102,
-   "see": 133,
-   "sleep": 112,
-   "withCoords": 346,
+   "eat": 80,
+   "drink": 51,
+   "buy": 82,
+   "see": 132,
+   "sleep": 107,
+   "withCoords": 370,
    "districts": 8
   },
   "wiki": {
@@ -1229,7 +1229,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "ถนนเจริญกรุง (50)",
@@ -1239,11 +1246,23 @@
    "ถนนสีลม (14)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 129 40431ms",
-   "overpass-api.de ok 81 36546ms",
-   "overpass-api.de ok 73 31460ms",
-   "fame: 351 of 351"
+   "overpass-api.de ok 129 29346ms",
+   "overpass-api.de ok 81 43793ms",
+   "overpass-api.de ok 450 35412ms",
+   "overpass-api.de ok 286 39336ms",
+   "overpass-api.de ok 350 39463ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de ok 226 31287ms",
+   "overpass-api.de ok 27 44519ms",
+   "overpass-api.de ok 200 40666ms",
+   "overpass-api.de ok 73 32959ms",
+   "overpass-api.de ok 373 40779ms",
+   "streets: 373 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 340 of 340"
   ]
  },
  "tokyo": {
