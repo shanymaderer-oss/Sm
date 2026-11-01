@@ -2727,19 +2727,19 @@
   ]
  },
  "valencia": {
-  "at": "2026-10-23T23:13:41.069Z",
-  "seconds": 540,
+  "at": "2026-11-01T04:51:23.991Z",
+  "seconds": 432,
   "osm": {
    "sights": 64,
+   "sights2": 15,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 142,
    "shopping": 300,
    "diet": 18,
    "extra": 43,
-   "streets": 2,
-   "sights2": 15,
-   "landmarks": 32
+   "landmarks": 33,
+   "streets": 2
   },
   "voyage": {
    "eat": 42,
@@ -2759,19 +2759,32 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Carrera de la Fonteta de Sant Lluís (9)",
    "Carrer d'Alboraia (8)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 64 45096ms",
-   "overpass-api.de HTTP 502 368ms",
-   "overpass-api.de ok 15 48332ms",
-   "overpass-api.de ok 32 38312ms",
-   "fame: 193 of 193"
+   "overpass-api.de ok 64 38351ms",
+   "overpass-api.de ok 15 34942ms",
+   "overpass-api.de ok 450 34696ms",
+   "overpass-api.de ok 300 32439ms",
+   "overpass-api.de ok 142 39802ms",
+   "overpass-api.de ok 300 31926ms",
+   "overpass-api.de ok 18 34961ms",
+   "overpass-api.de ok 43 31434ms",
+   "overpass-api.de ok 33 30335ms",
+   "overpass-api.de ok 163 34360ms",
+   "streets: 163 shops",
+   "fame: 163 of 163"
   ]
  },
  "miami": {
