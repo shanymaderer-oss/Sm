@@ -16,14 +16,14 @@ async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch()
         ctx = await b.new_context(viewport={"width": 400, "height": 860}, service_workers="block")
-        pg = await ctx.new_page(); errs = []; asked = []; answer = {"j": {}}
+        pg = await ctx.new_page(); errs = []; asked = []; answer = {"j": {}}; shapes = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
         async def r(route):
             u = route.request.url
             if "/__ai/generate" in u:
                 body = json.loads(route.request.post_data or "{}"); txt = json.dumps(body, ensure_ascii=False)
                 if "trip planner inside" not in txt: return await route.fulfill(json={"candidates": [{"content": {"parts": [{"text": "{}"}]}}]})
-                asked.append(body["contents"][-1]["parts"][0]["text"])
+                asked.append(body["contents"][-1]["parts"][0]["text"]); shapes.append(body.get("generationConfig", {}).get("responseSchema"))
                 await asyncio.sleep(0.4)
                 return await route.fulfill(json={"candidates": [{"content": {"parts": [{"text": json.dumps(answer["j"], ensure_ascii=False)}]}}]})
             if u.startswith(URL): return await route.continue_()
@@ -56,10 +56,11 @@ async def main():
         check(await pg.locator("#agent .agentsay.busy").count() == 1, "while the guide thinks, it says so")
         await pg.wait_for_selector("#agentUndo", timeout=8000); await pg.wait_for_timeout(600)
         prm = asked[-1] if asked else ""
-        check("[s2.2]" in prm and "[p1]" in prm and "יום שני רגוע יותר" in prm, "the guide is told the stops and the city's places by id, and what they wrote")
+        check("s2.2 " in prm and "\np1 " in prm and "יום שני רגוע יותר" in prm and len(prm) <= 6000, f"the guide is told the stops and the city's places by id, and what they wrote, within the server's limit ({len(prm)} chars)")
+        check(bool(shapes and shapes[-1] and shapes[-1]["properties"].get("actions")), "the answer's shape is asked for")
         t1 = await trip(); n1 = names(t1)
         gone, moved = n0[1][1], n0[0][2]
-        m = re.search(r"\[p1\] ([^{(]+?) [{(]", prm); added = m.group(1).strip() if m else "?"
+        m = re.search(r"^p1 (.+?)(?: \([^)]*\))? \[", prm, re.M); added = m.group(1).strip() if m else "?"
         check(gone not in sum(n1, []), f"the stop is removed ({gone})")
         check(moved in n1[2] and moved not in n1[0], f"the stop moved to day 3 ({moved})")
         check(added in n1[1], f"the city's place is added to day 2 ({added})")

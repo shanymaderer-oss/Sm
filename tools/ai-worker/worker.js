@@ -65,8 +65,28 @@ function clean(b) {
     temperature: Math.min(1, Math.max(0, +g.temperature || 0.7)),
     maxOutputTokens: Math.min(1024, Math.max(64, +g.maxOutputTokens || 1024))
   };
-  if (g.responseMimeType === "application/json") out.generationConfig.responseMimeType = "application/json";
+  if (g.responseMimeType === "application/json") {
+    out.generationConfig.responseMimeType = "application/json";
+    const sc = schema(g.responseSchema, 0);
+    if (sc && JSON.stringify(sc).length <= 2500) out.generationConfig.responseSchema = sc;
+  }
   return out;
+}
+/* the shape of a JSON answer (the agent asks for {say, actions, chips}): only plain schema words are passed on */
+const TYPES = ["OBJECT", "ARRAY", "STRING", "INTEGER", "NUMBER", "BOOLEAN"];
+function schema(s, depth) {
+  if (!s || typeof s !== "object" || Array.isArray(s) || depth > 4 || !TYPES.includes(s.type)) return null;
+  const o = { type: s.type };
+  if (s.type === "OBJECT" && s.properties && typeof s.properties === "object") {
+    o.properties = {};
+    for (const [k, v] of Object.entries(s.properties).slice(0, 12)) { if (!/^[a-z_]{1,20}$/i.test(k)) continue; const c = schema(v, depth + 1); if (c) o.properties[k] = c; }
+    const keys = Object.keys(o.properties);
+    if (Array.isArray(s.required)) o.required = s.required.filter(k => keys.includes(k));
+    if (Array.isArray(s.propertyOrdering)) o.propertyOrdering = s.propertyOrdering.filter(k => keys.includes(k));
+  }
+  if (s.type === "ARRAY") { const c = schema(s.items, depth + 1); if (c) o.items = c; }
+  if (s.type === "STRING" && Array.isArray(s.enum)) o.enum = s.enum.filter(x => typeof x === "string" && x.length <= 20).slice(0, 10);
+  return o;
 }
 
 async function gemini(env, body) {

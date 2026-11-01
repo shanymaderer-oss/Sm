@@ -65,34 +65,35 @@
     t.days.forEach((d, i) => d.stops.forEach(s => { const k = U.km(s, p); if (k < bk) { bk = k; bi = i; } }));
     return bi;
   }
+  const SYSTEM = `You are the trip planner inside "מסע", a Hebrew travel app. The traveler looks at their trip and writes what to change. You get THE TRIP (stops by id), PLACES (the city's places not in the trip, by id) and what they wrote.
+Change the trip to do what they asked, as a great local guide would:
+- Use only the given ids: stops "s<day>.<n>", places "p<n>". Never invent a place. Do not list stops that stay as they are.
+- Each action: {"do":"remove","stop":"s1.3"} or {"do":"move","stop":"s1.3","day":2} or {"do":"add","place":"p4","day":1} or {"do":"replace","stop":"s2.1","place":"p7"}.
+- A lighter or calmer day, or less walking: remove one or two of its least important sights, or replace far ones with near ones.
+- Keep breakfast/lunch/dinner stops unless they ask about food; to change a meal, replace it with another eating place near it.
+- Keep stops marked "asked" unless they ask to remove them. Add places to the day they are near. At most 6 actions.
+- If they only ask a question, or nothing in the lists fits, give no actions and say so in "say" (for a place not in the lists, suggest searching it in the search bar).
+"say": Hebrew, warm, at most 2 short sentences: what you changed and why, naming the places.
+"chips": 3 short Hebrew suggestions (max 30 characters each) for their next change, specific to this trip and city now.
+Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","..."]}`;
+  const SHAPE = { type: "OBJECT", properties: {
+    say: { type: "STRING" },
+    actions: { type: "ARRAY", items: { type: "OBJECT", properties: { do: { type: "STRING", enum: ["remove", "move", "add", "replace"] }, stop: { type: "STRING" }, place: { type: "STRING" }, day: { type: "INTEGER" } }, required: ["do"] } },
+    chips: { type: "ARRAY", items: { type: "STRING" } } }, required: ["say", "actions", "chips"], propertyOrdering: ["say", "actions", "chips"] };
+  const short = n => String(n).slice(0, 48);
   function prompt(t, text, cands) {
-    const days = t.days.map((d, di) => `Day ${di + 1} "${d.label}" (walking about ${walk(d).toFixed(1)} km): ` + d.stops.map((s, i) =>
-      `[s${di + 1}.${i + 1}] ${nameOf(s)} {${s.meal ? "meal:" + s.meal : s.kind || s.cat}${s.time ? ", " + s.time : ""}${s.asked ? ", asked by traveler" : ""}}`).join(" → ")).join("\n");
-    const places = cands.map((p, i) => `[p${i + 1}] ${nameOf(p)} {${p.kind}, near day ${nearestDay(t, p) + 1}}`).join("\n");
-    return `You are the trip planner inside "מסע", a Hebrew travel app. The traveler is looking at their ${t.days.length}-day trip to ${t.cityEn || t.city} (${t.country || ""}), moving by ${t.opts?.move || "walk"}, and wrote what to change.
-
-THE TRIP NOW:
-${days}
-
-PLACES IN THE CITY NOT IN THE TRIP (you may add only these):
-${places}
-
-THE TRAVELER WROTE (in Hebrew): """${String(text).slice(0, 300)}"""
-
-Change the trip to do what they asked, as a great local guide would. Rules:
-- Use only the ids above: stops as "s<day>.<n>", places as "p<n>". Never invent a place.
-- Actions: {"do":"remove","stop":"s1.3"} | {"do":"move","stop":"s1.3","day":2} | {"do":"add","place":"p4","day":1} | {"do":"replace","stop":"s2.1","place":"p7"}.
-- A lighter or calmer day: remove one or two of its least important sights, or replace far ones with near ones. Less walking: keep stops close together.
-- Keep breakfast/lunch/dinner stops unless asked about food; to change a meal, replace it with another eating place near it.
-- Keep stops marked "asked by traveler" unless they ask to remove them.
-- Add places to the day they are near. At most 6 actions.
-- If they only ask a question, or nothing fits, use no actions and answer in "say".
-- "say": Hebrew, warm, at most 2 short sentences: what you changed and why (name the places).
-- "chips": 3 short Hebrew suggestions (max 30 characters each) for their next change, specific to this trip and city now (e.g. a place name or a day), not generic.
-Answer with ONE JSON object (never a bare array) with exactly these three keys, for example:
-{"say":"הורדתי את הפנתאון מהיום השני כדי שיהיה רגוע יותר, והוספתי את שוק קמפו דה פיורי ליד.","actions":[{"do":"remove","stop":"s2.3"},{"do":"add","place":"p5","day":2}],"chips":["שקיעה בג'יאניקולו ביום 3","ארוחת ערב בטרסטוורה","פחות הליכה ביום 1"]}`;
+    const days = t.days.map((d, di) => `Day ${di + 1} (${walk(d).toFixed(1)} km walking): ` + d.stops.map((s, i) =>
+      `s${di + 1}.${i + 1} ${short(nameOf(s))} [${s.meal ? "meal:" + s.meal : s.kind || s.cat}${s.asked ? ",asked" : ""}]`).join("; ")).join("\n");
+    const head = `City: ${t.cityEn || t.city}, ${t.country || ""}. ${t.days.length} days, moving by ${t.opts?.move || "walk"}.\nTHE TRIP:\n${days}\nTHE TRAVELER WROTE (Hebrew): """${String(text).slice(0, 300)}"""\nPLACES:\n`;
+    // the places fill what is left of the message (the guide server keeps 6000 characters of it)
+    let out = head, n = 0;
+    for (let i = 0; i < cands.length; i++) {
+      const line = `p${i + 1} ${short(nameOf(cands[i]))} [${cands[i].kind}, day ${nearestDay(t, cands[i]) + 1}]\n`;
+      if (out.length + line.length > 5800) break;
+      out += line; n++;
+    }
+    return out;
   }
-
   /* ---------- making the changes ---------- */
   function apply(t, actions, cands) {
     const stopAt = id => { const m = /^s(\d+)\.(\d+)$/.exec(String(id || "")); if (!m) return null; const d = t.days[+m[1] - 1], s = d?.stops[+m[2] - 1]; return s ? { d, s } : null; };
@@ -152,7 +153,7 @@ Answer with ONE JSON object (never a bare array) with exactly these three keys, 
     U.track("guide_ai", t.slug || t.cityEn, 2);
     try {
       const cands = candidates(t);
-      const j = await U.ai.json(prompt(t, text, cands));
+      const j = await U.ai.structured(SYSTEM, prompt(t, text, cands), SHAPE);
       if (U.S.trip !== t) { A.busy = false; return; }
       // some models answer with the list of changes only: take it as the changes
       const r = Array.isArray(j) ? { actions: j } : j || {};
@@ -178,5 +179,5 @@ Answer with ONE JSON object (never a bare array) with exactly these three keys, 
   }
 
   window.Masa = window.Masa || {};
-  window.Masa.agent = { install(u) { U = u; }, box, bind, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt };
+  window.Masa.agent = { install(u) { U = u; }, box, bind, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();

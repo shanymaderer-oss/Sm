@@ -101,6 +101,15 @@ Masa.ai = (() => {
     return parseJSON(text);
   }
 
+  /* a JSON answer in a fixed shape: the rules in the system text, the data in the message (the guide server keeps up to
+     8000 and 6000 characters of each) */
+  async function structured(system, user, schema) {
+    return parseJSON(await generate({
+      systemInstruction: { parts: [{ text: system }] },
+      contents: [{ role: "user", parts: [{ text: user }] }],
+      generationConfig: { responseMimeType: "application/json", responseSchema: schema, temperature: 0.4, maxOutputTokens: 900 }
+    }));
+  }
   /* turns: [{role:"user"|"assistant", content}] */
   async function chat(system, turns, search) {
     return generate({
@@ -177,5 +186,5 @@ Answer JSON only: {"want":[{"name":"","he":""}],"skip":[{"name":"","he":""}],"id
     return { want: fix(list(j?.want)), skip: fix(list(j?.skip)), ideas };
   }
   const hasSearch = () => !!SHARED;
-  return { enabled, shared, own, model, json, chat, events, translate, understand, hasSearch, lastSources: () => sources, saveKey, errText };
+  return { enabled, shared, own, model, json, structured, chat, events, translate, understand, hasSearch, lastSources: () => sources, saveKey, errText };
 })();

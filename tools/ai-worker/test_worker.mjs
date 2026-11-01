@@ -18,6 +18,9 @@ r = await call(good, { path: "/v1beta/models" }); ok(r.status === 404, "other pa
 sent = []; r = await call({ ...good, tools: [{ googleSearch: {} }], safetySettings: [], cachedContent: "x", generationConfig: { maxOutputTokens: 100000, temperature: 9 } }, { ip: "2" });
 const b = JSON.parse(sent[0].o.body);
 ok(!b.tools && !b.safetySettings && !b.cachedContent && b.generationConfig.maxOutputTokens === 1024 && b.generationConfig.temperature === 1, "extra fields are dropped and limits enforced");
+sent = []; r = await call({ ...good, generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { say: { type: "STRING" }, actions: { type: "ARRAY", items: { type: "OBJECT", properties: { do: { type: "STRING", enum: ["remove", "add"] }, "bad key!": { type: "STRING" } } } }, x: { type: "EVIL" } }, required: ["say", "x"], $ref: "http://a" } } }, { ip: "2s" });
+{ const sc = JSON.parse(sent[0].o.body).generationConfig.responseSchema;
+  ok(sc && sc.type === "OBJECT" && sc.properties.say.type === "STRING" && sc.properties.actions.items.properties.do.enum.length === 2 && !sc.properties.x && !sc.$ref && !sc.properties.actions.items.properties["bad key!"] && sc.required.join() === "say", "an answer shape is passed on, cleaned"); }
 r = await call("x".repeat(30000), { ip: "3" }); ok(r.status === 413, "a huge request is refused");
 r = await call("{bad", { ip: "4" }); ok(r.status === 400, "broken JSON is refused");
 r = await call({ contents: [{ role: "model", parts: [{ text: "hi" }] }] }, { ip: "5" }); ok(r.status === 400, "must end with the traveler's question");
