@@ -5743,6 +5743,206 @@
    "fame: 113 of 113"
   ]
  },
+ "helsinki": {
+  "at": "2026-11-01T05:05:15.663Z",
+  "seconds": 519,
+  "osm": {
+   "sights": 127,
+   "sights2": 88,
+   "restaurants": 450,
+   "cafes": 239,
+   "hotels": 83,
+   "shopping": 286,
+   "diet": 25,
+   "extra": 107,
+   "landmarks": 35,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 157,
+   "drink": 100,
+   "buy": 62,
+   "see": 102,
+   "sleep": 54,
+   "withCoords": 528,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 21,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Fredrikinkatu (47)",
+   "Hermannin rantatie (31)",
+   "Mannerheimintie (30)",
+   "Aleksanterinkatu (19)",
+   "Korkeavuorenkatu (21)"
+  ],
+  "log": [
+   "overpass-api.de ok 127 35362ms",
+   "overpass-api.de ok 88 43853ms",
+   "overpass-api.de ok 450 36072ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de ok 239 28568ms",
+   "overpass-api.de ok 83 30327ms",
+   "overpass-api.de ok 286 51547ms",
+   "overpass-api.de ok 25 51270ms",
+   "overpass-api.de ok 107 31644ms",
+   "overpass-api.de ok 35 38763ms",
+   "overpass-api.de ok 506 38825ms",
+   "streets: 506 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 264 of 264"
+  ]
+ },
+ "salzburg": {
+  "at": "2026-11-01T05:02:57.317Z",
+  "seconds": 502,
+  "osm": {
+   "sights": 62,
+   "sights2": 43,
+   "restaurants": 158,
+   "cafes": 142,
+   "hotels": 140,
+   "shopping": 97,
+   "diet": 14,
+   "extra": 40,
+   "landmarks": 27,
+   "streets": 6
+  },
+  "voyage": {
+   "eat": 24,
+   "drink": 14,
+   "buy": 1,
+   "see": 24,
+   "sleep": 35,
+   "withCoords": 62,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 5,
+   "en": 54
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Linzer Gasse (15)",
+   "Getreidegasse (9)",
+   "Dreifaltigkeitsgasse (8)",
+   "Schallmooser Hauptstraße (6)",
+   "Rainerstraße (6)"
+  ],
+  "log": [
+   "overpass-api.de ok 62 33943ms",
+   "overpass-api.de ok 43 26082ms",
+   "overpass-api.de ok 158 35827ms",
+   "overpass-api.de ok 142 33200ms",
+   "overpass-api.de ok 140 38192ms",
+   "overpass-api.de HTTP 502 403ms",
+   "overpass-api.de ok 97 36868ms",
+   "overpass-api.de ok 14 45174ms",
+   "overpass-api.de ok 40 39874ms",
+   "overpass-api.de HTTP 502 445ms",
+   "overpass-api.de ok 27 54071ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 165 40481ms",
+   "streets: 165 shops",
+   "fame: 124 of 124"
+  ]
+ },
+ "zurich": {
+  "at": "2026-11-01T05:00:35.313Z",
+  "seconds": 445,
+  "osm": {
+   "sights": 160,
+   "sights2": 105,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 138,
+   "shopping": 295,
+   "diet": 53,
+   "extra": 67,
+   "landmarks": 96,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 42,
+   "drink": 39,
+   "buy": 13,
+   "see": 20,
+   "sleep": 29,
+   "withCoords": 154,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 15,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Bahnhofstrasse (55)",
+   "Löwenstrasse (20)",
+   "Limmatquai (20)",
+   "Rennweg (20)",
+   "Viaduktstrasse (18)"
+  ],
+  "log": [
+   "overpass-api.de ok 160 34781ms",
+   "overpass-api.de ok 105 27351ms",
+   "overpass-api.de HTTP 502 402ms",
+   "overpass-api.de ok 450 24970ms",
+   "overpass-api.de ok 300 26701ms",
+   "overpass-api.de ok 138 42845ms",
+   "overpass-api.de ok 295 34595ms",
+   "overpass-api.de ok 53 44969ms",
+   "overpass-api.de ok 67 45422ms",
+   "overpass-api.de ok 96 30064ms",
+   "overpass-api.de ok 546 29589ms",
+   "streets: 546 shops",
+   "fame: 285 of 285"
+  ]
+ },
  "oslo": {
   "at": "2026-11-01T05:00:10.245Z",
   "seconds": 507,
@@ -5878,71 +6078,6 @@
    "fame: 269 of 269"
   ]
  },
- "zurich": {
-  "at": "2026-11-01T05:00:35.313Z",
-  "seconds": 445,
-  "osm": {
-   "sights": 160,
-   "sights2": 105,
-   "restaurants": 450,
-   "cafes": 300,
-   "hotels": 138,
-   "shopping": 295,
-   "diet": 53,
-   "extra": 67,
-   "landmarks": 96,
-   "streets": 14
-  },
-  "voyage": {
-   "eat": 42,
-   "drink": 39,
-   "buy": 13,
-   "see": 20,
-   "sleep": 29,
-   "withCoords": 154,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 15,
-   "en": 100
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "landmarks": 1,
-   "streets": 1
-  },
-  "streets": [
-   "Bahnhofstrasse (55)",
-   "Löwenstrasse (20)",
-   "Limmatquai (20)",
-   "Rennweg (20)",
-   "Viaduktstrasse (18)"
-  ],
-  "log": [
-   "overpass-api.de ok 160 34781ms",
-   "overpass-api.de ok 105 27351ms",
-   "overpass-api.de HTTP 502 402ms",
-   "overpass-api.de ok 450 24970ms",
-   "overpass-api.de ok 300 26701ms",
-   "overpass-api.de ok 138 42845ms",
-   "overpass-api.de ok 295 34595ms",
-   "overpass-api.de ok 53 44969ms",
-   "overpass-api.de ok 67 45422ms",
-   "overpass-api.de ok 96 30064ms",
-   "overpass-api.de ok 546 29589ms",
-   "streets: 546 shops",
-   "fame: 285 of 285"
-  ]
- },
  "hamburg": {
   "at": "2026-11-01T05:13:16.728Z",
   "seconds": 692,
@@ -6016,73 +6151,6 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "fame: 601 of 601"
-  ]
- },
- "salzburg": {
-  "at": "2026-11-01T05:02:57.317Z",
-  "seconds": 502,
-  "osm": {
-   "sights": 62,
-   "sights2": 43,
-   "restaurants": 158,
-   "cafes": 142,
-   "hotels": 140,
-   "shopping": 97,
-   "diet": 14,
-   "extra": 40,
-   "landmarks": 27,
-   "streets": 6
-  },
-  "voyage": {
-   "eat": 24,
-   "drink": 14,
-   "buy": 1,
-   "see": 24,
-   "sleep": 35,
-   "withCoords": 62,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 5,
-   "en": 54
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "landmarks": 1,
-   "streets": 1
-  },
-  "streets": [
-   "Linzer Gasse (15)",
-   "Getreidegasse (9)",
-   "Dreifaltigkeitsgasse (8)",
-   "Schallmooser Hauptstraße (6)",
-   "Rainerstraße (6)"
-  ],
-  "log": [
-   "overpass-api.de ok 62 33943ms",
-   "overpass-api.de ok 43 26082ms",
-   "overpass-api.de ok 158 35827ms",
-   "overpass-api.de ok 142 33200ms",
-   "overpass-api.de ok 140 38192ms",
-   "overpass-api.de HTTP 502 403ms",
-   "overpass-api.de ok 97 36868ms",
-   "overpass-api.de ok 14 45174ms",
-   "overpass-api.de ok 40 39874ms",
-   "overpass-api.de HTTP 502 445ms",
-   "overpass-api.de ok 27 54071ms",
-   "overpass-api.de HTTP 502 424ms",
-   "overpass-api.de ok 165 40481ms",
-   "streets: 165 shops",
-   "fame: 124 of 124"
   ]
  },
  "riga": {
@@ -6224,32 +6292,32 @@
    "fame: 146 of 146"
   ]
  },
- "helsinki": {
-  "at": "2026-11-01T05:05:15.663Z",
-  "seconds": 519,
+ "zagreb": {
+  "at": "2026-11-01T05:22:44.872Z",
+  "seconds": 541,
   "osm": {
-   "sights": 127,
-   "sights2": 88,
-   "restaurants": 450,
-   "cafes": 239,
-   "hotels": 83,
-   "shopping": 286,
-   "diet": 25,
-   "extra": 107,
-   "landmarks": 35,
+   "sights": 28,
+   "sights2": 58,
+   "restaurants": 169,
+   "cafes": 251,
+   "hotels": 143,
+   "shopping": 180,
+   "diet": 6,
+   "extra": 46,
+   "landmarks": 19,
    "streets": 14
   },
   "voyage": {
-   "eat": 157,
-   "drink": 100,
-   "buy": 62,
-   "see": 102,
-   "sleep": 54,
-   "withCoords": 528,
-   "districts": 8
+   "eat": 27,
+   "drink": 25,
+   "buy": 5,
+   "see": 40,
+   "sleep": 31,
+   "withCoords": 69,
+   "districts": 0
   },
   "wiki": {
-   "he": 21,
+   "he": 7,
    "en": 100
   },
   "streetsV": 2,
@@ -6267,29 +6335,28 @@
    "streets": 1
   },
   "streets": [
-   "Fredrikinkatu (47)",
-   "Hermannin rantatie (31)",
-   "Mannerheimintie (30)",
-   "Aleksanterinkatu (19)",
-   "Korkeavuorenkatu (21)"
+   "Ilica (44)",
+   "Vlaška ulica (29)",
+   "Jurišićeva ulica (27)",
+   "Trg Drage Iblera (16)",
+   "Masarykova ulica (16)"
   ],
   "log": [
-   "overpass-api.de ok 127 35362ms",
-   "overpass-api.de ok 88 43853ms",
-   "overpass-api.de ok 450 36072ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 239 28568ms",
-   "overpass-api.de ok 83 30327ms",
-   "overpass-api.de ok 286 51547ms",
-   "overpass-api.de ok 25 51270ms",
-   "overpass-api.de ok 107 31644ms",
-   "overpass-api.de ok 35 38763ms",
-   "overpass-api.de ok 506 38825ms",
-   "streets: 506 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 264 of 264"
+   "overpass-api.de ok 28 37894ms",
+   "overpass-api.de ok 58 26380ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de HTTP 502 347ms",
+   "overpass-api.de ok 169 54574ms",
+   "overpass-api.de ok 251 29323ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 143 34710ms",
+   "overpass-api.de ok 180 58849ms",
+   "overpass-api.de ok 6 32182ms",
+   "overpass-api.de ok 46 47326ms",
+   "overpass-api.de ok 19 56327ms",
+   "overpass-api.de ok 417 34874ms",
+   "streets: 417 shops",
+   "fame: 105 of 105"
   ]
  },
  "vilnius": {
@@ -6423,6 +6490,68 @@
    "overpass-api.de ok 326 53441ms",
    "streets: 326 shops",
    "fame: 252 of 252"
+  ]
+ },
+ "heraklion": {
+  "at": "2026-11-01T05:30:40.810Z",
+  "seconds": 445,
+  "osm": {
+   "sights": 46,
+   "sights2": 10,
+   "restaurants": 100,
+   "cafes": 98,
+   "hotels": 48,
+   "shopping": 22,
+   "diet": 3,
+   "extra": 5,
+   "landmarks": 2,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 14,
+   "drink": 0,
+   "buy": 0,
+   "see": 16,
+   "sleep": 8,
+   "withCoords": 31,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 3,
+   "en": 26
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "25ης Αυγούστου (30)",
+   "Πλατεία Ελευθερίου Βενιζέλου (13)"
+  ],
+  "log": [
+   "overpass-api.de ok 46 44948ms",
+   "overpass-api.de ok 10 34419ms",
+   "overpass-api.de ok 100 24482ms",
+   "overpass-api.de ok 98 34555ms",
+   "overpass-api.de ok 48 35193ms",
+   "overpass-api.de ok 22 34063ms",
+   "overpass-api.de ok 3 36972ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de ok 5 34645ms",
+   "overpass-api.de ok 2 37343ms",
+   "overpass-api.de ok 71 34723ms",
+   "streets: 71 shops",
+   "fame: 21 of 21"
   ]
  },
  "singapore": {
@@ -6621,73 +6750,6 @@
    "overpass-api.de ok 271 36730ms",
    "streets: 271 shops",
    "fame: 182 of 182"
-  ]
- },
- "zagreb": {
-  "at": "2026-11-01T05:22:44.872Z",
-  "seconds": 541,
-  "osm": {
-   "sights": 28,
-   "sights2": 58,
-   "restaurants": 169,
-   "cafes": 251,
-   "hotels": 143,
-   "shopping": 180,
-   "diet": 6,
-   "extra": 46,
-   "landmarks": 19,
-   "streets": 14
-  },
-  "voyage": {
-   "eat": 27,
-   "drink": 25,
-   "buy": 5,
-   "see": 40,
-   "sleep": 31,
-   "withCoords": 69,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 7,
-   "en": 100
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "landmarks": 1,
-   "streets": 1
-  },
-  "streets": [
-   "Ilica (44)",
-   "Vlaška ulica (29)",
-   "Jurišićeva ulica (27)",
-   "Trg Drage Iblera (16)",
-   "Masarykova ulica (16)"
-  ],
-  "log": [
-   "overpass-api.de ok 28 37894ms",
-   "overpass-api.de ok 58 26380ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de HTTP 502 347ms",
-   "overpass-api.de ok 169 54574ms",
-   "overpass-api.de ok 251 29323ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 143 34710ms",
-   "overpass-api.de ok 180 58849ms",
-   "overpass-api.de ok 6 32182ms",
-   "overpass-api.de ok 46 47326ms",
-   "overpass-api.de ok 19 56327ms",
-   "overpass-api.de ok 417 34874ms",
-   "streets: 417 shops",
-   "fame: 105 of 105"
   ]
  }
 }
