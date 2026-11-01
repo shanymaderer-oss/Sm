@@ -2994,8 +2994,8 @@
   ]
  },
  "san-francisco": {
-  "at": "2026-10-31T11:22:17.407Z",
-  "seconds": 501,
+  "at": "2026-11-01T04:59:21.216Z",
+  "seconds": 573,
   "osm": {
    "sights": 96,
    "sights2": 106,
@@ -3009,12 +3009,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 93,
-   "drink": 58,
-   "buy": 41,
-   "see": 154,
-   "sleep": 94,
-   "withCoords": 467,
+   "eat": 94,
+   "drink": 62,
+   "buy": 34,
+   "see": 156,
+   "sleep": 79,
+   "withCoords": 460,
    "districts": 8
   },
   "wiki": {
@@ -3043,17 +3043,21 @@
    "Post Street (17)"
   ],
   "log": [
-   "overpass-api.de ok 96 38845ms",
-   "overpass-api.de HTTP 502 416ms",
-   "overpass-api.de ok 106 32641ms",
-   "overpass-api.de ok 450 37719ms",
-   "overpass-api.de ok 300 49800ms",
-   "overpass-api.de ok 327 21736ms",
-   "overpass-api.de ok 300 43070ms",
-   "overpass-api.de ok 27 31689ms",
-   "overpass-api.de ok 83 20296ms",
-   "overpass-api.de ok 8 41991ms",
-   "overpass-api.de ok 409 31646ms",
+   "overpass-api.de ok 96 37886ms",
+   "overpass-api.de ok 106 43392ms",
+   "overpass-api.de HTTP 502 666ms",
+   "overpass-api.de ok 450 44051ms",
+   "overpass-api.de ok 300 42076ms",
+   "overpass-api.de ok 327 34845ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de ok 300 40560ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 27 28823ms",
+   "overpass-api.de ok 83 35858ms",
+   "overpass-api.de HTTP 502 687ms",
+   "overpass-api.de ok 8 34613ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de ok 409 36859ms",
    "streets: 409 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
