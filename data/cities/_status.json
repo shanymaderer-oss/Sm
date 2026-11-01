@@ -2305,19 +2305,19 @@
   ]
  },
  "naples": {
-  "at": "2026-10-23T22:30:45.619Z",
-  "seconds": 520,
+  "at": "2026-11-01T04:44:07.585Z",
+  "seconds": 486,
   "osm": {
-   "sights": 220,
-   "restaurants": 342,
+   "sights": 219,
+   "sights2": 41,
+   "restaurants": 343,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 182,
+   "shopping": 181,
    "diet": 5,
    "extra": 200,
-   "streets": 7,
-   "sights2": 41,
-   "landmarks": 34
+   "landmarks": 34,
+   "streets": 7
   },
   "voyage": {
    "eat": 23,
@@ -2337,7 +2337,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Via Toledo (76)",
@@ -2347,11 +2354,22 @@
    "Via Luca Giordano (8)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 220 32816ms",
-   "overpass-api.de ok 41 38475ms",
-   "overpass-api.de ok 34 37893ms",
-   "fame: 430 of 430"
+   "overpass-api.de ok 219 30877ms",
+   "overpass-api.de HTTP 502 446ms",
+   "overpass-api.de HTTP 502 366ms",
+   "overpass-api.de ok 41 29025ms",
+   "overpass-api.de ok 343 35389ms",
+   "overpass-api.de ok 300 33686ms",
+   "overpass-api.de ok 350 40223ms",
+   "overpass-api.de ok 181 24670ms",
+   "overpass-api.de ok 5 44084ms",
+   "overpass-api.de ok 200 32683ms",
+   "overpass-api.de ok 34 37618ms",
+   "overpass-api.de ok 265 33413ms",
+   "streets: 265 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 413 of 413"
   ]
  },
  "belgrade": {
