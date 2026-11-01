@@ -1395,19 +1395,19 @@
   ]
  },
  "tbilisi": {
-  "at": "2026-10-23T21:12:45.898Z",
-  "seconds": 609,
+  "at": "2026-11-01T04:21:25.188Z",
+  "seconds": 558,
   "osm": {
    "sights": 128,
-   "restaurants": 272,
+   "sights2": 67,
+   "restaurants": 274,
    "cafes": 300,
    "hotels": 350,
    "shopping": 249,
    "diet": 19,
    "extra": 58,
-   "streets": 1,
-   "sights2": 67,
-   "landmarks": 31
+   "landmarks": 31,
+   "streets": 1
   },
   "voyage": {
    "eat": 33,
@@ -1419,7 +1419,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 48,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -1427,18 +1427,37 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "David Aghmashenebeli Avenue (6)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 128 32539ms",
-   "overpass-api.de HTTP 502 296ms",
-   "overpass-api.de ok 67 43519ms",
-   "overpass-api.de ok 31 31585ms",
-   "fame: 201 of 201"
+   "overpass-api.de HTTP 502 365ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 128 29293ms",
+   "overpass-api.de ok 67 53395ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de ok 274 29995ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 300 38875ms",
+   "overpass-api.de HTTP 502 363ms",
+   "overpass-api.de ok 350 42601ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 249 43689ms",
+   "overpass-api.de ok 19 53150ms",
+   "overpass-api.de ok 58 37559ms",
+   "overpass-api.de ok 31 35567ms",
+   "overpass-api.de ok 96 34024ms",
+   "streets: 96 shops",
+   "fame: 186 of 186"
   ]
  },
  "larnaca": {
