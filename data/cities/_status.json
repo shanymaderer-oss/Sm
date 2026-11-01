@@ -514,19 +514,19 @@
   ]
  },
  "berlin": {
-  "at": "2026-10-23T17:34:13.596Z",
-  "seconds": 727,
+  "at": "2026-11-01T04:15:06.835Z",
+  "seconds": 1324,
   "osm": {
    "sights": 900,
+   "sights2": 0,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 300,
-   "diet": 200,
+   "shopping": 0,
+   "diet": 212,
    "extra": 200,
-   "streets": 14,
-   "sights2": 245,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 14
   },
   "voyage": {
    "eat": 132,
@@ -534,7 +534,7 @@
    "buy": 65,
    "see": 134,
    "sleep": 70,
-   "withCoords": 509,
+   "withCoords": 510,
    "districts": 8
   },
   "wiki": {
@@ -546,7 +546,13 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Rosenthaler Straße (56)",
@@ -556,10 +562,30 @@
    "Friedrichstraße (21)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 900 31031ms",
-   "overpass-api.de ok 245 17615ms",
-   "overpass-api.de ok 150 49374ms",
+   "overpass-api.de ok 900 43450ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass.private.coffee timeout 60003ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 463ms",
+   "overpass-api.de ok 450 36442ms",
+   "overpass-api.de ok 300 41754ms",
+   "overpass-api.de ok 350 44282ms",
+   "overpass-api.de HTTP 502 512ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de HTTP 502 511ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 212 51323ms",
+   "overpass-api.de ok 200 47669ms",
+   "overpass-api.de timeout 60001ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de ok 150 35427ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de HTTP 504 55378ms",
+   "overpass-api.de ok 1301 29784ms",
+   "streets: 1301 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -567,7 +593,11 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 1200 of 1200"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 1150 of 1200"
   ]
  },
  "amsterdam": {
