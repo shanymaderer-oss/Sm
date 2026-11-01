@@ -3113,8 +3113,8 @@
   ]
  },
  "toronto": {
-  "at": "2026-10-31T11:45:19.373Z",
-  "seconds": 410,
+  "at": "2026-11-01T04:50:13.047Z",
+  "seconds": 512,
   "osm": {
    "sights": 77,
    "sights2": 45,
@@ -3128,12 +3128,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 101,
-   "drink": 23,
-   "buy": 53,
-   "see": 154,
-   "sleep": 28,
-   "withCoords": 374,
+   "eat": 102,
+   "drink": 26,
+   "buy": 49,
+   "see": 140,
+   "sleep": 22,
+   "withCoords": 365,
    "districts": 8
   },
   "wiki": {
@@ -3162,17 +3162,21 @@
    "College Street (17)"
   ],
   "log": [
-   "overpass-api.de ok 77 27426ms",
-   "overpass-api.de ok 45 32448ms",
-   "overpass-api.de ok 450 44722ms",
-   "overpass-api.de ok 300 26342ms",
-   "overpass-api.de ok 92 28792ms",
-   "overpass-api.de ok 300 23965ms",
-   "overpass-api.de ok 42 35398ms",
-   "overpass-api.de ok 120 27967ms",
-   "overpass-api.de ok 16 32223ms",
-   "overpass-api.de ok 620 24515ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 77 28614ms",
+   "overpass-api.de ok 45 38036ms",
+   "overpass-api.de ok 450 40021ms",
+   "overpass-api.de ok 300 27544ms",
+   "overpass-api.de ok 92 40032ms",
+   "overpass-api.de ok 300 36795ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 42 41198ms",
+   "overpass-api.de ok 120 26577ms",
+   "overpass-api.de ok 16 36964ms",
+   "overpass-api.de ok 620 34388ms",
    "streets: 620 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "fame: 234 of 234"
