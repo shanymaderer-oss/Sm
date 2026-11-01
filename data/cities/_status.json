@@ -842,19 +842,19 @@
   ]
  },
  "milan": {
-  "at": "2026-10-23T18:21:32.968Z",
-  "seconds": 630,
+  "at": "2026-11-01T04:11:43.571Z",
+  "seconds": 675,
   "osm": {
    "sights": 364,
+   "sights2": 62,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 29,
+   "diet": 36,
    "extra": 156,
-   "streets": 14,
-   "sights2": 62,
-   "landmarks": 84
+   "landmarks": 84,
+   "streets": 14
   },
   "voyage": {
    "eat": 43,
@@ -866,7 +866,7 @@
    "districts": 5
   },
   "wiki": {
-   "he": 38,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -874,7 +874,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Via Monte Napoleone (58)",
@@ -884,14 +891,26 @@
    "Via Dante (31)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 364 42389ms",
-   "overpass-api.de ok 62 26865ms",
-   "overpass-api.de ok 84 29379ms",
+   "overpass-api.de timeout 60002ms",
+   "overpass-api.de ok 364 49900ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de ok 62 37745ms",
+   "overpass-api.de ok 450 32236ms",
+   "overpass-api.de ok 300 42603ms",
+   "overpass-api.de ok 350 36942ms",
+   "overpass-api.de ok 300 47034ms",
+   "overpass-api.de ok 36 37477ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de ok 156 40733ms",
+   "overpass-api.de ok 84 35003ms",
+   "overpass-api.de ok 1492 45855ms",
+   "streets: 1492 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 627 of 627"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 540 of 590"
   ]
  },
  "florence": {
