@@ -5748,6 +5748,74 @@
    "fame: 113 of 113"
   ]
  },
+ "helsinki": {
+  "at": "2026-11-01T05:05:15.663Z",
+  "seconds": 519,
+  "osm": {
+   "sights": 127,
+   "sights2": 88,
+   "restaurants": 450,
+   "cafes": 239,
+   "hotels": 83,
+   "shopping": 286,
+   "diet": 25,
+   "extra": 107,
+   "landmarks": 35,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 157,
+   "drink": 100,
+   "buy": 62,
+   "see": 102,
+   "sleep": 54,
+   "withCoords": 528,
+   "districts": 8
+  },
+  "wiki": {
+   "he": 21,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Fredrikinkatu (47)",
+   "Hermannin rantatie (31)",
+   "Mannerheimintie (30)",
+   "Aleksanterinkatu (19)",
+   "Korkeavuorenkatu (21)"
+  ],
+  "log": [
+   "overpass-api.de ok 127 35362ms",
+   "overpass-api.de ok 88 43853ms",
+   "overpass-api.de ok 450 36072ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de ok 239 28568ms",
+   "overpass-api.de ok 83 30327ms",
+   "overpass-api.de ok 286 51547ms",
+   "overpass-api.de ok 25 51270ms",
+   "overpass-api.de ok 107 31644ms",
+   "overpass-api.de ok 35 38763ms",
+   "overpass-api.de ok 506 38825ms",
+   "streets: 506 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 264 of 264"
+  ]
+ },
  "salzburg": {
   "at": "2026-11-01T05:02:57.317Z",
   "seconds": 502,
