@@ -75,6 +75,13 @@ async def main():
         await pg.click("#agent [data-ach] >> nth=0"); await pg.wait_for_timeout(1200)
         check(len(asked) == n_ask + 1 and "פחות הליכה ביום 3" in asked[-1], "tapping a suggestion sends it")
         check(await pg.locator("#agentUndo").count() == 0 and names(await trip()) == n1, "no change: nothing to undo, the trip stays")
+        # a model that answers with the list of changes only: the changes are made, and said in plain words
+        answer["j"] = [{"do": "remove", "stop": "s3.2"}]
+        gone3 = n1[2][1]
+        await pg.fill("#agentIn", "פחות ביום 3"); await pg.press("#agentIn", "Enter"); await pg.wait_for_selector("#agentUndo", timeout=8000); await pg.wait_for_timeout(400)
+        say = await pg.inner_text("#agent .agentsay")
+        check(gone3 not in sum(names(await trip()), []) and "הורדתי" in say and gone3 in say, f"a bare list of changes works and is described ({say[:80]!r})")
+        await pg.click("#agentUndo"); await pg.wait_for_timeout(500)
         # undo (ask again with a change, then undo)
         answer["j"] = {"say": "הורדתי.", "actions": [{"do": "remove", "stop": "s1.2"}], "chips": ["א", "ב", "ג"]}
         await pg.fill("#agentIn", "תוריד משהו"); await pg.press("#agentIn", "Enter"); await pg.wait_for_selector("#agentUndo", timeout=8000); await pg.wait_for_timeout(400)

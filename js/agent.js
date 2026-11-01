@@ -42,9 +42,9 @@
   function bind(t) {
     const el = U.$("agent"); if (!el) return;
     const chips = A.chips || startChips(t);
-    el.querySelectorAll("[data-ach]").forEach(b => b.onclick = () => ask(t, chips[+b.dataset.ach]));
-    U.$("agentForm").onsubmit = e => { e.preventDefault(); const v = U.$("agentIn").value.trim(); if (v) ask(t, v); };
-    U.$("agentUndo") && (U.$("agentUndo").onclick = () => undo(t));
+    el.querySelectorAll("[data-ach]").forEach(b => b.onclick = () => ask(U.S.trip, chips[+b.dataset.ach]));
+    U.$("agentForm").onsubmit = e => { e.preventDefault(); const v = U.$("agentIn").value.trim(); if (v) ask(U.S.trip, v); };
+    U.$("agentUndo") && (U.$("agentUndo").onclick = () => undo(U.S.trip));
     U.bindGuideActs(el);
   }
 
@@ -89,7 +89,8 @@ Change the trip to do what they asked, as a great local guide would. Rules:
 - If they only ask a question, or nothing fits, use no actions and answer in "say".
 - "say": Hebrew, warm, at most 2 short sentences: what you changed and why (name the places).
 - "chips": 3 short Hebrew suggestions (max 30 characters each) for their next change, specific to this trip and city now (e.g. a place name or a day), not generic.
-Answer JSON only: {"say":"","actions":[],"chips":["","",""]}`;
+Answer with ONE JSON object (never a bare array) with exactly these three keys, for example:
+{"say":"הורדתי את הפנתאון מהיום השני כדי שיהיה רגוע יותר, והוספתי את שוק קמפו דה פיורי ליד.","actions":[{"do":"remove","stop":"s2.3"},{"do":"add","place":"p5","day":2}],"chips":["שקיעה בג'יאניקולו ביום 3","ארוחת ערב בטרסטוורה","פחות הליכה ביום 1"]}`;
   }
 
   /* ---------- making the changes ---------- */
@@ -104,20 +105,20 @@ Answer JSON only: {"say":"","actions":[],"chips":["","",""]}`;
       const k = a?.do;
       if (k === "remove" && st && st.s.meal !== "hotel") {
         const i = st.d.stops.indexOf(st.s); if (i < 0) continue;
-        st.d.stops.splice(i, 1); touched.add(st.d); done.push(`-${st.s.name}`);
+        st.d.stops.splice(i, 1); touched.add(st.d); done.push({ c: "-", n: st.s.name });
       } else if (k === "move" && st && to && to !== st.d && st.s.meal !== "hotel") {
         const i = st.d.stops.indexOf(st.s); if (i < 0) continue;
         st.d.stops.splice(i, 1);
         if (st.s.meal && to.stops.some(x => x.meal === st.s.meal)) { delete st.s.meal; delete st.s.mealHe; }
-        to.stops.push(st.s); to.manualOrder = false; touched.add(st.d); touched.add(to); done.push(`>${st.s.name}`);
+        to.stops.push(st.s); to.manualOrder = false; touched.add(st.d); touched.add(to); done.push({ c: ">", n: st.s.name });
       } else if (k === "add" && p && !used.has(p.name)) {
         const d = to || t.days[nearestDay(t, p)];
         if (d.stops.some(s => s.name === p.name)) continue;
         const s = Object.assign(U.stopFrom({ ...p, why: p.vtext || U.planner.KIND[p.kind]?.he || "" }), { osm: p.id, kind: p.kind, kindHe: U.planner.KIND[p.kind]?.he, cuisine: p.cuisine, priceClass: p.priceClass, signals: p.signals || [], hours: p.hours, phone: p.phone, address: p.address, website: p.website, _he: p._he || null });
-        d.stops.push(s); d.manualOrder = false; used.add(p.name); touched.add(d); done.push(`+${p.name}`);
+        d.stops.push(s); d.manualOrder = false; used.add(p.name); touched.add(d); done.push({ c: "+", n: p.name });
       } else if (k === "replace" && st && p && !used.has(p.name) && st.s.meal !== "hotel") {
         const di = t.days.indexOf(st.d), i = st.d.stops.indexOf(st.s); if (i < 0) continue;
-        U.replaceAt(di, i, p); used.add(p.name); touched.add(st.d); done.push(`~${p.name}`);
+        U.replaceAt(di, i, p); used.add(p.name); touched.add(st.d); done.push({ c: "~", n: p.name });
       }
     }
     for (const d of touched) {
@@ -127,6 +128,12 @@ Answer JSON only: {"say":"","actions":[],"chips":["","",""]}`;
     return { touched: [...touched], done };
   }
 
+  /* what changed, in plain words, when the guide did not say it */
+  function describe(done) {
+    const by = c => done.filter(x => x.c === c).map(x => x.n);
+    const parts = [[by("-"), "הורדתי"], [by("+"), "הוספתי"], [by(">"), "העברתי ליום אחר"], [by("~"), "החלפתי ל"]].filter(([l]) => l.length).map(([l, w]) => `${w}${w.endsWith("ל") ? "" : ": "}${l.join(", ")}`);
+    return parts.join(". ") + ".";
+  }
   function finish(t, touched) {
     U.saveEdit(); U.renderMap(); refresh();
     for (const d of touched) U.planner.computeRoute(d).then(() => { if (U.S.trip === t) { U.renderMap(); refresh(); } }).catch(() => {});
@@ -146,11 +153,13 @@ Answer JSON only: {"say":"","actions":[],"chips":["","",""]}`;
     try {
       const cands = candidates(t);
       const j = await U.ai.json(prompt(t, text, cands));
-      if (U.S.trip !== t) return;
-      const { touched, done } = apply(t, j?.actions, cands);
-      const chips = (Array.isArray(j?.chips) ? j.chips : []).map(c => String(c || "").replace(/<[^>]*>/g, "").replace(/[<>"`]/g, "").trim().slice(0, 34)).filter(Boolean).slice(0, 3);
-      const say = String(j?.say || "").replace(/[<>`]/g, "").trim().slice(0, 400);
-      Object.assign(A, { say: say || (done.length ? "עדכנתי את המסלול." : "לא מצאתי מה לשנות. נסו לכתוב את זה אחרת."), chips: chips.length ? chips : A.chips, undo: done.length ? before : null });
+      if (U.S.trip !== t) { A.busy = false; return; }
+      // some models answer with the list of changes only: take it as the changes
+      const r = Array.isArray(j) ? { actions: j } : j || {};
+      const { touched, done } = apply(t, r.actions, cands);
+      const chips = (Array.isArray(r.chips) ? r.chips : []).map(c => String(c || "").replace(/<[^>]*>/g, "").replace(/[<>"`]/g, "").trim().slice(0, 34)).filter(Boolean).slice(0, 3);
+      const say = String(r.say || "").replace(/[<>`]/g, "").trim().slice(0, 400);
+      Object.assign(A, { say: say || (done.length ? describe(done) : "לא מצאתי מה לשנות. נסו לכתוב את זה אחרת, או לשאול על מקום מסוים."), chips: chips.length ? chips : startChips(t).filter(c => c !== text), undo: done.length ? before : null });
       A.busy = false;
       if (done.length) { finish(t, touched); U.toast("המסלול עודכן"); } else refresh();
     } catch (e) {
