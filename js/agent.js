@@ -68,13 +68,14 @@
   const SYSTEM = `You are the trip planner inside "מסע", a Hebrew travel app. The traveler looks at their trip and writes what to change. You get THE TRIP (stops by id), PLACES (the city's places not in the trip, by id) and what they wrote.
 Change the trip to do what they asked, as a great local guide would:
 - Use only the given ids: stops "s<day>.<n>", places "p<n>". Never invent a place. Do not list stops that stay as they are.
-- Each action: {"do":"remove","stop":"s1.3"} or {"do":"move","stop":"s1.3","day":2} or {"do":"add","place":"p4","day":1} or {"do":"replace","stop":"s2.1","place":"p7"}.
+- Each action: {"do":"remove","stop":"s1.3"} or {"do":"move","stop":"s1.3","day":2} or {"do":"add","place":"p4","day":1} or {"do":"replace","stop":"s2.1","place":"p7"}. "move" and "add" always need "day" (a day number).
+- "say" must match the actions exactly: never say you changed something you did not put in "actions". A place already in the trip cannot be added.
 - A lighter or calmer day, or less walking: remove one or two of its least important sights, or replace far ones with near ones.
 - Keep breakfast/lunch/dinner stops unless they ask about food; to change a meal, replace it with another eating place near it.
 - Keep stops marked "asked" unless they ask to remove them. Add places to the day they are near. At most 6 actions.
 - If they only ask a question, or nothing in the lists fits, give no actions and say so in "say" (for a place not in the lists, suggest searching it in the search bar).
-"say": Hebrew, warm, at most 2 short sentences: what you changed and why, naming the places.
-"chips": 3 short Hebrew suggestions (max 30 characters each) for their next change, specific to this trip and city now.
+"say": Hebrew, warm, at most 2 short sentences, speaking to them in plural (אתם, e.g. "שתיהנו", "ביקשתם"): what you changed and why, naming the places.
+"chips": 3 short Hebrew suggestions (max 30 characters each) for their next change, specific to this trip and city now, each starting with an infinitive verb (e.g. "להוסיף גלידה בג'וליטי", "לקצר את יום 1").
 Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","..."]}`;
   const SHAPE = { type: "OBJECT", properties: {
     say: { type: "STRING" },
@@ -159,7 +160,9 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       const r = Array.isArray(j) ? { actions: j } : j || {};
       const { touched, done } = apply(t, r.actions, cands);
       const chips = (Array.isArray(r.chips) ? r.chips : []).map(c => String(c || "").replace(/<[^>]*>/g, "").replace(/[<>"`]/g, "").trim().slice(0, 34)).filter(Boolean).slice(0, 3);
-      const say = String(r.say || "").replace(/[<>`]/g, "").trim().slice(0, 400);
+      let say = String(r.say || "").replace(/[<>`]/g, "").trim().slice(0, 400);
+      // it said it changed something but nothing it gave could be done: say that honestly
+      if (!done.length && /(הוספ|הסר|הורד|העבר|החלפ|שינית|עדכנ)/.test(say)) say = "";
       Object.assign(A, { say: say || (done.length ? describe(done) : "לא מצאתי מה לשנות. נסו לכתוב את זה אחרת, או לשאול על מקום מסוים."), chips: chips.length ? chips : startChips(t).filter(c => c !== text), undo: done.length ? before : null });
       A.busy = false;
       if (done.length) { finish(t, touched); U.toast("המסלול עודכן"); } else refresh();

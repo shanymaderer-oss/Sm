@@ -71,10 +71,16 @@ async def main():
         check(chips[:2] == ["פחות הליכה ביום 3", "שקיעה בג'יאניקולו"] and not any("<" in c for c in chips), f"new suggestions from the guide, cleaned ({chips})")
         check(all(s.get("time") for d in t1["days"] for s in d["stops"]), "the times are set again")
         # a suggestion tap asks again
+        # it says it added something, but gives nothing that can be done: it is not believed
+        answer["j"] = {"say": "הוספתי את השוק ליום 3.", "actions": [{"do": "add", "place": "p999"}], "chips": []}
+        await pg.fill("#agentIn", "תוסיף שוק"); await pg.press("#agentIn", "Enter"); await pg.wait_for_timeout(1500)
+        say = await pg.inner_text("#agent .agentsay")
+        check("הוספתי" not in say and "לא מצאתי" in say and names(await trip()) == n1, f"a change it claims but did not make is not reported as done ({say[:60]!r})")
         answer["j"] = {"say": "אין מה לשנות, היום כבר קליל.", "actions": [], "chips": []}
         n_ask = len(asked)
+        c0 = await pg.locator("#agent [data-ach] >> nth=0").inner_text()
         await pg.click("#agent [data-ach] >> nth=0"); await pg.wait_for_timeout(1200)
-        check(len(asked) == n_ask + 1 and "פחות הליכה ביום 3" in asked[-1], "tapping a suggestion sends it")
+        check(len(asked) == n_ask + 1 and c0 in asked[-1], f"tapping a suggestion sends it ({c0})")
         check(await pg.locator("#agentUndo").count() == 0 and names(await trip()) == n1, "no change: nothing to undo, the trip stays")
         # a model that answers with the list of changes only: the changes are made, and said in plain words
         answer["j"] = [{"do": "remove", "stop": "s3.2"}]
