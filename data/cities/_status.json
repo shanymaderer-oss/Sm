@@ -2141,19 +2141,19 @@
   ]
  },
  "sofia": {
-  "at": "2026-10-23T22:12:48.306Z",
-  "seconds": 490,
+  "at": "2026-11-01T04:45:18.784Z",
+  "seconds": 748,
   "osm": {
-   "sights": 334,
+   "sights": 336,
+   "sights2": 110,
    "restaurants": 323,
    "cafes": 300,
    "hotels": 146,
    "shopping": 247,
-   "diet": 11,
+   "diet": 0,
    "extra": 31,
-   "streets": 1,
-   "sights2": 110,
-   "landmarks": 44
+   "landmarks": 45,
+   "streets": 1
   },
   "voyage": {
    "eat": 12,
@@ -2161,7 +2161,7 @@
    "buy": 12,
    "see": 55,
    "sleep": 18,
-   "withCoords": 91,
+   "withCoords": 94,
    "districts": 0
   },
   "wiki": {
@@ -2173,17 +2173,40 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Георги С. Раковски (7)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 334 33404ms",
-   "overpass-api.de ok 110 32208ms",
-   "overpass-api.de ok 44 37090ms",
-   "fame: 435 of 435"
+   "overpass-api.de ok 336 33120ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 110 45746ms",
+   "overpass-api.de ok 323 33777ms",
+   "overpass-api.de ok 300 29104ms",
+   "overpass-api.de ok 146 28548ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass-api.de ok 247 33151ms",
+   "overpass-api.de HTTP 502 336ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de HTTP 502 348ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 31 30981ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 45 33471ms",
+   "overpass-api.de ok 95 49854ms",
+   "streets: 95 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 416 of 416"
   ]
  },
  "bucharest": {
