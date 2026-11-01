@@ -1266,27 +1266,27 @@
   ]
  },
  "tokyo": {
-  "at": "2026-10-23T18:55:59.638Z",
-  "seconds": 866,
+  "at": "2026-11-01T04:24:26.129Z",
+  "seconds": 598,
   "osm": {
    "sights": 155,
+   "sights2": 148,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 47,
+   "diet": 49,
    "extra": 200,
-   "streets": 0,
-   "sights2": 148,
-   "landmarks": 66
+   "landmarks": 66,
+   "streets": 0
   },
   "voyage": {
-   "eat": 70,
-   "drink": 41,
-   "buy": 35,
-   "see": 58,
-   "sleep": 50,
-   "withCoords": 149,
+   "eat": 73,
+   "drink": 54,
+   "buy": 42,
+   "see": 62,
+   "sleep": 48,
+   "withCoords": 158,
    "districts": 8
   },
   "wiki": {
@@ -1298,13 +1298,33 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
   },
   "streets": [],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de ok 1 39882ms",
-   "streets: 1 shops"
+   "overpass-api.de ok 155 34450ms",
+   "overpass-api.de ok 148 41643ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 450 44869ms",
+   "overpass-api.de ok 300 47843ms",
+   "overpass-api.de ok 350 47516ms",
+   "overpass-api.de ok 300 34118ms",
+   "overpass-api.de ok 49 39856ms",
+   "overpass-api.de ok 200 49373ms",
+   "overpass-api.de ok 66 55568ms",
+   "overpass-api.de ok 1 41675ms",
+   "streets: 1 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 482 of 482"
   ]
  },
  "istanbul": {
