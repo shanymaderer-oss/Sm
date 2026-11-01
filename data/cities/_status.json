@@ -292,31 +292,31 @@
   ]
  },
  "prague": {
-  "at": "2026-10-23T16:48:24.887Z",
-  "seconds": 667,
+  "at": "2026-11-01T04:02:21.211Z",
+  "seconds": 619,
   "osm": {
-   "sights": 836,
+   "sights": 837,
+   "sights2": 115,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 63,
+   "diet": 75,
    "extra": 200,
-   "streets": 9,
-   "sights2": 114,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 9
   },
   "voyage": {
-   "eat": 188,
-   "drink": 59,
-   "buy": 10,
-   "see": 150,
-   "sleep": 102,
-   "withCoords": 512,
+   "eat": 163,
+   "drink": 53,
+   "buy": 12,
+   "see": 148,
+   "sleep": 96,
+   "withCoords": 477,
    "districts": 8
   },
   "wiki": {
-   "he": 62,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -324,7 +324,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Pařížská (33)",
@@ -334,7 +341,21 @@
    "Na Příkopě (8)"
   ],
   "log": [
-   "(updated: )",
+   "overpass-api.de HTTP 502 738ms",
+   "overpass-api.de HTTP 502 447ms",
+   "overpass-api.de ok 837 38661ms",
+   "overpass-api.de ok 115 38379ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de ok 450 41486ms",
+   "overpass-api.de ok 300 38139ms",
+   "overpass-api.de ok 350 36958ms",
+   "overpass-api.de ok 300 25873ms",
+   "overpass-api.de ok 75 36511ms",
+   "overpass-api.de HTTP 502 414ms",
+   "overpass-api.de ok 200 37576ms",
+   "overpass-api.de ok 150 34178ms",
+   "overpass-api.de ok 392 25485ms",
+   "streets: 392 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -342,7 +363,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 1061 of 1061"
+   "fame: 988 of 1038"
   ]
  },
  "budapest": {
