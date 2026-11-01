@@ -164,14 +164,17 @@ List only specific named places in or near ${city} (not kinds of places like "mu
 "skip": places they already visited or saw, or say they do not want.
 When they refer to a group ("all of Gaudí's buildings", "the big museums"), list those specific places.
 For each place give "name": its common English or local name (e.g. "Sagrada Família"), and "he": the Hebrew name they used, if any.
-Never add a place they did not refer to. Answer JSON only: {"want":[{"name":"","he":""}],"skip":[{"name":"","he":""}]}` }] }],
-      generationConfig: { responseMimeType: "application/json", temperature: 0.1, maxOutputTokens: 600 }
+Never add a place they did not refer to.
+"ideas": 3 more things in ${city} they would probably love, given what they wrote and who they are: each a specific place, neighborhood, food or experience (not one they named or skipped), written in Hebrew as a short request they could add to their wishes, at most 30 characters, e.g. "ערב בשכונת טרסטוורה".
+Answer JSON only: {"want":[{"name":"","he":""}],"skip":[{"name":"","he":""}],"ideas":["","",""]}` }] }],
+      generationConfig: { responseMimeType: "application/json", temperature: 0.1, maxOutputTokens: 700 }
     };
     const j = parseJSON(await generate(body));
+    const ideas = (Array.isArray(j?.ideas) ? j.ideas : []).map(x => String(x || "").replace(/<[^>]*>/g, "").replace(/[<>"`]/g, "").trim().slice(0, 34)).filter(Boolean).slice(0, 3);
     const list = a => (Array.isArray(a) ? a : []).slice(0, 10).map(x => ({ name: String(x?.name || "").replace(/[<>"`]/g, "").slice(0, 80).trim(), he: String(x?.he || "").replace(/[<>"`]/g, "").slice(0, 80).trim() })).filter(x => x.name || x.he);
     // a group they wrote ("המבנים של גאודי") comes back as the Hebrew of each building: keep the real names then
     const fix = a => { const n = {}; a.forEach(x => { if (x.he) n[x.he] = (n[x.he] || 0) + 1; }); return a.map(x => n[x.he] > 1 ? { ...x, he: "" } : x).filter(x => x.name || x.he); };
-    return { want: fix(list(j?.want)), skip: fix(list(j?.skip)) };
+    return { want: fix(list(j?.want)), skip: fix(list(j?.skip)), ideas };
   }
   const hasSearch = () => !!SHARED;
   return { enabled, shared, own, model, json, chat, events, translate, understand, hasSearch, lastSources: () => sources, saveKey, errText };

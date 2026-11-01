@@ -927,3 +927,24 @@ a.btn{text-decoration:none}
 .card.nudge p{display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;font-size:.92rem;line-height:1.5}
 .card.nudge p svg{flex:none;width:18px;height:18px;margin-top:2px;color:var(--primary)}
 .card.nudge .chiprow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* the agent on the route: say what to change, the route follows */
+.agent{margin:12px 0;padding:12px 14px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.agent.ghost{min-height:118px}
+.agenthead{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.agenthead .av{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--primary);color:#fff}
+.agenthead .av svg{width:18px;height:18px}
+.agenthead b{display:block;font-size:1rem}
+.agenthead small{color:var(--muted);font-size:.82rem}
+.agentsay{background:var(--surface-2);border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:.92rem;line-height:1.55}
+.agentsay .linkbtn{display:inline-flex;gap:4px;align-items:center;margin-top:6px}
+.agentsay.busy{display:flex;gap:8px;align-items:center;color:var(--muted)}
+.agentsay.busy i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--primary);animation:spin 1s linear infinite}
+.agentchips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;scrollbar-width:none}
+.agentchips .chipbtn{white-space:nowrap;flex:none}
+.agentform{display:flex;gap:8px}
+.agentform input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:10px 14px;background:var(--bg);color:var(--ink);font:inherit}
+.agentform .btn{border-radius:999px;padding:0 14px}
+@media (prefers-reduced-motion:reduce){.agentsay.busy i{animation:none}}
+.wishhints button.ai{border-color:var(--primary);color:var(--primary);display:inline-flex;gap:4px;align-items:center}
+.wishhints button.ai svg{width:14px;height:14px}
+.wishhints button svg{width:13px;height:13px;vertical-align:-2px;margin-inline-end:3px}

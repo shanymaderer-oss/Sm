@@ -505,6 +505,20 @@ let journeyLoad = null;
 const loadJourney = () => journeyLoad || (journeyLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/journey.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
+/* the agent on the route lives in js/agent.js, loaded when a trip is open */
+let agentLoad = null, agentIn = false;
+const loadAgent = () => agentLoad || (agentLoad = new Promise(res => {
+  const el = document.createElement("script"); el.src = "js/min/agent.js"; el.onload = el.onerror = () => res(); document.head.append(el);
+}));
+function bindAgent(t) {
+  if (!t || t.source === "sample") return;
+  if (agentIn) return Masa.agent.bind(t);
+  loadAgent().then(() => {
+    if (!Masa.agent) return;
+    if (!agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, HOTEL_KINDS }); agentIn = true; }
+    if (S.screen === "plan" && S.trip === t && $("agentSlot")) { $("agentSlot").outerHTML = Masa.agent.box(t); Masa.agent.bind(t); }
+  });
+}
 /* the two screens live in js/journey.js; they get what they need from here */
 let journeyIn = false;
 async function startJourney() {
@@ -536,7 +550,7 @@ SCREENS.goals = {
     <div class="wishbox">
       <label class="section-label" for="notes">ספרו במילים שלכם</label>
       <textarea id="notes" rows="3" placeholder="למשל: אנחנו זוג עם ילד בן 6, לא אוכלים בשר, חייבים לראות את הקולוסיאום, ובערב משהו עם נוף">${esc(f.notes)}</textarea>
-      <div class="wishhints" id="wishHints">${WISH_HINTS.map(h => `<button type="button" data-h="${esc(h)}">${esc(h)}</button>`).join("")}</div>
+      <div class="wishhints" id="wishHints">${hintsHtml()}</div>
       <div class="wishout" id="wishOut" aria-live="polite"></div>
     </div>
     <details class="moreprefs"><summary>עוד העדפות <small class="muted">תקציב, אוכל, תחבורה, נגישות וקצב</small></summary>
@@ -565,12 +579,8 @@ SCREENS.goals = {
     $("mobility").querySelectorAll("button").forEach(b => b.onclick = () => { touched.add("mobility"); f.mobility = b.dataset.v; $("mobility").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
     let wt = null;
     $("notes").oninput = e => { f.notes = e.target.value; clearTimeout(wt); wt = setTimeout(syncWish, 220); };
-    document.querySelectorAll("#wishHints button").forEach(b => b.onclick = () => {
-      const el = $("notes"), v = el.value.trim();
-      el.value = v ? `${v.replace(/[,.]$/, "")}, ${b.dataset.h}` : b.dataset.h;
-      f.notes = el.value; syncWish(); el.focus();
-      if (b.dataset.h.endsWith("…")) { el.value = el.value.replace(/…$/, " "); f.notes = el.value; el.setSelectionRange(el.value.length, el.value.length); }
-    });
+    bindHints();
+    loadMustSee();
     syncWish();
     $("buildBtn").onclick = () => build();
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
@@ -660,7 +670,36 @@ function bindMine() {
   $("myAdd").onclick = () => add(inp.value);
 }
 /* what the traveler wrote fills in the choices below it (unless they set that choice by hand), and is said back to them */
-const WISH_HINTS = ["עם ילדים", "קצב רגוע", "שקיעה יפה", "אוכל מקומי", "בלי מוזיאונים", "שומרים כשרות", "חייבים לראות את…"];
+const WISH_HINTS = ["עם ילדים", "קצב רגוע", "שקיעה יפה", "אוכל מקומי", "בלי מוזיאונים", "שומרים כשרות"];
+/* suggestions under the wishes box change with the city and with what they wrote: the smart guide's ideas for them
+   first, then the city's best-known places, then the usual wishes; anything already in the text is not offered again */
+function hintsHtml() {
+  const f = S.form, notes = Masa.intent.norm(f.notes || ""), has = h => notes.includes(Masa.intent.norm(h.replace(/^חייבים לראות את /, "")));
+  const ideas = f.aiWish?.text === f.notes ? f.aiWish.ideas || [] : [];
+  const must = S.mustSee?.key === S.dest?.q ? S.mustSee.list.map(n => `חייבים לראות את ${n}`) : [];
+  const list = [...ideas.map(h => ({ h, ai: true })), ...must.slice(0, ideas.length ? 2 : 4).map(h => ({ h })), ...WISH_HINTS.map(h => ({ h }))].filter(x => !has(x.h)).slice(0, 8);
+  // a must-see shows as its name with a plus; the full wish ("חייבים לראות את…") goes into the text
+  return list.map(x => `<button type="button" data-h="${esc(x.h)}"${x.ai ? ` class="ai"` : ""}>${x.ai ? ic("sparkle", 2.2) : x.h.startsWith("חייבים לראות את ") ? ic("plus", 2.4) : ""}${esc(x.h.replace(/^חייבים לראות את /, ""))}</button>`).join("");
+}
+function bindHints() {
+  document.querySelectorAll("#wishHints button").forEach(b => b.onclick = () => {
+    const el = $("notes"), v = el.value.trim();
+    el.value = v ? `${v.replace(/[,.]$/, "")}, ${b.dataset.h}` : b.dataset.h;
+    S.form.notes = el.value; syncWish(); el.focus(); renderHints();
+  });
+}
+function renderHints() { const el = $("wishHints"); if (el) { el.innerHTML = hintsHtml(); bindHints(); } }
+function loadMustSee() {
+  const key = S.dest?.q, city = Masa.cities.findCity(key || "");
+  if (!city || S.mustSee?.key === key) return;
+  S.mustSee = { key, list: [] };
+  planner.placeIndex(city.slug).then(ps => {
+    const he = /[\u0590-\u05FF]/, seen = new Set();
+    S.mustSee = { key, list: ps.filter(p => p.fame > 0 && !p.statue && p.cat !== "food" && p.cat !== "night" && he.test(p.he)).sort((a, b) => b.fame - a.fame)
+      .map(p => p.he).filter(n => n.length <= 24 && !seen.has(n) && seen.add(n)).slice(0, 4) };
+    if (S.screen === "goals") renderHints();
+  });
+}
 const WISH_KEYS = ["days", "people", "budget", "pace", "diet", "mobility", "move"];
 function syncWish() {
   const f = S.form, out = $("wishOut");
@@ -723,6 +762,7 @@ async function guideWish() {
 function showWishAi() {
   const out = $("wishOut"), a = S.form.aiWish;
   if (!out) return;
+  renderHints();
   let el = $("wishAi");
   if (!a || a.text !== S.form.notes || (!a.want.length && !a.skip.length)) { el?.remove(); return; }
   if (!el) { out.insertAdjacentHTML("beforeend", `<div id="wishAi" class="wishai"></div>`); el = $("wishAi"); }
@@ -975,6 +1015,7 @@ SCREENS.plan = {
       <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p>${esc(t.summary || "")}</p>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}
       <div class="stats"><div><b>${all.length}</b><small>תחנות</small></div><div><b>${all.filter(s => s.booking?.needed).length}</b><small>דורשות הזמנה</small></div><div><b>${totalWalk(t).toFixed(1)}</b><small>ק״מ הליכה</small></div>${(t.opts?.move || "walk") !== "walk" ? `<div><b>${totalDrive(t).toFixed(0)}</b><small>${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}</small></div>` : ""}</div></div>
     ${saveNudge(t)}
+    ${t.source === "sample" ? "" : Masa.agent ? Masa.agent.box(t) : `<div id="agentSlot" class="agent ghost"></div>`}
     ${t.wish ? wishCard(t) : ""}${t.wish?.fitness ? fitnessCard(t) : ""}
     ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
     <div class="duo">
@@ -1032,18 +1073,21 @@ SCREENS.plan = {
     bindFamily();
     bindNow();
     bindNudge();
+    bindAgent(t);
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
   }
 };
+/* a place from the map or the city's list as a stop of the trip */
+const stopFrom = item => ({
+    name: item.name, local: item.local || item.name, cat: item.cat || "view", lat: +item.lat, lng: +item.lng, time: "", duration: "", _min: 45, cost: "",
+    why: item.why || "", history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], website: item.website || null, wikidata: item.wikidata || null,
+    booking: { needed: false, steps: ["בדקו בגוגל מפות את שעות הפתיחה לפני שמגיעים."], query: item.local || item.name }, _added: true
+  });
 function addToDay(item, dayIdx = S.day, after = null) {
   const d = S.trip.days[dayIdx];
   if (d.stops.some(s => s.name === item.name)) { toast("המקום כבר במסלול"); return; }
   if (!hasXY(item)) { toast("אין למקום הזה מיקום על המפה"); return; }
-  const stop = {
-    name: item.name, local: item.local || item.name, cat: item.cat || "view", lat: +item.lat, lng: +item.lng, time: "", duration: "", _min: 45, cost: "",
-    why: item.why || "", history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], website: item.website || null, wikidata: item.wikidata || null,
-    booking: { needed: false, steps: ["בדקו בגוגל מפות את שעות הפתיחה לפני שמגיעים."], query: item.local || item.name }, _added: true
-  };
+  const stop = stopFrom(item);
   let idx = d.stops.length;
   if (after != null) idx = after + 1;
   else { let best = Infinity; d.stops.forEach((s, i) => { const dd = km(s, stop); if (dd < best) { best = dd; idx = i + 1; } }); }
