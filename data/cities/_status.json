@@ -4251,8 +4251,8 @@
   ]
  },
  "innsbruck": {
-  "at": "2026-10-31T18:25:35.696Z",
-  "seconds": 634,
+  "at": "2026-11-01T04:57:52.826Z",
+  "seconds": 441,
   "osm": {
    "sights": 89,
    "sights2": 36,
@@ -4262,7 +4262,8 @@
    "shopping": 102,
    "diet": 11,
    "extra": 58,
-   "landmarks": 27
+   "landmarks": 27,
+   "streets": 9
   },
   "voyage": {
    "eat": 14,
@@ -4274,10 +4275,10 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 8,
    "en": 53
   },
-  "streetsV": 0,
+  "streetsV": 2,
   "fameV": 3,
   "qv": {
    "sights": 2,
@@ -4288,25 +4289,29 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "streets": 1
   },
-  "streets": [],
+  "streets": [
+   "Maria-Theresien-Straße (33)",
+   "Museumstraße (24)",
+   "Herzog-Friedrich-Straße (16)",
+   "Leopoldstraße (16)",
+   "Anichstraße (15)"
+  ],
   "log": [
-   "overpass-api.de ok 89 36283ms",
-   "overpass-api.de ok 36 38049ms",
-   "overpass-api.de ok 170 19773ms",
-   "overpass-api.de ok 178 30287ms",
-   "overpass-api.de ok 73 26401ms",
-   "overpass-api.de ok 102 29687ms",
-   "overpass-api.de ok 11 25995ms",
-   "overpass-api.de ok 58 31104ms",
-   "overpass-api.de HTTP 502 471ms",
-   "overpass-api.de ok 27 26247ms",
-   "overpass-api.de HTTP 502 522ms",
-   "overpass-api.de HTTP 502 516ms",
-   "overpass-api.de HTTP 502 517ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 89 34585ms",
+   "overpass-api.de ok 36 28601ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de ok 170 23438ms",
+   "overpass-api.de ok 178 35895ms",
+   "overpass-api.de ok 73 30256ms",
+   "overpass-api.de ok 102 49578ms",
+   "overpass-api.de ok 11 32153ms",
+   "overpass-api.de ok 58 34792ms",
+   "overpass-api.de ok 27 35641ms",
+   "overpass-api.de ok 229 36720ms",
+   "streets: 229 shops",
    "fame: 178 of 178"
   ]
  },
