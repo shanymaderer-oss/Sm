@@ -1584,19 +1584,19 @@
   ]
  },
  "larnaca": {
-  "at": "2026-10-23T21:19:23.819Z",
-  "seconds": 589,
+  "at": "2026-11-01T04:32:21.032Z",
+  "seconds": 822,
   "osm": {
    "sights": 11,
+   "sights2": 13,
    "restaurants": 73,
-   "cafes": 85,
+   "cafes": 0,
    "hotels": 61,
    "shopping": 27,
    "diet": 1,
    "extra": 9,
-   "streets": 5,
-   "sights2": 13,
-   "landmarks": 2
+   "landmarks": 2,
+   "streets": 5
   },
   "voyage": {
    "eat": 10,
@@ -1608,7 +1608,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 4,
+   "he": 0,
    "en": 15
   },
   "streetsV": 2,
@@ -1616,7 +1616,13 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Ermou (48)",
@@ -1626,12 +1632,27 @@
    "Archiepiskopou Kyprianou Avenue (6)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 11 29903ms",
-   "overpass-api.de ok 13 40848ms",
-   "overpass-api.de HTTP 504 52770ms",
-   "overpass-api.de ok 2 36648ms",
-   "fame: 25 of 25"
+   "overpass-api.de ok 11 31128ms",
+   "overpass-api.de ok 13 43879ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 73 34126ms",
+   "overpass-api.de HTTP 504 55911ms",
+   "overpass-api.de HTTP 502 356ms",
+   "overpass-api.de HTTP 502 553ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 61 34263ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de ok 27 39685ms",
+   "overpass-api.de HTTP 502 336ms",
+   "overpass-api.de ok 1 28436ms",
+   "overpass-api.de ok 9 43980ms",
+   "overpass-api.de ok 2 48689ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 172 47205ms",
+   "streets: 172 shops",
+   "fame: 22 of 22"
   ]
  },
  "limassol": {
