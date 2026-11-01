@@ -1169,19 +1169,19 @@
   ]
  },
  "new-york": {
-  "at": "2026-10-23T18:42:13.154Z",
-  "seconds": 550,
+  "at": "2026-11-01T04:31:11.534Z",
+  "seconds": 1044,
   "osm": {
    "sights": 214,
+   "sights2": 188,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 300,
-   "diet": 156,
+   "shopping": 0,
+   "diet": 0,
    "extra": 200,
-   "streets": 14,
-   "sights2": 187,
-   "landmarks": 25
+   "landmarks": 25,
+   "streets": 14
   },
   "voyage": {
    "eat": 0,
@@ -1201,20 +1201,44 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Broadway (40)",
    "5th Avenue (30)",
    "West 34th Street (25)",
-   "Columbus Circle (24)",
-   "Prince Street (28)"
+   "Prince Street (29)",
+   "Columbus Circle (24)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 214 21387ms",
-   "overpass-api.de ok 187 30194ms",
-   "overpass-api.de ok 25 36611ms",
+   "overpass-api.de ok 214 40274ms",
+   "overpass-api.de ok 188 40656ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de ok 450 36198ms",
+   "overpass-api.de ok 300 45949ms",
+   "overpass-api.de ok 350 45021ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 282ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de HTTP 504 48612ms",
+   "overpass-api.de HTTP 502 366ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 200 42547ms",
+   "overpass-api.de ok 25 35703ms",
+   "overpass-api.de HTTP 502 355ms",
+   "overpass-api.de ok 1270 30625ms",
+   "streets: 1270 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
    "fame: 472 of 472"
   ]
  },
