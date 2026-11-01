@@ -61,12 +61,29 @@ async function wikiGeo(lang, lat, lng, r) {
     return (j.query?.geosearch || []).map(g => ({ title: g.title, lat: g.lat, lng: g.lon, pageid: g.pageid, lang }));
   } catch { return []; }
 }
-function commit(msg) {
+// Several machines commit at once and all of them touch _status.json, so a plain "pull --rebase" stopped on a
+// conflict and every later city of that machine was lost (31.10: 50 of 135 cities). Instead, on a rejected push:
+// take main as it is now, keep its status lines for the other machines' cities, add ours, and commit again.
+const mine = new Set();
+function commit(slug, msg) {
   if (!COMMIT) return;
+  mine.add(slug);
   msg = String(msg).replace(/[^\p{L}\p{N} :._-]/gu, "");
-  try {
-    execSync(`git add data/cities && (git diff --cached --quiet || (git commit -q -m "${msg}" && (git push -q || (git pull -q --rebase && git push -q))))`, { stdio: "inherit", shell: "/bin/bash" });
-  } catch (e) { console.log("commit failed", e.message); }
+  const sh = cmd => execSync(cmd, { stdio: "inherit", shell: "/bin/bash" });
+  for (let i = 0; i < 6; i++) {
+    try {
+      if (i) {
+        sh("git rebase --abort 2>/dev/null; git fetch -q origin main && git reset -q FETCH_HEAD");
+        const remote = JSON.parse(execSync("git show FETCH_HEAD:" + statusPath).toString());
+        for (const k of Object.keys(remote)) if (!mine.has(k)) status[k] = remote[k];
+        writeFileSync(statusPath, JSON.stringify(status, null, 1));
+      }
+      const files = [statusPath, ...[...mine].map(s => `data/cities/${s}.json`).filter(p => existsSync(p))];
+      sh(`git add -- ${files.join(" ")} && (git diff --cached --quiet || git commit -q -m "${msg}") && git push -q origin HEAD:main`);
+      return;
+    } catch (e) { console.log("commit try", i + 1, "failed:", e.message.split("\n")[0]); execSync(`sleep ${5 + Math.floor(Math.random() * 20)}`); }
+  }
+  console.log("commit failed for", slug);
 }
 
 const only = process.argv.slice(2);
@@ -135,6 +152,6 @@ const fresh = c => {
 for (const c of list) {
   if (!FORCE && fresh(c)) { console.log(c.slug, "fresh, skipped"); continue; }
   await doCity(c);
-  commit(`נתוני עיר: ${c.slug}`);
+  commit(c.slug, `נתוני עיר: ${c.slug}`);
   await sleep(3000);
 }
