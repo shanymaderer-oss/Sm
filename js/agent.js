@@ -163,7 +163,9 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     U.track("guide_ai", t.slug || t.cityEn, 2);
     try {
       const cands = candidates(t), snapshot = t.days.map(d => d.stops.map(x => x.name));
-      const j = await U.ai.structured(SYSTEM, prompt(t, text, cands), SHAPE);
+      // a slow answer (the guide server tries up to three models): after 25 seconds the device answers instead
+      const j = await Promise.race([U.ai.structured(SYSTEM, prompt(t, text, cands), SHAPE),
+        new Promise((_, no) => setTimeout(() => no(Object.assign(new Error("slow"), { code: "shared_quota" })), 25000))]);
       if (U.S.trip !== t) { A.busy = false; return; }
       // some models answer with the list of changes only: take it as the changes
       const r = Array.isArray(j) ? { actions: j } : j || {};
