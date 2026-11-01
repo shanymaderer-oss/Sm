@@ -2510,27 +2510,27 @@
   ]
  },
  "edinburgh": {
-  "at": "2026-10-23T22:51:45.366Z",
-  "seconds": 588,
+  "at": "2026-11-01T04:46:23.592Z",
+  "seconds": 546,
   "osm": {
    "sights": 130,
-   "restaurants": 360,
+   "sights2": 76,
+   "restaurants": 361,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 21,
+   "diet": 27,
    "extra": 62,
-   "streets": 14,
-   "sights2": 75,
-   "landmarks": 23
+   "landmarks": 23,
+   "streets": 14
   },
   "voyage": {
-   "eat": 82,
-   "drink": 53,
-   "buy": 34,
-   "see": 125,
-   "sleep": 100,
-   "withCoords": 306,
+   "eat": 85,
+   "drink": 61,
+   "buy": 32,
+   "see": 129,
+   "sleep": 103,
+   "withCoords": 315,
    "districts": 8
   },
   "wiki": {
@@ -2542,21 +2542,41 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "George Street (43)",
-   "Princes Street (29)",
+   "Princes Street (30)",
    "High Street (37)",
-   "Bruntsfield Place (26)",
+   "Bruntsfield Place (27)",
    "Canongate (26)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 130 23897ms",
-   "overpass-api.de ok 75 41189ms",
-   "overpass-api.de ok 23 28752ms",
-   "fame: 269 of 269"
+   "overpass-api.de ok 130 42798ms",
+   "overpass-api.de ok 76 42233ms",
+   "overpass-api.de ok 361 24154ms",
+   "overpass-api.de ok 300 43016ms",
+   "overpass-api.de HTTP 502 414ms",
+   "overpass-api.de ok 350 40052ms",
+   "overpass-api.de ok 300 42773ms",
+   "overpass-api.de ok 27 36560ms",
+   "overpass-api.de ok 62 36489ms",
+   "overpass-api.de HTTP 502 439ms",
+   "overpass-api.de ok 23 33806ms",
+   "overpass-api.de ok 594 40123ms",
+   "streets: 594 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 225 of 225"
   ]
  },
  "copenhagen": {
