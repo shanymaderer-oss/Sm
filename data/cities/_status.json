@@ -5751,6 +5751,71 @@
    "fame: 113 of 113"
   ]
  },
+ "zurich": {
+  "at": "2026-11-01T05:00:35.313Z",
+  "seconds": 445,
+  "osm": {
+   "sights": 160,
+   "sights2": 105,
+   "restaurants": 450,
+   "cafes": 300,
+   "hotels": 138,
+   "shopping": 295,
+   "diet": 53,
+   "extra": 67,
+   "landmarks": 96,
+   "streets": 14
+  },
+  "voyage": {
+   "eat": 42,
+   "drink": 39,
+   "buy": 13,
+   "see": 20,
+   "sleep": 29,
+   "withCoords": 154,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 15,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Bahnhofstrasse (55)",
+   "Löwenstrasse (20)",
+   "Limmatquai (20)",
+   "Rennweg (20)",
+   "Viaduktstrasse (18)"
+  ],
+  "log": [
+   "overpass-api.de ok 160 34781ms",
+   "overpass-api.de ok 105 27351ms",
+   "overpass-api.de HTTP 502 402ms",
+   "overpass-api.de ok 450 24970ms",
+   "overpass-api.de ok 300 26701ms",
+   "overpass-api.de ok 138 42845ms",
+   "overpass-api.de ok 295 34595ms",
+   "overpass-api.de ok 53 44969ms",
+   "overpass-api.de ok 67 45422ms",
+   "overpass-api.de ok 96 30064ms",
+   "overpass-api.de ok 546 29589ms",
+   "streets: 546 shops",
+   "fame: 285 of 285"
+  ]
+ },
  "oslo": {
   "at": "2026-11-01T05:00:10.245Z",
   "seconds": 507,
