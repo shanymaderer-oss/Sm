@@ -1720,17 +1720,17 @@
   ]
  },
  "paphos": {
-  "at": "2026-10-23T21:36:31.316Z",
-  "seconds": 1005,
+  "at": "2026-11-01T04:39:14.482Z",
+  "seconds": 468,
   "osm": {
    "sights": 18,
+   "sights2": 24,
    "restaurants": 90,
    "cafes": 51,
-   "hotels": 99,
+   "hotels": 100,
    "shopping": 86,
    "diet": 1,
    "extra": 14,
-   "sights2": 24,
    "landmarks": 2,
    "streets": 0
   },
@@ -1752,14 +1752,30 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
   },
   "streets": [],
   "log": [
-   "(updated: streets)",
-   "overpass-api.de HTTP 502 380ms",
-   "overpass-api.de ok 17 37182ms",
-   "streets: 17 shops"
+   "overpass-api.de ok 18 51160ms",
+   "overpass-api.de HTTP 502 370ms",
+   "overpass-api.de ok 24 38843ms",
+   "overpass-api.de ok 90 40145ms",
+   "overpass-api.de ok 51 35426ms",
+   "overpass-api.de ok 100 30021ms",
+   "overpass-api.de ok 86 25966ms",
+   "overpass-api.de ok 1 33098ms",
+   "overpass-api.de ok 14 31875ms",
+   "overpass-api.de HTTP 502 283ms",
+   "overpass-api.de ok 2 35998ms",
+   "overpass-api.de ok 17 40984ms",
+   "streets: 17 shops",
+   "fame: 28 of 28"
   ]
  },
  "nice": {
