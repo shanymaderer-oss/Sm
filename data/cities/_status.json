@@ -571,19 +571,19 @@
   ]
  },
  "amsterdam": {
-  "at": "2026-10-23T17:44:32.683Z",
-  "seconds": 917,
+  "at": "2026-11-01T04:13:27.179Z",
+  "seconds": 705,
   "osm": {
    "sights": 172,
+   "sights2": 187,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 60,
+   "diet": 69,
    "extra": 84,
-   "streets": 14,
-   "sights2": 186,
-   "landmarks": 150
+   "landmarks": 150,
+   "streets": 14
   },
   "voyage": {
    "eat": 50,
@@ -603,7 +603,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Kalverstraat (80)",
@@ -613,12 +620,26 @@
    "Ferdinand Bolstraat (26)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de timeout 60001ms",
-   "overpass-api.de ok 172 40141ms",
-   "overpass-api.de ok 186 32096ms",
-   "overpass-api.de ok 150 30218ms",
-   "fame: 464 of 464"
+   "overpass-api.de ok 172 39152ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 187 35074ms",
+   "overpass-api.de ok 450 42633ms",
+   "overpass-api.de ok 300 37658ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de ok 350 45966ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de timeout 60003ms",
+   "overpass-api.de ok 300 39789ms",
+   "overpass-api.de ok 69 59839ms",
+   "overpass-api.de ok 84 53876ms",
+   "overpass-api.de ok 150 47417ms",
+   "overpass-api.de ok 1088 43437ms",
+   "streets: 1088 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 430 of 430"
   ]
  },
  "lisbon": {
