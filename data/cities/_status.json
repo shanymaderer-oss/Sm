@@ -260,27 +260,27 @@
   ]
  },
  "budapest": {
-  "at": "2026-10-23T16:53:25.525Z",
-  "seconds": 774,
+  "at": "2026-11-01T04:00:24.046Z",
+  "seconds": 483,
   "osm": {
-   "sights": 199,
+   "sights": 198,
+   "sights2": 211,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 29,
+   "diet": 43,
    "extra": 105,
-   "streets": 14,
-   "sights2": 210,
-   "landmarks": 49
+   "landmarks": 49,
+   "streets": 14
   },
   "voyage": {
-   "eat": 75,
-   "drink": 28,
-   "buy": 71,
-   "see": 239,
-   "sleep": 68,
-   "withCoords": 502,
+   "eat": 104,
+   "drink": 66,
+   "buy": 74,
+   "see": 244,
+   "sleep": 76,
+   "withCoords": 598,
    "districts": 8
   },
   "wiki": {
@@ -292,7 +292,14 @@
   "qv": {
    "sights": 2,
    "sights2": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "streets": 1
   },
   "streets": [
    "Váci utca (58)",
@@ -302,12 +309,22 @@
    "Kossuth Lajos utca (20)"
   ],
   "log": [
-   "(updated: sights, sights2, landmarks)",
-   "overpass-api.de ok 199 7847ms",
-   "overpass-api.de ok 210 8356ms",
-   "overpass-api.de HTTP 429 19509ms",
-   "overpass-api.de ok 49 24191ms",
-   "fame: 427 of 427"
+   "overpass-api.de ok 198 40476ms",
+   "overpass-api.de HTTP 502 287ms",
+   "overpass-api.de ok 211 41730ms",
+   "overpass-api.de ok 450 27742ms",
+   "overpass-api.de HTTP 502 287ms",
+   "overpass-api.de ok 300 37427ms",
+   "overpass-api.de ok 350 34547ms",
+   "overpass-api.de ok 300 28389ms",
+   "overpass-api.de ok 43 30618ms",
+   "overpass-api.de ok 105 38455ms",
+   "overpass-api.de ok 49 37804ms",
+   "overpass-api.de ok 950 32182ms",
+   "streets: 950 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 408 of 408"
   ]
  },
  "vienna": {
