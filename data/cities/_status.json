@@ -6914,8 +6914,8 @@
   ]
  },
  "bratislava": {
-  "at": "2026-11-01T05:24:02.773Z",
-  "seconds": 548,
+  "at": "2026-11-02T13:38:48.407Z",
+  "seconds": 1016,
   "osm": {
    "sights": 115,
    "sights2": 58,
@@ -6924,9 +6924,8 @@
    "hotels": 115,
    "shopping": 201,
    "diet": 15,
-   "extra": 35,
-   "landmarks": 84,
-   "streets": 2
+   "extra": 0,
+   "landmarks": 84
   },
   "voyage": {
    "eat": 12,
@@ -6938,7 +6937,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 11,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -6955,24 +6954,32 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "Obchodná (10)",
-   "Einsteinova (9)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de HTTP 502 446ms",
-   "overpass-api.de ok 115 56693ms",
-   "overpass-api.de ok 58 39425ms",
-   "overpass-api.de ok 219 42858ms",
-   "overpass-api.de ok 257 48831ms",
-   "overpass-api.de ok 115 49147ms",
-   "overpass-api.de ok 201 45038ms",
-   "overpass-api.de ok 15 46600ms",
-   "overpass-api.de ok 35 33340ms",
-   "overpass-api.de ok 84 41929ms",
-   "overpass-api.de ok 52 43170ms",
-   "streets: 52 shops",
-   "fame: 228 of 228"
+   "overpass-api.de ok 115 41193ms",
+   "overpass-api.de ok 58 38508ms",
+   "overpass-api.de ok 219 37873ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 257 36738ms",
+   "overpass-api.de ok 115 39125ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 201 41455ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de ok 15 31749ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 84 44411ms",
+   "overpass-api.de HTTP 502 426ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "fame: 198 of 198"
   ]
  },
  "palermo": {
