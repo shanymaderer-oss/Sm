@@ -6020,8 +6020,8 @@
   ]
  },
  "corfu": {
-  "at": "2026-11-01T06:32:20.680Z",
-  "seconds": 463,
+  "at": "2026-11-02T15:07:30.926Z",
+  "seconds": 476,
   "osm": {
    "sights": 42,
    "sights2": 9,
@@ -6065,18 +6065,19 @@
    "Ιωάννου Θεοτόκη (6)"
   ],
   "log": [
-   "overpass-api.de ok 42 36054ms",
-   "overpass-api.de ok 9 32449ms",
-   "overpass-api.de ok 63 31815ms",
-   "overpass-api.de ok 71 39928ms",
-   "overpass-api.de HTTP 502 279ms",
-   "overpass-api.de ok 20 28007ms",
-   "overpass-api.de ok 23 40182ms",
-   "overpass-api.de ok 2 32319ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de ok 25 25671ms",
-   "overpass-api.de ok 5 47392ms",
-   "overpass-api.de ok 18 44600ms",
+   "overpass-api.de ok 42 33222ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de ok 9 44786ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 63 34513ms",
+   "overpass-api.de ok 71 33776ms",
+   "overpass-api.de ok 20 32458ms",
+   "overpass-api.de ok 23 37886ms",
+   "overpass-api.de ok 2 38134ms",
+   "overpass-api.de ok 25 33139ms",
+   "overpass-api.de ok 5 28486ms",
+   "overpass-api.de ok 18 33397ms",
    "streets: 18 shops",
    "fame: 61 of 61"
   ]
