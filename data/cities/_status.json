@@ -6680,17 +6680,18 @@
   ]
  },
  "ljubljana": {
-  "at": "2026-11-02T13:04:25.129Z",
-  "seconds": 855,
+  "at": "2026-11-02T18:14:15.037Z",
+  "seconds": 1143,
   "osm": {
    "sights": 62,
-   "sights2": 0,
+   "sights2": 34,
    "restaurants": 157,
-   "cafes": 125,
-   "hotels": 108,
+   "cafes": 0,
+   "hotels": 0,
    "shopping": 116,
    "diet": 13,
    "extra": 39,
+   "fitness": 7,
    "landmarks": 25,
    "streets": 5
   },
@@ -6719,7 +6720,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Mestni trg (13)",
@@ -6729,27 +6731,30 @@
    "Ciril-Metodov trg (7)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 449ms",
-   "overpass-api.de ok 62 48977ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass-api.de HTTP 502 429ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de HTTP 502 434ms",
+   "overpass-api.de ok 62 43109ms",
+   "overpass-api.de ok 34 37431ms",
+   "overpass-api.de ok 157 43226ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de HTTP 502 380ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass.private.coffee timeout 60000ms",
    "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de HTTP 502 456ms",
-   "overpass-api.de ok 157 41942ms",
-   "overpass-api.de ok 125 39083ms",
-   "overpass-api.de HTTP 502 418ms",
-   "overpass-api.de ok 108 33847ms",
-   "overpass-api.de ok 116 37502ms",
-   "overpass-api.de timeout 60001ms",
-   "overpass-api.de HTTP 502 451ms",
-   "overpass-api.de ok 13 42370ms",
-   "overpass-api.de ok 39 45917ms",
-   "overpass-api.de ok 25 43416ms",
-   "overpass-api.de ok 105 41015ms",
+   "overpass-api.de HTTP 504 53685ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 504 50741ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 116 43822ms",
+   "overpass-api.de ok 13 42866ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 39 42573ms",
+   "overpass-api.de ok 7 36399ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 25 48229ms",
+   "overpass-api.de ok 105 31938ms",
    "streets: 105 shops",
-   "fame: 146 of 146"
+   "fame: 118 of 118"
   ]
  },
  "helsinki": {
