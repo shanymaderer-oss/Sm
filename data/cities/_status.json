@@ -6245,8 +6245,8 @@
   ]
  },
  "riga": {
-  "at": "2026-11-01T05:11:32.324Z",
-  "seconds": 642,
+  "at": "2026-11-02T13:09:27.360Z",
+  "seconds": 606,
   "osm": {
    "sights": 58,
    "sights2": 41,
@@ -6269,7 +6269,7 @@
    "districts": 4
   },
   "wiki": {
-   "he": 22,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -6294,23 +6294,24 @@
    "Marijas iela (23)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 412ms",
-   "overpass-api.de HTTP 502 383ms",
-   "overpass-api.de ok 58 38272ms",
-   "overpass-api.de HTTP 502 384ms",
-   "overpass-api.de ok 41 49160ms",
-   "overpass-api.de ok 184 35557ms",
-   "overpass-api.de ok 160 38236ms",
-   "overpass-api.de HTTP 504 56215ms",
-   "overpass-api.de ok 122 52006ms",
-   "overpass-api.de ok 200 40374ms",
-   "overpass-api.de ok 20 47833ms",
-   "overpass-api.de ok 41 36683ms",
-   "overpass-api.de HTTP 502 374ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de ok 13 43860ms",
-   "overpass-api.de ok 666 34480ms",
-   "streets: 666 shops",
+   "overpass-api.de ok 58 48159ms",
+   "overpass-api.de HTTP 502 493ms",
+   "overpass-api.de ok 41 50786ms",
+   "overpass-api.de ok 184 47054ms",
+   "overpass-api.de HTTP 502 516ms",
+   "overpass-api.de ok 160 44088ms",
+   "overpass-api.de HTTP 502 515ms",
+   "overpass-api.de HTTP 502 494ms",
+   "overpass-api.de ok 122 37009ms",
+   "overpass-api.de ok 200 37038ms",
+   "overpass-api.de ok 20 36620ms",
+   "overpass-api.de HTTP 502 515ms",
+   "overpass-api.de HTTP 502 494ms",
+   "overpass-api.de ok 41 46747ms",
+   "overpass-api.de ok 13 43774ms",
+   "overpass-api.de HTTP 502 694ms",
+   "overpass-api.de ok 673 33825ms",
+   "streets: 673 shops",
    "fame: 108 of 108"
   ]
  },
