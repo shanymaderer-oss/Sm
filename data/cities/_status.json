@@ -9346,8 +9346,8 @@
   ]
  },
  "sarajevo": {
-  "at": "2026-11-01T06:31:51.746Z",
-  "seconds": 494,
+  "at": "2026-11-02T15:07:16.058Z",
+  "seconds": 597,
   "osm": {
    "sights": 53,
    "sights2": 22,
@@ -9370,7 +9370,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 12,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -9388,20 +9388,24 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de HTTP 502 460ms",
-   "overpass-api.de ok 53 26308ms",
-   "overpass-api.de HTTP 504 50681ms",
-   "overpass-api.de ok 22 33966ms",
-   "overpass-api.de ok 91 31300ms",
-   "overpass-api.de ok 120 38582ms",
-   "overpass-api.de HTTP 502 616ms",
-   "overpass-api.de ok 172 29754ms",
-   "overpass-api.de ok 75 24442ms",
-   "overpass-api.de ok 6 32893ms",
-   "overpass-api.de HTTP 502 454ms",
-   "overpass-api.de ok 49 25957ms",
-   "overpass-api.de ok 15 42495ms",
-   "overpass-api.de ok 44 29153ms",
+   "overpass-api.de ok 53 39933ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 22 37632ms",
+   "overpass-api.de ok 91 31327ms",
+   "overpass-api.de ok 120 44038ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de HTTP 502 434ms",
+   "overpass-api.de ok 172 49208ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 75 47911ms",
+   "overpass-api.de ok 6 27860ms",
+   "overpass-api.de HTTP 502 411ms",
+   "overpass-api.de ok 49 47765ms",
+   "overpass-api.de HTTP 502 411ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 15 35169ms",
+   "overpass-api.de ok 44 37537ms",
    "streets: 44 shops",
    "fame: 104 of 104"
   ]
