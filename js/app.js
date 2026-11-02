@@ -528,7 +528,7 @@ function bindAgent(t) {
 let journeyIn = false;
 async function startJourney() {
   await loadJourney();
-  if (Masa.journey && !journeyIn) { Masa.journey.install({ S, SCREENS, $, esc, ic, go, toast, track, partnerUrl, COST, planner, hasXY, rerenderKeepScroll, renderMap, svc, km }); journeyIn = true; }
+  if (Masa.journey && !journeyIn) { Masa.journey.install({ S, SCREENS, $, esc, ic, go, toast, track, partnerUrl, COST, planner, hasXY, rerenderKeepScroll, renderMap, svc, km, build: () => build() }); journeyIn = true; }
   S.fl = null; S.bases = null; go(journeyIn ? "when" : "goals");
 }
 const MODE_HINT = { auto: "אתם מסמנים מה אתם אוהבים, ואנחנו בונים את כל המסלול.", mine: "כתבו מקומות שאתם מכירים או רוצים, ונבנה את הטיול סביבם, עם ההמלצות שלנו מסביב." };

@@ -123,6 +123,12 @@ async def main():
         await pg.fill("#gq", "פריז"); await pg.press("#gq", "Enter"); await Q.to_stay(pg); await pg.wait_for_timeout(2500)
         links = await pg.eval_on_selector_all(".card.base >> nth=0 >> a", "a => a.map(x => [x.innerText.trim(), x.getAttribute('href') || ''])")
         check(len(links) == 3 and all(h.startswith("https://") for _, h in links), f"every link on the area card works, even for a name with an apostrophe ({[(n[:10], h[:50]) for n, h in links]})")
+        # in a hurry: build straight from the flights step, with what is chosen so far
+        await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
+        await pg.fill("#gq", "פראג"); await pg.press("#gq", "Enter"); await pg.wait_for_selector("#quickBuild", timeout=15000)
+        await pg.click("#quickBuild"); await pg.wait_for_selector(".triphero", timeout=60000); await pg.wait_for_timeout(500)
+        t = await pg.evaluate("JSON.parse(localStorage.getItem('masa-trips'))[0]")
+        check("פראג" in await pg.inner_text(".triphero h1") and len(t["days"]) >= 1 and all(len(d["stops"]) >= 3 for d in t["days"]), "'build me a trip now' from the flights step builds a full trip")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS); sys.exit(1 if FAILS else 0)

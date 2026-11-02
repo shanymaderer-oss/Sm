@@ -980,3 +980,5 @@ a.btn{text-decoration:none}
 .agentbar .agentform .btn svg{width:17px;height:17px}
 .agentsay .linkbtn{white-space:nowrap;font-size:.86rem;gap:4px}
 .agentsay .linkbtn svg{width:14px;height:14px;flex:none}
+.linkbtn.quickbuild{display:flex;gap:6px;align-items:center;justify-content:center;margin:10px auto 0;color:var(--primary);font-weight:600}
+.linkbtn.quickbuild svg{width:16px;height:16px}

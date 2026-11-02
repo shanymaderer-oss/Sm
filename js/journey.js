@@ -218,6 +218,10 @@ Masa.journey = (() => {
     function bindFlights() {
       document.querySelectorAll("[data-fld]").forEach(b => b.onclick = () => { S.form.start = b.dataset.fld; $("startDate").value = S.form.start; $("backDay").textContent = `חוזרים ביום ${J.dayName(backDate(S.form))}, ${J.short(backDate(S.form))}`; toast(`התאריכים עודכנו: ${J.short(S.form.start)}–${J.short(backDate(S.form))}`); loadFlights(); });
     }
+    /* for whoever wants the trip now: build it straight away with what is chosen so far (the usual mix of interests);
+       the steps stay there for later */
+    const quickBuild = () => `<button class="linkbtn quickbuild" id="quickBuild" type="button">${ic("sparkle", 2.2)} דלגו, תבנו לי טיול עכשיו</button>`;
+    const bindQuick = () => { const b = $("quickBuild"); if (b) b.onclick = () => U.build(); };
     SCREENS.when = {
       view() {
         const f = S.form;
@@ -228,6 +232,7 @@ Masa.journey = (() => {
         <div class="card flights" id="flights">${flightsHtml()}</div>
         <button class="btn coral block" id="whenNext" type="button">המשך: איפה ישנים</button>
         <button class="linkbtn" id="whenSkip" type="button">כבר יש לנו טיסה, ממשיכים</button>
+        ${quickBuild()}
       </div>`;
       },
       bind() {
@@ -236,6 +241,7 @@ Masa.journey = (() => {
         bindSteppers(() => { clearTimeout(t); t = setTimeout(loadFlights, 450); });
         bindFlights();
         $("whenNext").onclick = $("whenSkip").onclick = () => go("stay");
+        bindQuick();
         if (!S.fl || S.fl.key !== `${S.dest?.q}|${S.form.start}|${S.form.days}`) { loadFlights().then(() => { if (S.fl) S.fl.key = `${S.dest?.q}|${S.form.start}|${S.form.days}`; }); }
       }
     };
@@ -277,11 +283,13 @@ Masa.journey = (() => {
         <div class="sugs" id="hotelSug" role="listbox"></div>
         <p class="hotelok" id="hotelOk" aria-live="polite">${f.hotelPick?.base ? "" : hotelOkText()}</p>
         <button class="btn coral block" id="stayNext" type="button">המשך: מה בא לכם</button>
+        ${quickBuild()}
       </div>`;
       },
       bind() {
         $("backWhen").onclick = () => go("when");
         $("stayNext").onclick = () => go("goals");
+        bindQuick();
         bindHotel();
         document.querySelectorAll("[data-base]").forEach(btn => btn.onclick = () => {
           const b = S.bases.list[+btn.dataset.base], f = S.form;
