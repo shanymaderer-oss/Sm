@@ -4108,8 +4108,8 @@
   ]
  },
  "amman": {
-  "at": "2026-11-02T14:02:58.001Z",
-  "seconds": 582,
+  "at": "2026-11-02T19:25:27.105Z",
+  "seconds": 892,
   "osm": {
    "sights": 10,
    "sights2": 24,
@@ -4119,7 +4119,8 @@
    "shopping": 23,
    "diet": 0,
    "extra": 3,
-   "landmarks": 2,
+   "fitness": 4,
+   "landmarks": 0,
    "streets": 0
   },
   "voyage": {
@@ -4145,30 +4146,35 @@
    "hotels": 1,
    "shopping": 1,
    "extra": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "fitness": 1
   },
   "streets": [],
   "log": [
-   "overpass-api.de HTTP 502 384ms",
-   "overpass-api.de HTTP 502 371ms",
-   "overpass-api.de ok 10 54587ms",
-   "overpass-api.de ok 24 29624ms",
-   "overpass-api.de HTTP 502 358ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 60 49916ms",
-   "overpass-api.de ok 65 33794ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de ok 95 30839ms",
-   "overpass-api.de HTTP 502 440ms",
-   "overpass-api.de ok 23 36245ms",
-   "overpass-api.de ok 0 45425ms",
-   "overpass-api.de ok 3 39881ms",
-   "overpass-api.de HTTP 502 364ms",
-   "overpass-api.de HTTP 502 417ms",
-   "overpass-api.de ok 2 38223ms",
-   "overpass-api.de ok 17 28185ms",
+   "overpass-api.de ok 10 52721ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de HTTP 502 453ms",
+   "overpass-api.de ok 24 33217ms",
+   "overpass-api.de ok 60 42766ms",
+   "overpass-api.de ok 65 40409ms",
+   "overpass-api.de ok 95 27812ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de HTTP 502 530ms",
+   "overpass-api.de ok 23 39604ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de ok 0 41784ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de ok 3 41114ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de ok 4 28071ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de HTTP 502 519ms",
+   "overpass-api.de HTTP 504 55177ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 17 34077ms",
    "streets: 17 shops",
-   "fame: 18 of 18"
+   "fame: 17 of 17"
   ]
  },
  "montreal": {
