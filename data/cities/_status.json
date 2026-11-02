@@ -7723,8 +7723,8 @@
   ]
  },
  "delhi": {
-  "at": "2026-11-01T05:57:10.192Z",
-  "seconds": 441,
+  "at": "2026-11-02T14:11:19.497Z",
+  "seconds": 584,
   "osm": {
    "sights": 82,
    "sights2": 64,
@@ -7738,17 +7738,17 @@
    "streets": 2
   },
   "voyage": {
-   "eat": 24,
-   "drink": 1,
-   "buy": 52,
-   "see": 236,
-   "sleep": 74,
-   "withCoords": 403,
+   "eat": 20,
+   "drink": 0,
+   "buy": 45,
+   "see": 177,
+   "sleep": 71,
+   "withCoords": 327,
    "districts": 8
   },
   "wiki": {
    "he": 21,
-   "en": 0
+   "en": 100
   },
   "streetsV": 2,
   "fameV": 3,
@@ -7769,18 +7769,26 @@
    "Saraswati Marg (7)"
   ],
   "log": [
-   "overpass-api.de ok 82 33762ms",
-   "overpass-api.de ok 64 40913ms",
-   "overpass-api.de ok 171 33349ms",
-   "overpass-api.de ok 88 30874ms",
-   "overpass-api.de ok 226 34332ms",
-   "overpass-api.de ok 34 22577ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 23 40907ms",
-   "overpass-api.de ok 23 37111ms",
-   "overpass-api.de ok 6 40013ms",
-   "overpass-api.de ok 56 24912ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de ok 82 31061ms",
+   "overpass-api.de ok 64 34214ms",
+   "overpass-api.de ok 171 40091ms",
+   "overpass-api.de ok 88 28597ms",
+   "overpass-api.de HTTP 502 510ms",
+   "overpass-api.de HTTP 502 517ms",
+   "overpass-api.de ok 226 35573ms",
+   "overpass-api.de ok 34 35072ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de ok 23 31271ms",
+   "overpass-api.de ok 23 40171ms",
+   "overpass-api.de ok 6 45646ms",
+   "overpass-api.de HTTP 502 453ms",
+   "overpass-api.de HTTP 502 448ms",
+   "overpass-api.de ok 56 40945ms",
    "streets: 56 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
    "wikidata HTTP 429",
    "fame: 110 of 110"
   ]
