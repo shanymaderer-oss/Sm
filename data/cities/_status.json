@@ -2574,12 +2574,12 @@
   ]
  },
  "dublin": {
-  "at": "2026-11-01T04:49:27.163Z",
-  "seconds": 542,
+  "at": "2026-11-02T12:14:40.110Z",
+  "seconds": 739,
   "osm": {
    "sights": 80,
    "sights2": 54,
-   "restaurants": 408,
+   "restaurants": 0,
    "cafes": 300,
    "hotels": 258,
    "shopping": 300,
@@ -2598,7 +2598,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 27,
    "en": 100
   },
   "streetsV": 2,
@@ -2623,21 +2623,22 @@
    "Mary Street (12)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 687ms",
-   "overpass-api.de HTTP 502 582ms",
-   "overpass-api.de ok 80 43142ms",
-   "overpass-api.de HTTP 502 677ms",
-   "overpass-api.de ok 54 29622ms",
-   "overpass-api.de ok 408 39264ms",
-   "overpass-api.de ok 300 37510ms",
-   "overpass-api.de ok 258 32543ms",
-   "overpass-api.de HTTP 502 667ms",
-   "overpass-api.de ok 300 35559ms",
-   "overpass-api.de ok 16 49690ms",
-   "overpass-api.de ok 57 43566ms",
-   "overpass-api.de HTTP 502 415ms",
-   "overpass-api.de ok 24 37432ms",
-   "overpass-api.de ok 484 40293ms",
+   "overpass-api.de ok 80 35777ms",
+   "overpass-api.de ok 54 31105ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de HTTP 502 402ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 300 44111ms",
+   "overpass-api.de ok 258 29463ms",
+   "overpass-api.de ok 300 32859ms",
+   "overpass-api.de ok 16 54916ms",
+   "overpass-api.de ok 57 46020ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de ok 24 45216ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de ok 484 35514ms",
    "streets: 484 shops",
    "fame: 213 of 213"
   ]
