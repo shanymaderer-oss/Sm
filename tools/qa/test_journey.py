@@ -75,7 +75,7 @@ async def main():
         await pg.click("#pplus"); await pg.wait_for_timeout(1500)
         txt = await pg.inner_text("#flights"); hrefs = await pg.eval_on_selector_all("#flights a", "a => a.map(x => x.href)")
         check("₪" not in txt and any("kayak.com/flights/TLV-ROM/2026-11-17/2026-11-20/3adults" in h for h in hrefs) and any("aviasales.com/search/TLV1711ROM20113" in h for h in hrefs), f"without prices: ready searches with the dates and 3 travelers ({hrefs[:3]})")
-        check(any("aviasales.com/search/" in h and "marker=594662" in h for h in hrefs) and "עמלה" in txt, "the Aviasales search carries our partner id, and says it is a partner link")
+        check(any("aviasales.com/search/" in h and "marker=799451" in h for h in hrefs) and "עמלה" in txt, "the Aviasales search carries our partner id, and says it is a partner link")
         mode["off"] = False
         # where to sleep
         await Q.to_stay(pg); await pg.wait_for_timeout(2500)
