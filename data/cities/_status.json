@@ -2912,8 +2912,8 @@
   ]
  },
  "seville": {
-  "at": "2026-11-02T12:31:53.967Z",
-  "seconds": 512,
+  "at": "2026-11-02T17:10:21.500Z",
+  "seconds": 583,
   "osm": {
    "sights": 89,
    "sights2": 53,
@@ -2923,6 +2923,7 @@
    "shopping": 300,
    "diet": 4,
    "extra": 70,
+   "fitness": 28,
    "landmarks": 50,
    "streets": 10
   },
@@ -2951,7 +2952,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Calle Gonzalo Jiménez de Quesada (15)",
@@ -2961,22 +2963,24 @@
    "Calle Monte Carmelo (10)"
   ],
   "log": [
-   "overpass-api.de ok 89 54131ms",
-   "overpass-api.de HTTP 502 466ms",
-   "overpass-api.de ok 53 33913ms",
-   "overpass-api.de HTTP 502 465ms",
-   "overpass-api.de ok 450 40586ms",
-   "overpass-api.de HTTP 502 522ms",
-   "overpass-api.de ok 264 29869ms",
-   "overpass-api.de ok 283 29073ms",
-   "overpass-api.de ok 300 44002ms",
-   "overpass-api.de ok 4 38730ms",
-   "overpass-api.de ok 70 29106ms",
-   "overpass-api.de ok 50 34165ms",
-   "overpass-api.de HTTP 502 517ms",
-   "overpass-api.de ok 283 45589ms",
+   "overpass-api.de ok 89 40052ms",
+   "overpass-api.de ok 53 33258ms",
+   "overpass-api.de HTTP 502 404ms",
+   "overpass-api.de ok 450 43213ms",
+   "overpass-api.de ok 264 34650ms",
+   "overpass-api.de ok 283 38188ms",
+   "overpass-api.de HTTP 502 409ms",
+   "overpass-api.de ok 300 36990ms",
+   "overpass-api.de ok 4 41960ms",
+   "overpass-api.de HTTP 502 414ms",
+   "overpass-api.de ok 70 32742ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de HTTP 502 398ms",
+   "overpass-api.de ok 28 45589ms",
+   "overpass-api.de ok 50 41717ms",
+   "overpass-api.de ok 283 33826ms",
    "streets: 283 shops",
-   "fame: 245 of 245"
+   "fame: 195 of 245"
   ]
  },
  "valencia": {
