@@ -3531,17 +3531,18 @@
   ]
  },
  "geneva": {
-  "at": "2026-11-02T12:47:21.090Z",
-  "seconds": 829,
+  "at": "2026-11-02T17:55:17.466Z",
+  "seconds": 819,
   "osm": {
    "sights": 102,
    "sights2": 45,
    "restaurants": 450,
    "cafes": 231,
    "hotels": 109,
-   "shopping": 206,
-   "diet": 0,
+   "shopping": 0,
+   "diet": 11,
    "extra": 83,
+   "fitness": 34,
    "landmarks": 54,
    "streets": 1
   },
@@ -3555,7 +3556,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 17,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -3570,37 +3571,34 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Rue de Carouge (9)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 416ms",
-   "overpass-api.de ok 102 53816ms",
-   "overpass-api.de ok 45 34193ms",
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de ok 450 28238ms",
-   "overpass-api.de ok 231 35588ms",
-   "overpass-api.de ok 109 34039ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de ok 206 33090ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de HTTP 502 376ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de ok 102 40478ms",
+   "overpass-api.de ok 45 40792ms",
+   "overpass-api.de ok 450 34613ms",
+   "overpass-api.de ok 231 46960ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de ok 109 34883ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de HTTP 502 453ms",
+   "overpass.private.coffee timeout 60000ms",
    "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de HTTP 502 562ms",
-   "overpass-api.de ok 83 31435ms",
-   "overpass-api.de HTTP 502 418ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass-api.de ok 54 37984ms",
-   "overpass-api.de HTTP 502 375ms",
-   "overpass-api.de HTTP 502 394ms",
-   "overpass-api.de ok 150 55885ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de ok 11 43206ms",
+   "overpass-api.de ok 83 39000ms",
+   "overpass-api.de ok 34 39428ms",
+   "overpass-api.de ok 54 44604ms",
+   "overpass-api.de ok 150 34597ms",
    "streets: 150 shops",
-   "fame: 178 of 178"
+   "fame: 180 of 180"
   ]
  },
  "brussels": {
