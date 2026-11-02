@@ -878,8 +878,8 @@
   ]
  },
  "madrid": {
-  "at": "2026-11-02T11:37:23.845Z",
-  "seconds": 843,
+  "at": "2026-11-02T16:37:14.303Z",
+  "seconds": 995,
   "osm": {
    "sights": 405,
    "sights2": 88,
@@ -887,22 +887,23 @@
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 61,
-   "extra": 0,
+   "diet": 0,
+   "extra": 107,
+   "fitness": 57,
    "landmarks": 76,
    "streets": 14
   },
   "voyage": {
    "eat": 45,
-   "drink": 19,
+   "drink": 21,
    "buy": 44,
-   "see": 60,
+   "see": 62,
    "sleep": 28,
-   "withCoords": 220,
+   "withCoords": 224,
    "districts": 8
   },
   "wiki": {
-   "he": 0,
+   "he": 55,
    "en": 100
   },
   "streetsV": 2,
@@ -917,7 +918,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Calle de Fuencarral (79)",
@@ -927,32 +929,34 @@
    "Calle del Arenal (21)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 382ms",
-   "overpass-api.de ok 405 45324ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 88 42999ms",
-   "overpass-api.de ok 450 33056ms",
-   "overpass-api.de ok 300 32369ms",
-   "overpass-api.de HTTP 502 383ms",
-   "overpass-api.de ok 350 33955ms",
-   "overpass-api.de HTTP 502 426ms",
-   "overpass-api.de ok 300 43911ms",
-   "overpass-api.de HTTP 502 371ms",
-   "overpass-api.de ok 61 43690ms",
-   "overpass-api.de HTTP 502 426ms",
-   "overpass-api.de HTTP 502 420ms",
-   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de ok 405 27836ms",
+   "overpass-api.de ok 88 46733ms",
+   "overpass-api.de ok 450 41231ms",
+   "overpass-api.de ok 300 42891ms",
+   "overpass-api.de ok 350 34249ms",
+   "overpass-api.de ok 300 44226ms",
+   "overpass-api.de HTTP 502 463ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de HTTP 502 520ms",
    "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de ok 76 42471ms",
-   "overpass-api.de HTTP 502 435ms",
-   "overpass-api.de ok 1263 40666ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 691ms",
+   "overpass-api.de HTTP 502 519ms",
+   "overpass-api.de ok 107 44394ms",
+   "overpass-api.de HTTP 504 51690ms",
+   "overpass-api.de ok 57 40926ms",
+   "overpass-api.de ok 76 47413ms",
+   "overpass-api.de ok 1263 41333ms",
    "streets: 1263 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 487 of 487"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 431 of 581"
   ]
  },
  "athens": {
