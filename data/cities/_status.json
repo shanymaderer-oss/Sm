@@ -2624,17 +2624,18 @@
   ]
  },
  "belgrade": {
-  "at": "2026-11-02T12:31:05.049Z",
-  "seconds": 1037,
+  "at": "2026-11-02T17:22:10.638Z",
+  "seconds": 618,
   "osm": {
    "sights": 215,
-   "sights2": 0,
+   "sights2": 43,
    "restaurants": 285,
-   "cafes": 0,
+   "cafes": 300,
    "hotels": 175,
    "shopping": 291,
    "diet": 11,
    "extra": 55,
+   "fitness": 22,
    "landmarks": 16,
    "streets": 10
   },
@@ -2663,7 +2664,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Булевар краља Александра (29)",
@@ -2673,34 +2675,22 @@
    "Синђелићева (8)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 665ms",
-   "overpass-api.de ok 215 36210ms",
-   "overpass-api.de HTTP 502 511ms",
-   "overpass-api.de HTTP 502 476ms",
-   "overpass-api.de HTTP 502 471ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de ok 285 52076ms",
-   "overpass-api.de HTTP 502 494ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 175 34825ms",
-   "overpass-api.de HTTP 502 511ms",
-   "overpass-api.de ok 291 40713ms",
-   "overpass-api.de ok 11 26266ms",
-   "overpass-api.de HTTP 502 510ms",
-   "overpass-api.de HTTP 502 530ms",
-   "overpass-api.de ok 55 30301ms",
-   "overpass-api.de HTTP 502 474ms",
-   "overpass-api.de HTTP 502 534ms",
-   "overpass-api.de ok 16 32241ms",
-   "overpass-api.de ok 284 34663ms",
+   "overpass-api.de ok 215 47136ms",
+   "overpass-api.de ok 43 41481ms",
+   "overpass-api.de ok 285 40254ms",
+   "overpass-api.de HTTP 502 497ms",
+   "overpass-api.de ok 300 24102ms",
+   "overpass-api.de ok 175 40894ms",
+   "overpass-api.de ok 291 44610ms",
+   "overpass-api.de HTTP 504 53245ms",
+   "overpass-api.de ok 11 38879ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 55 43921ms",
+   "overpass-api.de ok 22 33407ms",
+   "overpass-api.de ok 16 40974ms",
+   "overpass-api.de ok 284 37801ms",
    "streets: 284 shops",
-   "fame: 292 of 292"
+   "fame: 293 of 293"
   ]
  },
  "dublin": {
