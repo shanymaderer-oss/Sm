@@ -7654,8 +7654,8 @@
   ]
  },
  "tirana": {
-  "at": "2026-11-02T13:44:38.217Z",
-  "seconds": 511,
+  "at": "2026-11-02T18:42:24.909Z",
+  "seconds": 908,
   "osm": {
    "sights": 28,
    "sights2": 20,
@@ -7665,7 +7665,8 @@
    "shopping": 284,
    "diet": 4,
    "extra": 14,
-   "landmarks": 7,
+   "fitness": 9,
+   "landmarks": 0,
    "streets": 13
   },
   "voyage": {
@@ -7678,7 +7679,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 11,
+   "he": 0,
    "en": 89
   },
   "streetsV": 2,
@@ -7693,7 +7694,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Rruga Bardhyl (21)",
@@ -7703,22 +7705,25 @@
    "Rruga Xhanfize Keko (10)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 349ms",
-   "overpass-api.de ok 28 39580ms",
-   "overpass-api.de ok 20 32551ms",
-   "overpass-api.de ok 250 32209ms",
-   "overpass-api.de ok 300 36203ms",
-   "overpass-api.de ok 300 38605ms",
-   "overpass-api.de ok 284 43672ms",
-   "overpass-api.de HTTP 502 361ms",
-   "overpass-api.de ok 4 38515ms",
-   "overpass-api.de ok 14 41070ms",
-   "overpass-api.de HTTP 502 596ms",
-   "overpass-api.de HTTP 502 394ms",
-   "overpass-api.de ok 7 38469ms",
-   "overpass-api.de ok 293 33060ms",
+   "overpass-api.de HTTP 502 720ms",
+   "overpass-api.de ok 28 40817ms",
+   "overpass-api.de ok 20 41001ms",
+   "overpass-api.de HTTP 502 438ms",
+   "overpass-api.de ok 250 53131ms",
+   "overpass-api.de ok 300 38669ms",
+   "overpass-api.de ok 300 50891ms",
+   "overpass-api.de ok 284 38252ms",
+   "overpass-api.de ok 4 33317ms",
+   "overpass-api.de ok 14 32559ms",
+   "overpass-api.de ok 9 38572ms",
+   "overpass-api.de HTTP 504 47537ms",
+   "overpass-api.de HTTP 502 464ms",
+   "overpass-api.de HTTP 504 59602ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 293 49658ms",
    "streets: 293 shops",
-   "fame: 63 of 63"
+   "fame: 59 of 59"
   ]
  },
  "osaka": {
