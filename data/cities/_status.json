@@ -5881,18 +5881,19 @@
   ]
  },
  "buenos-aires": {
-  "at": "2026-11-02T14:47:41.502Z",
-  "seconds": 1130,
+  "at": "2026-11-02T20:10:08.824Z",
+  "seconds": 699,
   "osm": {
    "sights": 368,
    "sights2": 72,
    "restaurants": 450,
    "cafes": 300,
-   "hotels": 0,
+   "hotels": 350,
    "shopping": 300,
    "diet": 58,
    "extra": 187,
-   "landmarks": 0,
+   "fitness": 70,
+   "landmarks": 6,
    "streets": 14
   },
   "voyage": {
@@ -5905,7 +5906,7 @@
    "districts": 8
   },
   "wiki": {
-   "he": 0,
+   "he": 28,
    "en": 100
   },
   "streetsV": 2,
@@ -5920,7 +5921,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Avenida Córdoba (55)",
@@ -5930,39 +5932,32 @@
    "Avenida Corrientes (17)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 518ms",
-   "overpass-api.de ok 368 45744ms",
-   "overpass-api.de ok 72 52901ms",
-   "overpass-api.de HTTP 502 475ms",
-   "overpass-api.de ok 450 33208ms",
-   "overpass-api.de HTTP 502 510ms",
-   "overpass-api.de HTTP 502 470ms",
-   "overpass-api.de ok 300 33280ms",
-   "overpass-api.de HTTP 502 465ms",
-   "overpass-api.de HTTP 502 466ms",
-   "overpass-api.de HTTP 502 510ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 300 38233ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de HTTP 502 516ms",
-   "overpass-api.de ok 58 38139ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de ok 187 30844ms",
-   "overpass-api.de HTTP 502 467ms",
-   "overpass-api.de HTTP 502 522ms",
-   "overpass-api.de HTTP 502 517ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 517ms",
-   "overpass-api.de ok 934 29667ms",
+   "overpass-api.de ok 368 34162ms",
+   "overpass-api.de ok 72 44049ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass-api.de ok 450 34699ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 300 34937ms",
+   "overpass-api.de ok 350 34591ms",
+   "overpass-api.de HTTP 502 401ms",
+   "overpass-api.de ok 300 50735ms",
+   "overpass-api.de ok 58 36751ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 187 33135ms",
+   "overpass-api.de ok 70 45882ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 6 42199ms",
+   "overpass-api.de ok 934 42951ms",
    "streets: 934 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 486 of 536"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 550 of 550"
   ]
  },
  "santiago": {
