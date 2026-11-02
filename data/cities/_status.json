@@ -6217,17 +6217,18 @@
   ]
  },
  "valletta": {
-  "at": "2026-11-02T15:02:29.480Z",
-  "seconds": 777,
+  "at": "2026-11-02T20:25:38.662Z",
+  "seconds": 730,
   "osm": {
    "sights": 80,
    "sights2": 36,
    "restaurants": 214,
    "cafes": 89,
    "hotels": 153,
-   "shopping": 0,
+   "shopping": 116,
    "diet": 2,
    "extra": 52,
+   "fitness": 6,
    "landmarks": 11,
    "streets": 6
   },
@@ -6241,7 +6242,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 40,
    "en": 100
   },
   "streetsV": 2,
@@ -6256,7 +6257,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Pjazza Tigné (21)",
@@ -6266,29 +6268,28 @@
    "Triq Manwel Dimech (6)"
   ],
   "log": [
-   "overpass-api.de ok 80 32138ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de ok 36 31833ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 214 32773ms",
-   "overpass-api.de ok 89 31534ms",
-   "overpass-api.de HTTP 502 445ms",
-   "overpass-api.de ok 153 39350ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 2 35844ms",
-   "overpass-api.de ok 52 36722ms",
-   "overpass-api.de HTTP 502 456ms",
-   "overpass-api.de ok 11 38405ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de ok 111 45697ms",
+   "overpass-api.de ok 80 42220ms",
+   "overpass-api.de ok 36 44753ms",
+   "overpass-api.de ok 214 51202ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de ok 89 45509ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de ok 153 55180ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass-api.de HTTP 502 396ms",
+   "overpass-api.de ok 116 34218ms",
+   "overpass-api.de ok 2 38850ms",
+   "overpass-api.de HTTP 502 597ms",
+   "overpass-api.de ok 52 41969ms",
+   "overpass-api.de HTTP 502 372ms",
+   "overpass-api.de ok 6 40334ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 11 36176ms",
+   "overpass-api.de HTTP 504 48256ms",
+   "overpass-api.de HTTP 502 399ms",
+   "overpass-api.de ok 111 40137ms",
    "streets: 111 shops",
-   "fame: 165 of 165"
+   "fame: 166 of 166"
   ]
  },
  "corfu": {
