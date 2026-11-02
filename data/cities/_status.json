@@ -8305,18 +8305,19 @@
   ]
  },
  "doha": {
-  "at": "2026-11-02T14:13:30.656Z",
-  "seconds": 832,
+  "at": "2026-11-02T19:26:44.489Z",
+  "seconds": 1157,
   "osm": {
    "sights": 8,
-   "sights2": 24,
+   "sights2": 0,
    "restaurants": 182,
    "cafes": 61,
    "hotels": 179,
    "shopping": 33,
-   "diet": 2,
+   "diet": 0,
    "extra": 4,
-   "landmarks": 0,
+   "fitness": 7,
+   "landmarks": 1,
    "streets": 8
   },
   "voyage": {
@@ -8329,7 +8330,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 15,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -8344,7 +8345,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Jabr Bin Mohammed Street (9)",
@@ -8354,23 +8356,28 @@
    "Al Jabr Street (8)"
   ],
   "log": [
-   "overpass-api.de ok 8 37044ms",
-   "overpass-api.de ok 24 38310ms",
-   "overpass-api.de HTTP 502 528ms",
-   "overpass-api.de ok 182 41563ms",
-   "overpass-api.de HTTP 504 47288ms",
-   "overpass-api.de ok 61 40635ms",
-   "overpass-api.de ok 179 29380ms",
-   "overpass-api.de HTTP 502 485ms",
-   "overpass-api.de ok 33 30515ms",
-   "overpass-api.de ok 2 50636ms",
-   "overpass-api.de ok 4 45186ms",
-   "overpass-api.de HTTP 502 476ms",
-   "overpass-api.de HTTP 502 533ms",
-   "overpass-api.de HTTP 504 45411ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 59999ms",
-   "overpass-api.de ok 161 39440ms",
+   "overpass-api.de ok 8 42228ms",
+   "overpass-api.de HTTP 502 481ms",
+   "overpass-api.de HTTP 504 50027ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 706ms",
+   "overpass-api.de ok 182 51010ms",
+   "overpass-api.de ok 61 40195ms",
+   "overpass-api.de ok 179 31984ms",
+   "overpass-api.de HTTP 502 489ms",
+   "overpass-api.de ok 33 34854ms",
+   "overpass-api.de HTTP 502 495ms",
+   "overpass-api.de HTTP 502 482ms",
+   "overpass-api.de HTTP 502 491ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 4 55207ms",
+   "overpass-api.de ok 7 38267ms",
+   "overpass-api.de timeout 60003ms",
+   "overpass-api.de ok 1 53291ms",
+   "overpass-api.de ok 161 36192ms",
    "streets: 161 shops",
    "fame: 14 of 14"
   ]
