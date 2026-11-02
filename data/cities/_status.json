@@ -7916,8 +7916,8 @@
   ]
  },
  "doha": {
-  "at": "2026-11-01T05:54:25.204Z",
-  "seconds": 420,
+  "at": "2026-11-02T14:13:30.656Z",
+  "seconds": 832,
   "osm": {
    "sights": 8,
    "sights2": 24,
@@ -7927,7 +7927,7 @@
    "shopping": 33,
    "diet": 2,
    "extra": 4,
-   "landmarks": 1,
+   "landmarks": 0,
    "streets": 8
   },
   "voyage": {
@@ -7940,7 +7940,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 15,
    "en": 100
   },
   "streetsV": 2,
@@ -7965,16 +7965,23 @@
    "Al Jabr Street (8)"
   ],
   "log": [
-   "overpass-api.de ok 8 38153ms",
-   "overpass-api.de ok 24 31273ms",
-   "overpass-api.de ok 182 29235ms",
-   "overpass-api.de ok 61 36244ms",
-   "overpass-api.de ok 179 30135ms",
-   "overpass-api.de ok 33 39484ms",
-   "overpass-api.de ok 2 47460ms",
-   "overpass-api.de ok 4 34661ms",
-   "overpass-api.de ok 1 25127ms",
-   "overpass-api.de ok 161 25583ms",
+   "overpass-api.de ok 8 37044ms",
+   "overpass-api.de ok 24 38310ms",
+   "overpass-api.de HTTP 502 528ms",
+   "overpass-api.de ok 182 41563ms",
+   "overpass-api.de HTTP 504 47288ms",
+   "overpass-api.de ok 61 40635ms",
+   "overpass-api.de ok 179 29380ms",
+   "overpass-api.de HTTP 502 485ms",
+   "overpass-api.de ok 33 30515ms",
+   "overpass-api.de ok 2 50636ms",
+   "overpass-api.de ok 4 45186ms",
+   "overpass-api.de HTTP 502 476ms",
+   "overpass-api.de HTTP 502 533ms",
+   "overpass-api.de HTTP 504 45411ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 59999ms",
+   "overpass-api.de ok 161 39440ms",
    "streets: 161 shops",
    "fame: 14 of 14"
   ]
