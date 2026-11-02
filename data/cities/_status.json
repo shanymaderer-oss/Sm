@@ -956,17 +956,18 @@
   ]
  },
  "athens": {
-  "at": "2026-11-02T11:38:03.142Z",
-  "seconds": 639,
+  "at": "2026-11-02T16:33:47.259Z",
+  "seconds": 865,
   "osm": {
    "sights": 187,
    "sights2": 101,
    "restaurants": 450,
-   "cafes": 300,
+   "cafes": 0,
    "hotels": 350,
    "shopping": 300,
    "diet": 43,
    "extra": 56,
+   "fitness": 25,
    "landmarks": 14,
    "streets": 14
   },
@@ -995,7 +996,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Πατησίων (83)",
@@ -1005,22 +1007,25 @@
    "Πανεπιστημίου (30)"
   ],
   "log": [
-   "overpass-api.de ok 187 42685ms",
-   "overpass-api.de HTTP 504 57219ms",
-   "overpass-api.de HTTP 502 357ms",
-   "overpass-api.de ok 101 46766ms",
-   "overpass-api.de ok 450 39159ms",
-   "overpass-api.de HTTP 502 394ms",
-   "overpass-api.de ok 300 43729ms",
-   "overpass-api.de HTTP 502 394ms",
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 350 55779ms",
-   "overpass-api.de ok 300 37733ms",
-   "overpass-api.de ok 43 38723ms",
-   "overpass-api.de ok 56 37181ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 14 28911ms",
-   "overpass-api.de ok 1466 34295ms",
+   "overpass-api.de ok 187 32643ms",
+   "overpass-api.de HTTP 502 444ms",
+   "overpass-api.de ok 101 38300ms",
+   "overpass-api.de ok 450 35536ms",
+   "overpass-api.de HTTP 502 426ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de HTTP 504 52437ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 350 37320ms",
+   "overpass-api.de ok 300 38592ms",
+   "overpass-api.de ok 43 40111ms",
+   "overpass-api.de ok 56 31392ms",
+   "overpass-api.de HTTP 502 437ms",
+   "overpass-api.de ok 25 50222ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de HTTP 502 437ms",
+   "overpass-api.de ok 14 43410ms",
+   "overpass-api.de ok 1466 38075ms",
    "streets: 1466 shops",
    "fame: 340 of 340"
   ]
