@@ -5230,27 +5230,26 @@
   ]
  },
  "kuala-lumpur": {
-  "at": "2026-11-01T05:48:04.635Z",
-  "seconds": 461,
+  "at": "2026-11-02T14:27:08.273Z",
+  "seconds": 1183,
   "osm": {
    "sights": 32,
-   "sights2": 76,
+   "sights2": 0,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 228,
+   "shopping": 229,
    "diet": 25,
    "extra": 20,
-   "landmarks": 5,
-   "streets": 13
+   "landmarks": 0
   },
   "voyage": {
-   "eat": 45,
-   "drink": 9,
-   "buy": 42,
-   "see": 44,
-   "sleep": 66,
-   "withCoords": 175,
+   "eat": 51,
+   "drink": 11,
+   "buy": 33,
+   "see": 57,
+   "sleep": 70,
+   "withCoords": 188,
    "districts": 8
   },
   "wiki": {
@@ -5271,27 +5270,33 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "Jalan Petaling (36)",
-   "Lorong Merbau (34)",
-   "Jalan Tun H.S. Lee (17)",
-   "Jalan Bukit Bintang (13)",
-   "Jalan Tuanku Abdul Rahman (17)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 32 45663ms",
-   "overpass-api.de ok 76 51444ms",
-   "overpass-api.de ok 450 41879ms",
-   "overpass-api.de ok 300 43233ms",
-   "overpass-api.de ok 350 24485ms",
-   "overpass-api.de ok 228 34026ms",
-   "overpass-api.de ok 25 37961ms",
-   "overpass-api.de ok 20 29583ms",
-   "overpass-api.de ok 5 30223ms",
-   "overpass-api.de ok 312 33178ms",
-   "streets: 312 shops",
+   "overpass-api.de ok 32 33186ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 758ms",
+   "overpass-api.de ok 450 35513ms",
+   "overpass-api.de ok 300 41312ms",
+   "overpass-api.de ok 350 41969ms",
+   "overpass-api.de ok 229 39092ms",
+   "overpass-api.de ok 25 34484ms",
+   "overpass-api.de ok 20 42093ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de HTTP 502 416ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
    "wikidata HTTP 429",
-   "fame: 57 of 57"
+   "fame: 55 of 55"
   ]
  },
  "beijing": {
