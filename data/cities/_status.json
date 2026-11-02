@@ -3743,19 +3743,19 @@
   ]
  },
  "malaga": {
-  "at": "2026-11-02T13:22:11.471Z",
-  "seconds": 1054,
+  "at": "2026-11-02T18:33:07.844Z",
+  "seconds": 1110,
   "osm": {
    "sights": 218,
    "sights2": 48,
    "restaurants": 346,
    "cafes": 220,
-   "hotels": 0,
-   "shopping": 0,
+   "hotels": 149,
+   "shopping": 172,
    "diet": 8,
    "extra": 53,
-   "landmarks": 49,
-   "streets": 5
+   "fitness": 24,
+   "landmarks": 0
   },
   "voyage": {
    "eat": 17,
@@ -3767,7 +3767,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 2,
+   "he": 0,
    "en": 40
   },
   "streetsV": 2,
@@ -3782,40 +3782,38 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
-  "streets": [
-   "Calle Cristo de la Epidemia (18)",
-   "Calle Nueva (15)",
-   "Calle Victoria (8)",
-   "Calle Marqués de Larios (7)",
-   "Alameda Capuchinos (6)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de HTTP 504 49696ms",
-   "overpass-api.de ok 218 41833ms",
-   "overpass-api.de ok 48 43012ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 346 37022ms",
-   "overpass-api.de ok 220 37113ms",
-   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 434ms",
+   "overpass-api.de ok 218 41144ms",
+   "overpass-api.de ok 48 34554ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 346 34399ms",
+   "overpass-api.de HTTP 502 426ms",
+   "overpass-api.de ok 220 35497ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 149 47956ms",
+   "overpass-api.de ok 172 35893ms",
+   "overpass-api.de ok 8 42491ms",
+   "overpass-api.de HTTP 502 373ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass-api.de ok 53 58960ms",
+   "overpass-api.de ok 24 43402ms",
+   "overpass-api.de HTTP 502 562ms",
+   "overpass-api.de HTTP 502 381ms",
    "overpass-api.de HTTP 502 449ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 423ms",
    "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de HTTP 502 376ms",
    "overpass.private.coffee timeout 60001ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 567ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 8 43786ms",
-   "overpass-api.de HTTP 502 411ms",
-   "overpass-api.de ok 53 34740ms",
-   "overpass-api.de ok 49 46241ms",
-   "overpass-api.de HTTP 502 411ms",
-   "overpass-api.de ok 167 41364ms",
-   "streets: 167 shops",
-   "fame: 292 of 292"
+   "fame: 276 of 276"
   ]
  },
  "phuket": {
