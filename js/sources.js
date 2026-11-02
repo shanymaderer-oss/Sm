@@ -28,6 +28,8 @@
       shopping: H(R * 0.9) + `(nwr["shop"~"^(mall|department_store)$"]["name"];nwr["amenity"~"^(bar|pub|nightclub|biergarten)$"]["name"];);out center tags 300;`,
       diet: H(R * 2) + `(nwr["diet:kosher"~"^(yes|only)$"]["name"];nwr["cuisine"~"kosher|jewish"]["name"];nwr["diet:vegan"="only"]["name"];nwr["diet:vegetarian"="only"]["name"];nwr["amenity"="place_of_worship"]["religion"="jewish"]["name"];);out center tags 250;`,
       extra: H(R * 1.1) + `(nwr["amenity"="place_of_worship"]["name"]["wikidata"];nwr["leisure"~"^(park|garden|water_park)$"]["name"]["wikidata"];nwr["natural"="beach"]["name"];);out center tags 200;`,
+      /* gyms, pools and yoga studios, for travelers who work out on the trip */
+      fitness: H(R * 0.6) + `(nwr["leisure"="fitness_centre"]["name"];nwr["leisure"="sports_centre"]["sport"~"fitness|swimming|yoga|pilates|multi"]["name"];nwr["leisure"="swimming_pool"]["name"]["access"!~"^(private|customers|no)$"];nwr["sport"~"^(yoga|pilates)$"]["name"];);out center tags 150;`,
       /* famous bridges, squares and castles: often not tagged as tourist sights at all */
       landmarks: H(R) + `(nwr["man_made"="bridge"]["wikidata"]["name"];nwr["place"="square"]["wikidata"]["name"];nwr["highway"="pedestrian"]["area"="yes"]["wikidata"]["name"];nwr["historic"="castle"]["wikidata"]["name"];nwr["amenity"="clock"]["wikidata"];nwr["man_made"="tower"]["wikidata"]["name"];);out center tags 150;`,
       /* every fashion, shoe, gift… shop with a street address. Counted per street to find the main shopping streets. */
@@ -75,7 +77,7 @@
   /* keep only the tags the app uses, so cached data stays small */
   const KEEP = ["name", "name:he", "name:en", "tourism", "historic", "amenity", "leisure", "natural", "shop", "building", "wikidata", "wikipedia",
     "website", "contact:website", "url", "phone", "contact:phone", "opening_hours", "fee", "charge", "cuisine", "heritage",
-    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "wheelchair", "brand", "michelin:stars", "stars", "addr:street", "addr:housenumber", "reservation", "rooms", "beds", "religion", "man_made", "place", "highway", "area"];
+    "outdoor_seating", "diet:vegetarian", "diet:vegan", "diet:kosher", "wheelchair", "brand", "michelin:stars", "stars", "addr:street", "addr:housenumber", "reservation", "rooms", "beds", "religion", "man_made", "place", "highway", "area", "sport", "access"];
   const slim = els => els.map(e => ({
     type: e.type, id: e.id, lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon,
     tags: Object.fromEntries(Object.entries(e.tags || {}).filter(([k]) => KEEP.includes(k)))

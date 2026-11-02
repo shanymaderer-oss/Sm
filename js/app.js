@@ -902,8 +902,14 @@ function fitnessCard(t) {
   const park = (t.places || []).filter(p => ["park", "beach"].includes(p.kind) && hasXY(p)).map(p => ({ p, k: km(at, p) })).filter(x => x.k < 2.5).sort((a, b) => a.k - b.k)[0];
   const USC = ["de", "fr", "es", "it", "pt", "nl", "at", "be"].includes(t.cc);
   const kinds = [["חדר כושר", "gym"], ["יוגה", "yoga studio"], ["פילאטיס", "pilates studio"], ["קרוספיט", "crossfit"], ["בריכה", "swimming pool"]];
+  // the gyms, pools and studios in the city's own data, nearest first (one of each kind before a second of any)
+  const all = (t.places || []).filter(p => ["gym", "pool", "studio"].includes(p.kind) && hasXY(p)).map(p => ({ p, k: km(at, p) })).filter(x => x.k < 2.5).sort((a, b) => a.k - b.k);
+  const firsts = ["gym", "studio", "pool"].map(k => all.find(x => x.p.kind === k)).filter(Boolean);
+  const picks = [...firsts, ...all.filter(x => !firsts.includes(x))].slice(0, 4).sort((a, b) => a.k - b.k);
   return `<div class="card"><h2>${ic("heart")} אימונים בטיול</h2>
-    <p class="lead">${t.hotel ? "ליד המלון שלכם" : "ליד תחילת המסלול"}: מכונים וסטודיואים, עם שעות ודירוגים בגוגל מפות.</p>
+    <p class="lead">${t.hotel ? "ליד המלון שלכם" : "ליד תחילת המסלול"}${picks.length ? ":" : ": מכונים וסטודיואים, עם שעות ודירוגים בגוגל מפות."}</p>
+    ${picks.length ? `<ul class="fitlist">${picks.map(({ p, k }) => `<li><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")} · ${walkMin(k)} דק׳ הליכה${p.hours ? ` · ${esc(String(p.hours).slice(0, 40))}` : ""}</small></span><a class="chipbtn" href="${gmPlace(p)}" target="_blank" rel="noopener">${ic("pin")}במפה</a></li>`).join("")}</ul>
+    <p class="lead" style="margin-top:8px">עוד בגוגל מפות:</p>` : ""}
     <div class="chiprow">${kinds.map(([he, q]) => `<a class="chipbtn" href="${near(q)}" target="_blank" rel="noopener">${ic("pin")}${he}</a>`).join("")}</div>
     <p class="lead" style="margin-top:10px">שיעורים בכרטיסייה אחת, בלי מנוי מקומי:</p>
     <div class="chiprow"><a class="chipbtn" href="https://classpass.com/" target="_blank" rel="noopener">${ic("ext")}ClassPass</a>${USC ? `<a class="chipbtn" href="https://urbansportsclub.com/" target="_blank" rel="noopener">${ic("ext")}Urban Sports Club</a>` : ""}</div>

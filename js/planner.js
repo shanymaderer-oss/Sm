@@ -20,6 +20,7 @@ Masa.planner = (() => {
     restaurant: { cat: "food", he: "מסעדה", min: 75 }, cafe: { cat: "food", he: "בית קפה", min: 45 }, dessert: { cat: "food", he: "קינוח", min: 30 },
     bakery: { cat: "food", he: "מאפייה", min: 25 }, market: { cat: "food", he: "שוק", min: 60 }, deli: { cat: "food", he: "מעדנייה", min: 30 },
     bar: { cat: "night", he: "בר", min: 90 }, club: { cat: "night", he: "מועדון", min: 120 },
+    gym: { cat: "sport", he: "חדר כושר", min: 60 }, pool: { cat: "sport", he: "בריכה", min: 60 }, studio: { cat: "sport", he: "סטודיו ליוגה ופילאטיס", min: 60 },
     street: { cat: "shopping", he: "רחוב קניות", min: 75 }, mall: { cat: "shopping", he: "קניון", min: 90 }, shop: { cat: "shopping", he: "חנות", min: 40 }, store: { cat: "shopping", he: "כלבו", min: 60 },
     museum: { cat: "art", he: "מוזיאון", min: 110 }, gallery: { cat: "art", he: "גלריה", min: 60 },
     sight: { cat: "history", he: "אתר היסטורי", min: 70 }, square: { cat: "history", he: "כיכר", min: 35 }, bridge: { cat: "view", he: "גשר", min: 30 }, church: { cat: "history", he: "מבנה דתי", min: 40 },
@@ -66,6 +67,10 @@ Masa.planner = (() => {
     if (tu === "viewpoint") return "view";
     if (a === "place_of_worship" || /^(church|monastery)$/.test(t.historic || "")) return "church";
     if (t.natural === "beach") return "beach";
+    // a place to work out (kept out of the sights: only the workouts card and the agent use them)
+    if (/^(yoga|pilates)$/.test(t.sport || "") && !tu) return "studio";
+    if (t.leisure === "swimming_pool" || (t.leisure === "sports_centre" && /swimming/.test(t.sport || ""))) return "pool";
+    if (t.leisure === "fitness_centre" || t.leisure === "sports_centre") return "gym";
     if (/^(park|garden)$/.test(t.leisure || "")) return "park";
     if (t.historic) return "sight";
     if (tu === "attraction") return /^(church|cathedral|chapel|basilica|mosque|synagogue|temple)$/.test(t.building || "") ? "church" : "attraction";
@@ -1426,7 +1431,8 @@ Masa.planner = (() => {
     };
 
     const ranked = pool.filter(p => p.q > -3).sort((a, b) => b.q - a.q);
-    const placeList = [...ranked.filter(p => p.cat !== "sleep").slice(0, 800), ...ranked.filter(p => p.cat === "sleep").slice(0, 250)].map(toPlace);
+    // places to work out have no fame to rank by: they get their own share, so the workouts card can find them
+    const placeList = [...ranked.filter(p => p.cat !== "sleep" && p.cat !== "sport").slice(0, 800), ...ranked.filter(p => p.cat === "sleep").slice(0, 250), ...ranked.filter(p => p.cat === "sport").slice(0, 60)].map(toPlace);
     const trip = {
       city: geo.name, slug: geo.slug || null, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
       source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,

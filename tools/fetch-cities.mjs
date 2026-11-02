@@ -108,7 +108,7 @@ async function getFame(els, log, voyage) {
   return out;
 }
 const STREETS_V = 2; // bump to fetch the shopping streets again everywhere (bigger area, better ranking)
-const OPTIONAL = ["diet"]; // there can honestly be no kosher places; streets are asked again until found (cheap, one query)
+const OPTIONAL = ["fitness", "diet"]; // there can honestly be no kosher places; streets are asked again until found (cheap, one query)
 async function doCity(c) {
   const t0 = Date.now();
   const log = [];

@@ -34,6 +34,12 @@ async def main():
                     {**fl(380, d, bk, 1, "PC"), "depart": d + "T02:30:00+02:00"}, fl(415, d, bk, 0, "IZ"), fl(520, d, bk, 1, "LY")]})
                 # the whole month: a cheaper day with the same number of nights, and one with a different length (ignored)
                 return await route.fulfill(json={"flights": [fl(289, "2026-11-17", "2026-11-20"), fl(199, "2026-11-10", "2026-11-25")]})
+            if u.endswith("/data/cities/rome.json"):
+                # Rome with gyms and yoga studios around (the next data refresh brings the real ones)
+                res = await route.fetch(); d = await res.json()
+                for i, (dy, dx) in enumerate([(a, b) for a in (-0.02, -0.01, 0, 0.01, 0.02) for b in (-0.02, -0.01, 0, 0.01, 0.02)]):
+                    d["els"].append({"type": "node", "id": 9900000 + i, "lat": 41.8986 + dy, "lon": 12.4769 + dx, "tags": {"name": f"Palestra {i}", "leisure": "fitness_centre"} if i % 2 else {"name": f"Yoga Roma {i}", "sport": "yoga", "leisure": "sports_centre"}})
+                return await route.fulfill(response=res, json=d)
             if u.startswith(URL): return await route.continue_()
             if "openfreemap.org/styles" in u: return await route.fulfill(json={"version": 8, "sources": {}, "layers": []})
             return await route.abort()
@@ -117,6 +123,9 @@ async def main():
         card = await pg.locator(".card:has-text('אימונים בטיול')").inner_text() if await pg.locator(".card:has-text('אימונים בטיול')").count() else ""
         hrefs = await pg.eval_on_selector_all(".card:has-text('אימונים בטיול') a", "a => a.map(x => x.href)")
         check("חדר כושר" in card and "יוגה" in card and any("google.com/maps/search/gym" in h for h in hrefs) and any("classpass" in h for h in hrefs), "the trip has a workouts card: gyms and studios near by, classes")
+        fit = await pg.locator(".fitlist li").all_inner_texts()
+        check(2 <= len(fit) <= 4 and any("Palestra" in x and "חדר כושר" in x for x in fit) and any("Yoga" in x for x in fit) and all("דק׳ הליכה" in x for x in fit), f"real gyms and studios from the city's data, nearest first ({[x[:30] for x in fit]})")
+        check(not any("Palestra" in s["name"] or "Yoga Roma" in s["name"] for d in t["days"] for s in d["stops"]), "gyms are not put in the route as sights")
         await pg.click("#nav button[data-k=plan]")
         # Paris: the area is "סן ז'רמן"; a name with an apostrophe must not take the Booking and Airbnb links away
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(600)
