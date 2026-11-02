@@ -4721,8 +4721,8 @@
   ]
  },
  "dubrovnik": {
-  "at": "2026-11-01T05:23:05.460Z",
-  "seconds": 471,
+  "at": "2026-11-02T13:31:03.697Z",
+  "seconds": 836,
   "osm": {
    "sights": 18,
    "sights2": 24,
@@ -4730,7 +4730,7 @@
    "cafes": 42,
    "hotels": 63,
    "shopping": 44,
-   "diet": 3,
+   "diet": 0,
    "extra": 13,
    "landmarks": 7,
    "streets": 0
@@ -4745,7 +4745,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 4,
+   "he": 0,
    "en": 29
   },
   "streetsV": 2,
@@ -4763,18 +4763,28 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 18 39350ms",
-   "overpass-api.de ok 24 43874ms",
-   "overpass-api.de ok 98 26686ms",
-   "overpass-api.de ok 42 33651ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de ok 63 44666ms",
-   "overpass-api.de ok 44 30982ms",
-   "overpass-api.de ok 3 31938ms",
-   "overpass-api.de ok 13 45208ms",
-   "overpass-api.de ok 7 31846ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de ok 5 38534ms",
+   "overpass-api.de ok 18 34456ms",
+   "overpass-api.de HTTP 504 55501ms",
+   "overpass-api.de HTTP 502 289ms",
+   "overpass-api.de ok 24 30419ms",
+   "overpass-api.de ok 98 34767ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 42 30673ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 368ms",
+   "overpass-api.de ok 63 37911ms",
+   "overpass-api.de ok 44 34523ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 368ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 13 38281ms",
+   "overpass-api.de HTTP 502 368ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 7 27235ms",
+   "overpass-api.de ok 5 36493ms",
    "streets: 5 shops",
    "fame: 33 of 33"
   ]
