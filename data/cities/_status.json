@@ -3824,8 +3824,8 @@
   ]
  },
  "hong-kong": {
-  "at": "2026-11-01T05:48:17.323Z",
-  "seconds": 529,
+  "at": "2026-11-02T14:03:35.595Z",
+  "seconds": 897,
   "osm": {
    "sights": 82,
    "sights2": 42,
@@ -3835,20 +3835,20 @@
    "shopping": 240,
    "diet": 25,
    "extra": 199,
-   "landmarks": 6,
+   "landmarks": 0,
    "streets": 14
   },
   "voyage": {
    "eat": 100,
    "drink": 46,
    "buy": 51,
-   "see": 101,
-   "sleep": 91,
-   "withCoords": 253,
+   "see": 111,
+   "sleep": 90,
+   "withCoords": 263,
    "districts": 8
   },
   "wiki": {
-   "he": 50,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -3873,23 +3873,33 @@
    "加拿分道 Carnarvon Road (15)"
   ],
   "log": [
-   "overpass-api.de ok 82 29489ms",
-   "overpass-api.de ok 42 48517ms",
-   "overpass-api.de HTTP 502 458ms",
-   "overpass-api.de ok 450 35795ms",
-   "overpass-api.de HTTP 502 528ms",
-   "overpass-api.de ok 173 46785ms",
-   "overpass-api.de ok 350 48257ms",
-   "overpass-api.de ok 240 31063ms",
-   "overpass-api.de ok 25 35232ms",
-   "overpass-api.de ok 199 36320ms",
-   "overpass-api.de ok 6 25493ms",
-   "overpass-api.de ok 646 43823ms",
+   "overpass-api.de ok 82 32632ms",
+   "overpass-api.de HTTP 502 385ms",
+   "overpass-api.de ok 42 49983ms",
+   "overpass-api.de ok 450 37963ms",
+   "overpass-api.de HTTP 502 372ms",
+   "overpass-api.de ok 173 39002ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de ok 350 50986ms",
+   "overpass-api.de HTTP 502 410ms",
+   "overpass-api.de ok 240 39901ms",
+   "overpass-api.de ok 25 42458ms",
+   "overpass-api.de ok 199 43060ms",
+   "overpass-api.de HTTP 502 411ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de HTTP 502 410ms",
+   "overpass-api.de ok 646 47080ms",
    "streets: 646 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 357 of 357"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 305 of 355"
   ]
  },
  "shanghai": {
