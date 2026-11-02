@@ -9578,8 +9578,8 @@
   ]
  },
  "lucerne": {
-  "at": "2026-11-01T06:41:51.214Z",
-  "seconds": 441,
+  "at": "2026-11-02T15:24:09.791Z",
+  "seconds": 732,
   "osm": {
    "sights": 39,
    "sights2": 17,
@@ -9589,7 +9589,7 @@
    "shopping": 82,
    "diet": 13,
    "extra": 20,
-   "landmarks": 21,
+   "landmarks": 0,
    "streets": 3
   },
   "voyage": {
@@ -9602,7 +9602,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 5,
+   "he": 0,
    "en": 34
   },
   "streetsV": 2,
@@ -9625,19 +9625,24 @@
    "Kapellgasse (7)"
   ],
   "log": [
-   "overpass-api.de ok 39 31275ms",
-   "overpass-api.de ok 17 45087ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 166 34144ms",
-   "overpass-api.de ok 125 40190ms",
-   "overpass-api.de ok 63 24713ms",
-   "overpass-api.de ok 82 37482ms",
-   "overpass-api.de ok 13 30062ms",
-   "overpass-api.de ok 20 43383ms",
-   "overpass-api.de ok 21 43165ms",
-   "overpass-api.de ok 95 17051ms",
+   "overpass-api.de ok 39 42303ms",
+   "overpass-api.de ok 17 30429ms",
+   "overpass-api.de ok 166 36566ms",
+   "overpass-api.de ok 125 32888ms",
+   "overpass-api.de ok 63 44270ms",
+   "overpass-api.de ok 82 32427ms",
+   "overpass-api.de ok 13 38174ms",
+   "overpass-api.de ok 20 44832ms",
+   "overpass-api.de HTTP 502 739ms",
+   "overpass-api.de HTTP 502 516ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass.private.coffee timeout 59999ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de ok 95 42247ms",
    "streets: 95 shops",
-   "fame: 82 of 82"
+   "fame: 74 of 74"
   ]
  },
  "palma": {
