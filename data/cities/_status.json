@@ -8855,8 +8855,8 @@
   ]
  },
  "cartagena": {
-  "at": "2026-11-01T06:11:53.292Z",
-  "seconds": 380,
+  "at": "2026-11-02T15:02:17.527Z",
+  "seconds": 532,
   "osm": {
    "sights": 6,
    "sights2": 41,
@@ -8897,16 +8897,22 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 6 20967ms",
-   "overpass-api.de ok 41 26753ms",
-   "overpass-api.de ok 196 19514ms",
-   "overpass-api.de ok 73 31389ms",
-   "overpass-api.de ok 220 29244ms",
-   "overpass-api.de ok 71 27282ms",
-   "overpass-api.de ok 1 36393ms",
-   "overpass-api.de ok 7 21276ms",
-   "overpass-api.de ok 1 36608ms",
-   "overpass-api.de ok 6 47489ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass-api.de ok 6 48117ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de ok 41 39718ms",
+   "overpass-api.de HTTP 502 408ms",
+   "overpass-api.de ok 196 32047ms",
+   "overpass-api.de HTTP 502 408ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de ok 73 40639ms",
+   "overpass-api.de ok 220 32692ms",
+   "overpass-api.de ok 71 36053ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de ok 1 32033ms",
+   "overpass-api.de ok 7 42500ms",
+   "overpass-api.de ok 1 42408ms",
+   "overpass-api.de ok 6 30283ms",
    "streets: 6 shops",
    "fame: 10 of 10"
   ]
