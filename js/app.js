@@ -1091,6 +1091,7 @@ SCREENS.before = {
       ${card("infoCard", "info", "var(--teal)", "מידע על היעד", "מזג אוויר, כסף, חשמל, eSIM")}
       ${card("moveCard", "bus", "var(--violet)", "תחבורה", "מהשדה לעיר ובתוך העיר")}
       ${card("packCard", "check", "var(--sun)", "מה לארוז", "רשימה לפי מזג האוויר, הנוסעים והמסלול")}
+      ${t.source === "sample" ? "" : card("mapCard", "pin", "var(--sky)", "המפה לטיסה", t.mapSaved ? `${ic("check", 2.6)} שמורה בטלפון מ-${esc(fmtDay(new Date(t.mapSaved)))}. אפשר לשמור שוב` : "לשמור את מפת העיר בטלפון, לשימוש בלי אינטרנט")}
     </div>
     ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים בטיול?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
   </div>`;
@@ -1101,6 +1102,13 @@ SCREENS.before = {
     $("infoCard").onclick = () => loadCountries().then(() => go("info"));
     $("moveCard").onclick = () => go("move");
     $("packCard").onclick = () => openPack();
+    $("mapCard") && ($("mapCard").onclick = () => {
+      const b = $("mapCard"), out = b.querySelector("b"); if (b.disabled) return;
+      b.disabled = true; out.textContent = "שומרים את המפה…";
+      saveMapOffline(S.trip, (d, n) => { out.textContent = `שומרים את המפה… ${Math.round(d / n * 100)}%`; })
+        .then(() => { toast("המפה נשמרה בטלפון. היא תעבוד גם בלי אינטרנט"); if (S.screen === "before") rerenderKeepScroll(); })
+        .catch(() => { b.disabled = false; out.textContent = navigator.onLine ? "לא הצלחנו לשמור את כל המפה. נסו שוב" : "צריך אינטרנט כדי לשמור את המפה"; });
+    });
     document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
   }
 };
@@ -1113,6 +1121,33 @@ function openPack() {
     if (!packIn) { Masa.pack.install({ S, SCREENS, $, esc, ic, go, rerenderKeepScroll, infoCache, tripDates, isoDate, countryInfo, totalWalk }); packIn = true; }
     go("pack", { noFly: true });
   });
+}
+/* the trip's map, kept for the flight: the street map's tiles around every stop (zoom 10 to 14; the map draws the
+   closer zooms from those) and the letters it writes with, all stored by the offline cache (sw.js) */
+const tileXY = (lat, lng, z) => { const n = 2 ** z, r = lat * Math.PI / 180;
+  return [Math.floor((lng + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)]; };
+async function saveMapOffline(t, prog) {
+  const st = map.getStyle(), src = Object.entries(st?.sources || {}).find(([, x]) => x.type === "vector");
+  const tpl = src && map.getSource(src[0])?.tiles?.[0];
+  if (!tpl || !navigator.serviceWorker?.controller) throw new Error("not ready");
+  const pts = t.days.flatMap(d => d.stops).filter(hasXY), pad = t.opts?.move === "car" ? 0.04 : 0.015;
+  const lat = pts.map(p => +p.lat), lng = pts.map(p => +p.lng);
+  const box = [Math.min(...lat) - pad, Math.min(...lng) - pad, Math.max(...lat) + pad, Math.max(...lng) + pad];
+  const urls = [];
+  for (let z = 10; z <= 14; z++) {
+    const [x0, y0] = tileXY(box[2], box[1], z), [x1, y1] = tileXY(box[0], box[3], z);
+    if ((x1 - x0 + 1) * (y1 - y0 + 1) > 300) break; // a very spread-out trip: the closest zoom would be too many tiles
+    for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) urls.push(tpl.replace("{z}", z).replace("{x}", x).replace("{y}", y));
+  }
+  const fonts = [...new Set(st.layers.flatMap(l => { const f = l.layout?.["text-font"]; return Array.isArray(f) && f.every(x => typeof x === "string") ? [f.join(",")] : []; }))];
+  if (st.glyphs) for (const f of fonts) for (const r of ["0-255", "256-511", "1280-1535", "8192-8447"]) urls.push(st.glyphs.replace("{fontstack}", encodeURIComponent(f)).replace("{range}", r));
+  let done = 0, ok = 0;
+  for (let i = 0; i < urls.length; i += 6) {
+    await Promise.all(urls.slice(i, i + 6).map(u => fetch(u, { mode: "cors" }).then(r => { if (r.ok) ok++; }).catch(() => {}).finally(() => { done++; prog?.(done, urls.length); })));
+  }
+  if (ok < urls.length * 0.8) throw new Error("partial");
+  t.mapSaved = Date.now(); saveTrip(t);
+  return ok;
 }
 SCREENS.together = {
   view() { const t = S.trip; return `<div class="screen">${tripTop(t, "together")}${t.source === "sample" ? "" : familyCard(t)}</div>`; },

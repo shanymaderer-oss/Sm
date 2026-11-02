@@ -60,7 +60,7 @@ jobs:
         env: { QA_URL: "http://localhost:8790" }
         run: |
           (python -m http.server 8790 >/dev/null 2>&1 &) ; sleep 2
-          for t in test_journey test_agent test_hints test_nudge test_pack; do echo "== $t"; python tools/qa/$t.py || exit 1; done
+          for t in test_journey test_agent test_hints test_nudge test_pack test_mapsave; do echo "== $t"; python tools/qa/$t.py || exit 1; done
       - name: Feedback and anonymous counts
         run: python tools/qa/test_feedback.py
       - name: The guide (local answers and the shared guide)
