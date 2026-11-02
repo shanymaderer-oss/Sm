@@ -2997,17 +2997,18 @@
   ]
  },
  "valencia": {
-  "at": "2026-11-02T12:15:40.839Z",
-  "seconds": 768,
+  "at": "2026-11-02T17:16:29.680Z",
+  "seconds": 804,
   "osm": {
-   "sights": 0,
+   "sights": 64,
    "sights2": 15,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 142,
    "shopping": 300,
    "diet": 18,
-   "extra": 43,
+   "extra": 0,
+   "fitness": 22,
    "landmarks": 33,
    "streets": 2
   },
@@ -3021,7 +3022,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 12,
    "en": 76
   },
   "streetsV": 2,
@@ -3036,33 +3037,36 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Carrera de la Fonteta de Sant Lluís (9)",
    "Carrer d'Alboraia (8)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 385ms",
-   "overpass-api.de HTTP 502 385ms",
-   "overpass-api.de HTTP 502 385ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de ok 15 37992ms",
-   "overpass-api.de ok 450 54775ms",
-   "overpass-api.de ok 300 30188ms",
-   "overpass-api.de HTTP 502 435ms",
-   "overpass-api.de ok 142 28822ms",
-   "overpass-api.de ok 300 35214ms",
-   "overpass-api.de ok 18 44365ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de ok 43 57044ms",
-   "overpass-api.de ok 33 38477ms",
-   "overpass-api.de HTTP 502 411ms",
-   "overpass-api.de ok 163 40660ms",
+   "overpass-api.de HTTP 502 380ms",
+   "overpass-api.de HTTP 502 374ms",
+   "overpass-api.de ok 64 32456ms",
+   "overpass-api.de HTTP 502 360ms",
+   "overpass-api.de ok 15 27804ms",
+   "overpass-api.de ok 450 34790ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 300 40837ms",
+   "overpass-api.de ok 142 44458ms",
+   "overpass-api.de ok 300 38869ms",
+   "overpass-api.de ok 18 37739ms",
+   "overpass-api.de HTTP 502 359ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 22 48352ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de ok 33 32448ms",
+   "overpass-api.de ok 163 36909ms",
    "streets: 163 shops",
-   "fame: 109 of 109"
+   "fame: 123 of 123"
   ]
  },
  "miami": {
