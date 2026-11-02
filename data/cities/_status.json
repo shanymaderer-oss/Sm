@@ -5510,8 +5510,8 @@
   ]
  },
  "boston": {
-  "at": "2026-11-01T06:05:20.895Z",
-  "seconds": 480,
+  "at": "2026-11-02T14:29:16.100Z",
+  "seconds": 761,
   "osm": {
    "sights": 143,
    "sights2": 63,
@@ -5521,16 +5521,15 @@
    "shopping": 144,
    "diet": 34,
    "extra": 92,
-   "landmarks": 32,
-   "streets": 4
+   "landmarks": 32
   },
   "voyage": {
-   "eat": 137,
-   "drink": 77,
-   "buy": 44,
-   "see": 78,
+   "eat": 141,
+   "drink": 83,
+   "buy": 48,
+   "see": 80,
    "sleep": 69,
-   "withCoords": 442,
+   "withCoords": 459,
    "districts": 8
   },
   "wiki": {
@@ -5551,26 +5550,24 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "Newbury Street (85)",
-   "Boylston Street (40)",
-   "Charles Street (24)",
-   "Washington Street (6)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 143 31614ms",
-   "overpass-api.de ok 63 27071ms",
-   "overpass-api.de ok 319 35921ms",
-   "overpass-api.de ok 158 25228ms",
-   "overpass-api.de ok 117 23098ms",
-   "overpass-api.de ok 144 48512ms",
-   "overpass-api.de ok 34 36737ms",
-   "overpass-api.de HTTP 502 460ms",
-   "overpass-api.de ok 92 57814ms",
-   "overpass-api.de ok 32 31950ms",
-   "overpass-api.de ok 306 44846ms",
-   "streets: 306 shops",
-   "wikidata HTTP 429",
+   "overpass-api.de ok 143 42473ms",
+   "overpass-api.de ok 63 41816ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 319 35920ms",
+   "overpass-api.de ok 158 45620ms",
+   "overpass-api.de ok 117 42226ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 144 42333ms",
+   "overpass-api.de ok 34 38020ms",
+   "overpass-api.de ok 92 40557ms",
+   "overpass-api.de ok 32 41374ms",
+   "overpass-api.de HTTP 502 626ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60000ms",
    "wikidata HTTP 429",
    "fame: 254 of 254"
   ]
