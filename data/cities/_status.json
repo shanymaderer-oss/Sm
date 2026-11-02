@@ -6376,11 +6376,11 @@
   ]
  },
  "helsinki": {
-  "at": "2026-11-01T05:05:15.663Z",
-  "seconds": 519,
+  "at": "2026-11-02T12:59:29.226Z",
+  "seconds": 707,
   "osm": {
    "sights": 127,
-   "sights2": 88,
+   "sights2": 89,
    "restaurants": 450,
    "cafes": 239,
    "hotels": 83,
@@ -6391,16 +6391,16 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 157,
-   "drink": 100,
-   "buy": 62,
-   "see": 102,
-   "sleep": 54,
-   "withCoords": 528,
+   "eat": 160,
+   "drink": 86,
+   "buy": 61,
+   "see": 93,
+   "sleep": 50,
+   "withCoords": 503,
    "districts": 8
   },
   "wiki": {
-   "he": 21,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -6425,22 +6425,29 @@
    "Korkeavuorenkatu (21)"
   ],
   "log": [
-   "overpass-api.de ok 127 35362ms",
-   "overpass-api.de ok 88 43853ms",
-   "overpass-api.de ok 450 36072ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 239 28568ms",
-   "overpass-api.de ok 83 30327ms",
-   "overpass-api.de ok 286 51547ms",
-   "overpass-api.de ok 25 51270ms",
-   "overpass-api.de ok 107 31644ms",
-   "overpass-api.de ok 35 38763ms",
-   "overpass-api.de ok 506 38825ms",
+   "overpass-api.de ok 127 32031ms",
+   "overpass-api.de ok 89 42003ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 450 46191ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass-api.de timeout 60000ms",
+   "overpass-api.de ok 239 50605ms",
+   "overpass-api.de ok 83 34556ms",
+   "overpass-api.de ok 286 38726ms",
+   "overpass-api.de ok 25 35184ms",
+   "overpass-api.de ok 107 37581ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 35 35301ms",
+   "overpass-api.de HTTP 502 368ms",
+   "overpass-api.de ok 506 45513ms",
    "streets: 506 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 264 of 264"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 214 of 264"
   ]
  },
  "zagreb": {
