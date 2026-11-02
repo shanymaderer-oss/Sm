@@ -918,8 +918,8 @@
   ]
  },
  "athens": {
-  "at": "2026-11-01T04:11:04.245Z",
-  "seconds": 488,
+  "at": "2026-11-02T11:38:03.142Z",
+  "seconds": 639,
   "osm": {
    "sights": 187,
    "sights2": 101,
@@ -967,18 +967,22 @@
    "Πανεπιστημίου (30)"
   ],
   "log": [
-   "overpass-api.de ok 187 41061ms",
-   "overpass-api.de ok 101 31005ms",
-   "overpass-api.de ok 450 33581ms",
-   "overpass-api.de ok 300 33058ms",
-   "overpass-api.de ok 350 54656ms",
-   "overpass-api.de ok 300 34292ms",
-   "overpass-api.de ok 43 31470ms",
-   "overpass-api.de HTTP 502 417ms",
-   "overpass-api.de ok 56 33563ms",
-   "overpass-api.de HTTP 502 418ms",
-   "overpass-api.de ok 14 34198ms",
-   "overpass-api.de ok 1466 44920ms",
+   "overpass-api.de ok 187 42685ms",
+   "overpass-api.de HTTP 504 57219ms",
+   "overpass-api.de HTTP 502 357ms",
+   "overpass-api.de ok 101 46766ms",
+   "overpass-api.de ok 450 39159ms",
+   "overpass-api.de HTTP 502 394ms",
+   "overpass-api.de ok 300 43729ms",
+   "overpass-api.de HTTP 502 394ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass-api.de ok 350 55779ms",
+   "overpass-api.de ok 300 37733ms",
+   "overpass-api.de ok 43 38723ms",
+   "overpass-api.de ok 56 37181ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 14 28911ms",
+   "overpass-api.de ok 1466 34295ms",
    "streets: 1466 shops",
    "fame: 340 of 340"
   ]
