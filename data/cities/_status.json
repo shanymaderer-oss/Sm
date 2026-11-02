@@ -8906,16 +8906,16 @@
   ]
  },
  "cape-town": {
-  "at": "2026-11-01T06:23:47.448Z",
-  "seconds": 420,
+  "at": "2026-11-02T14:33:24.156Z",
+  "seconds": 1046,
   "osm": {
    "sights": 43,
    "sights2": 33,
    "restaurants": 226,
    "cafes": 107,
    "hotels": 222,
-   "shopping": 85,
-   "diet": 7,
+   "shopping": 0,
+   "diet": 0,
    "extra": 33,
    "landmarks": 4,
    "streets": 1
@@ -8930,7 +8930,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 13,
    "en": 100
   },
   "streetsV": 2,
@@ -8951,17 +8951,28 @@
    "Regent Road (8)"
   ],
   "log": [
-   "overpass-api.de ok 43 33294ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 33 38489ms",
-   "overpass-api.de ok 226 32888ms",
-   "overpass-api.de ok 107 30281ms",
-   "overpass-api.de ok 222 26907ms",
-   "overpass-api.de ok 85 41330ms",
-   "overpass-api.de ok 7 32253ms",
-   "overpass-api.de ok 33 26692ms",
-   "overpass-api.de ok 4 30860ms",
-   "overpass-api.de ok 44 30310ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 43 33327ms",
+   "overpass-api.de HTTP 502 566ms",
+   "overpass-api.de ok 33 31035ms",
+   "overpass-api.de ok 226 37185ms",
+   "overpass-api.de HTTP 504 52956ms",
+   "overpass-api.de ok 107 31568ms",
+   "overpass-api.de ok 222 37303ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de HTTP 502 408ms",
+   "overpass-api.de HTTP 502 376ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 383ms",
+   "overpass-api.de ok 33 59379ms",
+   "overpass-api.de ok 4 47635ms",
+   "overpass-api.de ok 44 43027ms",
    "streets: 44 shops",
    "fame: 117 of 117"
   ]
