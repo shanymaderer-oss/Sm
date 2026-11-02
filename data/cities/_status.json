@@ -8258,12 +8258,12 @@
   ]
  },
  "ho-chi-minh": {
-  "at": "2026-11-01T05:57:37.554Z",
-  "seconds": 466,
+  "at": "2026-11-02T13:52:49.016Z",
+  "seconds": 756,
   "osm": {
    "sights": 14,
    "sights2": 28,
-   "restaurants": 450,
+   "restaurants": 0,
    "cafes": 300,
    "hotels": 350,
    "shopping": 149,
@@ -8282,7 +8282,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 1,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -8306,18 +8306,24 @@
    "Đường Phan Văn Trị (7)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 415ms",
-   "overpass-api.de ok 14 31218ms",
-   "overpass-api.de ok 28 41199ms",
-   "overpass-api.de ok 450 36744ms",
-   "overpass-api.de ok 300 46090ms",
-   "overpass-api.de ok 350 48181ms",
-   "overpass-api.de ok 149 42570ms",
+   "overpass-api.de ok 14 47166ms",
+   "overpass-api.de ok 28 37802ms",
+   "overpass-api.de HTTP 502 366ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 545ms",
+   "overpass-api.de ok 300 47706ms",
+   "overpass-api.de HTTP 502 398ms",
+   "overpass-api.de ok 350 38490ms",
    "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de ok 250 29814ms",
-   "overpass-api.de ok 18 29604ms",
-   "overpass-api.de ok 3 26726ms",
-   "overpass-api.de ok 261 29350ms",
+   "overpass-api.de ok 149 38647ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de ok 250 34417ms",
+   "overpass-api.de ok 18 43168ms",
+   "overpass-api.de ok 3 38394ms",
+   "overpass-api.de ok 261 34582ms",
    "streets: 261 shops",
    "fame: 34 of 34"
   ]
