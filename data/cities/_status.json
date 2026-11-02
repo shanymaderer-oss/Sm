@@ -2083,17 +2083,18 @@
   ]
  },
  "dubai": {
-  "at": "2026-11-02T12:01:55.322Z",
-  "seconds": 842,
+  "at": "2026-11-02T17:09:37.552Z",
+  "seconds": 1024,
   "osm": {
    "sights": 12,
    "sights2": 14,
    "restaurants": 182,
    "cafes": 90,
-   "hotels": 112,
+   "hotels": 0,
    "shopping": 58,
    "diet": 0,
    "extra": 12,
+   "fitness": 4,
    "landmarks": 1,
    "streets": 4
   },
@@ -2122,7 +2123,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Al Satwa Road (37)",
@@ -2131,27 +2133,31 @@
    "Jumeira Street (7)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 416ms",
-   "overpass-api.de ok 12 39440ms",
-   "overpass-api.de HTTP 504 47938ms",
-   "overpass-api.de HTTP 502 400ms",
-   "overpass-api.de ok 14 36370ms",
-   "overpass-api.de ok 182 53965ms",
-   "overpass-api.de ok 90 33533ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 112 33741ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 58 46186ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de HTTP 502 424ms",
-   "overpass-api.de HTTP 502 375ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de ok 12 35863ms",
+   "overpass-api.de ok 14 46682ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de ok 182 27191ms",
+   "overpass-api.de ok 90 23532ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de HTTP 502 526ms",
+   "overpass-api.de HTTP 502 462ms",
    "overpass.private.coffee timeout 60001ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 12 47293ms",
-   "overpass-api.de ok 1 37933ms",
-   "overpass-api.de ok 196 46525ms",
+   "overpass-api.de ok 58 33446ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 12 46585ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de ok 4 42733ms",
+   "overpass-api.de ok 1 42653ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de ok 196 47921ms",
    "streets: 196 shops",
-   "fame: 67 of 67"
+   "fame: 20 of 20"
   ]
  },
  "krakow": {
