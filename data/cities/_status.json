@@ -9108,8 +9108,8 @@
   ]
  },
  "bordeaux": {
-  "at": "2026-11-01T06:22:08.890Z",
-  "seconds": 462,
+  "at": "2026-11-02T14:55:51.746Z",
+  "seconds": 727,
   "osm": {
    "sights": 66,
    "sights2": 42,
@@ -9119,7 +9119,7 @@
    "shopping": 252,
    "diet": 10,
    "extra": 37,
-   "landmarks": 13,
+   "landmarks": 0,
    "streets": 14
   },
   "voyage": {
@@ -9132,7 +9132,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 6,
+   "he": 0,
    "en": 54
   },
   "streetsV": 2,
@@ -9157,20 +9157,25 @@
    "Avenue de la Libération Charles de Gaulle (18)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 409ms",
-   "overpass-api.de ok 66 24850ms",
-   "overpass-api.de ok 42 43399ms",
-   "overpass-api.de ok 450 39601ms",
-   "overpass-api.de ok 300 32627ms",
-   "overpass-api.de ok 101 38533ms",
-   "overpass-api.de ok 252 35988ms",
-   "overpass-api.de ok 10 38125ms",
-   "overpass-api.de ok 37 36725ms",
-   "overpass-api.de HTTP 502 413ms",
-   "overpass-api.de ok 13 32557ms",
-   "overpass-api.de ok 577 30943ms",
-   "streets: 577 shops",
-   "fame: 106 of 106"
+   "overpass-api.de ok 66 47130ms",
+   "overpass-api.de ok 42 36590ms",
+   "overpass-api.de ok 450 27281ms",
+   "overpass-api.de HTTP 502 527ms",
+   "overpass-api.de ok 300 41094ms",
+   "overpass-api.de ok 101 28769ms",
+   "overpass-api.de HTTP 502 492ms",
+   "overpass-api.de ok 252 40235ms",
+   "overpass-api.de HTTP 502 494ms",
+   "overpass-api.de ok 10 40952ms",
+   "overpass-api.de ok 37 33803ms",
+   "overpass-api.de HTTP 502 493ms",
+   "overpass-api.de HTTP 502 489ms",
+   "overpass-api.de HTTP 502 533ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 576 42616ms",
+   "streets: 576 shops",
+   "fame: 97 of 97"
   ]
  },
  "luxembourg": {
