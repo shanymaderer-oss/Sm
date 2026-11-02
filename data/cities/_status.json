@@ -2825,8 +2825,8 @@
   ]
  },
  "seville": {
-  "at": "2026-11-01T04:53:04.389Z",
-  "seconds": 440,
+  "at": "2026-11-02T12:31:53.967Z",
+  "seconds": 512,
   "osm": {
    "sights": 89,
    "sights2": 53,
@@ -2849,7 +2849,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 15,
+   "he": 0,
    "en": 90
   },
   "streetsV": 2,
@@ -2874,18 +2874,20 @@
    "Calle Monte Carmelo (10)"
   ],
   "log": [
-   "overpass-api.de ok 89 35439ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 53 31715ms",
-   "overpass-api.de ok 450 29378ms",
-   "overpass-api.de ok 264 28276ms",
-   "overpass-api.de ok 283 34555ms",
-   "overpass-api.de ok 300 29739ms",
-   "overpass-api.de ok 4 38714ms",
-   "overpass-api.de ok 70 43419ms",
-   "overpass-api.de HTTP 502 342ms",
-   "overpass-api.de ok 50 35083ms",
-   "overpass-api.de ok 283 23008ms",
+   "overpass-api.de ok 89 54131ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 53 33913ms",
+   "overpass-api.de HTTP 502 465ms",
+   "overpass-api.de ok 450 40586ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de ok 264 29869ms",
+   "overpass-api.de ok 283 29073ms",
+   "overpass-api.de ok 300 44002ms",
+   "overpass-api.de ok 4 38730ms",
+   "overpass-api.de ok 70 29106ms",
+   "overpass-api.de ok 50 34165ms",
+   "overpass-api.de HTTP 502 517ms",
+   "overpass-api.de ok 283 45589ms",
    "streets: 283 shops",
    "fame: 245 of 245"
   ]
