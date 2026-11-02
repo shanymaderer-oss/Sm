@@ -40,7 +40,8 @@ async def main():
         bk = [l for l in links if "booking.com" in l]
         check(bk and f"checkin={start}" in bk[0], "lodging search has the dates")
         check(any("getyourguide" in l and "Rome" in l for l in links), "tours are searched in the trip's city")
-        check(not any("aid=" in l for l in links) and not await pg.locator("text=חלק מהקישורים הם של שותפים").count(), "no partner ids and no partner notice while there are no partners")
+        # the only partnership so far is Aviasales (Travelpayouts): no id on other sites, and the notice says links may be partner links
+        check(not any("aid=" in l or "marker=" in l for l in links if "aviasales" not in l) and await pg.locator("text=חלק מהקישורים הם של שותפים").count() > 0, "partner ids only where there is a partnership, and the partner notice is shown")
         # mark closed, kept after reload
         await pg.click("[data-kit=insurance]"); await pg.wait_for_timeout(300)
         await pg.reload(); await pg.wait_for_timeout(1000)

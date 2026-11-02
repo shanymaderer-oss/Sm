@@ -24,4 +24,4 @@ window.MASA_AI = { proxy: "https://masa-ai.sivanmad7.workers.dev" };
 /* partner programs: when a partnership is approved, its id goes here and is added to every link to that site.
    Example: { "booking.com": { aid: "1234567" }, "getyourguide.com": { partner_id: "ABC123" }, "viator.com": { pid: "P00012345", mcid: "42383" } }
    While this is null, no link carries a partner id and the "partner links" notice is not shown. */
-window.MASA_PARTNERS = null;
+window.MASA_PARTNERS = { "aviasales.com": { marker: "594662" } }; // Travelpayouts partner id (public, not a secret)

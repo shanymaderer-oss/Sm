@@ -190,7 +190,8 @@ Masa.journey = (() => {
       const links = to ? J.searchLinks(to, f.start, back, f.people) : [{ name: "Google Flights", url: `https://www.google.com/travel/flights?hl=iw&q=${encodeURIComponent(`Flights from TLV to ${S.dest?.q || ""} on ${f.start} through ${back}`)}` }];
       const linkRow = `<div class="linkrow">${links.map(l => `<a class="chipbtn" href="${esc(partnerUrl(l.url))}" target="_blank" rel="noopener sponsored">${ic("ext")}${esc(l.name)}</a>`).join("")}</div>`;
       const head = `<h2>${ic("route")} טיסות מתל אביב <small class="muted">${J.short(f.start)}–${J.short(back)}, ${f.people === 1 ? "נוסע אחד" : f.people + " נוסעים"}</small></h2>`;
-      if (!to || !window.MASA_AI?.proxy || F?.off) return `${head}<p class="lead">השוו מחירים לתאריכים שלכם באתרים הגדולים:</p>${linkRow}`;
+      const note = window.MASA_PARTNERS ? `<p class="pline muted">חלק מהקישורים הם של שותפים: הזמנה דרכם עשויה לזכות את מסע בעמלה קטנה, בלי תוספת למחיר שלכם.</p>` : "";
+      if (!to || !window.MASA_AI?.proxy || F?.off) return `${head}<p class="lead">השוו מחירים לתאריכים שלכם באתרים הגדולים:</p>${linkRow}${note}`;
       if (!F || F.loading) return `${head}<div class="skeleton" style="height:64px"></div><div class="skeleton" style="height:64px"></div>`;
       const per = p => f.people > 1 ? `<small>₪${p.toLocaleString("he-IL")} לאדם · ₪${(p * f.people).toLocaleString("he-IL")} ל-${f.people}</small>` : `<small>לאדם, הלוך ושוב</small>`;
       const stops = n => n === 0 ? "ישירה" : n === 1 ? "עצירה אחת" : `${n} עצירות`;
