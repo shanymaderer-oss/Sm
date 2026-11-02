@@ -1643,17 +1643,18 @@
   ]
  },
  "tbilisi": {
-  "at": "2026-11-02T11:51:44.762Z",
-  "seconds": 820,
+  "at": "2026-11-02T16:49:36.517Z",
+  "seconds": 591,
   "osm": {
    "sights": 128,
    "sights2": 67,
    "restaurants": 273,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 0,
+   "shopping": 249,
    "diet": 19,
    "extra": 58,
+   "fitness": 8,
    "landmarks": 31,
    "streets": 1
   },
@@ -1667,7 +1668,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 48,
    "en": 100
   },
   "streetsV": 2,
@@ -1682,32 +1683,29 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "David Aghmashenebeli Avenue (6)"
   ],
   "log": [
-   "overpass-api.de HTTP 504 53167ms",
-   "overpass-api.de ok 128 50760ms",
-   "overpass-api.de HTTP 502 452ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 67 35009ms",
-   "overpass-api.de HTTP 502 985ms",
-   "overpass-api.de ok 273 27393ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de ok 300 46435ms",
-   "overpass-api.de ok 350 37293ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de HTTP 502 444ms",
-   "overpass-api.de HTTP 502 440ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 19 30848ms",
-   "overpass-api.de ok 58 35421ms",
-   "overpass-api.de ok 31 31000ms",
-   "overpass-api.de HTTP 502 609ms",
-   "overpass-api.de ok 96 39552ms",
+   "overpass-api.de HTTP 502 375ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 128 40512ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 67 45305ms",
+   "overpass-api.de ok 273 31832ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de ok 300 32634ms",
+   "overpass-api.de ok 350 38635ms",
+   "overpass-api.de ok 249 34528ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de ok 19 42332ms",
+   "overpass-api.de ok 58 28738ms",
+   "overpass-api.de ok 8 45512ms",
+   "overpass-api.de ok 31 54235ms",
+   "overpass-api.de ok 96 36607ms",
    "streets: 96 shops",
    "fame: 186 of 186"
   ]
