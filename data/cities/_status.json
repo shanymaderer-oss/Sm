@@ -6599,18 +6599,18 @@
   ]
  },
  "vilnius": {
-  "at": "2026-11-01T05:21:30.036Z",
-  "seconds": 703,
+  "at": "2026-11-02T13:01:32.455Z",
+  "seconds": 825,
   "osm": {
    "sights": 70,
    "sights2": 71,
-   "restaurants": 256,
+   "restaurants": 0,
    "cafes": 150,
    "hotels": 112,
    "shopping": 180,
    "diet": 9,
    "extra": 65,
-   "landmarks": 0,
+   "landmarks": 21,
    "streets": 7
   },
   "voyage": {
@@ -6623,7 +6623,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 20,
+   "he": 21,
    "en": 100
   },
   "streetsV": 2,
@@ -6637,7 +6637,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "landmarks": 1
   },
   "streets": [
    "Gedimino pr. (21)",
@@ -6647,23 +6648,26 @@
    "Vilniaus g. (6)"
   ],
   "log": [
-   "overpass-api.de ok 70 46872ms",
-   "overpass-api.de ok 71 35075ms",
-   "overpass-api.de HTTP 502 691ms",
-   "overpass-api.de ok 256 30541ms",
-   "overpass-api.de ok 150 36818ms",
-   "overpass-api.de ok 112 31912ms",
-   "overpass-api.de ok 180 40448ms",
-   "overpass-api.de ok 9 26536ms",
-   "overpass-api.de ok 65 39433ms",
-   "overpass-api.de HTTP 502 698ms",
-   "overpass-api.de HTTP 502 686ms",
-   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de ok 70 34680ms",
+   "overpass-api.de ok 71 36586ms",
+   "overpass-api.de HTTP 502 438ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de HTTP 502 431ms",
    "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 183 44164ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de HTTP 502 365ms",
+   "overpass-api.de ok 150 32174ms",
+   "overpass-api.de HTTP 504 55459ms",
+   "overpass-api.de ok 112 36373ms",
+   "overpass-api.de ok 180 38460ms",
+   "overpass-api.de HTTP 502 414ms",
+   "overpass-api.de ok 9 39968ms",
+   "overpass-api.de ok 65 39234ms",
+   "overpass-api.de ok 21 51397ms",
+   "overpass-api.de ok 183 49252ms",
    "streets: 183 shops",
-   "fame: 136 of 136"
+   "fame: 152 of 152"
   ]
  },
  "bologna": {
