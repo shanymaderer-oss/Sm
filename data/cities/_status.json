@@ -3046,8 +3046,8 @@
   ]
  },
  "los-angeles": {
-  "at": "2026-11-01T04:52:06.523Z",
-  "seconds": 458,
+  "at": "2026-11-02T12:48:13.182Z",
+  "seconds": 628,
   "osm": {
    "sights": 58,
    "sights2": 129,
@@ -3061,16 +3061,16 @@
    "streets": 5
   },
   "voyage": {
-   "eat": 65,
-   "drink": 23,
-   "buy": 26,
-   "see": 72,
-   "sleep": 27,
-   "withCoords": 232,
+   "eat": 79,
+   "drink": 32,
+   "buy": 28,
+   "see": 85,
+   "sleep": 28,
+   "withCoords": 274,
    "districts": 8
   },
   "wiki": {
-   "he": 19,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -3094,17 +3094,26 @@
    "Santa Monica Boulevard (6)"
   ],
   "log": [
-   "overpass-api.de ok 58 40627ms",
-   "overpass-api.de ok 129 39165ms",
-   "overpass-api.de ok 345 50097ms",
-   "overpass-api.de ok 96 39354ms",
-   "overpass-api.de ok 174 38280ms",
-   "overpass-api.de ok 116 36884ms",
-   "overpass-api.de ok 68 31424ms",
-   "overpass-api.de ok 46 31335ms",
-   "overpass-api.de ok 0 34448ms",
-   "overpass-api.de ok 144 27263ms",
-   "streets: 144 shops",
+   "overpass-api.de ok 58 52685ms",
+   "overpass-api.de ok 129 33310ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 345 35239ms",
+   "overpass-api.de HTTP 502 445ms",
+   "overpass-api.de ok 96 38771ms",
+   "overpass-api.de HTTP 502 585ms",
+   "overpass-api.de ok 174 42470ms",
+   "overpass-api.de ok 116 43100ms",
+   "overpass-api.de HTTP 502 407ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 68 54433ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de ok 46 39350ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 0 44178ms",
+   "overpass-api.de ok 147 39904ms",
+   "streets: 147 shops",
+   "wikidata HTTP 429",
    "wikidata HTTP 429",
    "fame: 99 of 99"
   ]
