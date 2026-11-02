@@ -7118,8 +7118,8 @@
   ]
  },
  "heraklion": {
-  "at": "2026-11-01T05:30:40.810Z",
-  "seconds": 445,
+  "at": "2026-11-02T13:47:04.455Z",
+  "seconds": 935,
   "osm": {
    "sights": 46,
    "sights2": 10,
@@ -7129,8 +7129,7 @@
    "shopping": 22,
    "diet": 3,
    "extra": 5,
-   "landmarks": 2,
-   "streets": 2
+   "landmarks": 0
   },
   "voyage": {
    "eat": 14,
@@ -7142,7 +7141,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 3,
+   "he": 0,
    "en": 26
   },
   "streetsV": 2,
@@ -7159,24 +7158,29 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "25ης Αυγούστου (30)",
-   "Πλατεία Ελευθερίου Βενιζέλου (13)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 46 44948ms",
-   "overpass-api.de ok 10 34419ms",
-   "overpass-api.de ok 100 24482ms",
-   "overpass-api.de ok 98 34555ms",
-   "overpass-api.de ok 48 35193ms",
-   "overpass-api.de ok 22 34063ms",
-   "overpass-api.de ok 3 36972ms",
+   "overpass-api.de ok 46 30608ms",
+   "overpass-api.de ok 10 35988ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 100 43430ms",
+   "overpass-api.de ok 98 41591ms",
+   "overpass-api.de ok 48 31462ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass-api.de ok 22 36942ms",
+   "overpass-api.de ok 3 37055ms",
+   "overpass-api.de ok 5 32397ms",
+   "overpass-api.de HTTP 502 284ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 369ms",
    "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 5 34645ms",
-   "overpass-api.de ok 2 37343ms",
-   "overpass-api.de ok 71 34723ms",
-   "streets: 71 shops",
-   "fame: 21 of 21"
+   "overpass-api.de HTTP 502 368ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "fame: 20 of 20"
   ]
  },
  "singapore": {
