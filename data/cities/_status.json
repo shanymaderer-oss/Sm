@@ -3757,13 +3757,13 @@
   ]
  },
  "hanoi": {
-  "at": "2026-11-01T05:40:11.092Z",
-  "seconds": 492,
+  "at": "2026-11-02T14:07:05.699Z",
+  "seconds": 875,
   "osm": {
-   "sights": 25,
+   "sights": 26,
    "sights2": 28,
-   "restaurants": 421,
-   "cafes": 300,
+   "restaurants": 420,
+   "cafes": 0,
    "hotels": 350,
    "shopping": 168,
    "diet": 28,
@@ -3781,7 +3781,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 7,
+   "he": 0,
    "en": 80
   },
   "streetsV": 2,
@@ -3806,21 +3806,29 @@
    "Phố Triệu Việt Vương (23)"
   ],
   "log": [
-   "overpass-api.de ok 25 37641ms",
-   "overpass-api.de ok 28 30171ms",
-   "overpass-api.de ok 421 44571ms",
-   "overpass-api.de HTTP 502 687ms",
-   "overpass-api.de HTTP 502 441ms",
-   "overpass-api.de ok 300 29234ms",
-   "overpass-api.de ok 350 44954ms",
-   "overpass-api.de ok 168 36299ms",
-   "overpass-api.de ok 28 34918ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 22 53625ms",
-   "overpass-api.de ok 9 27117ms",
-   "overpass-api.de ok 490 28379ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 26 33883ms",
+   "overpass-api.de ok 28 43139ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass-api.de ok 420 35664ms",
+   "overpass-api.de HTTP 504 55687ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 350 50231ms",
+   "overpass-api.de ok 168 29629ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de HTTP 504 45963ms",
+   "overpass-api.de ok 28 28373ms",
+   "overpass-api.de ok 22 32223ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de ok 9 42479ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 490 39985ms",
    "streets: 490 shops",
-   "fame: 50 of 50"
+   "fame: 51 of 51"
   ]
  },
  "hong-kong": {
