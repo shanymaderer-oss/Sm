@@ -5718,19 +5718,18 @@
   ]
  },
  "santiago": {
-  "at": "2026-11-01T06:14:08.762Z",
-  "seconds": 501,
+  "at": "2026-11-02T14:43:14.978Z",
+  "seconds": 980,
   "osm": {
-   "sights": 161,
-   "sights2": 60,
+   "sights": 0,
+   "sights2": 59,
    "restaurants": 450,
    "cafes": 296,
    "hotels": 244,
    "shopping": 224,
    "diet": 22,
    "extra": 64,
-   "landmarks": 15,
-   "streets": 12
+   "landmarks": 15
   },
   "voyage": {
    "eat": 37,
@@ -5759,30 +5758,32 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "Estado (15)",
-   "Moneda (17)",
-   "Avenida Independencia (11)",
-   "Agustinas (13)",
-   "Sazié (9)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 161 22170ms",
-   "overpass-api.de ok 60 35496ms",
-   "overpass-api.de ok 450 35461ms",
-   "overpass-api.de ok 296 37268ms",
-   "overpass-api.de ok 244 31606ms",
-   "overpass-api.de ok 224 34293ms",
-   "overpass-api.de ok 22 33402ms",
-   "overpass-api.de ok 64 48964ms",
-   "overpass-api.de ok 15 38833ms",
-   "overpass-api.de ok 293 41799ms",
-   "streets: 293 shops",
+   "overpass-api.de HTTP 502 494ms",
+   "overpass-api.de HTTP 502 534ms",
+   "overpass-api.de HTTP 502 494ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 488ms",
+   "overpass-api.de ok 59 36083ms",
+   "overpass-api.de ok 450 38910ms",
+   "overpass-api.de ok 296 34573ms",
+   "overpass-api.de ok 244 36893ms",
+   "overpass-api.de ok 224 41010ms",
+   "overpass-api.de ok 22 32606ms",
+   "overpass-api.de ok 64 42373ms",
+   "overpass-api.de HTTP 502 494ms",
+   "overpass-api.de ok 15 34823ms",
+   "overpass-api.de HTTP 502 487ms",
+   "overpass-api.de HTTP 502 490ms",
+   "overpass-api.de HTTP 502 532ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 245 of 245"
+   "fame: 104 of 104"
   ]
  },
  "melbourne": {
