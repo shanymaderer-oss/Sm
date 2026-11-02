@@ -2973,8 +2973,8 @@
   ]
  },
  "miami": {
-  "at": "2026-11-01T04:56:13.007Z",
-  "seconds": 502,
+  "at": "2026-11-02T12:47:31.368Z",
+  "seconds": 1013,
   "osm": {
    "sights": 26,
    "sights2": 59,
@@ -2984,8 +2984,7 @@
    "shopping": 111,
    "diet": 14,
    "extra": 75,
-   "landmarks": 1,
-   "streets": 8
+   "landmarks": 1
   },
   "voyage": {
    "eat": 17,
@@ -2997,7 +2996,7 @@
    "districts": 7
   },
   "wiki": {
-   "he": 8,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -3014,32 +3013,36 @@
    "streets": 1,
    "sights": 2
   },
-  "streets": [
-   "Lincoln Road (76)",
-   "Northeast 39th Street (37)",
-   "Northeast 41st Street (22)",
-   "Northeast 40th Street (18)",
-   "Collins Avenue (14)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 26 30700ms",
-   "overpass-api.de ok 59 35085ms",
-   "overpass-api.de ok 86 26849ms",
-   "overpass-api.de ok 8 29435ms",
-   "overpass-api.de ok 325 41223ms",
-   "overpass-api.de ok 111 27650ms",
-   "overpass-api.de ok 14 34245ms",
-   "overpass-api.de ok 75 34932ms",
-   "overpass-api.de ok 1 30339ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 305 40854ms",
-   "streets: 305 shops",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 26 44421ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 59 33415ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 86 47220ms",
+   "overpass-api.de HTTP 502 368ms",
+   "overpass-api.de ok 8 50604ms",
+   "overpass-api.de ok 325 45503ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 111 33666ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 14 50698ms",
+   "overpass-api.de ok 75 37506ms",
+   "overpass-api.de HTTP 504 56576ms",
+   "overpass-api.de ok 1 32736ms",
+   "overpass-api.de HTTP 504 52780ms",
+   "overpass-api.de HTTP 502 403ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60002ms",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 198 of 198"
+   "wikidata HTTP 429",
+   "fame: 148 of 198"
   ]
  },
  "los-angeles": {
