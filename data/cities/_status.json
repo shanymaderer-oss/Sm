@@ -7550,18 +7550,18 @@
   ]
  },
  "baku": {
-  "at": "2026-11-01T05:49:18.902Z",
-  "seconds": 465,
+  "at": "2026-11-02T14:01:06.155Z",
+  "seconds": 818,
   "osm": {
-   "sights": 40,
+   "sights": 41,
    "sights2": 36,
    "restaurants": 128,
    "cafes": 124,
-   "hotels": 155,
+   "hotels": 156,
    "shopping": 82,
    "diet": 3,
    "extra": 30,
-   "landmarks": 5,
+   "landmarks": 0,
    "streets": 1
   },
   "voyage": {
@@ -7574,7 +7574,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 22,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -7595,18 +7595,27 @@
    "Neftçilər prospekti (15)"
   ],
   "log": [
-   "overpass-api.de ok 40 47304ms",
-   "overpass-api.de ok 36 42629ms",
-   "overpass-api.de ok 128 32598ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 124 27121ms",
-   "overpass-api.de HTTP 502 356ms",
-   "overpass-api.de ok 155 28329ms",
-   "overpass-api.de ok 82 37453ms",
-   "overpass-api.de ok 3 34322ms",
-   "overpass-api.de ok 30 32159ms",
-   "overpass-api.de ok 5 36333ms",
-   "overpass-api.de ok 148 40238ms",
+   "overpass-api.de HTTP 502 453ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 41 48140ms",
+   "overpass-api.de ok 36 38210ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de ok 128 28479ms",
+   "overpass-api.de ok 124 41239ms",
+   "overpass-api.de ok 156 39726ms",
+   "overpass-api.de ok 82 41150ms",
+   "overpass-api.de HTTP 502 453ms",
+   "overpass-api.de HTTP 502 450ms",
+   "overpass-api.de ok 3 39548ms",
+   "overpass-api.de ok 30 40906ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de HTTP 502 448ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 517ms",
+   "overpass-api.de HTTP 502 516ms",
+   "overpass-api.de ok 148 40229ms",
    "streets: 148 shops",
    "fame: 72 of 72"
   ]
