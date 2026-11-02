@@ -5041,8 +5041,8 @@
   ]
  },
  "rhodes": {
-  "at": "2026-11-02T13:30:49.746Z",
-  "seconds": 761,
+  "at": "2026-11-02T18:18:20.350Z",
+  "seconds": 780,
   "osm": {
    "sights": 15,
    "sights2": 16,
@@ -5050,9 +5050,10 @@
    "cafes": 72,
    "hotels": 144,
    "shopping": 67,
-   "diet": 2,
+   "diet": 0,
    "extra": 18,
-   "landmarks": 0,
+   "fitness": 1,
+   "landmarks": 8,
    "streets": 0
   },
   "voyage": {
@@ -5065,7 +5066,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 9,
+   "he": 0,
    "en": 26
   },
   "streetsV": 2,
@@ -5079,30 +5080,30 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "fitness": 1
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 15 51458ms",
-   "overpass-api.de HTTP 502 411ms",
-   "overpass-api.de ok 16 38160ms",
-   "overpass-api.de ok 170 34259ms",
-   "overpass-api.de ok 72 34897ms",
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 144 38372ms",
-   "overpass-api.de ok 67 40288ms",
-   "overpass-api.de ok 2 35765ms",
-   "overpass-api.de HTTP 502 411ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 18 30709ms",
-   "overpass-api.de HTTP 502 390ms",
-   "overpass-api.de HTTP 502 363ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass.private.coffee timeout 60002ms",
+   "overpass-api.de ok 15 27464ms",
+   "overpass-api.de ok 16 41708ms",
+   "overpass-api.de ok 170 31232ms",
+   "overpass-api.de ok 72 25938ms",
+   "overpass-api.de ok 144 53023ms",
+   "overpass-api.de ok 67 45225ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass.private.coffee timeout 60001ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 13 50990ms",
+   "overpass-api.de ok 18 47175ms",
+   "overpass-api.de HTTP 502 355ms",
+   "overpass-api.de HTTP 502 374ms",
+   "overpass-api.de ok 1 38147ms",
+   "overpass-api.de ok 8 39197ms",
+   "overpass-api.de ok 13 38770ms",
    "streets: 13 shops",
-   "fame: 32 of 32"
+   "fame: 37 of 37"
   ]
  },
  "abu-dhabi": {
