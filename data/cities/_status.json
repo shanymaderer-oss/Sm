@@ -220,10 +220,10 @@
   ]
  },
  "london": {
-  "at": "2026-11-01T04:02:23.072Z",
-  "seconds": 638,
+  "at": "2026-11-02T11:23:16.179Z",
+  "seconds": 758,
   "osm": {
-   "sights": 593,
+   "sights": 0,
    "sights2": 222,
    "restaurants": 450,
    "cafes": 300,
@@ -235,12 +235,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 95,
-   "drink": 144,
-   "buy": 50,
-   "see": 147,
-   "sleep": 84,
-   "withCoords": 525,
+   "eat": 116,
+   "drink": 112,
+   "buy": 52,
+   "see": 121,
+   "sleep": 99,
+   "withCoords": 535,
    "districts": 8
   },
   "wiki": {
@@ -269,26 +269,24 @@
    "Marylebone High Street (56)"
   ],
   "log": [
-   "overpass-api.de ok 593 41191ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 222 39613ms",
-   "overpass-api.de ok 450 42023ms",
-   "overpass-api.de ok 300 56364ms",
-   "overpass-api.de ok 350 47594ms",
-   "overpass-api.de ok 300 29194ms",
-   "overpass-api.de ok 192 39947ms",
-   "overpass-api.de ok 200 55665ms",
-   "overpass-api.de ok 81 34558ms",
-   "overpass-api.de ok 2448 41681ms",
+   "overpass-api.de HTTP 502 724ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 222 38574ms",
+   "overpass-api.de ok 450 46915ms",
+   "overpass-api.de ok 300 49617ms",
+   "overpass-api.de ok 350 41057ms",
+   "overpass-api.de ok 300 46241ms",
+   "overpass-api.de ok 192 43234ms",
+   "overpass-api.de ok 200 40627ms",
+   "overpass-api.de ok 81 37471ms",
+   "overpass-api.de ok 2448 29889ms",
    "streets: 2448 shops",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 875 of 875"
+   "fame: 352 of 352"
   ]
  },
  "prague": {
