@@ -392,6 +392,7 @@ function storeTripLocal(t, keepPlace) {
 }
 function openTrip(t) {
   S.trip = t; S.day = 0; S.stop = 0; S.chat = []; S.chatLog = []; S.edited = false;
+  tr();
   const live = liveDay(t); if (live > 0) S.day = live; // traveling now: open on today
   COST.loadFX(COUNTRY_CUR[t.cc] || "EUR").then(() => { if (S.trip === t && TRIP_SCREENS.includes(S.screen) && S.screen !== "guide") rerenderKeepScroll(); }).catch(() => {});
   go("plan");
@@ -1296,7 +1297,7 @@ const enMonth = d => d.toLocaleDateString("en-US", { month: "long", year: "numer
 const yymmdd = d => isoDate(d).slice(2).replace(/-/g, "");
 function kitItems(t = S.trip) {
   const { start, end, people } = tripDates(t), city = cityName(), slug = t.slug || Masa.cities.findCity(t.city)?.slug;
-  const ap = slug ? Masa.transport.airport(slug, { family: !!t.opts?.notes?.match(/ילד/), mobility: t.opts?.mobility }) : null;
+  const ap = slug && tr() ? TR.airport(slug, { family: !!t.opts?.notes?.match(/ילד/), mobility: t.opts?.mobility }) : null;
   const iata = ap?.[0]?.code || "";
   const all = t.days.flatMap((d, di) => d.stops.map(s => ({ s, di })));
   const tickets = all.filter(x => x.s.booking?.needed);
@@ -2442,7 +2443,16 @@ SCREENS.info = {
 };
 
 /* ================= getting there and around ================= */
-const TR = Masa.transport;
+/* js/transport.js (fares and airport routes for every city) loads with the trip, not with the home screen.
+   Until it arrives the route shows without taxi hints and the kit without the airport code; a re-render fills them in. */
+let TR = null, transportLoad = null;
+const loadTransport = () => transportLoad || (transportLoad = new Promise(res => {
+  const el = document.createElement("script"); el.src = "js/min/transport.js";
+  el.onload = () => { TR = Masa.transport || null; if (S.trip && TRIP_SCREENS.includes(S.screen)) rerenderKeepScroll(); res(); };
+  el.onerror = () => { transportLoad = null; res(); }; /* try again the next time it is needed */
+  document.head.append(el);
+}));
+const tr = () => { if (!TR) loadTransport(); return TR; };
 function legRow(t, a, b, L2) {
   if (L2.mode === "car") return `<div class="leg">${ic("car")} ${L2.kmv.toFixed(1)} ק״מ · כ-${L2.min} דק׳ נסיעה וחניה · <a href="${gmDir(a, b, "driving")}" target="_blank" rel="noopener">ניווט ברכב</a></div>`;
   if (L2.mode === "transit") return `<div class="leg">${ic("bus")} ${L2.kmv.toFixed(1)} ק״מ · כ-${L2.min} דק׳ בתחבורה ציבורית · <a href="${gmDir(a, b, "transit")}" target="_blank" rel="noopener">איזה קו לוקחים</a></div>`;
@@ -2451,8 +2461,8 @@ function legRow(t, a, b, L2) {
   const far = L2.min > (mob ? 12 : 25);
   let extra = "";
   if (far) {
-    const tx = TR.taxi(t.slug, t.cc, L2.kmv);
-    const apps = (TR.city(t.slug)?.apps || []);
+    const tx = tr()?.taxi(t.slug, t.cc, L2.kmv);
+    const apps = (tr()?.city(t.slug)?.apps || []);
     const uber = apps.includes("Uber") ? `https://m.uber.com/ul/?action=setPickup&pickup[latitude]=${a.lat}&pickup[longitude]=${a.lng}&dropoff[latitude]=${b.lat}&dropoff[longitude]=${b.lng}` : null;
     extra = `<span class="legopts"><a href="${gmDir(a, b, "transit")}" target="_blank" rel="noopener">${ic("bus")}תחבורה ציבורית</a>${tx ? `<span>${ic("car")}מונית כ-${money(COST.ils(tx))}${uber ? ` · <a href="${uber}" target="_blank" rel="noopener">Uber</a>` : apps.length ? ` · ${esc(apps.slice(0, 2).join(" / "))}` : ""}</span>` : ""}</span>`;
   }
@@ -2461,6 +2471,7 @@ function legRow(t, a, b, L2) {
 SCREENS.move = {
   view() {
     const t = S.trip, mob = t.opts?.mobility, fam = (t.opts?.people || 2) >= 3;
+    if (!tr()) return `<div class="panel"><p class="muted">טוענים את פרטי התחבורה…</p></div>`;
     const groups = TR.airport(t.slug, { mobility: !!mob, family: fam });
     const c = TR.city(t.slug);
     const row = o => `<div class="mvrow${o.easy ? " easy" : ""}"><span class="ic" style="background:${cv(o.m === "taxi" ? "--coral" : o.m === "bus" ? "--sky" : "--violet")}">${ic(TR.MODE_IC[o.m] || "bus")}</span>
@@ -2493,7 +2504,7 @@ SCREENS.move = {
     <div class="disclaim">${ic("info")}<span>רוב המחירים נבדקו מול מקורות עדכניים באוקטובר 2026, אבל הם משתנים. לפני הטיסה כדאי לבדוק באתר של שדה התעופה או של חברת התחבורה.</span></div>
   </div>`;
   },
-  bind() { $("backMove").onclick = () => go("before", { noFly: true }); }
+  bind() { const back = $("backMove"); if (back) back.onclick = () => go("before", { noFly: true }); }
 };
 
 /* ================= internet abroad: eSIM ================= */
