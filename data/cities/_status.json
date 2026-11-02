@@ -7067,12 +7067,12 @@
   ]
  },
  "antalya": {
-  "at": "2026-11-01T05:31:42.629Z",
-  "seconds": 442,
+  "at": "2026-11-02T13:52:08.384Z",
+  "seconds": 777,
   "osm": {
-   "sights": 14,
+   "sights": 0,
    "sights2": 8,
-   "restaurants": 141,
+   "restaurants": 142,
    "cafes": 144,
    "hotels": 184,
    "shopping": 51,
@@ -7091,7 +7091,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 1,
+   "he": 0,
    "en": 16
   },
   "streetsV": 2,
@@ -7109,19 +7109,27 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 14 32736ms",
-   "overpass-api.de ok 8 33798ms",
-   "overpass-api.de ok 141 31613ms",
-   "overpass-api.de ok 144 31907ms",
-   "overpass-api.de ok 184 38424ms",
-   "overpass-api.de ok 51 38418ms",
+   "overpass-api.de HTTP 502 551ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 8 44076ms",
+   "overpass-api.de ok 142 29379ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 144 47939ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de ok 184 30755ms",
    "overpass-api.de HTTP 502 441ms",
-   "overpass-api.de ok 5 41473ms",
-   "overpass-api.de ok 19 28965ms",
-   "overpass-api.de ok 1 33935ms",
-   "overpass-api.de ok 39 34957ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de ok 51 37876ms",
+   "overpass-api.de ok 5 37302ms",
+   "overpass-api.de ok 19 37471ms",
+   "overpass-api.de ok 1 38813ms",
+   "overpass-api.de ok 39 45474ms",
    "streets: 39 shops",
-   "fame: 63 of 63"
+   "fame: 51 of 51"
   ]
  },
  "heraklion": {
