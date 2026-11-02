@@ -5567,14 +5567,14 @@
   ]
  },
  "havana": {
-  "at": "2026-11-01T06:16:32.624Z",
-  "seconds": 431,
+  "at": "2026-11-02T14:15:46.929Z",
+  "seconds": 746,
   "osm": {
    "sights": 42,
    "sights2": 162,
    "restaurants": 311,
    "cafes": 118,
-   "hotels": 350,
+   "hotels": 0,
    "shopping": 195,
    "diet": 4,
    "extra": 13,
@@ -5612,20 +5612,27 @@
    "Obispo (10)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 435ms",
-   "overpass-api.de ok 42 23007ms",
-   "overpass-api.de ok 162 33522ms",
-   "overpass-api.de ok 311 29956ms",
-   "overpass-api.de ok 118 31687ms",
-   "overpass-api.de ok 350 33849ms",
-   "overpass-api.de ok 195 39027ms",
-   "overpass-api.de ok 4 32675ms",
-   "overpass-api.de HTTP 502 691ms",
-   "overpass-api.de ok 13 30389ms",
-   "overpass-api.de ok 12 35008ms",
-   "overpass-api.de ok 149 35352ms",
+   "overpass-api.de ok 42 34813ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 162 25117ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass-api.de ok 311 31254ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 118 45908ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 195 38046ms",
+   "overpass-api.de ok 4 45430ms",
+   "overpass-api.de ok 13 40154ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 12 48073ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 149 28703ms",
    "streets: 149 shops",
-   "fame: 59 of 59"
+   "fame: 56 of 56"
   ]
  },
  "buenos-aires": {
