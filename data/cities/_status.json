@@ -1498,27 +1498,28 @@
   ]
  },
  "istanbul": {
-  "at": "2026-11-02T11:47:36.043Z",
-  "seconds": 593,
+  "at": "2026-11-02T16:52:19.140Z",
+  "seconds": 891,
   "osm": {
    "sights": 170,
    "sights2": 69,
-   "restaurants": 450,
+   "restaurants": 0,
    "cafes": 300,
    "hotels": 350,
    "shopping": 203,
    "diet": 26,
    "extra": 200,
+   "fitness": 6,
    "landmarks": 14,
    "streets": 14
   },
   "voyage": {
-   "eat": 53,
-   "drink": 17,
-   "buy": 32,
-   "see": 120,
-   "sleep": 69,
-   "withCoords": 268,
+   "eat": 49,
+   "drink": 16,
+   "buy": 29,
+   "see": 125,
+   "sleep": 64,
+   "withCoords": 257,
    "districts": 8
   },
   "wiki": {
@@ -1537,7 +1538,8 @@
    "hotels": 1,
    "shopping": 1,
    "diet": 1,
-   "extra": 1
+   "extra": 1,
+   "fitness": 1
   },
   "streets": [
    "Fevzipaşa Caddesi (102)",
@@ -1547,25 +1549,31 @@
    "Mahmutpaşa Yokuşu (52)"
   ],
   "log": [
-   "overpass-api.de ok 170 35763ms",
-   "overpass-api.de ok 69 36564ms",
-   "overpass-api.de ok 450 32933ms",
-   "overpass-api.de ok 300 41580ms",
-   "overpass-api.de ok 350 36471ms",
-   "overpass-api.de ok 203 38753ms",
-   "overpass-api.de ok 26 38390ms",
-   "overpass-api.de ok 200 40262ms",
-   "overpass-api.de ok 14 54707ms",
-   "overpass-api.de HTTP 502 384ms",
-   "overpass-api.de HTTP 502 420ms",
-   "overpass-api.de ok 2457 31635ms",
+   "overpass-api.de ok 170 37400ms",
+   "overpass-api.de ok 69 35795ms",
+   "overpass-api.de HTTP 502 463ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 300 47135ms",
+   "overpass-api.de HTTP 502 528ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 350 28651ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de ok 203 27096ms",
+   "overpass-api.de ok 26 45017ms",
+   "overpass-api.de HTTP 504 43679ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de ok 200 35655ms",
+   "overpass-api.de ok 6 45471ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de ok 14 29904ms",
+   "overpass-api.de ok 2457 27953ms",
    "streets: 2457 shops",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 370 of 420"
+   "fame: 420 of 420"
   ]
  },
  "batumi": {
