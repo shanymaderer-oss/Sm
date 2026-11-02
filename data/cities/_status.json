@@ -1227,18 +1227,18 @@
   ]
  },
  "new-york": {
-  "at": "2026-11-01T04:31:11.534Z",
-  "seconds": 1044,
+  "at": "2026-11-02T12:11:57.615Z",
+  "seconds": 1753,
   "osm": {
-   "sights": 214,
-   "sights2": 188,
+   "sights": 0,
+   "sights2": 0,
    "restaurants": 450,
-   "cafes": 300,
+   "cafes": 0,
    "hotels": 350,
    "shopping": 0,
-   "diet": 0,
+   "diet": 223,
    "extra": 200,
-   "landmarks": 25,
+   "landmarks": 0,
    "streets": 14
   },
   "voyage": {
@@ -1251,7 +1251,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 100,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -1264,7 +1264,8 @@
    "cafes": 1,
    "hotels": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "diet": 1
   },
   "streets": [
    "Broadway (40)",
@@ -1274,30 +1275,38 @@
    "Columbus Circle (24)"
   ],
   "log": [
-   "overpass-api.de ok 214 40274ms",
-   "overpass-api.de ok 188 40656ms",
-   "overpass-api.de HTTP 502 367ms",
-   "overpass-api.de ok 450 36198ms",
-   "overpass-api.de ok 300 45949ms",
-   "overpass-api.de ok 350 45021ms",
+   "overpass-api.de HTTP 504 53717ms",
    "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de HTTP 502 282ms",
-   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de HTTP 502 368ms",
    "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de HTTP 504 48612ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de HTTP 504 42250ms",
+   "overpass.private.coffee timeout 60002ms",
    "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 200 42547ms",
-   "overpass-api.de ok 25 35703ms",
-   "overpass-api.de HTTP 502 355ms",
-   "overpass-api.de ok 1270 30625ms",
+   "overpass-api.de ok 450 46610ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 350 33729ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de ok 223 48831ms",
+   "overpass-api.de ok 200 44769ms",
+   "overpass-api.de HTTP 502 365ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 1270 36188ms",
    "streets: 1270 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 472 of 472"
+   "fame: 269 of 269"
   ]
  },
  "bangkok": {
