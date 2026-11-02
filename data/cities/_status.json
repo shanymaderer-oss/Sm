@@ -7401,8 +7401,8 @@
   ]
  },
  "heraklion": {
-  "at": "2026-11-02T13:47:04.455Z",
-  "seconds": 935,
+  "at": "2026-11-02T18:08:39.133Z",
+  "seconds": 687,
   "osm": {
    "sights": 46,
    "sights2": 10,
@@ -7412,7 +7412,9 @@
    "shopping": 22,
    "diet": 3,
    "extra": 5,
-   "landmarks": 0
+   "fitness": 3,
+   "landmarks": 2,
+   "streets": 2
   },
   "voyage": {
    "eat": 14,
@@ -7439,31 +7441,31 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
-  "streets": [],
+  "streets": [
+   "25ης Αυγούστου (30)",
+   "Πλατεία Ελευθερίου Βενιζέλου (13)"
+  ],
   "log": [
-   "overpass-api.de ok 46 30608ms",
-   "overpass-api.de ok 10 35988ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de ok 100 43430ms",
-   "overpass-api.de ok 98 41591ms",
-   "overpass-api.de ok 48 31462ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de ok 22 36942ms",
-   "overpass-api.de ok 3 37055ms",
-   "overpass-api.de ok 5 32397ms",
-   "overpass-api.de HTTP 502 284ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de HTTP 502 368ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "fame: 20 of 20"
+   "overpass-api.de ok 46 32143ms",
+   "overpass-api.de ok 10 39398ms",
+   "overpass-api.de ok 100 43522ms",
+   "overpass-api.de ok 98 47071ms",
+   "overpass-api.de timeout 60000ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 48 44952ms",
+   "overpass-api.de ok 22 36862ms",
+   "overpass-api.de HTTP 502 383ms",
+   "overpass-api.de ok 3 41172ms",
+   "overpass-api.de ok 5 46082ms",
+   "overpass-api.de HTTP 504 53915ms",
+   "overpass-api.de ok 3 31425ms",
+   "overpass-api.de ok 2 32839ms",
+   "overpass-api.de ok 71 36977ms",
+   "streets: 71 shops",
+   "fame: 21 of 21"
   ]
  },
  "singapore": {
