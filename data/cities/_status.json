@@ -8782,8 +8782,8 @@
   ]
  },
  "cusco": {
-  "at": "2026-11-01T06:14:55.484Z",
-  "seconds": 447,
+  "at": "2026-11-02T14:48:38.893Z",
+  "seconds": 470,
   "osm": {
    "sights": 13,
    "sights2": 40,
@@ -8806,7 +8806,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 3,
+   "he": 0,
    "en": 34
   },
   "streetsV": 2,
@@ -8824,17 +8824,18 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 13 31310ms",
-   "overpass-api.de ok 40 30433ms",
-   "overpass-api.de ok 290 27599ms",
-   "overpass-api.de ok 122 32647ms",
-   "overpass-api.de ok 350 39774ms",
+   "overpass-api.de ok 13 37365ms",
+   "overpass-api.de ok 40 26822ms",
    "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 50 45839ms",
-   "overpass-api.de ok 25 43291ms",
-   "overpass-api.de ok 12 39039ms",
-   "overpass-api.de ok 4 33064ms",
-   "overpass-api.de ok 40 31247ms",
+   "overpass-api.de ok 290 34830ms",
+   "overpass-api.de ok 122 37447ms",
+   "overpass-api.de ok 350 45880ms",
+   "overpass-api.de ok 50 48912ms",
+   "overpass-api.de ok 25 31805ms",
+   "overpass-api.de HTTP 502 284ms",
+   "overpass-api.de ok 12 32949ms",
+   "overpass-api.de ok 4 33854ms",
+   "overpass-api.de ok 40 36485ms",
    "streets: 40 shops",
    "fame: 25 of 25"
   ]
