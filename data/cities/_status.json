@@ -3147,8 +3147,8 @@
   ]
  },
  "los-angeles": {
-  "at": "2026-11-02T12:48:13.182Z",
-  "seconds": 628,
+  "at": "2026-11-02T17:36:14.389Z",
+  "seconds": 936,
   "osm": {
    "sights": 58,
    "sights2": 129,
@@ -3157,21 +3157,22 @@
    "hotels": 174,
    "shopping": 116,
    "diet": 68,
-   "extra": 46,
+   "extra": 0,
+   "fitness": 19,
    "landmarks": 0,
    "streets": 5
   },
   "voyage": {
-   "eat": 79,
-   "drink": 32,
-   "buy": 28,
-   "see": 85,
-   "sleep": 28,
-   "withCoords": 274,
+   "eat": 64,
+   "drink": 31,
+   "buy": 25,
+   "see": 82,
+   "sleep": 26,
+   "withCoords": 250,
    "districts": 8
   },
   "wiki": {
-   "he": 0,
+   "he": 19,
    "en": 100
   },
   "streetsV": 2,
@@ -3185,7 +3186,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Melrose Avenue (25)",
@@ -3195,28 +3197,34 @@
    "Santa Monica Boulevard (6)"
   ],
   "log": [
-   "overpass-api.de ok 58 52685ms",
-   "overpass-api.de ok 129 33310ms",
-   "overpass-api.de HTTP 502 461ms",
-   "overpass-api.de ok 345 35239ms",
-   "overpass-api.de HTTP 502 445ms",
-   "overpass-api.de ok 96 38771ms",
-   "overpass-api.de HTTP 502 585ms",
-   "overpass-api.de ok 174 42470ms",
-   "overpass-api.de ok 116 43100ms",
-   "overpass-api.de HTTP 502 407ms",
-   "overpass-api.de HTTP 502 461ms",
-   "overpass-api.de ok 68 54433ms",
-   "overpass-api.de HTTP 502 441ms",
-   "overpass-api.de ok 46 39350ms",
-   "overpass-api.de HTTP 502 460ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 0 44178ms",
-   "overpass-api.de ok 147 39904ms",
+   "overpass-api.de ok 58 43421ms",
+   "overpass-api.de ok 129 32027ms",
+   "overpass-api.de ok 345 45217ms",
+   "overpass-api.de ok 96 47092ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 174 57222ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de ok 116 40278ms",
+   "overpass-api.de HTTP 502 410ms",
+   "overpass-api.de HTTP 502 489ms",
+   "overpass-api.de ok 68 50228ms",
+   "overpass-api.de HTTP 502 489ms",
+   "overpass-api.de HTTP 502 480ms",
+   "overpass-api.de HTTP 502 486ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 484ms",
+   "overpass-api.de HTTP 502 491ms",
+   "overpass-api.de ok 19 37266ms",
+   "overpass-api.de HTTP 502 411ms",
+   "overpass-api.de ok 0 41648ms",
+   "overpass-api.de HTTP 502 487ms",
+   "overpass-api.de ok 147 42096ms",
    "streets: 147 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 99 of 99"
+   "wikidata HTTP 429",
+   "fame: 58 of 58"
   ]
  },
  "las-vegas": {
