@@ -1035,17 +1035,18 @@
   ]
  },
  "milan": {
-  "at": "2026-11-02T11:37:42.681Z",
-  "seconds": 647,
+  "at": "2026-11-02T16:39:19.598Z",
+  "seconds": 875,
   "osm": {
    "sights": 364,
    "sights2": 62,
    "restaurants": 450,
    "cafes": 300,
-   "hotels": 350,
+   "hotels": 0,
    "shopping": 300,
    "diet": 36,
    "extra": 156,
+   "fitness": 42,
    "landmarks": 84,
    "streets": 14
   },
@@ -1059,7 +1060,7 @@
    "districts": 5
   },
   "wiki": {
-   "he": 0,
+   "he": 38,
    "en": 100
   },
   "streetsV": 2,
@@ -1074,7 +1075,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Via Monte Napoleone (58)",
@@ -1084,28 +1086,28 @@
    "Via Dante (31)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 444ms",
-   "overpass-api.de ok 364 39915ms",
-   "overpass-api.de ok 62 46995ms",
-   "overpass-api.de ok 450 41498ms",
-   "overpass-api.de ok 300 46841ms",
-   "overpass-api.de ok 350 46840ms",
-   "overpass-api.de ok 300 41961ms",
-   "overpass-api.de HTTP 502 402ms",
-   "overpass-api.de ok 36 35352ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 156 32971ms",
-   "overpass-api.de ok 84 39400ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 1492 31530ms",
+   "overpass-api.de HTTP 504 48204ms",
+   "overpass-api.de ok 364 35189ms",
+   "overpass-api.de ok 62 41820ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 450 46610ms",
+   "overpass-api.de ok 300 32654ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 300 36598ms",
+   "overpass-api.de ok 36 41397ms",
+   "overpass-api.de ok 156 47667ms",
+   "overpass-api.de ok 42 41872ms",
+   "overpass-api.de ok 84 29788ms",
+   "overpass-api.de ok 1492 40541ms",
    "streets: 1492 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 540 of 590"
+   "fame: 419 of 519"
   ]
  },
  "florence": {
