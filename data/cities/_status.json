@@ -1418,8 +1418,8 @@
   ]
  },
  "istanbul": {
-  "at": "2026-11-01T04:30:21.576Z",
-  "seconds": 884,
+  "at": "2026-11-02T11:47:36.043Z",
+  "seconds": 593,
   "osm": {
    "sights": 170,
    "sights2": 69,
@@ -1429,16 +1429,16 @@
    "shopping": 203,
    "diet": 26,
    "extra": 200,
-   "landmarks": 0,
+   "landmarks": 14,
    "streets": 14
   },
   "voyage": {
-   "eat": 47,
+   "eat": 53,
    "drink": 17,
-   "buy": 29,
-   "see": 116,
-   "sleep": 68,
-   "withCoords": 251,
+   "buy": 32,
+   "see": 120,
+   "sleep": 69,
+   "withCoords": 268,
    "districts": 8
   },
   "wiki": {
@@ -1467,27 +1467,25 @@
    "Mahmutpaşa Yokuşu (52)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 1103ms",
-   "overpass-api.de ok 170 52686ms",
-   "overpass-api.de ok 69 54410ms",
-   "overpass-api.de ok 450 48155ms",
-   "overpass-api.de ok 300 33796ms",
-   "overpass-api.de ok 350 33452ms",
-   "overpass-api.de ok 203 42563ms",
-   "overpass-api.de ok 26 55940ms",
-   "overpass-api.de ok 200 47038ms",
-   "overpass-api.de timeout 60001ms",
-   "overpass-api.de HTTP 502 441ms",
-   "overpass-api.de HTTP 502 687ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 436ms",
-   "overpass-api.de ok 2457 33995ms",
+   "overpass-api.de ok 170 35763ms",
+   "overpass-api.de ok 69 36564ms",
+   "overpass-api.de ok 450 32933ms",
+   "overpass-api.de ok 300 41580ms",
+   "overpass-api.de ok 350 36471ms",
+   "overpass-api.de ok 203 38753ms",
+   "overpass-api.de ok 26 38390ms",
+   "overpass-api.de ok 200 40262ms",
+   "overpass-api.de ok 14 54707ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de ok 2457 31635ms",
    "streets: 2457 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 413 of 413"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 370 of 420"
   ]
  },
  "batumi": {
