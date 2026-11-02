@@ -5335,8 +5335,8 @@
   ]
  },
  "yerevan": {
-  "at": "2026-11-02T13:45:38.390Z",
-  "seconds": 555,
+  "at": "2026-11-02T19:08:31.062Z",
+  "seconds": 890,
   "osm": {
    "sights": 65,
    "sights2": 33,
@@ -5345,7 +5345,8 @@
    "hotels": 242,
    "shopping": 167,
    "diet": 2,
-   "extra": 25,
+   "extra": 0,
+   "fitness": 16,
    "landmarks": 11,
    "streets": 11
   },
@@ -5374,7 +5375,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Աբովյան փողոց (32)",
@@ -5384,25 +5386,26 @@
    "Թումանյան փողոց (14)"
   ],
   "log": [
-   "overpass-api.de ok 65 41074ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de ok 33 36951ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 296 36966ms",
-   "overpass-api.de HTTP 502 451ms",
-   "overpass-api.de ok 300 37671ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de ok 242 42472ms",
-   "overpass-api.de ok 167 36340ms",
-   "overpass-api.de ok 2 42317ms",
-   "overpass-api.de HTTP 502 451ms",
-   "overpass-api.de ok 25 37646ms",
-   "overpass-api.de HTTP 502 451ms",
-   "overpass-api.de HTTP 502 724ms",
-   "overpass-api.de ok 11 34829ms",
-   "overpass-api.de ok 284 39882ms",
+   "overpass-api.de ok 65 45687ms",
+   "overpass-api.de ok 33 42878ms",
+   "overpass-api.de ok 296 50583ms",
+   "overpass-api.de ok 300 50160ms",
+   "overpass-api.de ok 242 41010ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 167 36696ms",
+   "overpass-api.de ok 2 43526ms",
+   "overpass-api.de HTTP 504 55244ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 16 41544ms",
+   "overpass-api.de ok 11 34640ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de HTTP 502 374ms",
+   "overpass-api.de ok 284 43434ms",
    "streets: 284 shops",
-   "fame: 94 of 94"
+   "fame: 77 of 77"
   ]
  },
  "kuala-lumpur": {
