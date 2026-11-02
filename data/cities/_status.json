@@ -448,31 +448,31 @@
   ]
  },
  "vienna": {
-  "at": "2026-11-01T04:08:18.119Z",
-  "seconds": 936,
+  "at": "2026-11-02T11:26:21.314Z",
+  "seconds": 880,
   "osm": {
    "sights": 658,
    "sights2": 157,
    "restaurants": 450,
    "cafes": 300,
-   "hotels": 0,
+   "hotels": 350,
    "shopping": 300,
-   "diet": 115,
-   "extra": 200,
+   "diet": 114,
+   "extra": 0,
    "landmarks": 150,
    "streets": 14
   },
   "voyage": {
-   "eat": 113,
-   "drink": 91,
-   "buy": 51,
-   "see": 110,
-   "sleep": 55,
-   "withCoords": 416,
+   "eat": 109,
+   "drink": 97,
+   "buy": 53,
+   "see": 105,
+   "sleep": 46,
+   "withCoords": 410,
    "districts": 8
   },
   "wiki": {
-   "he": 100,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -486,7 +486,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "hotels": 1
   },
   "streets": [
    "Mariahilfer Straße (66)",
@@ -496,26 +497,22 @@
    "Kärntner Straße (25)"
   ],
   "log": [
-   "overpass-api.de ok 658 38842ms",
-   "overpass-api.de ok 157 39674ms",
-   "overpass-api.de ok 450 42109ms",
-   "overpass-api.de HTTP 502 336ms",
-   "overpass-api.de ok 300 37484ms",
-   "overpass-api.de HTTP 502 348ms",
-   "overpass-api.de HTTP 502 343ms",
-   "overpass-api.de HTTP 504 54250ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de HTTP 502 388ms",
-   "overpass-api.de HTTP 502 384ms",
-   "overpass-api.de ok 300 38390ms",
-   "overpass-api.de HTTP 502 335ms",
-   "overpass-api.de HTTP 502 349ms",
-   "overpass-api.de ok 115 34028ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 200 42618ms",
-   "overpass-api.de ok 150 34507ms",
-   "overpass-api.de ok 1218 45639ms",
+   "overpass-api.de ok 658 47485ms",
+   "overpass-api.de ok 157 42869ms",
+   "overpass-api.de HTTP 502 467ms",
+   "overpass-api.de ok 450 46781ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de ok 300 37073ms",
+   "overpass-api.de ok 350 38549ms",
+   "overpass-api.de ok 300 47013ms",
+   "overpass-api.de ok 114 38068ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de HTTP 502 450ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 150 38032ms",
+   "overpass-api.de ok 1218 34537ms",
    "streets: 1218 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -523,7 +520,9 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 870 of 870"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 658 of 708"
   ]
  },
  "berlin": {
