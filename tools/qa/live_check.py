@@ -96,7 +96,7 @@ def check_links(links):
 
 SERVICES = [
     ("OpenFreeMap style", "https://tiles.openfreemap.org/styles/liberty", None),
-    ("Esri satellite tile", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/3/3/4", None),
+    ("NASA Blue Marble tile", "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/3/3/4.jpeg", None),
     ("OSM tile (fallback)", "https://tile.openstreetmap.org/3/4/3.png", None),
     ("Nominatim", "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=Thessaloniki", None),
     ("OSRM foot", "https://routing.openstreetmap.de/routed-foot/route/v1/driving/12.4922,41.8902;12.4768,41.8986?overview=false", None),

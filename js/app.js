@@ -117,9 +117,10 @@ function stopSpeak() { try { speechSynthesis.cancel(); } catch {} speaking = nul
 if (canSpeak) { try { speechSynthesis.getVoices(); } catch {} }
 
 /* ---------- map: 3D globe (MapLibre) ----------
-   From far away: a satellite globe in space. Zooming into a city: the satellite fades into a street map. */
+   From far away: the Earth from space (NASA Blue Marble, public domain, fine for a commercial site). Zooming in, it fades
+   into the street map. (Esri's imagery was used before; it is free for non-commercial use only.) */
 let reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const SAT_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+const SAT_TILES = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg";
 const STREET_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 const FALLBACK_STYLE = {
   version: 8,
@@ -129,7 +130,7 @@ const FALLBACK_STYLE = {
 const isMobile = () => innerWidth <= 760;
 const WORLD = () => ({ center: [25, 28], zoom: isMobile() ? 0.9 : 1.6 });
 const map = new maplibregl.Map({ container: "map", style: STREET_STYLE, ...WORLD(), attributionControl: false, maxPitch: 60, renderWorldCopies: false });
-map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · Imagery © Esri, Maxar, Earthstar Geographics' }), "bottom-left");
+map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · Imagery: NASA Blue Marble (GIBS)' }), "bottom-left");
 let mapReady = false, styleFailed = false;
 const EMPTY = { type: "FeatureCollection", features: [] };
 map.on("error", e => {
@@ -141,8 +142,9 @@ map.on("style.load", () => {
   try { map.setSky({ "sky-color": "#0a1a36", "horizon-color": "#8fc1ff", "fog-color": "#dfeeff", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.4, "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 5, 1, 8, 0] }); } catch {}
   const firstSymbol = map.getStyle().layers.find(l => l.type === "symbol")?.id;
   if (!map.getSource("sat")) {
-    map.addSource("sat", { type: "raster", tiles: [SAT_TILES], tileSize: 256, maxzoom: 18 });
-    map.addLayer({ id: "sat", type: "raster", source: "sat", paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 1, 13, 0], "raster-fade-duration": 250 } }, firstSymbol);
+    map.addSource("sat", { type: "raster", tiles: [SAT_TILES], tileSize: 256, maxzoom: 8 });
+    // the imagery has detail up to zoom 8: it gives way to the street map before it turns blurry
+    map.addLayer({ id: "sat", type: "raster", source: "sat", paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 0, 1, 6, 1, 9, 0], "raster-fade-duration": 250 } }, firstSymbol);
   }
   if (!map.getSource("route")) {
     map.addSource("route", { type: "geojson", data: EMPTY });
