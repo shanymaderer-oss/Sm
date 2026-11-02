@@ -1942,8 +1942,8 @@
   ]
  },
  "munich": {
-  "at": "2026-11-01T04:37:21.081Z",
-  "seconds": 753,
+  "at": "2026-11-02T12:13:20.799Z",
+  "seconds": 612,
   "osm": {
    "sights": 611,
    "sights2": 142,
@@ -1966,7 +1966,7 @@
    "districts": 7
   },
   "wiki": {
-   "he": 43,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -1991,21 +1991,17 @@
    "Kaufingerstraße (27)"
   ],
   "log": [
-   "overpass-api.de HTTP 504 51712ms",
-   "overpass-api.de HTTP 502 436ms",
-   "overpass-api.de ok 611 44484ms",
-   "overpass-api.de ok 142 46003ms",
-   "overpass-api.de ok 450 30909ms",
-   "overpass-api.de ok 300 35401ms",
-   "overpass-api.de ok 275 40472ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de ok 300 48983ms",
-   "overpass-api.de HTTP 502 384ms",
-   "overpass-api.de ok 57 53154ms",
-   "overpass-api.de ok 112 49865ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass-api.de ok 124 32944ms",
-   "overpass-api.de ok 1164 39273ms",
+   "overpass-api.de ok 611 29438ms",
+   "overpass-api.de ok 142 39828ms",
+   "overpass-api.de ok 450 40401ms",
+   "overpass-api.de ok 300 30547ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 275 41278ms",
+   "overpass-api.de ok 300 34807ms",
+   "overpass-api.de ok 57 58630ms",
+   "overpass-api.de ok 112 43380ms",
+   "overpass-api.de ok 124 35034ms",
+   "overpass-api.de ok 1164 53545ms",
    "streets: 1164 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -2014,8 +2010,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 783 of 833"
+   "fame: 833 of 833"
   ]
  },
  "dubai": {
