@@ -5126,8 +5126,8 @@
   ]
  },
  "yerevan": {
-  "at": "2026-11-01T05:36:17.037Z",
-  "seconds": 530,
+  "at": "2026-11-02T13:45:38.390Z",
+  "seconds": 555,
   "osm": {
    "sights": 65,
    "sights2": 33,
@@ -5150,7 +5150,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 21,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -5175,20 +5175,23 @@
    "Թումանյան փողոց (14)"
   ],
   "log": [
-   "overpass-api.de ok 65 38622ms",
-   "overpass-api.de ok 33 42363ms",
-   "overpass-api.de ok 296 46503ms",
-   "overpass-api.de ok 300 29695ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 242 44166ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 167 45231ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 2 31730ms",
-   "overpass-api.de ok 25 35202ms",
-   "overpass-api.de HTTP 502 282ms",
-   "overpass-api.de ok 11 41167ms",
-   "overpass-api.de ok 284 47764ms",
+   "overpass-api.de ok 65 41074ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 33 36951ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 296 36966ms",
+   "overpass-api.de HTTP 502 451ms",
+   "overpass-api.de ok 300 37671ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de ok 242 42472ms",
+   "overpass-api.de ok 167 36340ms",
+   "overpass-api.de ok 2 42317ms",
+   "overpass-api.de HTTP 502 451ms",
+   "overpass-api.de ok 25 37646ms",
+   "overpass-api.de HTTP 502 451ms",
+   "overpass-api.de HTTP 502 724ms",
+   "overpass-api.de ok 11 34829ms",
+   "overpass-api.de ok 284 39882ms",
    "streets: 284 shops",
    "fame: 94 of 94"
   ]
