@@ -6534,8 +6534,8 @@
   ]
  },
  "zagreb": {
-  "at": "2026-11-01T05:22:44.872Z",
-  "seconds": 541,
+  "at": "2026-11-02T13:24:19.282Z",
+  "seconds": 810,
   "osm": {
    "sights": 28,
    "sights2": 58,
@@ -6545,7 +6545,7 @@
    "shopping": 180,
    "diet": 6,
    "extra": 46,
-   "landmarks": 19,
+   "landmarks": 0,
    "streets": 14
   },
   "voyage": {
@@ -6558,7 +6558,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 7,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -6583,21 +6583,24 @@
    "Masarykova ulica (16)"
   ],
   "log": [
-   "overpass-api.de ok 28 37894ms",
-   "overpass-api.de ok 58 26380ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de HTTP 502 347ms",
-   "overpass-api.de ok 169 54574ms",
-   "overpass-api.de ok 251 29323ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 143 34710ms",
-   "overpass-api.de ok 180 58849ms",
-   "overpass-api.de ok 6 32182ms",
-   "overpass-api.de ok 46 47326ms",
-   "overpass-api.de ok 19 56327ms",
-   "overpass-api.de ok 417 34874ms",
+   "overpass-api.de ok 28 45742ms",
+   "overpass-api.de ok 58 49380ms",
+   "overpass-api.de ok 169 40719ms",
+   "overpass-api.de ok 251 35573ms",
+   "overpass-api.de ok 143 49742ms",
+   "overpass-api.de ok 180 34461ms",
+   "overpass-api.de ok 6 39352ms",
+   "overpass-api.de ok 46 39257ms",
+   "overpass-api.de HTTP 502 510ms",
+   "overpass-api.de HTTP 504 47694ms",
+   "overpass-api.de HTTP 502 450ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de HTTP 502 517ms",
+   "overpass-api.de ok 417 41259ms",
    "streets: 417 shops",
-   "fame: 105 of 105"
+   "fame: 90 of 90"
   ]
  },
  "frankfurt": {
