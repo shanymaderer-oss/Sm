@@ -481,7 +481,7 @@ SCREENS.home = {
     <button type="button" class="btn soft block" id="sampleBtn">לראות טיול לדוגמה: 3 ימים ברומא</button>
     ${cloud.configured() && cloud.state.status === "off" && !cloud.pendingInvite() ? `<p class="aboutnote"><button type="button" class="linkbtn" id="homeIn">התחברו עם Google</button> כדי לשמור את הטיולים בכל המכשירים ולתכנן יחד עם המשפחה.</p>` : ""}
     <p class="aboutnote">המקומות במסלול אמיתיים: מסעדות, אתרים ורחובות מ-OpenStreetMap, ההמלצות מ-Wikivoyage והסיפורים מוויקיפדיה. אין כאן מקומות ממומנים, וההזמנות נעשות באתר של המקום עצמו.</p>
-    <p class="legal"><button type="button" class="linkbtn" id="homeFb">משהו לא עבד?</button> · <a href="terms.html">תנאי שימוש</a> · <a href="privacy.html">מדיניות פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
+    <p class="legal"><a href="c/">מסלולים לפי עיר</a> · <button type="button" class="linkbtn" id="homeFb">משהו לא עבד?</button> · <a href="terms.html">תנאי שימוש</a> · <a href="privacy.html">מדיניות פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
   </div></div>`;
   },
   bind() {
@@ -2849,6 +2849,14 @@ function cleanShared(d) {
   return out;
 }
 async function importShared() {
+  // a link from one of the city pages ("#go=rome"): straight to planning a trip there
+  const g = location.hash.match(/^#go=([a-z-]{2,40})$/);
+  if (g) {
+    history.replaceState(null, "", location.pathname + location.search);
+    const c = Masa.cities.findCity(g[1]);
+    if (c) { S.dest = { q: `${c.he}, ${c.country}`, he: c.he, lat: c.lat, lng: c.lng }; flyCenter(c, 11); startJourney(); return true; }
+    return false;
+  }
   const m = location.hash.match(/^#t=([\w-]+)$/);
   if (!m) return false;
   history.replaceState(null, "", location.pathname + location.search);

@@ -5,6 +5,7 @@ import hashlib, re, pathlib, subprocess, sys
 root = pathlib.Path(__file__).resolve().parent.parent
 # the site runs the minified scripts: build them first, so a release never ships stale ones
 subprocess.run([sys.executable, str(root / "tools" / "build-js.py")], check=True)
+subprocess.run([sys.executable, str(root / "tools" / "build-city-pages.py")], check=True)
 sw = (root / "sw.js").read_text(encoding="utf-8")
 files = re.findall(r'"([^"]+)"', sw[sw.index("const SHELL = ["):sw.index("];", sw.index("const SHELL = ["))])
 h = hashlib.sha256()

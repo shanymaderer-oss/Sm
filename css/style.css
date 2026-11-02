@@ -1004,3 +1004,9 @@ a.btn{text-decoration:none}
 .spendlist{list-style:none;padding:0;margin:0}
 .spendlist li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
 .spendlist small{display:block;color:var(--muted);font-size:.8rem}
+/* the city pages (c/<city>.html) */
+.citypage a.btn{display:inline-flex;margin:6px 0 10px;text-decoration:none;color:var(--primary-ink)}
+.citypage .cityplaces li{margin:6px 0}
+.citypage .cityplaces small,.citypage .small{color:var(--muted)}
+.citypage .citylist{list-style:none;padding:0}
+.citypage .citylist li{margin:8px 0;line-height:1.9}
