@@ -5809,19 +5809,19 @@
   ]
  },
  "havana": {
-  "at": "2026-11-02T14:15:46.929Z",
-  "seconds": 746,
+  "at": "2026-11-02T19:44:43.737Z",
+  "seconds": 1129,
   "osm": {
    "sights": 42,
    "sights2": 162,
    "restaurants": 311,
    "cafes": 118,
-   "hotels": 0,
-   "shopping": 195,
+   "hotels": 350,
+   "shopping": 0,
    "diet": 4,
    "extra": 13,
-   "landmarks": 12,
-   "streets": 1
+   "fitness": 9,
+   "landmarks": 12
   },
   "voyage": {
    "eat": 10,
@@ -5833,7 +5833,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 11,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -5848,33 +5848,36 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
-  "streets": [
-   "Obispo (10)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 42 34813ms",
-   "overpass-api.de HTTP 502 395ms",
-   "overpass-api.de ok 162 25117ms",
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 311 31254ms",
-   "overpass-api.de HTTP 502 424ms",
-   "overpass-api.de ok 118 45908ms",
-   "overpass-api.de HTTP 502 420ms",
-   "overpass-api.de HTTP 502 421ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de ok 42 42121ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de ok 162 45304ms",
+   "overpass-api.de ok 311 36653ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de ok 118 42851ms",
+   "overpass-api.de ok 350 45706ms",
+   "overpass-api.de HTTP 502 520ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de ok 4 56428ms",
+   "overpass-api.de HTTP 502 464ms",
+   "overpass-api.de ok 13 42898ms",
+   "overpass-api.de ok 9 31036ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de ok 12 49629ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de HTTP 502 520ms",
+   "overpass-api.de HTTP 504 48699ms",
+   "overpass.private.coffee timeout 60000ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 195 38046ms",
-   "overpass-api.de ok 4 45430ms",
-   "overpass-api.de ok 13 40154ms",
-   "overpass-api.de HTTP 502 423ms",
-   "overpass-api.de ok 12 48073ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de ok 149 28703ms",
-   "streets: 149 shops",
-   "fame: 56 of 56"
+   "fame: 59 of 59"
   ]
  },
  "buenos-aires": {
