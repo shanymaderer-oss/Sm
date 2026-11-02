@@ -6265,17 +6265,18 @@
   ]
  },
  "corfu": {
-  "at": "2026-11-02T15:07:30.926Z",
-  "seconds": 476,
+  "at": "2026-11-02T20:02:31.409Z",
+  "seconds": 848,
   "osm": {
    "sights": 42,
-   "sights2": 9,
+   "sights2": 0,
    "restaurants": 63,
    "cafes": 71,
    "hotels": 20,
    "shopping": 23,
    "diet": 2,
    "extra": 25,
+   "fitness": 1,
    "landmarks": 5,
    "streets": 1
   },
@@ -6289,7 +6290,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 3,
    "en": 26
   },
   "streetsV": 2,
@@ -6304,25 +6305,35 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Ιωάννου Θεοτόκη (6)"
   ],
   "log": [
-   "overpass-api.de ok 42 33222ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de HTTP 502 371ms",
-   "overpass-api.de ok 9 44786ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 63 34513ms",
-   "overpass-api.de ok 71 33776ms",
-   "overpass-api.de ok 20 32458ms",
-   "overpass-api.de ok 23 37886ms",
-   "overpass-api.de ok 2 38134ms",
-   "overpass-api.de ok 25 33139ms",
-   "overpass-api.de ok 5 28486ms",
-   "overpass-api.de ok 18 33397ms",
+   "overpass-api.de ok 42 32915ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 63 47139ms",
+   "overpass-api.de ok 71 36612ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de ok 20 30219ms",
+   "overpass-api.de ok 23 48103ms",
+   "overpass-api.de HTTP 502 660ms",
+   "overpass-api.de ok 2 49022ms",
+   "overpass-api.de HTTP 502 428ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 25 42553ms",
+   "overpass-api.de ok 1 29707ms",
+   "overpass-api.de ok 5 38088ms",
+   "overpass-api.de HTTP 502 411ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de ok 18 35302ms",
    "streets: 18 shops",
    "fame: 61 of 61"
   ]
