@@ -1790,8 +1790,8 @@
   ]
  },
  "limassol": {
-  "at": "2026-11-02T11:49:36.202Z",
-  "seconds": 523,
+  "at": "2026-11-02T16:49:26.119Z",
+  "seconds": 584,
   "osm": {
    "sights": 2,
    "sights2": 21,
@@ -1801,6 +1801,7 @@
    "shopping": 52,
    "diet": 1,
    "extra": 5,
+   "fitness": 14,
    "landmarks": 1,
    "streets": 1
   },
@@ -1829,26 +1830,29 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Anexartisias (8)"
   ],
   "log": [
-   "overpass-api.de ok 2 42177ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 21 53413ms",
-   "overpass-api.de ok 97 40021ms",
-   "overpass-api.de ok 136 35464ms",
-   "overpass-api.de HTTP 502 391ms",
-   "overpass-api.de ok 36 44121ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de ok 52 36498ms",
-   "overpass-api.de ok 1 33064ms",
-   "overpass-api.de HTTP 502 391ms",
-   "overpass-api.de ok 5 35427ms",
-   "overpass-api.de ok 1 43290ms",
-   "overpass-api.de ok 45 34047ms",
+   "overpass-api.de ok 2 48125ms",
+   "overpass-api.de ok 21 37094ms",
+   "overpass-api.de ok 97 40454ms",
+   "overpass-api.de ok 136 40154ms",
+   "overpass-api.de ok 36 34745ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 52 41828ms",
+   "overpass-api.de ok 1 31215ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de HTTP 502 365ms",
+   "overpass-api.de ok 5 42219ms",
+   "overpass-api.de ok 14 34332ms",
+   "overpass-api.de ok 1 30862ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 45 39911ms",
    "streets: 45 shops",
    "fame: 7 of 7"
   ]
