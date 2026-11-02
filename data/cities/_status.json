@@ -8732,17 +8732,18 @@
   ]
  },
  "ho-chi-minh": {
-  "at": "2026-11-02T13:52:49.016Z",
-  "seconds": 756,
+  "at": "2026-11-02T19:10:16.313Z",
+  "seconds": 670,
   "osm": {
    "sights": 14,
    "sights2": 28,
-   "restaurants": 0,
+   "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 149,
    "diet": 250,
    "extra": 18,
+   "fitness": 15,
    "landmarks": 3,
    "streets": 4
   },
@@ -8756,7 +8757,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 1,
    "en": 100
   },
   "streetsV": 2,
@@ -8771,7 +8772,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Đường Nguyễn Trãi (69)",
@@ -8780,24 +8782,22 @@
    "Đường Phan Văn Trị (7)"
   ],
   "log": [
-   "overpass-api.de ok 14 47166ms",
-   "overpass-api.de ok 28 37802ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass-api.de HTTP 502 421ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de HTTP 502 545ms",
-   "overpass-api.de ok 300 47706ms",
-   "overpass-api.de HTTP 502 398ms",
-   "overpass-api.de ok 350 38490ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de ok 149 38647ms",
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de ok 250 34417ms",
-   "overpass-api.de ok 18 43168ms",
-   "overpass-api.de ok 3 38394ms",
-   "overpass-api.de ok 261 34582ms",
+   "overpass-api.de ok 14 54415ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de HTTP 502 511ms",
+   "overpass-api.de ok 28 56563ms",
+   "overpass-api.de ok 450 45358ms",
+   "overpass-api.de HTTP 502 522ms",
+   "overpass-api.de ok 300 37968ms",
+   "overpass-api.de ok 350 44858ms",
+   "overpass-api.de ok 149 57815ms",
+   "overpass-api.de ok 250 38065ms",
+   "overpass-api.de ok 18 59114ms",
+   "overpass-api.de ok 15 38205ms",
+   "overpass-api.de ok 3 38805ms",
+   "overpass-api.de HTTP 502 520ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 261 35264ms",
    "streets: 261 shops",
    "fame: 34 of 34"
   ]
