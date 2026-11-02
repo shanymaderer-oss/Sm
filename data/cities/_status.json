@@ -2389,17 +2389,18 @@
   ]
  },
  "bucharest": {
-  "at": "2026-11-02T12:02:33.807Z",
-  "seconds": 755,
+  "at": "2026-11-02T17:02:38.159Z",
+  "seconds": 771,
   "osm": {
    "sights": 102,
    "sights2": 76,
    "restaurants": 294,
    "cafes": 252,
    "hotels": 191,
-   "shopping": 0,
+   "shopping": 193,
    "diet": 11,
-   "extra": 70,
+   "extra": 0,
+   "fitness": 10,
    "landmarks": 21,
    "streets": 8
   },
@@ -2413,7 +2414,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 41,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -2428,7 +2429,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Calea Vitan (58)",
@@ -2438,26 +2440,28 @@
    "Strada Lipscani (20)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 391ms",
-   "overpass-api.de ok 102 37142ms",
-   "overpass-api.de ok 76 38930ms",
-   "overpass-api.de ok 294 33956ms",
-   "overpass-api.de ok 252 38772ms",
-   "overpass-api.de ok 191 29309ms",
-   "overpass-api.de HTTP 502 436ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de HTTP 502 390ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de ok 102 41608ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 76 28882ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de ok 294 35713ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 252 31880ms",
+   "overpass-api.de ok 191 35394ms",
+   "overpass-api.de ok 193 31647ms",
+   "overpass-api.de ok 11 29612ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de HTTP 502 374ms",
+   "overpass-api.de HTTP 502 373ms",
+   "overpass.private.coffee timeout 60000ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 386ms",
-   "overpass-api.de HTTP 502 386ms",
-   "overpass-api.de ok 11 35568ms",
-   "overpass-api.de ok 70 43313ms",
-   "overpass-api.de ok 21 44561ms",
-   "overpass-api.de HTTP 502 550ms",
-   "overpass-api.de ok 337 40172ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 10 31975ms",
+   "overpass-api.de ok 21 32706ms",
+   "overpass-api.de ok 337 44295ms",
    "streets: 337 shops",
-   "fame: 171 of 171"
+   "fame: 61 of 111"
   ]
  },
  "thessaloniki": {
