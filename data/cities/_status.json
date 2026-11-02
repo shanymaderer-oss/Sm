@@ -5534,8 +5534,8 @@
   ]
  },
  "kathmandu": {
-  "at": "2026-11-02T14:26:49.516Z",
-  "seconds": 740,
+  "at": "2026-11-02T18:56:34.029Z",
+  "seconds": 1194,
   "osm": {
    "sights": 7,
    "sights2": 35,
@@ -5544,8 +5544,10 @@
    "hotels": 350,
    "shopping": 120,
    "diet": 4,
-   "extra": 8,
-   "landmarks": 2
+   "extra": 0,
+   "fitness": 0,
+   "landmarks": 2,
+   "streets": 2
   },
   "voyage": {
    "eat": 12,
@@ -5574,29 +5576,38 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [],
+  "streets": [
+   "Dhumbharai Marg (9)",
+   "Durbar Marg (9)"
+  ],
   "log": [
-   "overpass-api.de ok 7 40374ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 35 35934ms",
-   "overpass-api.de ok 450 33444ms",
-   "overpass-api.de HTTP 502 364ms",
-   "overpass-api.de ok 198 29842ms",
-   "overpass-api.de ok 350 30393ms",
-   "overpass-api.de ok 120 38948ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 4 30243ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de ok 8 37654ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 2 36785ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de HTTP 502 388ms",
+   "overpass-api.de ok 7 33865ms",
+   "overpass-api.de ok 35 40294ms",
+   "overpass-api.de ok 450 42847ms",
+   "overpass-api.de ok 198 53475ms",
+   "overpass-api.de ok 350 34198ms",
+   "overpass-api.de ok 120 43774ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 4 41585ms",
+   "overpass-api.de HTTP 502 438ms",
+   "overpass-api.de HTTP 504 46527ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass-api.de HTTP 502 428ms",
+   "overpass.private.coffee timeout 60000ms",
    "overpass.kumi.systems timeout 60000ms",
-   "fame: 12 of 12"
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de ok 2 37252ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de HTTP 504 49617ms",
+   "overpass-api.de ok 177 55074ms",
+   "streets: 177 shops",
+   "fame: 7 of 7"
   ]
  },
  "cairo": {
