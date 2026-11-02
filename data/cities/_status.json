@@ -1945,17 +1945,18 @@
   ]
  },
  "nice": {
-  "at": "2026-11-02T12:15:58.077Z",
-  "seconds": 737,
+  "at": "2026-11-02T17:05:24.350Z",
+  "seconds": 510,
   "osm": {
    "sights": 50,
    "sights2": 19,
    "restaurants": 450,
-   "cafes": 0,
+   "cafes": 300,
    "hotels": 177,
    "shopping": 168,
    "diet": 11,
    "extra": 71,
+   "fitness": 19,
    "landmarks": 5,
    "streets": 2
   },
@@ -1984,33 +1985,29 @@
    "diet": 1,
    "extra": 1,
    "streets": 1,
-   "restaurants": 1
+   "restaurants": 1,
+   "fitness": 1
   },
   "streets": [
-   "Avenue Jean Médecin (17)",
+   "Avenue Jean Médecin (14)",
    "Avenue Notre-Dame (7)"
   ],
   "log": [
-   "overpass-api.de ok 50 35839ms",
-   "overpass-api.de ok 19 43990ms",
-   "overpass-api.de ok 450 35725ms",
-   "overpass-api.de HTTP 502 403ms",
-   "overpass-api.de HTTP 502 399ms",
-   "overpass-api.de HTTP 502 398ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 177 32418ms",
-   "overpass-api.de HTTP 502 426ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de ok 168 42946ms",
-   "overpass-api.de ok 11 34930ms",
-   "overpass-api.de ok 71 33125ms",
-   "overpass-api.de HTTP 502 426ms",
-   "overpass-api.de ok 5 30697ms",
-   "overpass-api.de HTTP 502 461ms",
-   "overpass-api.de ok 128 37057ms",
-   "streets: 128 shops",
-   "fame: 143 of 143"
+   "overpass-api.de ok 50 38491ms",
+   "overpass-api.de ok 19 36694ms",
+   "overpass-api.de ok 450 35194ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de ok 300 39757ms",
+   "overpass-api.de ok 177 34597ms",
+   "overpass-api.de ok 168 34922ms",
+   "overpass-api.de ok 11 35062ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de ok 71 28042ms",
+   "overpass-api.de ok 19 38727ms",
+   "overpass-api.de ok 5 35402ms",
+   "overpass-api.de ok 121 37820ms",
+   "streets: 121 shops",
+   "fame: 95 of 145"
   ]
  },
  "munich": {
