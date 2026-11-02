@@ -97,7 +97,7 @@ const S = {
 };
 let checks = store.get("masa-checks", {});
 const ckey = (s, i) => `${S.trip?.city}|${s.name}|${i}`;
-const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together"];
+const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together", "pack"];
 
 /* ---------- speech (built into the browser, free) ---------- */
 const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -323,7 +323,7 @@ function setNav() {
   if (!show) return;
   // four places: the trip (its folders), discover, the agent, home
   const items = [["plan", "route", "הטיול"], ["discover", "compass", "גלו"], ["guide", "sparkle", "הסוכן"], ["home", "home", "בית"]];
-  const inTrip = ["plan", "place", "before", "book", "together", "info", "move"].includes(S.screen);
+  const inTrip = ["plan", "place", "before", "book", "together", "info", "move", "pack"].includes(S.screen);
   nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && inTrip) || (k === "discover" && (S.screen === "list" || S.screen === "poi"))}">${ic(i)}${l}</button>`).join("");
   nav.querySelectorAll("button").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
@@ -1090,6 +1090,7 @@ SCREENS.before = {
       ${t.source === "sample" ? "" : t.hotel ? card("hotelCard", "bed", "var(--primary)", "המלון שלכם", esc(t.hotel.name)) : card("hotelCard", "bed", "var(--primary)", "איפה לישון?", "המלון שלכם, או מלונות שמתאימים למסלול")}
       ${card("infoCard", "info", "var(--teal)", "מידע על היעד", "מזג אוויר, כסף, חשמל, eSIM")}
       ${card("moveCard", "bus", "var(--violet)", "תחבורה", "מהשדה לעיר ובתוך העיר")}
+      ${card("packCard", "check", "var(--sun)", "מה לארוז", "רשימה לפי מזג האוויר, הנוסעים והמסלול")}
     </div>
     ${t.source === "sample" ? "" : `<div class="movebar"><span>איך מתניידים בטיול?</span><div class="seg" id="moveSeg">${MOVES.map(([v, l, i]) => `<button type="button" data-move="${v}" aria-pressed="${(t.opts?.move || "walk") === v}">${ic(i)}${l}</button>`).join("")}</div></div>`}
   </div>`;
@@ -1099,9 +1100,20 @@ SCREENS.before = {
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
     $("infoCard").onclick = () => loadCountries().then(() => go("info"));
     $("moveCard").onclick = () => go("move");
+    $("packCard").onclick = () => openPack();
     document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
   }
 };
+/* the packing list lives in js/pack.js, loaded when opened */
+let packLoad = null, packIn = false;
+function openPack() {
+  packLoad = packLoad || new Promise(res => { const el = document.createElement("script"); el.src = "js/min/pack.js"; el.onload = el.onerror = () => res(); document.head.append(el); });
+  Promise.all([packLoad, loadCountries()]).then(() => {
+    if (!Masa.pack) return toast("לא הצלחנו לפתוח את הרשימה. נסו שוב.");
+    if (!packIn) { Masa.pack.install({ S, SCREENS, $, esc, ic, go, rerenderKeepScroll, infoCache, tripDates, isoDate, countryInfo, totalWalk }); packIn = true; }
+    go("pack", { noFly: true });
+  });
+}
 SCREENS.together = {
   view() { const t = S.trip; return `<div class="screen">${tripTop(t, "together")}${t.source === "sample" ? "" : familyCard(t)}</div>`; },
   bind() { bindTripTop(); bindFamily(); }

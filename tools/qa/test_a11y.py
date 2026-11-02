@@ -35,6 +35,7 @@ async def run(p, scheme):
             await pg.click(f"[data-folder={f}]"); await pg.wait_for_timeout(600); await audit(pg, f, out)
         await pg.click("[data-folder=before]"); await pg.click("#infoCard"); await pg.wait_for_timeout(1000); await audit(pg, "info", out)
         await pg.click("#backInfo"); await pg.click("#moveCard"); await pg.wait_for_timeout(600); await audit(pg, "move", out)
+        await pg.click("#backMove"); await pg.click("#packCard"); await pg.wait_for_selector(".pack", timeout=10000); await audit(pg, "pack", out)
         await pg.click("#nav button[data-k=plan]"); await pg.click("button.stop >> nth=1"); await pg.wait_for_timeout(800); await audit(pg, "place", out)
         await pg.click("#nav button[data-k=discover]"); await pg.wait_for_timeout(800); await audit(pg, "discover", out)
         await pg.click("#nav button[data-k=guide]"); await pg.wait_for_timeout(800); await audit(pg, "agent", out)
@@ -43,7 +44,7 @@ async def run(p, scheme):
             FAILS.append(f"{scheme}: {k}")
             print(f"FAIL [{scheme}] {v['impact']} {k}: {v['help']}")
             for s2, nodes in list(v["screens"].items())[:4]: print(f"   [{s2}] " + " | ".join(nodes)[:300])
-        if not out: print(f"PASS [{scheme}] no accessibility violations on 15 screens")
+        if not out: print(f"PASS [{scheme}] no accessibility violations on 16 screens")
         await b.close()
 async def main():
     async with async_playwright() as p:

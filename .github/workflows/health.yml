@@ -56,6 +56,11 @@ jobs:
         run: python tools/qa/test_kit.py
       - name: Where we sleep shapes the trip
         run: python tools/qa/test_hotel.py
+      - name: Tests that run on a copy of the site (simulated flights and smart guide)
+        env: { QA_URL: "http://localhost:8790" }
+        run: |
+          (python -m http.server 8790 >/dev/null 2>&1 &) ; sleep 2
+          for t in test_journey test_agent test_hints test_nudge test_pack; do echo "== $t"; python tools/qa/$t.py || exit 1; done
       - name: Feedback and anonymous counts
         run: python tools/qa/test_feedback.py
       - name: The guide (local answers and the shared guide)
