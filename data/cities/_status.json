@@ -8095,8 +8095,8 @@
   ]
  },
  "mumbai": {
-  "at": "2026-11-02T14:16:17.182Z",
-  "seconds": 734,
+  "at": "2026-11-02T18:50:06.670Z",
+  "seconds": 568,
   "osm": {
    "sights": 16,
    "sights2": 11,
@@ -8105,17 +8105,18 @@
    "hotels": 83,
    "shopping": 17,
    "diet": 8,
-   "extra": 0,
+   "extra": 10,
+   "fitness": 6,
    "landmarks": 0,
    "streets": 0
   },
   "voyage": {
-   "eat": 58,
+   "eat": 74,
    "drink": 32,
-   "buy": 43,
-   "see": 110,
-   "sleep": 60,
-   "withCoords": 253,
+   "buy": 45,
+   "see": 129,
+   "sleep": 51,
+   "withCoords": 279,
    "districts": 8
   },
   "wiki": {
@@ -8132,33 +8133,29 @@
    "hotels": 1,
    "shopping": 1,
    "diet": 1,
-   "extra": 1
+   "extra": 1,
+   "fitness": 1
   },
   "streets": [],
   "log": [
-   "overpass-api.de HTTP 502 394ms",
-   "overpass-api.de ok 16 26102ms",
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de ok 11 34220ms",
-   "overpass-api.de ok 87 32677ms",
-   "overpass-api.de ok 47 35038ms",
-   "overpass-api.de ok 83 24682ms",
-   "overpass-api.de ok 17 34697ms",
-   "overpass-api.de ok 8 34890ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de HTTP 502 386ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 0 41514ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 15 33097ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass-api.de ok 16 40357ms",
+   "overpass-api.de ok 11 44948ms",
+   "overpass-api.de ok 87 27651ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 47 58730ms",
+   "overpass-api.de HTTP 502 363ms",
+   "overpass-api.de ok 83 32877ms",
+   "overpass-api.de HTTP 502 360ms",
+   "overpass-api.de ok 17 34162ms",
+   "overpass-api.de ok 8 44420ms",
+   "overpass-api.de ok 10 34735ms",
+   "overpass-api.de ok 6 39741ms",
+   "overpass-api.de ok 0 34183ms",
+   "overpass-api.de ok 15 37930ms",
    "streets: 15 shops",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 19 of 19"
+   "fame: 25 of 25"
   ]
  },
  "colombo": {
