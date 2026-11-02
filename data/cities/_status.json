@@ -1816,8 +1816,8 @@
   ]
  },
  "paphos": {
-  "at": "2026-11-01T04:39:14.482Z",
-  "seconds": 468,
+  "at": "2026-11-02T12:22:05.605Z",
+  "seconds": 598,
   "osm": {
    "sights": 18,
    "sights2": 24,
@@ -1840,7 +1840,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 1,
+   "he": 0,
    "en": 11
   },
   "streetsV": 2,
@@ -1858,18 +1858,26 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 18 51160ms",
-   "overpass-api.de HTTP 502 370ms",
-   "overpass-api.de ok 24 38843ms",
-   "overpass-api.de ok 90 40145ms",
-   "overpass-api.de ok 51 35426ms",
-   "overpass-api.de ok 100 30021ms",
-   "overpass-api.de ok 86 25966ms",
-   "overpass-api.de ok 1 33098ms",
-   "overpass-api.de ok 14 31875ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 18 40065ms",
+   "overpass-api.de ok 24 33719ms",
+   "overpass-api.de HTTP 502 368ms",
+   "overpass-api.de ok 90 30324ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de HTTP 502 284ms",
+   "overpass-api.de ok 51 51316ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de ok 100 43536ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 86 35448ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 1 30069ms",
+   "overpass-api.de ok 14 40504ms",
+   "overpass-api.de ok 2 37939ms",
    "overpass-api.de HTTP 502 283ms",
-   "overpass-api.de ok 2 35998ms",
-   "overpass-api.de ok 17 40984ms",
+   "overpass-api.de ok 17 39156ms",
    "streets: 17 shops",
    "fame: 28 of 28"
   ]
