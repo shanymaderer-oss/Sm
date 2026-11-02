@@ -4969,8 +4969,8 @@
   ]
  },
  "verona": {
-  "at": "2026-11-02T13:11:26.465Z",
-  "seconds": 579,
+  "at": "2026-11-02T18:22:35.779Z",
+  "seconds": 737,
   "osm": {
    "sights": 84,
    "sights2": 35,
@@ -4980,6 +4980,7 @@
    "shopping": 83,
    "diet": 5,
    "extra": 61,
+   "fitness": 5,
    "landmarks": 19,
    "streets": 6
   },
@@ -5008,7 +5009,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Via Giuseppe Mazzini (19)",
@@ -5018,24 +5020,26 @@
    "Via Guglielmo Oberdan (10)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de ok 84 32926ms",
-   "overpass-api.de ok 35 42467ms",
-   "overpass-api.de HTTP 502 416ms",
-   "overpass-api.de ok 224 50711ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de HTTP 502 397ms",
-   "overpass-api.de ok 183 42178ms",
-   "overpass-api.de HTTP 502 406ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de ok 94 41196ms",
-   "overpass-api.de HTTP 502 383ms",
-   "overpass-api.de ok 83 36765ms",
-   "overpass-api.de ok 5 44486ms",
-   "overpass-api.de ok 61 30795ms",
-   "overpass-api.de HTTP 502 382ms",
-   "overpass-api.de ok 19 29192ms",
-   "overpass-api.de ok 177 35286ms",
+   "overpass-api.de ok 84 37535ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de HTTP 502 526ms",
+   "overpass-api.de ok 35 48917ms",
+   "overpass-api.de HTTP 502 526ms",
+   "overpass-api.de timeout 60000ms",
+   "overpass-api.de ok 224 36685ms",
+   "overpass-api.de ok 183 39034ms",
+   "overpass-api.de HTTP 502 479ms",
+   "overpass-api.de ok 94 35322ms",
+   "overpass-api.de HTTP 504 47703ms",
+   "overpass-api.de ok 83 37731ms",
+   "overpass-api.de ok 5 39747ms",
+   "overpass-api.de ok 61 31745ms",
+   "overpass-api.de ok 5 31609ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de ok 19 35302ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de HTTP 502 525ms",
+   "overpass-api.de ok 177 33956ms",
    "streets: 177 shops",
    "fame: 154 of 154"
   ]
