@@ -1,11 +1,11 @@
 {
  "paris": {
-  "at": "2026-11-01T04:02:15.490Z",
-  "seconds": 673,
+  "at": "2026-11-02T11:26:13.398Z",
+  "seconds": 975,
   "osm": {
-   "sights": 739,
+   "sights": 745,
    "sights2": 250,
-   "restaurants": 450,
+   "restaurants": 0,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
@@ -15,12 +15,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 70,
-   "drink": 38,
-   "buy": 45,
-   "see": 112,
-   "sleep": 101,
-   "withCoords": 248,
+   "eat": 77,
+   "drink": 32,
+   "buy": 51,
+   "see": 108,
+   "sleep": 112,
+   "withCoords": 268,
    "districts": 8
   },
   "wiki": {
@@ -49,19 +49,28 @@
    "Rue de Rivoli (20)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 667ms",
-   "overpass-api.de ok 739 35208ms",
-   "overpass-api.de ok 250 39196ms",
-   "overpass-api.de ok 450 36255ms",
-   "overpass-api.de ok 300 49723ms",
-   "overpass-api.de ok 350 35429ms",
-   "overpass-api.de ok 300 39247ms",
-   "overpass-api.de HTTP 502 368ms",
-   "overpass-api.de ok 250 37615ms",
-   "overpass-api.de ok 200 42066ms",
-   "overpass-api.de ok 150 45957ms",
-   "overpass-api.de ok 1913 36500ms",
-   "streets: 1913 shops",
+   "overpass-api.de HTTP 502 855ms",
+   "overpass-api.de ok 745 39767ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de ok 250 51094ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 462ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de ok 300 46949ms",
+   "overpass-api.de ok 350 33291ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de ok 300 53595ms",
+   "overpass-api.de ok 250 47000ms",
+   "overpass-api.de ok 200 55462ms",
+   "overpass-api.de ok 150 33705ms",
+   "overpass-api.de HTTP 502 446ms",
+   "overpass-api.de ok 1915 32501ms",
+   "streets: 1915 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -70,10 +79,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 1111 of 1111"
+   "fame: 1116 of 1116"
   ]
  },
  "rome": {
