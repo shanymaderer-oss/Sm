@@ -4596,8 +4596,8 @@
   ]
  },
  "tallinn": {
-  "at": "2026-11-01T05:13:05.027Z",
-  "seconds": 595,
+  "at": "2026-11-02T13:09:30.469Z",
+  "seconds": 537,
   "osm": {
    "sights": 93,
    "sights2": 81,
@@ -4620,7 +4620,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 11,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -4645,19 +4645,19 @@
    "Pärnu mnt (12)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 457ms",
-   "overpass-api.de ok 93 47458ms",
-   "overpass-api.de ok 81 32458ms",
-   "overpass-api.de HTTP 504 58493ms",
-   "overpass-api.de ok 262 56789ms",
-   "overpass-api.de ok 153 44713ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 118 42205ms",
-   "overpass-api.de ok 163 47354ms",
-   "overpass-api.de ok 9 43793ms",
-   "overpass-api.de ok 50 39858ms",
-   "overpass-api.de ok 31 32577ms",
-   "overpass-api.de ok 338 29679ms",
+   "overpass-api.de ok 93 52972ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de ok 81 48235ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 262 35715ms",
+   "overpass-api.de ok 153 43779ms",
+   "overpass-api.de ok 118 32154ms",
+   "overpass-api.de HTTP 502 396ms",
+   "overpass-api.de ok 163 31909ms",
+   "overpass-api.de ok 9 37773ms",
+   "overpass-api.de ok 50 49927ms",
+   "overpass-api.de ok 31 45111ms",
+   "overpass-api.de ok 338 38820ms",
    "streets: 338 shops",
    "fame: 159 of 159"
   ]
