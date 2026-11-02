@@ -380,8 +380,8 @@
   ]
  },
  "budapest": {
-  "at": "2026-11-01T04:00:24.046Z",
-  "seconds": 483,
+  "at": "2026-11-02T11:26:26.884Z",
+  "seconds": 909,
   "osm": {
    "sights": 198,
    "sights2": 211,
@@ -389,7 +389,7 @@
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
-   "diet": 43,
+   "diet": 0,
    "extra": 105,
    "landmarks": 49,
    "streets": 14
@@ -404,7 +404,7 @@
    "districts": 8
   },
   "wiki": {
-   "he": 100,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -429,22 +429,34 @@
    "Kossuth Lajos utca (20)"
   ],
   "log": [
-   "overpass-api.de ok 198 40476ms",
-   "overpass-api.de HTTP 502 287ms",
-   "overpass-api.de ok 211 41730ms",
-   "overpass-api.de ok 450 27742ms",
-   "overpass-api.de HTTP 502 287ms",
-   "overpass-api.de ok 300 37427ms",
-   "overpass-api.de ok 350 34547ms",
-   "overpass-api.de ok 300 28389ms",
-   "overpass-api.de ok 43 30618ms",
-   "overpass-api.de ok 105 38455ms",
-   "overpass-api.de ok 49 37804ms",
-   "overpass-api.de ok 950 32182ms",
+   "overpass-api.de HTTP 502 747ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 198 44043ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de ok 211 32680ms",
+   "overpass-api.de ok 450 51947ms",
+   "overpass-api.de HTTP 502 445ms",
+   "overpass-api.de ok 300 43494ms",
+   "overpass-api.de ok 350 43290ms",
+   "overpass-api.de ok 300 45289ms",
+   "overpass-api.de HTTP 502 445ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de HTTP 502 445ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 105 40716ms",
+   "overpass-api.de HTTP 502 448ms",
+   "overpass-api.de ok 49 44907ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 950 37154ms",
    "streets: 950 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 408 of 408"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 406 of 406"
   ]
  },
  "vienna": {
