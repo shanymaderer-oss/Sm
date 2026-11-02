@@ -9427,14 +9427,14 @@
   ]
  },
  "turin": {
-  "at": "2026-11-01T06:29:02.191Z",
-  "seconds": 654,
+  "at": "2026-11-02T15:21:17.994Z",
+  "seconds": 1105,
   "osm": {
-   "sights": 0,
-   "sights2": 29,
+   "sights": 88,
+   "sights2": 0,
    "restaurants": 450,
    "cafes": 300,
-   "hotels": 123,
+   "hotels": 0,
    "shopping": 272,
    "diet": 12,
    "extra": 93,
@@ -9451,7 +9451,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 13,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -9465,7 +9465,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "sights": 2
   },
   "streets": [
    "Via Roma (18)",
@@ -9475,27 +9476,30 @@
    "Via Madama Cristina (6)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de HTTP 502 366ms",
+   "overpass-api.de ok 88 37586ms",
+   "overpass-api.de HTTP 502 703ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de HTTP 502 447ms",
    "overpass.private.coffee timeout 60002ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 29 29791ms",
-   "overpass-api.de ok 450 31273ms",
+   "overpass-api.de HTTP 502 452ms",
+   "overpass-api.de HTTP 502 451ms",
+   "overpass-api.de ok 450 46143ms",
+   "overpass-api.de ok 300 32021ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de timeout 60000ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 504 42040ms",
+   "overpass-api.de ok 272 31629ms",
    "overpass-api.de HTTP 502 456ms",
-   "overpass-api.de ok 300 35145ms",
-   "overpass-api.de ok 123 31008ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de ok 272 30099ms",
-   "overpass-api.de HTTP 502 282ms",
-   "overpass-api.de ok 12 21147ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 93 23563ms",
-   "overpass-api.de ok 25 20416ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de ok 213 22790ms",
+   "overpass-api.de ok 12 44334ms",
+   "overpass-api.de ok 93 39501ms",
+   "overpass-api.de ok 25 39835ms",
+   "overpass-api.de ok 213 48186ms",
    "streets: 213 shops",
-   "fame: 134 of 134"
+   "fame: 186 of 186"
   ]
  },
  "mykonos": {
