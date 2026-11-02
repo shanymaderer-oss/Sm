@@ -3070,10 +3070,10 @@
   ]
  },
  "miami": {
-  "at": "2026-11-02T12:47:31.368Z",
-  "seconds": 1013,
+  "at": "2026-11-02T17:16:24.326Z",
+  "seconds": 880,
   "osm": {
-   "sights": 26,
+   "sights": 0,
    "sights2": 59,
    "restaurants": 86,
    "cafes": 8,
@@ -3081,7 +3081,9 @@
    "shopping": 111,
    "diet": 14,
    "extra": 75,
-   "landmarks": 1
+   "fitness": 21,
+   "landmarks": 1,
+   "streets": 8
   },
   "voyage": {
    "eat": 17,
@@ -3108,38 +3110,43 @@
    "extra": 1,
    "landmarks": 1,
    "streets": 1,
-   "sights": 2
+   "sights": 2,
+   "fitness": 1
   },
-  "streets": [],
+  "streets": [
+   "Lincoln Road (76)",
+   "Northeast 39th Street (37)",
+   "Northeast 41st Street (22)",
+   "Northeast 40th Street (18)",
+   "Collins Avenue (14)"
+  ],
   "log": [
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de ok 26 44421ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de ok 59 33415ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 86 47220ms",
-   "overpass-api.de HTTP 502 368ms",
-   "overpass-api.de ok 8 50604ms",
-   "overpass-api.de ok 325 45503ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de ok 111 33666ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 14 50698ms",
-   "overpass-api.de ok 75 37506ms",
-   "overpass-api.de HTTP 504 56576ms",
-   "overpass-api.de ok 1 32736ms",
-   "overpass-api.de HTTP 504 52780ms",
-   "overpass-api.de HTTP 502 403ms",
-   "overpass-api.de HTTP 502 280ms",
+   "overpass-api.de HTTP 502 437ms",
+   "overpass-api.de HTTP 502 380ms",
+   "overpass-api.de HTTP 502 438ms",
    "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass-api.de ok 59 38923ms",
+   "overpass-api.de ok 86 36813ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 8 40811ms",
+   "overpass-api.de ok 325 35348ms",
+   "overpass-api.de ok 111 40680ms",
+   "overpass-api.de ok 14 39002ms",
+   "overpass-api.de ok 75 36511ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass-api.de ok 21 44079ms",
+   "overpass-api.de ok 1 49481ms",
+   "overpass-api.de ok 305 24597ms",
+   "streets: 305 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 148 of 198"
+   "fame: 126 of 176"
   ]
  },
  "los-angeles": {
