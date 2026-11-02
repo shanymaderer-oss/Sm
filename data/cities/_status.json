@@ -2236,8 +2236,8 @@
   ]
  },
  "warsaw": {
-  "at": "2026-11-02T12:03:17.093Z",
-  "seconds": 664,
+  "at": "2026-11-02T17:00:16.270Z",
+  "seconds": 624,
   "osm": {
    "sights": 467,
    "sights2": 184,
@@ -2247,16 +2247,17 @@
    "shopping": 300,
    "diet": 59,
    "extra": 95,
+   "fitness": 46,
    "landmarks": 81,
    "streets": 14
   },
   "voyage": {
-   "eat": 58,
-   "drink": 30,
-   "buy": 18,
-   "see": 121,
-   "sleep": 57,
-   "withCoords": 213,
+   "eat": 53,
+   "drink": 26,
+   "buy": 14,
+   "see": 113,
+   "sleep": 45,
+   "withCoords": 199,
    "districts": 8
   },
   "wiki": {
@@ -2275,7 +2276,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Mokotowska (64)",
@@ -2285,22 +2287,23 @@
    "Koszykowa (19)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 467 40413ms",
-   "overpass-api.de ok 184 34665ms",
-   "overpass-api.de HTTP 502 460ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 398 35077ms",
-   "overpass-api.de ok 300 39999ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de ok 138 37496ms",
-   "overpass-api.de ok 300 32521ms",
-   "overpass-api.de ok 59 36502ms",
-   "overpass-api.de HTTP 502 446ms",
-   "overpass-api.de ok 95 35679ms",
-   "overpass-api.de HTTP 502 445ms",
-   "overpass-api.de ok 81 50712ms",
-   "overpass-api.de ok 1012 41802ms",
+   "overpass-api.de ok 467 36152ms",
+   "overpass-api.de ok 184 22944ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de HTTP 502 388ms",
+   "overpass-api.de ok 398 35444ms",
+   "overpass-api.de ok 300 31628ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 138 42189ms",
+   "overpass-api.de ok 300 25614ms",
+   "overpass-api.de ok 59 32480ms",
+   "overpass-api.de ok 95 28106ms",
+   "overpass-api.de HTTP 502 375ms",
+   "overpass-api.de HTTP 502 380ms",
+   "overpass-api.de ok 46 53300ms",
+   "overpass-api.de ok 81 31500ms",
+   "overpass-api.de HTTP 502 367ms",
+   "overpass-api.de ok 1012 26511ms",
    "streets: 1012 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -2308,9 +2311,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 549 of 549"
+   "fame: 500 of 550"
   ]
  },
  "sofia": {
