@@ -4257,8 +4257,8 @@
   ]
  },
  "bruges": {
-  "at": "2026-11-01T06:32:17.799Z",
-  "seconds": 481,
+  "at": "2026-11-02T14:42:33.618Z",
+  "seconds": 537,
   "osm": {
    "sights": 97,
    "sights2": 45,
@@ -4303,21 +4303,22 @@
    "Noordzandstraat (9)"
   ],
   "log": [
-   "overpass-api.de ok 97 36537ms",
-   "overpass-api.de ok 45 31708ms",
-   "overpass-api.de HTTP 502 684ms",
-   "overpass-api.de ok 258 28778ms",
+   "overpass-api.de ok 97 38254ms",
+   "overpass-api.de ok 45 39293ms",
    "overpass-api.de HTTP 502 423ms",
-   "overpass-api.de ok 97 37083ms",
-   "overpass-api.de ok 129 38584ms",
-   "overpass-api.de ok 91 37674ms",
-   "overpass-api.de ok 2 30184ms",
-   "overpass-api.de HTTP 502 680ms",
-   "overpass-api.de HTTP 502 680ms",
-   "overpass-api.de ok 42 37047ms",
-   "overpass-api.de ok 40 31914ms",
-   "overpass-api.de ok 86 30306ms",
-   "streets: 86 shops",
+   "overpass-api.de ok 258 26085ms",
+   "overpass-api.de ok 97 37184ms",
+   "overpass-api.de ok 129 38289ms",
+   "overpass-api.de ok 91 33696ms",
+   "overpass-api.de ok 2 42796ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de ok 42 36692ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de ok 40 41290ms",
+   "overpass-api.de ok 85 41339ms",
+   "streets: 85 shops",
    "fame: 151 of 151"
   ]
  },
