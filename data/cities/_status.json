@@ -3235,27 +3235,26 @@
   ]
  },
  "chicago": {
-  "at": "2026-11-01T04:54:16.721Z",
-  "seconds": 460,
+  "at": "2026-11-02T12:35:10.298Z",
+  "seconds": 797,
   "osm": {
    "sights": 83,
    "sights2": 58,
    "restaurants": 450,
-   "cafes": 226,
+   "cafes": 228,
    "hotels": 163,
-   "shopping": 296,
+   "shopping": 295,
    "diet": 22,
    "extra": 83,
-   "landmarks": 36,
-   "streets": 14
+   "landmarks": 36
   },
   "voyage": {
-   "eat": 112,
-   "drink": 58,
-   "buy": 41,
-   "see": 124,
+   "eat": 104,
+   "drink": 54,
+   "buy": 40,
+   "see": 125,
    "sleep": 55,
-   "withCoords": 286,
+   "withCoords": 278,
    "districts": 8
   },
   "wiki": {
@@ -3276,29 +3275,26 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "North Michigan Avenue (74)",
-   "East Oak Street (25)",
-   "West North Avenue (12)",
-   "West Randolph Street (14)",
-   "North Rush Street (13)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 83 40406ms",
-   "overpass-api.de ok 58 35091ms",
-   "overpass-api.de ok 450 30478ms",
-   "overpass-api.de ok 226 34236ms",
-   "overpass-api.de ok 163 36138ms",
-   "overpass-api.de ok 296 40064ms",
-   "overpass-api.de ok 22 30661ms",
-   "overpass-api.de ok 83 30068ms",
-   "overpass-api.de ok 36 23041ms",
-   "overpass-api.de ok 377 37428ms",
-   "streets: 377 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 223 of 223"
+   "overpass-api.de ok 83 36380ms",
+   "overpass-api.de ok 58 46422ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de ok 450 45425ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de HTTP 502 400ms",
+   "overpass-api.de ok 228 45887ms",
+   "overpass-api.de ok 163 38470ms",
+   "overpass-api.de ok 295 41050ms",
+   "overpass-api.de ok 22 55019ms",
+   "overpass-api.de ok 83 45216ms",
+   "overpass-api.de ok 36 39621ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de HTTP 502 357ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "fame: 222 of 222"
   ]
  },
  "toronto": {
