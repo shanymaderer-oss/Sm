@@ -6711,8 +6711,8 @@
   ]
  },
  "helsinki": {
-  "at": "2026-11-02T12:59:29.226Z",
-  "seconds": 707,
+  "at": "2026-11-02T17:27:20.276Z",
+  "seconds": 625,
   "osm": {
    "sights": 127,
    "sights2": 89,
@@ -6722,16 +6722,17 @@
    "shopping": 286,
    "diet": 25,
    "extra": 107,
+   "fitness": 46,
    "landmarks": 35,
    "streets": 14
   },
   "voyage": {
-   "eat": 160,
-   "drink": 86,
-   "buy": 61,
+   "eat": 174,
+   "drink": 106,
+   "buy": 70,
    "see": 93,
-   "sleep": 50,
-   "withCoords": 503,
+   "sleep": 53,
+   "withCoords": 557,
    "districts": 8
   },
   "wiki": {
@@ -6750,7 +6751,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Fredrikinkatu (47)",
@@ -6760,29 +6762,25 @@
    "Korkeavuorenkatu (21)"
   ],
   "log": [
-   "overpass-api.de ok 127 32031ms",
-   "overpass-api.de ok 89 42003ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 450 46191ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de timeout 60000ms",
-   "overpass-api.de ok 239 50605ms",
-   "overpass-api.de ok 83 34556ms",
-   "overpass-api.de ok 286 38726ms",
-   "overpass-api.de ok 25 35184ms",
-   "overpass-api.de ok 107 37581ms",
-   "overpass-api.de HTTP 502 364ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de ok 35 35301ms",
-   "overpass-api.de HTTP 502 368ms",
-   "overpass-api.de ok 506 45513ms",
+   "overpass-api.de ok 127 42874ms",
+   "overpass-api.de ok 89 40156ms",
+   "overpass-api.de ok 450 53036ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 239 33579ms",
+   "overpass-api.de ok 83 39315ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de HTTP 502 385ms",
+   "overpass-api.de ok 286 49557ms",
+   "overpass-api.de ok 25 35530ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 107 46423ms",
+   "overpass-api.de ok 46 32523ms",
+   "overpass-api.de ok 35 40355ms",
+   "overpass-api.de ok 506 44840ms",
    "streets: 506 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 214 of 264"
+   "fame: 265 of 265"
   ]
  },
  "zagreb": {
