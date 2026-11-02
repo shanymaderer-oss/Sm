@@ -4449,17 +4449,17 @@
   ]
  },
  "innsbruck": {
-  "at": "2026-11-01T04:57:52.826Z",
-  "seconds": 441,
+  "at": "2026-11-02T12:49:57.246Z",
+  "seconds": 1046,
   "osm": {
    "sights": 89,
    "sights2": 36,
-   "restaurants": 170,
+   "restaurants": 0,
    "cafes": 178,
    "hotels": 73,
    "shopping": 102,
    "diet": 11,
-   "extra": 58,
+   "extra": 0,
    "landmarks": 27,
    "streets": 9
   },
@@ -4473,7 +4473,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 8,
+   "he": 0,
    "en": 53
   },
   "streetsV": 2,
@@ -4498,19 +4498,33 @@
    "Anichstraße (15)"
   ],
   "log": [
-   "overpass-api.de ok 89 34585ms",
-   "overpass-api.de ok 36 28601ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 170 23438ms",
-   "overpass-api.de ok 178 35895ms",
-   "overpass-api.de ok 73 30256ms",
-   "overpass-api.de ok 102 49578ms",
-   "overpass-api.de ok 11 32153ms",
-   "overpass-api.de ok 58 34792ms",
-   "overpass-api.de ok 27 35641ms",
-   "overpass-api.de ok 229 36720ms",
+   "overpass-api.de ok 89 36868ms",
+   "overpass-api.de ok 36 44737ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de HTTP 502 453ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de ok 178 42024ms",
+   "overpass-api.de HTTP 502 463ms",
+   "overpass-api.de ok 73 30091ms",
+   "overpass-api.de HTTP 502 463ms",
+   "overpass-api.de HTTP 502 692ms",
+   "overpass-api.de ok 102 39942ms",
+   "overpass-api.de HTTP 502 983ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 11 49731ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de ok 27 35910ms",
+   "overpass-api.de HTTP 502 448ms",
+   "overpass-api.de ok 229 43746ms",
    "streets: 229 shops",
-   "fame: 178 of 178"
+   "fame: 127 of 127"
   ]
  },
  "cologne": {
