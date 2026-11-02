@@ -3955,8 +3955,8 @@
   ]
  },
  "hong-kong": {
-  "at": "2026-11-02T14:03:35.595Z",
-  "seconds": 897,
+  "at": "2026-11-02T18:40:19.251Z",
+  "seconds": 710,
   "osm": {
    "sights": 82,
    "sights2": 42,
@@ -3966,7 +3966,8 @@
    "shopping": 240,
    "diet": 25,
    "extra": 199,
-   "landmarks": 0,
+   "fitness": 17,
+   "landmarks": 6,
    "streets": 14
   },
   "voyage": {
@@ -3979,7 +3980,7 @@
    "districts": 8
   },
   "wiki": {
-   "he": 0,
+   "he": 50,
    "en": 100
   },
   "streetsV": 2,
@@ -3994,7 +3995,8 @@
    "extra": 1,
    "landmarks": 1,
    "streets": 1,
-   "restaurants": 1
+   "restaurants": 1,
+   "fitness": 1
   },
   "streets": [
    "彌敦道 Nathan Road (48)",
@@ -4004,33 +4006,26 @@
    "加拿分道 Carnarvon Road (15)"
   ],
   "log": [
-   "overpass-api.de ok 82 32632ms",
-   "overpass-api.de HTTP 502 385ms",
-   "overpass-api.de ok 42 49983ms",
-   "overpass-api.de ok 450 37963ms",
-   "overpass-api.de HTTP 502 372ms",
-   "overpass-api.de ok 173 39002ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de ok 350 50986ms",
-   "overpass-api.de HTTP 502 410ms",
-   "overpass-api.de ok 240 39901ms",
-   "overpass-api.de ok 25 42458ms",
-   "overpass-api.de ok 199 43060ms",
-   "overpass-api.de HTTP 502 411ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de HTTP 502 391ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de HTTP 502 435ms",
-   "overpass-api.de HTTP 502 410ms",
-   "overpass-api.de ok 646 47080ms",
+   "overpass-api.de ok 82 37494ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 42 43008ms",
+   "overpass-api.de ok 450 44491ms",
+   "overpass-api.de HTTP 502 379ms",
+   "overpass-api.de ok 173 46540ms",
+   "overpass-api.de ok 350 41866ms",
+   "overpass-api.de ok 240 44827ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de HTTP 504 44715ms",
+   "overpass-api.de ok 25 47551ms",
+   "overpass-api.de ok 199 56568ms",
+   "overpass-api.de ok 17 38799ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass-api.de ok 6 44471ms",
+   "overpass-api.de HTTP 502 582ms",
+   "overpass-api.de ok 646 38021ms",
    "streets: 646 shops",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 305 of 355"
+   "fame: 361 of 361"
   ]
  },
  "shanghai": {
