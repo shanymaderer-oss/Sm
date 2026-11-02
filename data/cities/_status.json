@@ -8337,10 +8337,10 @@
   ]
  },
  "taipei": {
-  "at": "2026-11-02T14:14:17.592Z",
-  "seconds": 694,
+  "at": "2026-11-02T18:36:24.449Z",
+  "seconds": 951,
   "osm": {
-   "sights": 114,
+   "sights": 0,
    "sights2": 72,
    "restaurants": 450,
    "cafes": 300,
@@ -8348,6 +8348,7 @@
    "shopping": 238,
    "diet": 185,
    "extra": 135,
+   "fitness": 37,
    "landmarks": 13,
    "streets": 14
   },
@@ -8376,7 +8377,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "汀州路三段 (33)",
@@ -8386,31 +8388,35 @@
    "南京西路 (19)"
   ],
   "log": [
-   "overpass-api.de ok 114 37923ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de HTTP 502 355ms",
-   "overpass-api.de ok 72 39224ms",
-   "overpass-api.de HTTP 502 368ms",
-   "overpass-api.de ok 450 36421ms",
-   "overpass-api.de ok 300 39421ms",
-   "overpass-api.de ok 350 37127ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de ok 238 43303ms",
-   "overpass-api.de ok 185 54451ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de ok 135 45150ms",
-   "overpass-api.de ok 13 44088ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de HTTP 502 370ms",
-   "overpass-api.de ok 778 38244ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de HTTP 502 590ms",
+   "overpass-api.de ok 72 41635ms",
+   "overpass-api.de ok 450 49140ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de ok 300 55787ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 350 35980ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 238 46121ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de HTTP 502 385ms",
+   "overpass-api.de ok 185 47591ms",
+   "overpass-api.de ok 135 37576ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 37 41473ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de ok 13 41138ms",
+   "overpass-api.de ok 778 41194ms",
    "streets: 778 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 342 of 342"
+   "fame: 238 of 238"
   ]
  },
  "marrakech": {
