@@ -955,7 +955,7 @@ function editBar(t, d, s, i) {
   return `<div class="editbar" data-i="${i}">
     <button type="button" class="iconbtn" data-up="${i}" aria-label="להקדים" ${first ? "disabled" : ""}>${ic("up")}</button>
     <button type="button" class="iconbtn" data-down="${i}" aria-label="לאחר" ${last ? "disabled" : ""}>${ic("down")}</button>
-    <button type="button" class="chipbtn" data-repl="${i}" aria-expanded="${open}">${ic("search")}להחליף</button>
+    <button type="button" class="chipbtn" data-repl="${i}" aria-expanded="${!!open}">${ic("search")}להחליף</button>
     <button type="button" class="chipbtn" data-del="${i}">${ic("trash")}להוריד</button>
     ${t.days.length > 1 ? `<select class="select small" data-mv="${i}" aria-label="להעביר ליום אחר"><option value="">ליום אחר…</option>${dayOpts}</select>` : ""}
   </div>${alts}`;
@@ -2076,7 +2076,7 @@ SCREENS.list = {
       ${L2.chip === "hotel" ? `<button type="button" data-sort="fit" aria-pressed="${L2.sort === "fit"}">הכי מתאים למסלול</button>` : ""}
       <button type="button" data-sort="best" aria-pressed="${L2.sort === "best"}">הכי מומלץ</button>
       <button type="button" data-sort="near" aria-pressed="${L2.sort === "near"}">${S.me ? "הכי קרוב אליי" : "הכי קרוב למסלול"}</button>
-      ${now && L2.chip !== "hotel" ? `<button type="button" id="fOpen" aria-pressed="${L2.open}">פתוח עכשיו</button>` : ""}
+      ${now && L2.chip !== "hotel" ? `<button type="button" id="fOpen" aria-pressed="${!!L2.open}">פתוח עכשיו</button>` : ""}
       ${hasPrice ? ["budget", "mid", "splurge"].map(k => `<button type="button" data-price="${k}" aria-pressed="${L2.price === k}">${PRICE[k]}</button>`).join("") : ""}
       ${L2.chip === "hotel" ? `<button type="button" data-stars="3" aria-pressed="${L2.stars === 3}">3 כוכבים ומעלה</button><button type="button" data-stars="4" aria-pressed="${L2.stars === 4}">4 כוכבים ומעלה</button>${["hotel", "hostel", "apartment", "guesthouse"].filter(k => base.some(p => p.kind === k)).map(k => `<button type="button" data-ht="${k}" aria-pressed="${L2.htype === k}">${planner.KIND[k].he}</button>`).join("")}` : ""}
       ${base.some(p => p.wheel === "yes") ? `<button type="button" id="fAcc" aria-pressed="${!!L2.acc}">${ic("access")}נגיש</button>` : ""}
@@ -2680,7 +2680,7 @@ function tripData(t) {
 async function tripImage(t) {
   const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
   const x = c.getContext("2d"), css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const col = cityColor(t.city), bg = css(col.bg.slice(4, -1)) || "#e2336b", ink = col.ink, navy = "#1a2150";
+  const col = cityColor(t.city), bg = css(col.bg.slice(4, -1)) || "#d62862", ink = col.ink, navy = "#1a2150";
   try { await Promise.all(["700 90px Fredoka", "600 40px Fredoka", "500 34px 'IBM Plex Sans Hebrew'"].map(f => document.fonts.load(f, "אבג abc"))); } catch {}
   x.fillStyle = bg; x.fillRect(0, 0, W, H);
   // sticker-like circles in the background

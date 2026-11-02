@@ -268,7 +268,7 @@ Masa.journey = (() => {
           ${b.n ? `<p class="lead">${b.n} מהמקומות הכי מבוקשים במרחק הליכה${b.near.length ? `: ${b.near.map(esc).join(", ")}` : ""}.</p>` : `<p class="lead">קרוב לכל מה שבעיר, ונוח להגיע ממנו לכל מקום.</p>`}
           ${n ? `<p class="muted">מלון בינוני באזור: כ-${COST.ilsRange(n.lo, n.hi)} ללילה לחדר זוגי</p>` : ""}
           <div class="linkrow">${J.stayLinks(b, S.dest?.q || city, f.start, back, f.people).map(l => `<a class="chipbtn" href="${esc(partnerUrl(l.url))}" target="_blank" rel="noopener sponsored">${ic("ext")}${esc(l.name)}</a>`).join("")}</div>
-          <button type="button" class="btn ${on ? "coral" : "soft"} small" data-base="${i}" aria-pressed="${on}">${on ? `${ic("check", 2.6)} המסלול יתחיל מכאן` : "המסלול יתחיל מכאן"}</button></div>`;
+          <button type="button" class="btn ${on ? "coral" : "soft"} small" data-base="${i}" aria-pressed="${!!on}">${on ? `${ic("check", 2.6)} המסלול יתחיל מכאן` : "המסלול יתחיל מכאן"}</button></div>`;
       }).join("");
     }
     SCREENS.stay = {

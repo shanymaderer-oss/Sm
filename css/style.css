@@ -791,19 +791,19 @@ body.docpage{overflow:auto;padding:0}
    Display type is Fredoka (rounded, friendly, has Hebrew); body stays IBM Plex Sans Hebrew. */
 :root{
   --bg:#eef4ff; --surface:#ffffff; --surface-2:#f1f5fe; --ink:#1a2150; --muted:#5b6488; --line:#dce3f3;
-  --primary:#e2336b; --primary-ink:#ffffff; --link:#2f5bea;
-  --coral:#e2336b; --sun:#e5631b; --teal:#0b8f8c; --violet:#7a45d6; --sky:#2f5bea; --rose:#c2185b; --yellow:#ffc531;
+  --primary:#d62862; --primary-ink:#ffffff; --link:#2f5bea;
+  --coral:#d62862; --sun:#e5631b; --teal:#097b78; --violet:#6b3ac4; --sky:#2f5bea; --rose:#c2185b; --yellow:#ffc531;
   --display:"Fredoka","IBM Plex Sans Hebrew",system-ui,sans-serif;
   --shadow:0 1px 2px rgba(26,33,80,.10),0 8px 22px rgba(26,33,80,.10);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#10142e; --surface:#181d3d; --surface-2:#20264a; --ink:#eef1ff; --muted:#a3aacb; --line:#2c335c;
   --primary:#ff5c8e; --primary-ink:#1a0610; --link:#8eabff;
-  --coral:#ff5c8e; --sun:#ff8a4c; --teal:#2cc4be; --violet:#a784f5; --sky:#6e92ff; --rose:#ff6fa5; --yellow:#ffd25a}}
+  --coral:#ff5c8e; --sun:#ff8a4c; --teal:#2cc4be; --violet:#b39af7; --sky:#6e92ff; --rose:#ff6fa5; --yellow:#ffd25a}}
 :root[data-theme="dark"]{
   --bg:#10142e; --surface:#181d3d; --surface-2:#20264a; --ink:#eef1ff; --muted:#a3aacb; --line:#2c335c;
   --primary:#ff5c8e; --primary-ink:#1a0610; --link:#8eabff;
-  --coral:#ff5c8e; --sun:#ff8a4c; --teal:#2cc4be; --violet:#a784f5; --sky:#6e92ff; --rose:#ff6fa5; --yellow:#ffd25a}
+  --coral:#ff5c8e; --sun:#ff8a4c; --teal:#2cc4be; --violet:#b39af7; --sky:#6e92ff; --rose:#ff6fa5; --yellow:#ffd25a}
 h1{font-family:var(--display);font-weight:700;font-size:2.1rem;line-height:1.08;letter-spacing:0}
 h2{font-family:var(--display);font-weight:600;font-size:1.12rem}
 .section-label{font-family:var(--display);font-weight:600;font-size:1.05rem;margin-bottom:-6px}
@@ -982,3 +982,8 @@ a.btn{text-decoration:none}
 .agentsay .linkbtn svg{width:14px;height:14px;flex:none}
 .linkbtn.quickbuild{display:flex;gap:6px;align-items:center;justify-content:center;margin:10px auto 0;color:var(--primary);font-weight:600}
 .linkbtn.quickbuild svg{width:16px;height:16px}
+/* a place on the far side of the globe is out of sight: out of reach of screen readers too */
+.maplibregl-marker-covered{visibility:hidden}
+/* dark mode: the day colors are light there, so the chosen day's name is dark on them */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .daytab[aria-selected=true]{color:#10142e}}
+:root[data-theme="dark"] .daytab[aria-selected=true]{color:#10142e}

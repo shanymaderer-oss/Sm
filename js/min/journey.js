@@ -18,7 +18,7 @@ window.Masa=window.Masa||{},Masa.journey=(()=>{const et={rome:"ROM",paris:"PAR",
           ${M.n?`<p class="lead">${M.n} מהמקומות הכי מבוקשים במרחק הליכה${M.near.length?`: ${M.near.map(c).join(", ")}`:""}.</p>`:'<p class="lead">קרוב לכל מה שבעיר, ונוח להגיע ממנו לכל מקום.</p>'}
           ${A?`<p class="muted">מלון בינוני באזור: כ-${P.ilsRange(A.lo,A.hi)} ללילה לחדר זוגי</p>`:""}
           <div class="linkrow">${d.stayLinks(M,e.dest?.q||b,a.start,h,a.people).map(O=>`<a class="chipbtn" href="${c(H(O.url))}" target="_blank" rel="noopener sponsored">${m("ext")}${c(O.name)}</a>`).join("")}</div>
-          <button type="button" class="btn ${w?"coral":"soft"} small" data-base="${u}" aria-pressed="${w}">${w?`${m("check",2.6)} המסלול יתחיל מכאן`:"המסלול יתחיל מכאן"}</button></div>`}).join("")}p.stay={view(){const t=e.form;return`<div class="screen">
+          <button type="button" class="btn ${w?"coral":"soft"} small" data-base="${u}" aria-pressed="${!!w}">${w?`${m("check",2.6)} המסלול יתחיל מכאן`:"המסלול יתחיל מכאן"}</button></div>`}).join("")}p.stay={view(){const t=e.form;return`<div class="screen">
         <div class="topnav"><button class="iconbtn" id="backWhen" aria-label="חזרה">${m("back")}</button><span class="stepof">שלב 3 מתוך 4</span><span style="width:38px"></span></div>
         <div><h1>איפה כדאי לישון ב${c(e.dest?.he||"יעד")}?</h1><p class="lead">חיפשנו את האזור שהכי קרוב לרוב המקומות שכדאי לראות, כדי ללכת פחות ולראות יותר.</p></div>
         <div id="bases">${$t()}</div>
