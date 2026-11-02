@@ -7886,14 +7886,14 @@
   ]
  },
  "colombo": {
-  "at": "2026-11-01T05:55:50.174Z",
-  "seconds": 446,
+  "at": "2026-11-02T14:39:47.497Z",
+  "seconds": 732,
   "osm": {
    "sights": 13,
    "sights2": 13,
    "restaurants": 78,
    "cafes": 19,
-   "hotels": 103,
+   "hotels": 0,
    "shopping": 43,
    "diet": 3,
    "extra": 13,
@@ -7910,7 +7910,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 2,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -7931,19 +7931,25 @@
    "Sir James Peiris Mawatha (7)"
   ],
   "log": [
-   "overpass-api.de ok 13 39726ms",
-   "overpass-api.de ok 13 32222ms",
-   "overpass-api.de HTTP 502 360ms",
-   "overpass-api.de ok 78 25192ms",
-   "overpass-api.de ok 19 31925ms",
-   "overpass-api.de ok 103 35644ms",
-   "overpass-api.de ok 43 27888ms",
-   "overpass-api.de ok 3 57975ms",
-   "overpass-api.de ok 13 43116ms",
-   "overpass-api.de ok 4 23773ms",
-   "overpass-api.de ok 52 34847ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 13 35629ms",
+   "overpass-api.de ok 13 32462ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 78 35542ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de ok 19 50685ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 43 36733ms",
+   "overpass-api.de ok 3 42298ms",
+   "overpass-api.de ok 13 33936ms",
+   "overpass-api.de ok 4 41445ms",
+   "overpass-api.de ok 52 37580ms",
    "streets: 52 shops",
-   "fame: 34 of 34"
+   "fame: 25 of 25"
   ]
  },
  "doha": {
