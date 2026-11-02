@@ -6507,19 +6507,18 @@
   ]
  },
  "frankfurt": {
-  "at": "2026-11-01T05:14:11.654Z",
-  "seconds": 830,
+  "at": "2026-11-02T12:56:18.573Z",
+  "seconds": 1372,
   "osm": {
-   "sights": 153,
+   "sights": 0,
    "sights2": 43,
    "restaurants": 450,
-   "cafes": 281,
+   "cafes": 0,
    "hotels": 207,
    "shopping": 300,
    "diet": 32,
    "extra": 79,
-   "landmarks": 32,
-   "streets": 4
+   "landmarks": 32
   },
   "voyage": {
    "eat": 33,
@@ -6531,7 +6530,7 @@
    "districts": 5
   },
   "wiki": {
-   "he": 28,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -6548,38 +6547,36 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "Goethestraße (28)",
-   "Zeil (20)",
-   "Kaiserstraße (11)",
-   "Berger Straße (8)"
-  ],
+  "streets": [],
   "log": [
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 502 435ms",
    "overpass-api.de timeout 60001ms",
-   "overpass-api.de HTTP 504 59809ms",
-   "overpass-api.de ok 153 37803ms",
-   "overpass-api.de HTTP 502 459ms",
-   "overpass-api.de ok 43 43658ms",
-   "overpass-api.de ok 450 40113ms",
-   "overpass-api.de ok 281 37164ms",
-   "overpass-api.de HTTP 502 459ms",
-   "overpass-api.de ok 207 46427ms",
-   "overpass-api.de HTTP 502 459ms",
-   "overpass-api.de HTTP 504 49261ms",
-   "overpass-api.de ok 300 40318ms",
-   "overpass-api.de HTTP 502 459ms",
-   "overpass-api.de ok 32 37168ms",
-   "overpass-api.de ok 79 44743ms",
-   "overpass-api.de HTTP 502 459ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de ok 32 36248ms",
-   "overpass-api.de ok 170 31410ms",
-   "streets: 170 shops",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 43 42441ms",
+   "overpass-api.de ok 450 42811ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de HTTP 504 52145ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 207 36390ms",
+   "overpass-api.de ok 300 37303ms",
+   "overpass-api.de ok 32 52175ms",
+   "overpass-api.de ok 79 36330ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 32 50743ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de HTTP 502 434ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 269 of 269"
+   "fame: 155 of 155"
   ]
  },
  "vilnius": {
