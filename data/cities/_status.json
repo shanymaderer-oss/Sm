@@ -1666,17 +1666,17 @@
   ]
  },
  "larnaca": {
-  "at": "2026-11-01T04:32:21.032Z",
-  "seconds": 822,
+  "at": "2026-11-02T12:06:20.025Z",
+  "seconds": 884,
   "osm": {
    "sights": 11,
    "sights2": 13,
    "restaurants": 73,
-   "cafes": 0,
+   "cafes": 85,
    "hotels": 61,
    "shopping": 27,
    "diet": 1,
-   "extra": 9,
+   "extra": 0,
    "landmarks": 2,
    "streets": 5
   },
@@ -1704,7 +1704,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "cafes": 1
   },
   "streets": [
    "Ermou (48)",
@@ -1714,27 +1715,31 @@
    "Archiepiskopou Kyprianou Avenue (6)"
   ],
   "log": [
-   "overpass-api.de ok 11 31128ms",
-   "overpass-api.de ok 13 43879ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de ok 73 34126ms",
-   "overpass-api.de HTTP 504 55911ms",
-   "overpass-api.de HTTP 502 356ms",
-   "overpass-api.de HTTP 502 553ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de ok 11 54463ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 13 36953ms",
+   "overpass-api.de HTTP 502 465ms",
+   "overpass-api.de HTTP 502 514ms",
+   "overpass-api.de ok 73 43520ms",
+   "overpass-api.de HTTP 502 465ms",
+   "overpass-api.de HTTP 502 514ms",
+   "overpass-api.de ok 85 36897ms",
+   "overpass-api.de ok 61 35497ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 27 40470ms",
+   "overpass-api.de ok 1 32279ms",
+   "overpass-api.de HTTP 502 477ms",
+   "overpass-api.de HTTP 504 45330ms",
+   "overpass-api.de HTTP 502 516ms",
    "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 61 34263ms",
-   "overpass-api.de HTTP 502 379ms",
-   "overpass-api.de ok 27 39685ms",
-   "overpass-api.de HTTP 502 336ms",
-   "overpass-api.de ok 1 28436ms",
-   "overpass-api.de ok 9 43980ms",
-   "overpass-api.de ok 2 48689ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de ok 172 47205ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 2 34573ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de HTTP 502 509ms",
+   "overpass-api.de ok 172 45943ms",
    "streets: 172 shops",
-   "fame: 22 of 22"
+   "fame: 16 of 16"
   ]
  },
  "limassol": {
