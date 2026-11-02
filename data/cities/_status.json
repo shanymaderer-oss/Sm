@@ -3451,31 +3451,32 @@
   ]
  },
  "toronto": {
-  "at": "2026-11-02T12:32:11.422Z",
-  "seconds": 818,
+  "at": "2026-11-02T17:30:14.614Z",
+  "seconds": 853,
   "osm": {
    "sights": 77,
    "sights2": 45,
    "restaurants": 450,
-   "cafes": 300,
+   "cafes": 0,
    "hotels": 92,
-   "shopping": 0,
+   "shopping": 300,
    "diet": 42,
    "extra": 120,
+   "fitness": 79,
    "landmarks": 16,
    "streets": 14
   },
   "voyage": {
-   "eat": 101,
-   "drink": 23,
-   "buy": 53,
-   "see": 154,
-   "sleep": 28,
-   "withCoords": 374,
+   "eat": 97,
+   "drink": 20,
+   "buy": 44,
+   "see": 177,
+   "sleep": 30,
+   "withCoords": 391,
    "districts": 8
   },
   "wiki": {
-   "he": 28,
+   "he": 0,
    "en": 100
   },
   "streetsV": 2,
@@ -3490,7 +3491,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Queen Street West (68)",
@@ -3500,27 +3502,31 @@
    "College Street (17)"
   ],
   "log": [
-   "overpass-api.de ok 77 48195ms",
-   "overpass-api.de ok 45 41606ms",
-   "overpass-api.de HTTP 502 444ms",
-   "overpass-api.de ok 450 34794ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de ok 300 42381ms",
-   "overpass-api.de ok 92 32256ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de HTTP 502 461ms",
-   "overpass-api.de HTTP 504 58908ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 77 31362ms",
+   "overpass-api.de ok 45 40600ms",
+   "overpass-api.de ok 450 26820ms",
+   "overpass-api.de HTTP 502 383ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass.private.coffee timeout 60000ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 42 39192ms",
-   "overpass-api.de ok 120 29490ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de ok 16 41053ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de ok 620 40997ms",
+   "overpass-api.de ok 92 48145ms",
+   "overpass-api.de ok 300 43561ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 42 36350ms",
+   "overpass-api.de HTTP 502 355ms",
+   "overpass-api.de ok 120 40689ms",
+   "overpass-api.de ok 79 46444ms",
+   "overpass-api.de ok 16 41003ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de ok 620 36819ms",
    "streets: 620 shops",
    "wikidata HTTP 429",
-   "fame: 234 of 234"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 235 of 235"
   ]
  },
  "geneva": {
