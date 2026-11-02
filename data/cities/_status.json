@@ -5369,8 +5369,8 @@
   ]
  },
  "kathmandu": {
-  "at": "2026-11-01T05:58:44.165Z",
-  "seconds": 488,
+  "at": "2026-11-02T14:26:49.516Z",
+  "seconds": 740,
   "osm": {
    "sights": 7,
    "sights2": 35,
@@ -5380,8 +5380,7 @@
    "shopping": 120,
    "diet": 4,
    "extra": 8,
-   "landmarks": 2,
-   "streets": 2
+   "landmarks": 2
   },
   "voyage": {
    "eat": 12,
@@ -5410,23 +5409,28 @@
    "landmarks": 1,
    "streets": 1
   },
-  "streets": [
-   "Dhumbharai Marg (9)",
-   "Durbar Marg (9)"
-  ],
+  "streets": [],
   "log": [
-   "overpass-api.de ok 7 32613ms",
-   "overpass-api.de ok 35 42278ms",
-   "overpass-api.de ok 450 28323ms",
-   "overpass-api.de ok 198 43118ms",
-   "overpass-api.de HTTP 504 54864ms",
-   "overpass-api.de ok 350 31635ms",
-   "overpass-api.de ok 120 30412ms",
-   "overpass-api.de ok 4 38899ms",
-   "overpass-api.de ok 8 34224ms",
-   "overpass-api.de ok 2 29991ms",
-   "overpass-api.de ok 176 28383ms",
-   "streets: 176 shops",
+   "overpass-api.de ok 7 40374ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 35 35934ms",
+   "overpass-api.de ok 450 33444ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de ok 198 29842ms",
+   "overpass-api.de ok 350 30393ms",
+   "overpass-api.de ok 120 38948ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 4 30243ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass-api.de ok 8 37654ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 2 36785ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
    "fame: 12 of 12"
   ]
  },
