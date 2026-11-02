@@ -312,27 +312,28 @@
   ]
  },
  "prague": {
-  "at": "2026-11-02T11:27:03.399Z",
-  "seconds": 962,
+  "at": "2026-11-02T16:19:05.159Z",
+  "seconds": 775,
   "osm": {
    "sights": 837,
-   "sights2": 0,
+   "sights2": 115,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
    "shopping": 300,
    "diet": 76,
    "extra": 200,
+   "fitness": 19,
    "landmarks": 150,
    "streets": 9
   },
   "voyage": {
-   "eat": 188,
-   "drink": 59,
-   "buy": 10,
-   "see": 150,
-   "sleep": 102,
-   "withCoords": 512,
+   "eat": 186,
+   "drink": 57,
+   "buy": 13,
+   "see": 138,
+   "sleep": 96,
+   "withCoords": 504,
    "districts": 8
   },
   "wiki": {
@@ -351,7 +352,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Pařížská (33)",
@@ -361,26 +363,23 @@
    "Na Příkopě (8)"
   ],
   "log": [
-   "overpass-api.de ok 837 44411ms",
-   "overpass-api.de HTTP 502 341ms",
-   "overpass-api.de HTTP 502 351ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de ok 450 35806ms",
-   "overpass-api.de HTTP 502 350ms",
-   "overpass-api.de HTTP 502 358ms",
-   "overpass-api.de ok 300 36584ms",
-   "overpass-api.de ok 350 42703ms",
-   "overpass-api.de ok 300 46987ms",
-   "overpass-api.de ok 76 36542ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de ok 200 44447ms",
-   "overpass-api.de HTTP 502 396ms",
-   "overpass-api.de HTTP 502 390ms",
-   "overpass-api.de ok 150 42808ms",
-   "overpass-api.de HTTP 502 345ms",
-   "overpass-api.de ok 392 44034ms",
+   "overpass-api.de HTTP 502 768ms",
+   "overpass-api.de ok 837 44334ms",
+   "overpass-api.de ok 115 43458ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de ok 450 31961ms",
+   "overpass-api.de ok 300 43354ms",
+   "overpass-api.de ok 350 39320ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de HTTP 502 416ms",
+   "overpass-api.de ok 300 42899ms",
+   "overpass-api.de ok 76 42540ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de ok 200 50384ms",
+   "overpass-api.de ok 19 41205ms",
+   "overpass-api.de ok 150 44712ms",
+   "overpass-api.de ok 392 40468ms",
    "streets: 392 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -391,8 +390,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 1038 of 1038"
+   "fame: 650 of 1038"
   ]
  },
  "budapest": {
