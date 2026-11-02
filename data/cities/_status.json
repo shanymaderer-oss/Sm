@@ -650,8 +650,8 @@
   ]
  },
  "amsterdam": {
-  "at": "2026-11-02T11:42:17.907Z",
-  "seconds": 942,
+  "at": "2026-11-02T16:32:17.622Z",
+  "seconds": 639,
   "osm": {
    "sights": 172,
    "sights2": 188,
@@ -660,21 +660,22 @@
    "hotels": 350,
    "shopping": 300,
    "diet": 69,
-   "extra": 0,
+   "extra": 84,
+   "fitness": 59,
    "landmarks": 150,
    "streets": 14
   },
   "voyage": {
-   "eat": 49,
-   "drink": 80,
+   "eat": 50,
+   "drink": 79,
    "buy": 28,
-   "see": 69,
-   "sleep": 85,
-   "withCoords": 294,
+   "see": 63,
+   "sleep": 76,
+   "withCoords": 285,
    "districts": 8
   },
   "wiki": {
-   "he": 0,
+   "he": 87,
    "en": 100
   },
   "streetsV": 2,
@@ -689,7 +690,8 @@
    "shopping": 1,
    "diet": 1,
    "extra": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Kalverstraat (80)",
@@ -699,32 +701,26 @@
    "Ferdinand Bolstraat (26)"
   ],
   "log": [
-   "overpass-api.de ok 172 45733ms",
-   "overpass-api.de ok 188 39202ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 450 47180ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 300 36306ms",
-   "overpass-api.de ok 350 54467ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de timeout 60001ms",
-   "overpass-api.de ok 300 35392ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 69 51450ms",
-   "overpass-api.de HTTP 502 369ms",
-   "overpass-api.de HTTP 502 355ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de HTTP 502 557ms",
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de ok 150 39122ms",
-   "overpass-api.de ok 1089 37436ms",
+   "overpass-api.de ok 172 34838ms",
+   "overpass-api.de ok 188 34804ms",
+   "overpass-api.de ok 450 38263ms",
+   "overpass-api.de HTTP 502 388ms",
+   "overpass-api.de timeout 60002ms",
+   "overpass-api.de ok 300 36078ms",
+   "overpass-api.de ok 350 28184ms",
+   "overpass-api.de HTTP 502 606ms",
+   "overpass-api.de ok 300 32917ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de HTTP 502 428ms",
+   "overpass-api.de ok 69 33187ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass-api.de ok 84 29216ms",
+   "overpass-api.de ok 59 31644ms",
+   "overpass-api.de ok 150 42128ms",
+   "overpass-api.de ok 1089 43861ms",
    "streets: 1089 shops",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 358 of 358"
+   "fame: 332 of 432"
   ]
  },
  "lisbon": {
