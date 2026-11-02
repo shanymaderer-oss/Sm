@@ -2145,8 +2145,8 @@
   ]
  },
  "krakow": {
-  "at": "2026-11-02T12:03:10.881Z",
-  "seconds": 669,
+  "at": "2026-11-02T16:56:11.326Z",
+  "seconds": 667,
   "osm": {
    "sights": 264,
    "sights2": 88,
@@ -2156,6 +2156,7 @@
    "shopping": 270,
    "diet": 37,
    "extra": 94,
+   "fitness": 17,
    "landmarks": 44,
    "streets": 7
   },
@@ -2184,7 +2185,8 @@
    "shopping": 1,
    "diet": 1,
    "streets": 1,
-   "extra": 1
+   "extra": 1,
+   "fitness": 1
   },
   "streets": [
    "Pawia (10)",
@@ -2194,26 +2196,30 @@
    "Długa (13)"
   ],
   "log": [
-   "overpass-api.de ok 264 44238ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 88 37778ms",
-   "overpass-api.de ok 386 58272ms",
-   "overpass-api.de ok 300 35290ms",
-   "overpass-api.de HTTP 502 363ms",
-   "overpass-api.de ok 350 39358ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de HTTP 502 341ms",
-   "overpass-api.de ok 270 41911ms",
-   "overpass-api.de ok 37 31997ms",
-   "overpass-api.de ok 94 49153ms",
-   "overpass-api.de HTTP 504 54275ms",
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 44 42359ms",
-   "overpass-api.de ok 188 38544ms",
+   "overpass-api.de ok 264 33551ms",
+   "overpass-api.de HTTP 502 439ms",
+   "overpass-api.de HTTP 502 455ms",
+   "overpass-api.de ok 88 37655ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 386 32704ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de ok 300 37075ms",
+   "overpass-api.de HTTP 502 443ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 350 48066ms",
+   "overpass-api.de HTTP 502 406ms",
+   "overpass-api.de ok 270 39561ms",
+   "overpass-api.de ok 37 37208ms",
+   "overpass-api.de HTTP 502 434ms",
+   "overpass-api.de ok 94 29745ms",
+   "overpass-api.de HTTP 502 438ms",
+   "overpass-api.de HTTP 502 433ms",
+   "overpass-api.de ok 17 50191ms",
+   "overpass-api.de HTTP 502 406ms",
+   "overpass-api.de ok 44 32958ms",
+   "overpass-api.de ok 188 36236ms",
    "streets: 188 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 414 of 414"
+   "fame: 314 of 414"
   ]
  },
  "warsaw": {
