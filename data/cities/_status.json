@@ -4190,8 +4190,8 @@
   ]
  },
  "sydney": {
-  "at": "2026-11-01T06:09:21.031Z",
-  "seconds": 497,
+  "at": "2026-11-02T14:49:17.019Z",
+  "seconds": 537,
   "osm": {
    "sights": 74,
    "sights2": 168,
@@ -4200,17 +4200,17 @@
    "hotels": 225,
    "shopping": 300,
    "diet": 32,
-   "extra": 111,
+   "extra": 112,
    "landmarks": 11,
    "streets": 3
   },
   "voyage": {
-   "eat": 45,
-   "drink": 34,
-   "buy": 19,
-   "see": 81,
-   "sleep": 45,
-   "withCoords": 168,
+   "eat": 41,
+   "drink": 25,
+   "buy": 18,
+   "see": 61,
+   "sleep": 49,
+   "withCoords": 157,
    "districts": 8
   },
   "wiki": {
@@ -4237,23 +4237,26 @@
    "Hay Street (6)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 285ms",
-   "overpass-api.de ok 74 35017ms",
-   "overpass-api.de ok 168 39220ms",
-   "overpass-api.de ok 450 33342ms",
-   "overpass-api.de ok 300 31511ms",
-   "overpass-api.de ok 225 42450ms",
-   "overpass-api.de ok 300 33057ms",
-   "overpass-api.de ok 32 34174ms",
-   "overpass-api.de ok 111 28396ms",
-   "overpass-api.de ok 11 37717ms",
-   "overpass-api.de ok 101 32226ms",
-   "streets: 101 shops",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 74 42167ms",
+   "overpass-api.de HTTP 502 457ms",
+   "overpass-api.de ok 168 42328ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass-api.de ok 450 31088ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de ok 300 44019ms",
+   "overpass-api.de ok 225 31066ms",
+   "overpass-api.de ok 300 36854ms",
+   "overpass-api.de ok 32 34163ms",
+   "overpass-api.de HTTP 502 432ms",
+   "overpass-api.de ok 112 26293ms",
+   "overpass-api.de ok 11 38021ms",
+   "overpass-api.de ok 102 32894ms",
+   "streets: 102 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 192 of 192"
+   "fame: 193 of 193"
   ]
  },
  "bruges": {
