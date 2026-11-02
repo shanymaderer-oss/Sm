@@ -7319,8 +7319,8 @@
   ]
  },
  "tirana": {
-  "at": "2026-11-01T05:40:56.213Z",
-  "seconds": 510,
+  "at": "2026-11-02T13:44:38.217Z",
+  "seconds": 511,
   "osm": {
    "sights": 28,
    "sights2": 20,
@@ -7368,19 +7368,20 @@
    "Rruga Xhanfize Keko (10)"
   ],
   "log": [
-   "overpass-api.de ok 28 37072ms",
-   "overpass-api.de ok 20 34975ms",
-   "overpass-api.de ok 250 50917ms",
-   "overpass-api.de ok 300 37543ms",
-   "overpass-api.de HTTP 502 417ms",
-   "overpass-api.de HTTP 502 414ms",
-   "overpass-api.de ok 300 30530ms",
-   "overpass-api.de ok 284 31339ms",
-   "overpass-api.de ok 4 46686ms",
-   "overpass-api.de HTTP 502 448ms",
-   "overpass-api.de ok 14 41131ms",
-   "overpass-api.de ok 7 35748ms",
-   "overpass-api.de ok 293 37383ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de ok 28 39580ms",
+   "overpass-api.de ok 20 32551ms",
+   "overpass-api.de ok 250 32209ms",
+   "overpass-api.de ok 300 36203ms",
+   "overpass-api.de ok 300 38605ms",
+   "overpass-api.de ok 284 43672ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de ok 4 38515ms",
+   "overpass-api.de ok 14 41070ms",
+   "overpass-api.de HTTP 502 596ms",
+   "overpass-api.de HTTP 502 394ms",
+   "overpass-api.de ok 7 38469ms",
+   "overpass-api.de ok 293 33060ms",
    "streets: 293 shops",
    "fame: 63 of 63"
   ]
