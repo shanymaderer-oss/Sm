@@ -2390,8 +2390,8 @@
   ]
  },
  "thessaloniki": {
-  "at": "2026-11-01T04:47:39.158Z",
-  "seconds": 477,
+  "at": "2026-11-02T12:30:22.426Z",
+  "seconds": 482,
   "osm": {
    "sights": 151,
    "sights2": 22,
@@ -2439,17 +2439,18 @@
    "Φράγκων (7)"
   ],
   "log": [
-   "overpass-api.de ok 151 26084ms",
-   "overpass-api.de ok 22 41110ms",
-   "overpass-api.de ok 232 32381ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 300 29697ms",
-   "overpass-api.de ok 100 38109ms",
-   "overpass-api.de ok 166 38437ms",
-   "overpass-api.de ok 12 45214ms",
-   "overpass-api.de ok 60 35990ms",
-   "overpass-api.de ok 12 47836ms",
-   "overpass-api.de ok 213 41312ms",
+   "overpass-api.de ok 151 36630ms",
+   "overpass-api.de ok 22 37288ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 232 42118ms",
+   "overpass-api.de ok 300 34393ms",
+   "overpass-api.de ok 100 35182ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 166 40199ms",
+   "overpass-api.de ok 12 26744ms",
+   "overpass-api.de ok 60 44067ms",
+   "overpass-api.de ok 12 44238ms",
+   "overpass-api.de ok 213 30052ms",
    "streets: 213 shops",
    "fame: 240 of 240"
   ]
