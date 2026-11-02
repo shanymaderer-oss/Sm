@@ -97,7 +97,7 @@ const S = {
 };
 let checks = store.get("masa-checks", {});
 const ckey = (s, i) => `${S.trip?.city}|${s.name}|${i}`;
-const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together", "pack"];
+const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together", "pack", "spend"];
 
 /* ---------- speech (built into the browser, free) ---------- */
 const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -323,7 +323,7 @@ function setNav() {
   if (!show) return;
   // four places: the trip (its folders), discover, the agent, home
   const items = [["plan", "route", "הטיול"], ["discover", "compass", "גלו"], ["guide", "sparkle", "הסוכן"], ["home", "home", "בית"]];
-  const inTrip = ["plan", "place", "before", "book", "together", "info", "move", "pack"].includes(S.screen);
+  const inTrip = ["plan", "place", "before", "book", "together", "info", "move", "pack", "spend"].includes(S.screen);
   nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && inTrip) || (k === "discover" && (S.screen === "list" || S.screen === "poi"))}">${ic(i)}${l}</button>`).join("");
   nav.querySelectorAll("button").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
@@ -1149,9 +1149,24 @@ async function saveMapOffline(t, prog) {
   t.mapSaved = Date.now(); saveTrip(t);
   return ok;
 }
+/* the expenses live in js/spend.js, loaded when opened */
+let spendLoad = null, spendIn = false;
+function openSpend() {
+  spendLoad = spendLoad || new Promise(res => { const el = document.createElement("script"); el.src = "js/min/spend.js"; el.onload = el.onerror = () => res(); document.head.append(el); });
+  Promise.all([spendLoad, COST.loadFX(COUNTRY_CUR[S.trip.cc] || "EUR").catch(() => null)]).then(() => {
+    if (!Masa.spend) return toast("לא הצלחנו לפתוח את ההוצאות. נסו שוב.");
+    if (!spendIn) { Masa.spend.install({ S, SCREENS, $, esc, ic, go, rerenderKeepScroll, toast, saveTrip, tripDates, COST, COUNTRY_CUR }); spendIn = true; }
+    go("spend", { noFly: true });
+  });
+}
 SCREENS.together = {
-  view() { const t = S.trip; return `<div class="screen">${tripTop(t, "together")}${t.source === "sample" ? "" : familyCard(t)}</div>`; },
-  bind() { bindTripTop(); bindFamily(); }
+  view() {
+    const t = S.trip, n = (t.spend || []).length;
+    return `<div class="screen">${tripTop(t, "together")}
+      <div class="folderlist"><button type="button" class="duocard" id="spendCard"><span class="ic" style="background:var(--teal)">${ic("coin")}</span><span><small>הוצאות הטיול</small><b>${n ? `${n} הוצאות נרשמו. להוספה ולסיכום` : "רושמים כמה הוצאתם, בשקלים ובמטבע המקומי"}</b></span>${ic("back")}</button></div>
+      ${t.source === "sample" ? "" : familyCard(t)}</div>`;
+  },
+  bind() { bindTripTop(); bindFamily(); $("spendCard").onclick = () => openSpend(); }
 };
 /* a place from the map or the city's list as a stop of the trip */
 const stopFrom = item => ({

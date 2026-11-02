@@ -33,6 +33,7 @@ async def run(p, scheme):
         await pg.click("#editDay"); await pg.wait_for_timeout(300); await audit(pg, "plan-edit", out); await pg.click("#editDay")
         for f in ["before","book","together"]:
             await pg.click(f"[data-folder={f}]"); await pg.wait_for_timeout(600); await audit(pg, f, out)
+        await pg.click("#spendCard"); await pg.wait_for_selector(".spend", timeout=10000); await audit(pg, "spend", out); await pg.click("#backSpend")
         await pg.click("[data-folder=before]"); await pg.click("#infoCard"); await pg.wait_for_timeout(1000); await audit(pg, "info", out)
         await pg.click("#backInfo"); await pg.click("#moveCard"); await pg.wait_for_timeout(600); await audit(pg, "move", out)
         await pg.click("#backMove"); await pg.click("#packCard"); await pg.wait_for_selector(".pack", timeout=10000); await audit(pg, "pack", out)
@@ -44,7 +45,7 @@ async def run(p, scheme):
             FAILS.append(f"{scheme}: {k}")
             print(f"FAIL [{scheme}] {v['impact']} {k}: {v['help']}")
             for s2, nodes in list(v["screens"].items())[:4]: print(f"   [{s2}] " + " | ".join(nodes)[:300])
-        if not out: print(f"PASS [{scheme}] no accessibility violations on 16 screens")
+        if not out: print(f"PASS [{scheme}] no accessibility violations on 17 screens")
         await b.close()
 async def main():
     async with async_playwright() as p:

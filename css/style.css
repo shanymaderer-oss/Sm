@@ -992,3 +992,15 @@ a.btn{text-decoration:none}
 .pack .checks li{display:flex;align-items:center;gap:8px}
 .pack .checks li label{flex:1}
 .pack .checks small{display:block;color:var(--muted);font-size:.8rem}
+/* the trip's expenses */
+.spend .spendtotal b{display:block;font-family:var(--display);font-size:2rem;line-height:1.2}
+.spend .spendrow{display:flex;gap:8px;margin:8px 0;align-items:center}
+.spend .spendrow input,.spend .spendrow select{flex:1;min-width:0}
+.spend #spAmt{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:1.15rem;background:var(--bg);color:var(--ink)}
+.spend .chiprow{display:flex;flex-wrap:wrap;gap:6px}
+.spend .chiprow [aria-checked=true]{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.spendbar{display:grid;grid-template-columns:5.5em 1fr auto;gap:8px;align-items:center;margin:6px 0;font-size:.9rem}
+.spendbar i{height:10px;border-radius:6px;background:var(--teal);display:block}
+.spendlist{list-style:none;padding:0;margin:0}
+.spendlist li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.spendlist small{display:block;color:var(--muted);font-size:.8rem}
