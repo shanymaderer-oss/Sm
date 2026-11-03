@@ -1626,8 +1626,8 @@
   ]
  },
  "tbilisi": {
-  "at": "2026-11-02T16:49:36.517Z",
-  "seconds": 591,
+  "at": "2026-11-03T09:13:38.521Z",
+  "seconds": 515,
   "osm": {
    "sights": 128,
    "sights2": 67,
@@ -1673,22 +1673,19 @@
    "David Aghmashenebeli Avenue (6)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 375ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de ok 128 40512ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de ok 67 45305ms",
-   "overpass-api.de ok 273 31832ms",
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de ok 300 32634ms",
-   "overpass-api.de ok 350 38635ms",
-   "overpass-api.de ok 249 34528ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de ok 19 42332ms",
-   "overpass-api.de ok 58 28738ms",
-   "overpass-api.de ok 8 45512ms",
-   "overpass-api.de ok 31 54235ms",
-   "overpass-api.de ok 96 36607ms",
+   "overpass-api.de ok 128 26367ms",
+   "overpass-api.de ok 67 32656ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 273 50742ms",
+   "overpass-api.de ok 300 49936ms",
+   "overpass-api.de HTTP 502 435ms",
+   "overpass-api.de ok 350 40358ms",
+   "overpass-api.de ok 249 38878ms",
+   "overpass-api.de ok 19 25969ms",
+   "overpass-api.de ok 58 34400ms",
+   "overpass-api.de ok 8 35238ms",
+   "overpass-api.de ok 31 27062ms",
+   "overpass-api.de ok 96 35149ms",
    "streets: 96 shops",
    "fame: 186 of 186"
   ]
