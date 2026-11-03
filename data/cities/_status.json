@@ -6589,8 +6589,8 @@
   ]
  },
  "salzburg": {
-  "at": "2026-11-02T17:44:31.003Z",
-  "seconds": 843,
+  "at": "2026-11-03T09:52:31.513Z",
+  "seconds": 541,
   "osm": {
    "sights": 62,
    "sights2": 43,
@@ -6601,7 +6601,8 @@
    "diet": 14,
    "extra": 40,
    "fitness": 19,
-   "landmarks": 27
+   "landmarks": 27,
+   "streets": 6
   },
   "voyage": {
    "eat": 24,
@@ -6613,7 +6614,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 5,
    "en": 54
   },
   "streetsV": 2,
@@ -6631,29 +6632,32 @@
    "streets": 1,
    "fitness": 1
   },
-  "streets": [],
+  "streets": [
+   "Linzer Gasse (15)",
+   "Getreidegasse (9)",
+   "Dreifaltigkeitsgasse (8)",
+   "Schallmooser Hauptstraße (6)",
+   "Rainerstraße (6)"
+  ],
   "log": [
-   "overpass-api.de HTTP 502 438ms",
-   "overpass-api.de ok 62 37265ms",
-   "overpass-api.de ok 43 40123ms",
-   "overpass-api.de HTTP 502 450ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de ok 158 38779ms",
-   "overpass-api.de HTTP 502 438ms",
-   "overpass-api.de HTTP 502 454ms",
-   "overpass-api.de ok 142 42206ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 140 49244ms",
-   "overpass-api.de ok 96 40336ms",
-   "overpass-api.de ok 14 31046ms",
-   "overpass-api.de ok 40 38593ms",
-   "overpass-api.de ok 19 47107ms",
-   "overpass-api.de ok 27 29310ms",
-   "overpass-api.de HTTP 502 443ms",
-   "overpass-api.de HTTP 502 447ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 62 45381ms",
+   "overpass-api.de HTTP 502 310ms",
+   "overpass-api.de ok 43 30027ms",
+   "overpass-api.de HTTP 502 338ms",
+   "overpass-api.de ok 158 36212ms",
+   "overpass-api.de HTTP 502 309ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de ok 142 27998ms",
+   "overpass-api.de ok 140 31147ms",
+   "overpass-api.de ok 96 34353ms",
+   "overpass-api.de HTTP 502 308ms",
+   "overpass-api.de ok 14 34950ms",
+   "overpass-api.de ok 40 31176ms",
+   "overpass-api.de ok 19 36730ms",
+   "overpass-api.de HTTP 502 312ms",
+   "overpass-api.de ok 27 33672ms",
+   "overpass-api.de ok 165 32927ms",
+   "streets: 165 shops",
    "fame: 124 of 124"
   ]
  },
