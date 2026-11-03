@@ -5254,17 +5254,17 @@
   ]
  },
  "yerevan": {
-  "at": "2026-11-02T19:08:31.062Z",
-  "seconds": 890,
+  "at": "2026-11-03T10:35:56.063Z",
+  "seconds": 799,
   "osm": {
    "sights": 65,
    "sights2": 33,
    "restaurants": 296,
    "cafes": 300,
    "hotels": 242,
-   "shopping": 167,
+   "shopping": 0,
    "diet": 2,
-   "extra": 0,
+   "extra": 25,
    "fitness": 16,
    "landmarks": 11,
    "streets": 11
@@ -5279,7 +5279,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 21,
    "en": 100
   },
   "streetsV": 2,
@@ -5305,26 +5305,25 @@
    "Թումանյան փողոց (14)"
   ],
   "log": [
-   "overpass-api.de ok 65 45687ms",
-   "overpass-api.de ok 33 42878ms",
-   "overpass-api.de ok 296 50583ms",
-   "overpass-api.de ok 300 50160ms",
-   "overpass-api.de ok 242 41010ms",
-   "overpass-api.de HTTP 502 421ms",
-   "overpass-api.de ok 167 36696ms",
-   "overpass-api.de ok 2 43526ms",
-   "overpass-api.de HTTP 504 55244ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de HTTP 502 371ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 16 41544ms",
-   "overpass-api.de ok 11 34640ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de HTTP 502 374ms",
-   "overpass-api.de ok 284 43434ms",
+   "overpass-api.de ok 65 33504ms",
+   "overpass-api.de ok 33 29990ms",
+   "overpass-api.de ok 296 29273ms",
+   "overpass-api.de ok 300 46070ms",
+   "overpass-api.de ok 242 53575ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de HTTP 502 484ms",
+   "overpass-api.de HTTP 504 48346ms",
+   "overpass.private.coffee timeout 60002ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 2 41040ms",
+   "overpass-api.de ok 25 34775ms",
+   "overpass-api.de ok 16 39490ms",
+   "overpass-api.de ok 11 30730ms",
+   "overpass-api.de HTTP 502 431ms",
+   "overpass-api.de ok 284 37583ms",
    "streets: 284 shops",
-   "fame: 77 of 77"
+   "kept 170 places from the last good data",
+   "fame: 94 of 94"
   ]
  },
  "kuala-lumpur": {
