@@ -7758,8 +7758,8 @@
   ]
  },
  "osaka": {
-  "at": "2026-11-02T18:20:21.304Z",
-  "seconds": 675,
+  "at": "2026-11-03T10:51:33.575Z",
+  "seconds": 656,
   "osm": {
    "sights": 46,
    "sights2": 95,
@@ -7774,12 +7774,12 @@
    "streets": 0
   },
   "voyage": {
-   "eat": 11,
-   "drink": 8,
+   "eat": 20,
+   "drink": 16,
    "buy": 4,
-   "see": 23,
-   "sleep": 38,
-   "withCoords": 51,
+   "see": 22,
+   "sleep": 49,
+   "withCoords": 55,
    "districts": 8
   },
   "wiki": {
@@ -7802,27 +7802,27 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 46 58807ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 95 40740ms",
-   "overpass-api.de ok 450 43005ms",
-   "overpass-api.de HTTP 502 380ms",
-   "overpass-api.de ok 300 44204ms",
-   "overpass-api.de ok 350 52534ms",
-   "overpass-api.de ok 300 38279ms",
-   "overpass-api.de HTTP 502 382ms",
-   "overpass-api.de ok 27 41292ms",
-   "overpass-api.de ok 157 41610ms",
-   "overpass-api.de ok 36 43021ms",
-   "overpass-api.de ok 78 43270ms",
-   "overpass-api.de ok 20 34155ms",
+   "overpass-api.de ok 46 46687ms",
+   "overpass-api.de ok 95 38376ms",
+   "overpass-api.de ok 450 27634ms",
+   "overpass-api.de HTTP 502 355ms",
+   "overpass-api.de ok 300 35720ms",
+   "overpass-api.de ok 350 42239ms",
+   "overpass-api.de ok 300 42498ms",
+   "overpass-api.de ok 27 41265ms",
+   "overpass-api.de ok 157 40348ms",
+   "overpass-api.de ok 36 41064ms",
+   "overpass-api.de HTTP 502 292ms",
+   "overpass-api.de ok 78 45586ms",
+   "overpass-api.de HTTP 502 357ms",
+   "overpass-api.de HTTP 502 353ms",
+   "overpass-api.de ok 20 49950ms",
    "streets: 20 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 328 of 328"
+   "fame: 278 of 328"
   ]
  },
  "kyoto": {
