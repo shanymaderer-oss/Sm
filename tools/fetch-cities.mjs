@@ -129,13 +129,26 @@ async function doCity(c) {
   let v, he, en;
   if (prev) { v = { list: prev.voyage, districts: [] }; ({ he, en } = prev.wiki); }
   else [v, he, en] = await Promise.all([voyage(c.en), wikiGeo("he", c.lat, c.lng, c.R * 1.2), wikiGeo("en", c.lat, c.lng, c.R * 1.2)]);
-  const allEls = [...(prev?.els || []), ...S.slim(els)];
-  const fame = prev?.fame && st0?.fameV === FAME_V && !els.length ? prev.fame : await getFame(allEls, log, prev?.voyage || []);
+  /* A busy Overpass or Wikidata must never cost us what we already have (2.11: London lost the British Museum and
+     83 cities lost places when one query failed). On any failure the places we had stay, and the query is asked again next run. */
+  const old = !prev && existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : null;
+  const failed = need.some(k => k !== "streets" && !OPTIONAL.includes(k) && !counts[k]);
+  const fresh_ = S.slim(els), ids = new Set(fresh_.map(e => `${e.type}/${e.id}`));
+  const kept = old && failed ? old.els.filter(e => !ids.has(`${e.type}/${e.id}`)) : [];
+  if (kept.length) log.push(`kept ${kept.length} places from the last good data`);
+  const allEls = [...(prev?.els || []), ...kept, ...fresh_];
+  if (old && !v.list.length) v.list = old.voyage || [];
+  if (old && !he.length) he = old.wiki?.he || [];
+  if (old && !en.length) en = old.wiki?.en || [];
+  if (old && !streets.length) streets = old.streets || [];
+  const got = prev?.fame && st0?.fameV === FAME_V && !els.length ? prev.fame : await getFame(allEls, log, prev?.voyage || []);
+  const before = old?.fame?.n || {};
+  const fame = Object.keys(got.n).length < Object.keys(before).length ? { n: { ...before, ...got.n }, he: { ...(old.fame.he || {}), ...got.he } } : got;
   const data = { city: c, fetchedAt: prev ? prev.fetchedAt : new Date().toISOString(), els: allEls, streets, fame, voyage: v.list, wiki: { he, en } };
   const by = t => v.list.filter(x => x.type === t).length;
   status[c.slug] = { at: data.fetchedAt, seconds: Math.round((Date.now() - t0) / 1000) + (prev ? st0.seconds || 0 : 0), osm: counts,
     voyage: prev ? st0.voyage : { eat: by("eat"), drink: by("drink"), buy: by("buy"), see: by("see"), sleep: by("sleep"), withCoords: v.list.filter(x => x.lat).length, districts: v.districts.length },
-    wiki: { he: he.length, en: en.length }, streetsV: "streets" in counts ? STREETS_V : (st0?.streetsV || 0), fameV: Object.keys(fame.n).length ? FAME_V : 0, qv: { ...(st0?.qv || {}), ...Object.fromEntries(need.filter(k => counts[k] > 0).map(k => [k, QUERY_V[k] || 1])) }, streets: streets.slice(0, 5).map(x => `${x.name} (${x.n})`), log: [...(prev ? ["(updated: " + need.join(", ") + ")"] : []), ...log] };
+    wiki: { he: he.length, en: en.length }, streetsV: "streets" in counts ? STREETS_V : (st0?.streetsV || 0), fameV: Object.keys(got.n).length ? FAME_V : 0, qv: { ...(st0?.qv || {}), ...Object.fromEntries(need.filter(k => counts[k] > 0).map(k => [k, QUERY_V[k] || 1])) }, streets: streets.slice(0, 5).map(x => `${x.name} (${x.n})`), log: [...(prev ? ["(updated: " + need.join(", ") + ")"] : []), ...log] };
   if (data.els.length || v.list.length) writeFileSync(path, JSON.stringify(data));
   writeFileSync(statusPath, JSON.stringify(status, null, 1));
   console.log(c.slug, JSON.stringify(status[c.slug]));

@@ -54,6 +54,7 @@ Masa.planner = (() => {
     if (a === "ice_cream" || sh === "pastry" || sh === "confectionery") return "dessert";
     if (sh === "bakery") return "bakery";
     if (a === "marketplace" || a === "food_court") return "market";
+    if (!a && !sh && tu === "attraction" && /\b(souks?|souqs?|bazaa?r)\b|سوق/i.test(t.name || "")) return "market";
     if (sh === "deli" || sh === "wine") return "deli";
     if (a === "nightclub") return "club";
     if (a === "bar" || a === "pub" || a === "biergarten") return "bar";
@@ -93,7 +94,7 @@ Masa.planner = (() => {
   };
   const WHY = {
     restaurant: "מסעדה שנבחרה לפי סימני איכות, התקציב והקרבה למסלול.", cafe: "בית קפה טוב לעצירה.", dessert: "עצירה למשהו מתוק.",
-    bakery: "מאפייה מקומית.", market: "שוק אוכל מקומי, מקום טוב לטעום הרבה דברים.", deli: "מעדנייה לטעימות ולמזכרות אכילות.",
+    bakery: "מאפייה מקומית.", market: "שוק מקומי, מקום טוב לטעום ולהסתובב בין הדוכנים.", deli: "מעדנייה לטעימות ולמזכרות אכילות.",
     bar: "מקום לבילוי בערב.", club: "מועדון לילה.", street: "אחד מרחובות הקניות המרכזיים בעיר.", mall: "קניון גדול עם הרבה חנויות במקום אחד.", store: "כלבו גדול.", shop: "חנות מומלצת.",
     museum: "מוזיאון שמומלץ לחובבי אמנות ותרבות.", gallery: "גלריה לאמנות.", sight: "אתר היסטורי שמספר חלק מהסיפור של העיר.",
     church: "מבנה דתי מרשים, בדרך כלל פתוח למבקרים.", view: "נקודת תצפית או מקום מצולם במיוחד.", attraction: "אטרקציה מוכרת בעיר.",

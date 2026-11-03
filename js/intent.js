@@ -27,6 +27,9 @@ Masa.intent = (() => {
     T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("לא הרבה הליכה"), word("הורים מבוגרים"), word("אנשים מבוגרים"), word("קשישים"), word("גיל הזהב"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
     T([word("ירח דבש"), word("רומנטי"), word("יום נישואין"), word("זוגי"), /\b(honeymoon|romantic|anniversary)\b/], { romantic: true, boost: { view: 3, dessert: 2 }, label: "טיול זוגי: תצפיות, שקיעות וארוחת ערב טובה" }),
     // food and diet
+    // no restaurant in our data says gluten free (0 of 135 cities), so say that plainly instead of promising
+    T([word("גלוטן"), word("צליאק"), /\b(gluten|celiac|coeliac)\b/], { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }, { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }),
+    T([word("סהרה"), /(?:^|\s)(?:רוצ\S*|לראות|טיול\S*|יום|לילה)\s+[בלה]{0,2}מדבר(?=[\s,.]|$)/], { label: "מדבר: רחוק מהעיר ולא נכנס למסלול, כדאי טיול יום מאורגן" }),
     T([word("צמחוני"), /\b(vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
     T([word("טבעוני"), word("ויגן"), /\bvegan\b/], { diet: "טבעוני", label: "אוכל טבעוני" }),
     T([word("כשר"), word("כשרות"), /\bkosher\b/], { diet: "כשר", label: "אוכל כשר, ובית הכנסת הקרוב בכל יום" }),
@@ -34,7 +37,7 @@ Masa.intent = (() => {
     T([word("אוכל(?!ים|ת)(?!\\s+(?:ללא|בלי|לא|חריף|חריפ))"), word("קולינרי"), word("לטעום"), word("טעימות"), word("מסעדות טובות"), word("פודי"), /\b(food|foodie|eat well|restaurants)\b/], { add: ["food"], label: "אוכל טוב בכל יום" }, { drop: ["food"], label: "פחות עצירות אוכל" }),
     T([word("אוכל מקומי"), word("אותנטי"), word("מקומי(?:ים|ות)?(?=\\s|$)"), /\b(local food|authentic)\b/], { local: true, label: "אוכל מקומי ואותנטי" }),
     T([word("אוכל רחוב"), /\bstreet food\b/], { add: ["food"], boost: { market: 4 }, cheapFood: true, label: "אוכל רחוב ושווקים" }),
-    T([word("שו(?:ק(?!ולד|ו(?=\\s|$))|וקים)"), /\bmarkets?\b/], { add: ["food"], boost: { market: 5 }, label: "שווקים" }),
+    T([word("שו(?:ק(?!ולד|ו(?=\\s|$))|וקים)"), word("סוק(?:ים)?(?=[\\s,.]|$)"), word("בזאר"), /\b(markets?|souks?|souqs?|bazaars?)\b/], { add: ["food"], boost: { market: 5 }, label: "שווקים" }),
     T([word("גלידה"), word("קינוח"), word("מתוק"), word("עוגות"), word("שוקולד"), /\b(gelato|ice cream|dessert|sweets)\b/], { boost: { dessert: 4 }, label: "קינוחים וגלידה" }),
     T([word("בתי קפה"), word("בית קפה"), word("קפה טוב"), /\b(coffee|cafes?)\b/], { boost: { cafe: 3 }, label: "בתי קפה טובים" }),
     T([word("יין"), word("יקב"), /\bwine\b/], { wine: true, label: "ברים ליין" }),

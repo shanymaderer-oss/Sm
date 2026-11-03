@@ -95,7 +95,10 @@ def main():
         f = root / "data" / "cities" / f"{c['slug']}.json"
         if not f.exists(): continue
         places = top_places(json.loads(f.read_text()))
-        if len(places) < 5: continue
+        if len(places) < 5:
+            # thin data after a failed refresh must not remove a page that is already live
+            if (out / f"{c['slug']}.html").exists(): made.append(c)
+            continue
         (out / f"{c['slug']}.html").write_text(page(c, places))
         made.append(c)
     for old in out.glob("*.html"):
