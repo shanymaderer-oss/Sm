@@ -628,8 +628,8 @@
   ]
  },
  "amsterdam": {
-  "at": "2026-11-02T16:32:17.622Z",
-  "seconds": 639,
+  "at": "2026-11-03T09:04:17.844Z",
+  "seconds": 708,
   "osm": {
    "sights": 172,
    "sights2": 188,
@@ -644,12 +644,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 50,
-   "drink": 79,
-   "buy": 28,
-   "see": 63,
-   "sleep": 76,
-   "withCoords": 285,
+   "eat": 49,
+   "drink": 73,
+   "buy": 19,
+   "see": 64,
+   "sleep": 79,
+   "withCoords": 268,
    "districts": 8
   },
   "wiki": {
@@ -679,26 +679,29 @@
    "Ferdinand Bolstraat (26)"
   ],
   "log": [
-   "overpass-api.de ok 172 34838ms",
-   "overpass-api.de ok 188 34804ms",
-   "overpass-api.de ok 450 38263ms",
-   "overpass-api.de HTTP 502 388ms",
-   "overpass-api.de timeout 60002ms",
-   "overpass-api.de ok 300 36078ms",
-   "overpass-api.de ok 350 28184ms",
-   "overpass-api.de HTTP 502 606ms",
-   "overpass-api.de ok 300 32917ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de HTTP 502 428ms",
-   "overpass-api.de ok 69 33187ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de ok 84 29216ms",
-   "overpass-api.de ok 59 31644ms",
-   "overpass-api.de ok 150 42128ms",
-   "overpass-api.de ok 1089 43861ms",
+   "overpass-api.de HTTP 502 297ms",
+   "overpass-api.de ok 172 37910ms",
+   "overpass-api.de HTTP 502 297ms",
+   "overpass-api.de HTTP 502 356ms",
+   "overpass-api.de ok 188 39408ms",
+   "overpass-api.de ok 450 36924ms",
+   "overpass-api.de ok 300 44057ms",
+   "overpass-api.de ok 350 42696ms",
+   "overpass-api.de ok 300 36994ms",
+   "overpass-api.de ok 69 59402ms",
+   "overpass-api.de HTTP 502 363ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de ok 84 41868ms",
+   "overpass-api.de HTTP 502 301ms",
+   "overpass-api.de ok 59 49518ms",
+   "overpass-api.de ok 150 35912ms",
+   "overpass-api.de ok 1089 45092ms",
    "streets: 1089 shops",
    "wikidata HTTP 429",
-   "fame: 332 of 432"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 432 of 432"
   ]
  },
  "lisbon": {
