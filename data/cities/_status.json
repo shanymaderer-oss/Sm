@@ -2997,12 +2997,12 @@
   ]
  },
  "miami": {
-  "at": "2026-11-02T17:16:24.326Z",
-  "seconds": 880,
+  "at": "2026-11-03T09:51:16.211Z",
+  "seconds": 520,
   "osm": {
-   "sights": 0,
+   "sights": 26,
    "sights2": 59,
-   "restaurants": 86,
+   "restaurants": 87,
    "cafes": 8,
    "hotels": 325,
    "shopping": 111,
@@ -3022,7 +3022,7 @@
    "districts": 7
   },
   "wiki": {
-   "he": 0,
+   "he": 8,
    "en": 100
   },
   "streetsV": 2,
@@ -3048,32 +3048,23 @@
    "Collins Avenue (14)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 437ms",
-   "overpass-api.de HTTP 502 380ms",
-   "overpass-api.de HTTP 502 438ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 382ms",
-   "overpass-api.de ok 59 38923ms",
-   "overpass-api.de ok 86 36813ms",
-   "overpass-api.de HTTP 502 384ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 8 40811ms",
-   "overpass-api.de ok 325 35348ms",
-   "overpass-api.de ok 111 40680ms",
-   "overpass-api.de ok 14 39002ms",
-   "overpass-api.de ok 75 36511ms",
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 21 44079ms",
-   "overpass-api.de ok 1 49481ms",
-   "overpass-api.de ok 305 24597ms",
+   "overpass-api.de ok 26 39914ms",
+   "overpass-api.de ok 59 35603ms",
+   "overpass-api.de HTTP 502 297ms",
+   "overpass-api.de ok 87 30393ms",
+   "overpass-api.de ok 8 33716ms",
+   "overpass-api.de ok 325 32309ms",
+   "overpass-api.de ok 111 33749ms",
+   "overpass-api.de ok 14 35102ms",
+   "overpass-api.de ok 75 33571ms",
+   "overpass-api.de ok 21 35629ms",
+   "overpass-api.de ok 1 37471ms",
+   "overpass-api.de ok 305 34518ms",
    "streets: 305 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 126 of 176"
+   "fame: 198 of 198"
   ]
  },
  "los-angeles": {
