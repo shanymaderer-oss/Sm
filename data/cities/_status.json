@@ -1247,8 +1247,8 @@
   ]
  },
  "new-york": {
-  "at": "2026-11-02T16:43:12.344Z",
-  "seconds": 627,
+  "at": "2026-11-03T09:14:08.771Z",
+  "seconds": 581,
   "osm": {
    "sights": 214,
    "sights2": 188,
@@ -1298,26 +1298,27 @@
    "Columbus Circle (24)"
   ],
   "log": [
-   "overpass-api.de ok 214 39033ms",
-   "overpass-api.de ok 188 39122ms",
-   "overpass-api.de HTTP 502 390ms",
-   "overpass-api.de ok 450 33356ms",
-   "overpass-api.de ok 300 32976ms",
-   "overpass-api.de ok 350 35361ms",
-   "overpass-api.de ok 300 45850ms",
-   "overpass-api.de HTTP 502 372ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 224 41863ms",
-   "overpass-api.de ok 200 41258ms",
-   "overpass-api.de ok 102 50556ms",
-   "overpass-api.de ok 25 38609ms",
-   "overpass-api.de HTTP 502 386ms",
-   "overpass-api.de ok 1270 39786ms",
+   "overpass-api.de ok 214 39742ms",
+   "overpass-api.de ok 188 29876ms",
+   "overpass-api.de HTTP 502 353ms",
+   "overpass-api.de ok 450 26329ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 300 39882ms",
+   "overpass-api.de ok 350 31885ms",
+   "overpass-api.de ok 300 28549ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 224 37260ms",
+   "overpass-api.de ok 200 37641ms",
+   "overpass-api.de ok 102 37195ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass-api.de HTTP 502 357ms",
+   "overpass-api.de ok 25 33815ms",
+   "overpass-api.de ok 1270 38962ms",
    "streets: 1270 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 333 of 483"
+   "fame: 483 of 483"
   ]
  },
  "bangkok": {
