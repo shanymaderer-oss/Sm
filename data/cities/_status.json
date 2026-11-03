@@ -779,8 +779,8 @@
   ]
  },
  "porto": {
-  "at": "2026-11-02T16:44:55.647Z",
-  "seconds": 662,
+  "at": "2026-11-03T09:03:09.886Z",
+  "seconds": 565,
   "osm": {
    "sights": 141,
    "sights2": 165,
@@ -830,28 +830,24 @@
    "Rua Formosa (15)"
   ],
   "log": [
-   "overpass-api.de ok 141 31684ms",
-   "overpass-api.de HTTP 502 484ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 165 33941ms",
-   "overpass-api.de HTTP 502 608ms",
-   "overpass-api.de HTTP 502 412ms",
-   "overpass-api.de ok 450 42375ms",
-   "overpass-api.de ok 300 49885ms",
-   "overpass-api.de ok 350 49496ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 238 48156ms",
-   "overpass-api.de HTTP 502 484ms",
-   "overpass-api.de HTTP 502 484ms",
-   "overpass-api.de ok 15 37134ms",
-   "overpass-api.de ok 78 40012ms",
-   "overpass-api.de ok 8 29466ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 43 35236ms",
-   "overpass-api.de HTTP 502 488ms",
-   "overpass-api.de ok 347 40645ms",
+   "overpass-api.de HTTP 502 442ms",
+   "overpass-api.de ok 141 24666ms",
+   "overpass-api.de ok 165 36311ms",
+   "overpass-api.de ok 450 26705ms",
+   "overpass-api.de ok 300 30631ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 350 42243ms",
+   "overpass-api.de ok 238 43666ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de ok 15 38290ms",
+   "overpass-api.de ok 78 37581ms",
+   "overpass-api.de ok 8 43182ms",
+   "overpass-api.de ok 43 37117ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 347 43605ms",
    "streets: 347 shops",
-   "fame: 200 of 203"
+   "fame: 203 of 203"
   ]
  },
  "madrid": {
