@@ -1753,8 +1753,8 @@
   ]
  },
  "limassol": {
-  "at": "2026-11-02T16:49:26.119Z",
-  "seconds": 584,
+  "at": "2026-11-03T09:23:35.058Z",
+  "seconds": 469,
   "osm": {
    "sights": 2,
    "sights2": 21,
@@ -1800,22 +1800,18 @@
    "Anexartisias (8)"
   ],
   "log": [
-   "overpass-api.de ok 2 48125ms",
-   "overpass-api.de ok 21 37094ms",
-   "overpass-api.de ok 97 40454ms",
-   "overpass-api.de ok 136 40154ms",
-   "overpass-api.de ok 36 34745ms",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de HTTP 502 294ms",
-   "overpass-api.de ok 52 41828ms",
-   "overpass-api.de ok 1 31215ms",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de HTTP 502 365ms",
-   "overpass-api.de ok 5 42219ms",
-   "overpass-api.de ok 14 34332ms",
-   "overpass-api.de ok 1 30862ms",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de ok 45 39911ms",
+   "overpass-api.de ok 2 36604ms",
+   "overpass-api.de ok 21 41986ms",
+   "overpass-api.de ok 97 29777ms",
+   "overpass-api.de HTTP 502 488ms",
+   "overpass-api.de ok 136 26703ms",
+   "overpass-api.de ok 36 34389ms",
+   "overpass-api.de ok 52 40658ms",
+   "overpass-api.de ok 1 29295ms",
+   "overpass-api.de ok 5 38636ms",
+   "overpass-api.de ok 14 37335ms",
+   "overpass-api.de ok 1 23204ms",
+   "overpass-api.de ok 45 27652ms",
    "streets: 45 shops",
    "fame: 7 of 7"
   ]
