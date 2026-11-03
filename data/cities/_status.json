@@ -231,10 +231,10 @@
   ]
  },
  "london": {
-  "at": "2026-11-02T16:20:19.333Z",
-  "seconds": 869,
+  "at": "2026-11-03T08:54:30.750Z",
+  "seconds": 603,
   "osm": {
-   "sights": 0,
+   "sights": 592,
    "sights2": 222,
    "restaurants": 450,
    "cafes": 300,
@@ -247,12 +247,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 118,
-   "drink": 96,
-   "buy": 43,
-   "see": 119,
-   "sleep": 97,
-   "withCoords": 497,
+   "eat": 116,
+   "drink": 112,
+   "buy": 52,
+   "see": 121,
+   "sleep": 99,
+   "withCoords": 535,
    "districts": 8
   },
   "wiki": {
@@ -282,29 +282,30 @@
    "Marylebone High Street (56)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 688ms",
-   "overpass-api.de HTTP 502 460ms",
-   "overpass-api.de HTTP 502 526ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 463ms",
-   "overpass-api.de ok 222 34907ms",
-   "overpass-api.de ok 450 43582ms",
-   "overpass-api.de ok 300 48172ms",
-   "overpass-api.de ok 350 48586ms",
-   "overpass-api.de ok 300 36857ms",
-   "overpass-api.de ok 192 51315ms",
-   "overpass-api.de HTTP 502 527ms",
-   "overpass-api.de ok 200 44158ms",
-   "overpass-api.de ok 107 42824ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de ok 81 42736ms",
-   "overpass-api.de ok 2448 37311ms",
-   "streets: 2448 shops",
+   "overpass-api.de ok 592 28504ms",
+   "overpass-api.de ok 222 25264ms",
+   "overpass-api.de ok 450 28455ms",
+   "overpass-api.de ok 300 28344ms",
+   "overpass-api.de ok 350 30015ms",
+   "overpass-api.de HTTP 502 350ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 300 33286ms",
+   "overpass-api.de HTTP 502 353ms",
+   "overpass-api.de ok 192 31772ms",
+   "overpass-api.de ok 200 37533ms",
+   "overpass-api.de HTTP 502 301ms",
+   "overpass-api.de ok 107 34880ms",
+   "overpass-api.de HTTP 502 352ms",
+   "overpass-api.de ok 81 38404ms",
+   "overpass-api.de ok 2449 34429ms",
+   "streets: 2449 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 205 of 355"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 877 of 877"
   ]
  },
  "prague": {
