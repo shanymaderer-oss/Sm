@@ -7500,8 +7500,8 @@
   ]
  },
  "heraklion": {
-  "at": "2026-11-02T18:08:39.133Z",
-  "seconds": 687,
+  "at": "2026-11-03T10:40:22.306Z",
+  "seconds": 597,
   "osm": {
    "sights": 46,
    "sights2": 10,
@@ -7525,7 +7525,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 3,
    "en": 26
   },
   "streetsV": 2,
@@ -7548,21 +7548,23 @@
    "Πλατεία Ελευθερίου Βενιζέλου (13)"
   ],
   "log": [
-   "overpass-api.de ok 46 32143ms",
-   "overpass-api.de ok 10 39398ms",
-   "overpass-api.de ok 100 43522ms",
-   "overpass-api.de ok 98 47071ms",
-   "overpass-api.de timeout 60000ms",
-   "overpass-api.de HTTP 502 384ms",
-   "overpass-api.de ok 48 44952ms",
-   "overpass-api.de ok 22 36862ms",
-   "overpass-api.de HTTP 502 383ms",
-   "overpass-api.de ok 3 41172ms",
-   "overpass-api.de ok 5 46082ms",
-   "overpass-api.de HTTP 504 53915ms",
-   "overpass-api.de ok 3 31425ms",
-   "overpass-api.de ok 2 32839ms",
-   "overpass-api.de ok 71 36977ms",
+   "overpass-api.de ok 46 44179ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de ok 10 34643ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de ok 100 38406ms",
+   "overpass-api.de ok 98 34448ms",
+   "overpass-api.de HTTP 502 356ms",
+   "overpass-api.de HTTP 502 297ms",
+   "overpass-api.de ok 48 29497ms",
+   "overpass-api.de HTTP 502 356ms",
+   "overpass-api.de HTTP 502 354ms",
+   "overpass-api.de ok 22 35843ms",
+   "overpass-api.de ok 3 28867ms",
+   "overpass-api.de ok 5 54310ms",
+   "overpass-api.de ok 3 34904ms",
+   "overpass-api.de ok 2 36867ms",
+   "overpass-api.de ok 71 51377ms",
    "streets: 71 shops",
    "fame: 21 of 21"
   ]
