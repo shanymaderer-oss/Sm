@@ -4890,8 +4890,8 @@
   ]
  },
  "verona": {
-  "at": "2026-11-02T18:22:35.779Z",
-  "seconds": 737,
+  "at": "2026-11-03T10:31:27.964Z",
+  "seconds": 580,
   "osm": {
    "sights": 84,
    "sights2": 35,
@@ -4941,28 +4941,25 @@
    "Via Guglielmo Oberdan (10)"
   ],
   "log": [
-   "overpass-api.de ok 84 37535ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de HTTP 502 526ms",
-   "overpass-api.de ok 35 48917ms",
-   "overpass-api.de HTTP 502 526ms",
-   "overpass-api.de timeout 60000ms",
-   "overpass-api.de ok 224 36685ms",
-   "overpass-api.de ok 183 39034ms",
-   "overpass-api.de HTTP 502 479ms",
-   "overpass-api.de ok 94 35322ms",
-   "overpass-api.de HTTP 504 47703ms",
-   "overpass-api.de ok 83 37731ms",
-   "overpass-api.de ok 5 39747ms",
-   "overpass-api.de ok 61 31745ms",
-   "overpass-api.de ok 5 31609ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de ok 19 35302ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de HTTP 502 525ms",
-   "overpass-api.de ok 177 33956ms",
+   "overpass-api.de ok 84 31188ms",
+   "overpass-api.de ok 35 41289ms",
+   "overpass-api.de ok 224 29348ms",
+   "overpass-api.de ok 183 29388ms",
+   "overpass-api.de HTTP 502 350ms",
+   "overpass-api.de ok 94 35954ms",
+   "overpass-api.de ok 83 39979ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 5 42603ms",
+   "overpass-api.de HTTP 502 352ms",
+   "overpass-api.de ok 61 40723ms",
+   "overpass-api.de HTTP 502 353ms",
+   "overpass-api.de ok 5 42853ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de ok 19 45435ms",
+   "overpass-api.de HTTP 502 339ms",
+   "overpass-api.de ok 177 41771ms",
    "streets: 177 shops",
-   "fame: 154 of 154"
+   "fame: 104 of 154"
   ]
  },
  "rhodes": {
