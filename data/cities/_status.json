@@ -6948,8 +6948,8 @@
   ]
  },
  "frankfurt": {
-  "at": "2026-11-02T17:50:12.720Z",
-  "seconds": 684,
+  "at": "2026-11-03T10:17:15.801Z",
+  "seconds": 636,
   "osm": {
    "sights": 153,
    "sights2": 43,
@@ -6973,7 +6973,7 @@
    "districts": 5
   },
   "wiki": {
-   "he": 0,
+   "he": 28,
    "en": 100
   },
   "streetsV": 2,
@@ -6998,23 +6998,21 @@
    "Berger Straße (8)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 472ms",
-   "overpass-api.de ok 153 43523ms",
-   "overpass-api.de ok 43 45461ms",
-   "overpass-api.de ok 450 42176ms",
-   "overpass-api.de HTTP 502 295ms",
-   "overpass-api.de ok 281 31049ms",
-   "overpass-api.de ok 207 37359ms",
-   "overpass-api.de ok 300 45267ms",
-   "overpass-api.de ok 32 46117ms",
-   "overpass-api.de HTTP 502 300ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de ok 79 35458ms",
-   "overpass-api.de HTTP 502 294ms",
-   "overpass-api.de HTTP 502 295ms",
-   "overpass-api.de ok 37 33870ms",
-   "overpass-api.de ok 32 52952ms",
-   "overpass-api.de ok 172 38399ms",
+   "overpass-api.de HTTP 502 488ms",
+   "overpass-api.de ok 153 28581ms",
+   "overpass-api.de ok 43 43602ms",
+   "overpass-api.de ok 450 43537ms",
+   "overpass-api.de ok 281 48210ms",
+   "overpass-api.de ok 207 34438ms",
+   "overpass-api.de HTTP 502 489ms",
+   "overpass-api.de HTTP 502 488ms",
+   "overpass-api.de ok 300 33080ms",
+   "overpass-api.de HTTP 502 436ms",
+   "overpass-api.de ok 32 45395ms",
+   "overpass-api.de ok 79 43689ms",
+   "overpass-api.de ok 37 35872ms",
+   "overpass-api.de ok 32 37280ms",
+   "overpass-api.de ok 172 38408ms",
    "streets: 172 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
