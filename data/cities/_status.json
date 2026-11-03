@@ -1867,8 +1867,8 @@
   ]
  },
  "nice": {
-  "at": "2026-11-02T17:05:24.350Z",
-  "seconds": 510,
+  "at": "2026-11-03T09:37:09.389Z",
+  "seconds": 630,
   "osm": {
    "sights": 50,
    "sights2": 19,
@@ -1892,7 +1892,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 7,
    "en": 70
   },
   "streetsV": 2,
@@ -1915,21 +1915,23 @@
    "Avenue Notre-Dame (7)"
   ],
   "log": [
-   "overpass-api.de ok 50 38491ms",
-   "overpass-api.de ok 19 36694ms",
-   "overpass-api.de ok 450 35194ms",
-   "overpass-api.de HTTP 502 415ms",
-   "overpass-api.de ok 300 39757ms",
-   "overpass-api.de ok 177 34597ms",
-   "overpass-api.de ok 168 34922ms",
-   "overpass-api.de ok 11 35062ms",
-   "overpass-api.de HTTP 502 413ms",
-   "overpass-api.de ok 71 28042ms",
-   "overpass-api.de ok 19 38727ms",
-   "overpass-api.de ok 5 35402ms",
-   "overpass-api.de ok 121 37820ms",
+   "overpass-api.de HTTP 502 429ms",
+   "overpass-api.de ok 50 35295ms",
+   "overpass-api.de ok 19 52911ms",
+   "overpass-api.de ok 450 40047ms",
+   "overpass-api.de ok 300 33830ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 177 56590ms",
+   "overpass-api.de ok 168 40373ms",
+   "overpass-api.de HTTP 504 53339ms",
+   "overpass-api.de ok 11 32279ms",
+   "overpass-api.de ok 71 39163ms",
+   "overpass-api.de ok 19 31577ms",
+   "overpass-api.de ok 5 41064ms",
+   "overpass-api.de ok 121 26948ms",
    "streets: 121 shops",
-   "fame: 95 of 145"
+   "fame: 145 of 145"
   ]
  },
  "munich": {
