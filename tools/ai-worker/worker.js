@@ -132,6 +132,17 @@ const today = () => new Date().toISOString().slice(0, 10);
    many travelers is one call. Only what the page shows goes back: price, dates, stops, airline, and the booking link. */
 const IATA = /^[A-Z]{3}$/, YM = /^\d{4}-\d{2}(-\d{2})?$/;
 const flightCache = new Map();
+/* the booking page of that very flight on Aviasales (its own path, which can be long), with our partner marker; when
+   the path is missing or odd, the same search by airports and dates */
+function bookLink(x, marker) {
+  const m = marker ? `marker=${marker}` : "";
+  const p = typeof x.link === "string" ? x.link : "";
+  if (/^\/(?!\/)[A-Za-z0-9/?&=._%:+~-]{1,1200}$/.test(p)) return `https://www.aviasales.com${p}${m ? (p.includes("?") ? "&" : "?") + m : ""}`;
+  const dm = s => /^\d{4}-\d{2}-\d{2}/.test(s || "") ? s.slice(8, 10) + s.slice(5, 7) : "";
+  const from = text(x.origin_airport || x.origin, 3).replace(/[^A-Z]/g, ""), to = text(x.destination_airport || x.destination, 3).replace(/[^A-Z]/g, "");
+  if (from.length !== 3 || to.length !== 3 || !dm(x.departure_at)) return "";
+  return `https://www.aviasales.com/search/${from}${dm(x.departure_at)}${to}${dm(x.return_at)}1${m ? "?" + m : ""}`;
+}
 async function flights(env, q) {
   const key = JSON.stringify(q);
   const hit = flightCache.get(key);
@@ -153,7 +164,7 @@ async function flights(env, q) {
     stops: Math.max(0, Math.min(5, +x.transfers || 0)), backStops: Math.max(0, Math.min(5, +x.return_transfers || 0)),
     minutes: Math.max(0, Math.min(5000, +(x.duration_to || x.duration) || 0)),
     from: text(x.origin_airport || x.origin, 3), to: text(x.destination_airport || x.destination, 3),
-    link: /^\/[A-Za-z0-9/?&=._%-]{1,300}$/.test(x.link || "") ? `https://www.aviasales.com${x.link}${marker ? `${x.link.includes("?") ? "&" : "?"}marker=${marker}` : ""}` : ""
+    link: bookLink(x, marker)
   })).filter(x => x.price > 0);
   flightCache.set(key, { at: Date.now(), out });
   if (flightCache.size > 500) flightCache.delete(flightCache.keys().next().value);

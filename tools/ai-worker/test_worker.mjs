@@ -67,12 +67,16 @@ let fq = [];
 upstream = (u, o) => { fq.push({ u: String(u), h: o?.headers || {} }); return new Response(JSON.stringify({ success: true, data: [
   { origin: "TLV", destination: "ROM", origin_airport: "TLV", destination_airport: "FCO", price: 412.6, airline: "W6", flight_number: "1", departure_at: "2026-11-19T06:10:00+02:00", return_at: "2026-11-22T21:40:00+01:00", transfers: 0, return_transfers: 0, duration_to: 230, link: "/search/TLV1911ROM22111?t=W617635" },
   { origin: "TLV", destination: "ROM", price: 0, link: "/x" },
-  { origin: "TLV", destination: "ROM", price: 500, airline: "<b>", link: "javascript:alert(1)", transfers: 9 }], currency: "ils" }), { status: 200 }); };
+  { origin: "TLV", destination: "ROM", price: 500, airline: "<b>", link: "javascript:alert(1)", transfers: 9 },
+  { origin: "TLV", destination: "ROM", origin_airport: "TLV", destination_airport: "FCO", price: 600, departure_at: "2026-11-19T06:10:00+02:00", link: "/search/TLV1911FCO22111?t=W4" + "1764016740001235FCOTLV".repeat(20) + "&search_date=03112026&expected_price_uuid=0193-ab:cd+ef" },
+  { origin: "TLV", destination: "ROM", origin_airport: "TLV", destination_airport: "FCO", price: 700, departure_at: "2026-11-19T06:10:00+02:00", return_at: "2026-11-22T21:40:00+01:00", link: "//evil.example/x" }], currency: "ils" }), { status: 200 }); };
 r = await fcall({ to: "ROM", depart: "2026-11-19", back: "2026-11-22" }, "f1"); j = await r.json();
 const f0 = j.flights?.[0] || {};
-ok(r.status === 200 && j.flights.length === 2 && f0.price === 413 && f0.to === "FCO" && f0.stops === 0 && f0.minutes === 230, "the cheapest flights come back, cleaned");
+ok(r.status === 200 && j.flights.length === 4 && f0.price === 413 && f0.to === "FCO" && f0.stops === 0 && f0.minutes === 230, "the cheapest flights come back, cleaned");
 ok(f0.link === "https://www.aviasales.com/search/TLV1911ROM22111?t=W617635&marker=12345", "the booking link carries our partner marker");
 ok(j.flights[1].link === "" && j.flights[1].airline === "" && j.flights[1].stops === 5, "a bad link is dropped and odd values are bounded");
+ok(j.flights[2].link.startsWith("https://www.aviasales.com/search/TLV1911FCO22111?t=W4") && j.flights[2].link.endsWith("&marker=12345"), "a long booking link (Aviasales' own) is kept, with our marker");
+ok(j.flights[3].link === "https://www.aviasales.com/search/TLV1911FCO22111?marker=12345", "a link to another site is never passed on: the same search on Aviasales instead");
 const fu = new URL(fq[0].u);
 ok(fu.host === "api.travelpayouts.com" && fu.searchParams.get("origin") === "TLV" && fu.searchParams.get("currency") === "ils" && fu.searchParams.get("return_at") === "2026-11-22" && !fq[0].u.includes("token") && fq[0].h["X-Access-Token"] === "tp", "the token goes in a header, the trip in the address");
 fq = []; await fcall({ to: "ROM", depart: "2026-11-19", back: "2026-11-22" }, "f2"); ok(fq.length === 0, "the same route again comes from the short cache");
