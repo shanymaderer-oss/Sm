@@ -467,6 +467,8 @@ function hydrateSample(t) {
 }
 
 /* ================= screens ================= */
+/* opened from the home screen (an installed app): on iPhones it keeps its own storage, apart from Safari */
+const installed = () => { try { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; } catch { return false; } };
 SCREENS.home = {
   view() {
     const saved = savedTrips();
@@ -475,6 +477,7 @@ SCREENS.home = {
     <form class="search" id="destForm">${ic("search")}<input id="destInput" type="text" placeholder="עיר ומדינה, למשל ליסבון, פורטוגל" value="${esc(S.dest?.q || "")}" aria-label="יעד" autocomplete="off"><button class="btn" type="submit">המשך</button></form>
     <div class="status" id="destStatus"></div>
     ${cloud.configured() && cloud.pendingInvite() && cloud.state.status !== "in" ? `<div class="card invitecard"><h2>${ic("users")} הוזמנתם לטיול משותף</h2><p>כדי לראות את הטיול ולתכנן אותו יחד, מתחברים עם Google.</p><button type="button" class="btn block" id="inviteIn">התחברות עם Google</button></div>` : ""}
+    ${installed() && cloud.configured() && cloud.state.status !== "in" ? `<div class="card pwanote"><p>${ic("info")}<span>פתחתם את מסע ממסך הבית? הטיולים שבניתם בדפדפן לא עוברים לכאן לבד. התחברו עם Google, והם יופיעו כאן, גם בלי אינטרנט.</span></p><button type="button" class="btn small" id="pwaIn">התחברות עם Google</button></div>` : ""}
     ${saved.length ? `<div class="section-label">הטיולים שלי</div><div class="saved">${saved.map((t, i) => `<button type="button" class="savedtrip" data-i="${i}"><span class="ic" style="background:${cityColor(t.city).bg};color:${cityColor(t.city).ink}">${ic("save")}</span><span><b>${esc(t.city)}</b><small>${t.days.length} ימים, ${t.days.reduce((a, d) => a + d.stops.length, 0)} תחנות${t.cloud?.members > 1 ? ", משותף" : ""}</small></span>${ic("fwd")}</button>`).join("")}</div>` : ""}
     <div class="section-label">יעדים פופולריים</div>
     <div class="dests">${DESTS.slice(0, 8).map((d, i) => `<button type="button" class="dest" data-i="${i}" style="${cityColor(d.he).style};--tilt:${[-2, 1.5, 1, -1.5, -1, 2, 1.5, -2][i % 8]}deg"><b>${esc(d.he)}</b><small>${esc(d.country)}, ${esc(d.days)}</small></button>`).join("")}</div>
@@ -501,6 +504,7 @@ SCREENS.home = {
     $("homeFb") && ($("homeFb").onclick = openFeedback);
     $("inviteIn") && ($("inviteIn").onclick = () => cloud.signIn());
     $("homeIn") && ($("homeIn").onclick = () => cloud.signIn());
+    $("pwaIn") && ($("pwaIn").onclick = () => cloud.signIn());
   }
 };
 
@@ -854,6 +858,11 @@ async function translateStop(s) {
 function openFeedback() { S.prev = S.screen === "settings" ? S.prev : S.screen; S.openFeedback = true; go("settings"); }
 
 async function build() {
+  // no internet: a new trip can only be built for a city whose data is already on the phone
+  if (navigator.onLine === false) {
+    const c = Masa.cities.findCity(S.dest?.q || ""), have = c && self.caches ? await caches.match(`data/cities/${c.slug}.json`, { ignoreSearch: true }).catch(() => null) : null;
+    if (!have) { $("buildStatus") && ($("buildStatus").textContent = "אין חיבור לאינטרנט. כדי לבנות טיול חדש צריך אינטרנט. הטיולים ששמרתם נפתחים גם בלי, מהמסך הראשי."); return; }
+  }
   if (wishAiWanted() && S.form.aiWish?.text !== S.form.notes) {
     clearTimeout(wishAiT);
     await Promise.race([guideWish().catch(() => null), new Promise(r => setTimeout(r, 6000))]);
@@ -876,7 +885,7 @@ async function build() {
   } catch (e) {
     if (e?.code !== "cancelled") console.error("[masa] build failed", e?.code || "", e?.stack || e);
     go("goals");
-    if (e?.code !== "cancelled") $("buildStatus").textContent = buildErr(e?.code);
+    if (e?.code !== "cancelled") $("buildStatus").textContent = navigator.onLine === false ? "אין חיבור לאינטרנט. כדי לבנות טיול חדש צריך אינטרנט. הטיולים ששמרתם נפתחים גם בלי, מהמסך הראשי." : buildErr(e?.code);
   }
 }
 

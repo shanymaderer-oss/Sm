@@ -58,6 +58,13 @@ async def main():
         await pg.click("button.stop >> nth=0"); await pg.wait_for_timeout(500)
         check(await pg.locator(".screen h1").count() > 0, "the trip works without signing in (a place opens)")
         errs = [e for e in errs if "network-request-failed" not in e]  # no emulator here: the tap tries to reach it
+        # opened from the home screen (an installed app, which on iPhones has its own storage): how to bring the trips here
+        pg2 = await ctx.new_page()
+        await pg2.add_init_script("Object.defineProperty(navigator, 'standalone', { get: () => true })")
+        await pg2.route("**/*", r)
+        await pg2.goto(URL + "/index.html"); await pg2.wait_for_timeout(1000)
+        check(await pg2.locator(".pwanote #pwaIn").count() == 1 and "מסך הבית" in await pg2.inner_text(".pwanote"), "in the home-screen app, signed out: how to bring the browser's trips (sign in)")
+        check(await pg.locator(".pwanote").count() == 0, "not shown in the browser itself")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILED:" if FAILS else "ALL PASSED", FAILS); sys.exit(1 if FAILS else 0)

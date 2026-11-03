@@ -32,8 +32,19 @@ async def main():
     steps = await pg.locator("#whenNext").count() > 0
     print("offline, the flights step opens:", steps)
     await Q.to_goals(pg)
+    # a city whose data is already on the phone is built even offline; a city that is built live (not one of ours) says plainly it needs internet
+    await pg.click("#buildBtn"); await pg.wait_for_timeout(2500)
+    built = await pg.locator(".triphero").count() > 0 or "אין חיבור" in (await pg.inner_text("#buildStatus") if await pg.locator("#buildStatus").count() else "")
+    print("offline, a city whose data is on the phone builds (or says why not):", built)
+    await pg.click("#nav button[data-k=home]") if await pg.locator("#nav button[data-k=home]").is_visible() else None
+    await pg.wait_for_selector("#destInput", timeout=8000)
+    await pg.fill("#destInput", "פוזנן, פולין"); await pg.press("#destInput", "Enter"); await pg.wait_for_selector("#whenNext, #buildBtn", timeout=15000); await Q.to_goals(pg)
+    await pg.click("#buildBtn"); await pg.wait_for_timeout(1500)
+    msg = await pg.inner_text("#buildStatus") if await pg.locator("#buildStatus").count() else ""
+    plain = "אין חיבור לאינטרנט" in msg and await pg.locator(".triphero").count() == 0
+    print("offline, a new city not on the phone says there is no internet:", plain, repr(msg[:80]))
     print("errors:", errs)
-    global OK; OK = not errs and saved >= 1 and steps
+    global OK; OK = not errs and saved >= 1 and steps and plain and built
     await b.close()
 OK = False
 asyncio.run(main())
