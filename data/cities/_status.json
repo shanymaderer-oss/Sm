@@ -2606,13 +2606,13 @@
   ]
  },
  "dublin": {
-  "at": "2026-11-02T17:27:42.470Z",
-  "seconds": 1058,
+  "at": "2026-11-03T09:39:02.779Z",
+  "seconds": 560,
   "osm": {
-   "sights": 0,
+   "sights": 80,
    "sights2": 54,
    "restaurants": 408,
-   "cafes": 0,
+   "cafes": 300,
    "hotels": 258,
    "shopping": 300,
    "diet": 16,
@@ -2631,7 +2631,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 27,
    "en": 100
   },
   "streetsV": 2,
@@ -2657,30 +2657,25 @@
    "Mary Street (12)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de HTTP 502 525ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 54 32529ms",
-   "overpass-api.de ok 408 32974ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de HTTP 502 536ms",
-   "overpass-api.de HTTP 504 45639ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 258 34023ms",
-   "overpass-api.de ok 300 44845ms",
-   "overpass-api.de ok 16 48309ms",
-   "overpass-api.de HTTP 502 555ms",
-   "overpass-api.de ok 57 35750ms",
-   "overpass-api.de ok 61 37161ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de ok 24 39288ms",
-   "overpass-api.de HTTP 502 485ms",
-   "overpass-api.de ok 484 38501ms",
+   "overpass-api.de ok 80 34953ms",
+   "overpass-api.de ok 54 38051ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 408 37024ms",
+   "overpass-api.de ok 300 40336ms",
+   "overpass-api.de HTTP 502 366ms",
+   "overpass-api.de ok 258 30984ms",
+   "overpass-api.de ok 300 35068ms",
+   "overpass-api.de ok 16 35614ms",
+   "overpass-api.de ok 57 37225ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 61 26811ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 24 35139ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass-api.de ok 484 37759ms",
    "streets: 484 shops",
-   "fame: 144 of 144"
+   "fame: 213 of 213"
   ]
  },
  "edinburgh": {
