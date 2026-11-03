@@ -83,7 +83,7 @@ async def main():
     ok=bool(meals) and not silent; print("VEGAN","ok " if ok else "BAD","פריז",len(meals),"meals, not vegan:",silent)
     if not ok: FAILS.append("vegan")
     # readable names: in cities with their own script, stops with an English/Latin name show it (Tokyo was 7 of 14 in Japanese, Belgrade 10 in Cyrillic)
-    for city,most in [("טוקיו",3),("בלגרד",4),("אתונה",3)]:
+    for city,most in [("טוקיו",3),("בלגרד",0),("אתונה",0),("סופיה",1)]:
       t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:2, interests:["history","food"], budget:"בינוני", pace:"מאוזן", diet:"הכול", move:"walk", notes:"", start:"2026-12-01", people:2 }, ()=>{}, null)""",city)
       bad=[s["name"] for d in t["days"] for s in d["stops"] if not re.search(r"[A-Za-zÀ-ɏ֐-׿]",s["name"])]
       ok=len(bad)<=most; print("NAMES","ok " if ok else "BAD",city,"unreadable:",bad)

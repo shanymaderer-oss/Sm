@@ -129,12 +129,25 @@ Masa.planner = (() => {
   /* thermal baths, hammams and spas open to visitors (Budapest's fürdő, Istanbul's hamam, Tbilisi's abanotubani) */
   const BATH = t => t.amenity === "public_bath" || t.leisure === "spa" || !!t["bath:type"] || /gyógyfürdő|fürdő|hamam|hammam|აბანო/i.test(t.name || "");
   const LATIN = /\p{Script=Latin}/u;
+  /* Cyrillic and Greek names with no English form, letter by letter (Sofia, Belgrade, Athens, Thessaloniki: hundreds of places each) */
+  const LETTERS = {};
+  [["абвгдђежзијклмнопрстћуфхцчшйыэ", "abvgdđežzijklmnoprstćufhcčšjie"], ["αβγδεζηικλμνξοπρστυφχωςάέήίόύώϊϋΐΰ", "avgdeziiklmnxoprstyfhosaeiioyoiyiy"]]
+    .forEach(([a, b]) => [...a].forEach((c, i) => { LETTERS[c] = b[i]; }));
+  Object.assign(LETTERS, { љ: "lj", њ: "nj", џ: "dž", щ: "sht", ъ: "a", ь: "", ю: "yu", я: "ya", ё: "yo", θ: "th", ψ: "ps" });
+  const toLatin = text => {
+    const out = text.replace(/ου|ού/gi, m => (m[0] === "Ο" || m[0] === "Ό" ? "Ou" : "ou")).replace(/\p{L}/gu, c => {
+      const l = c.toLowerCase(), r = LETTERS[l];
+      if (r === undefined) return c;
+      return c === l ? r : r.charAt(0).toUpperCase() + r.slice(1);
+    });
+    return LATIN.test(out) && !/[\u0370-\u03ff\u0400-\u04ff]/.test(out) ? out : null;
+  };
   const isVegan = p => !!p.vegan || /vegan/.test(p.cuisine || "");
   function fromOSM(e, cc) {
     const t = e.tags || {};
     /* a name the traveler can read: Hebrew, else the local name if it is in Latin letters, else its English/Latin form
        (Tokyo, Athens, Tbilisi, Bangkok and Belgrade have most names in their own script) */
-    const name = t["name:he"] || (t.name && !LATIN.test(t.name) && [t["name:en"], t.int_name, t["name:sr-Latn"]].find(n => n && LATIN.test(n))) || t.name;
+    const name = t["name:he"] || (t.name && !LATIN.test(t.name) && ([t["name:en"], t.int_name, t["name:sr-Latn"]].find(n => n && LATIN.test(n)) || toLatin(t.name))) || t.name;
     if (!name) return null;
     const kind = kindFromTags(t);
     return {
@@ -208,7 +221,7 @@ Masa.planner = (() => {
       if (km(geo, st) > 12) continue;
       if (/(náměstí|piazza|plaza|\bplace\b|platz|square|\btér\b|\bplac\b|rynek|praça|plaça|meydan)/i.test(st.name) && st.n < 15) continue;
       const kinds = (st.kinds || []).map(([k]) => SHOP_HE[k]).filter(Boolean);
-      pool.push({ id: `street/${normName(st.name)}`, src: "osm", name: st.name, local: st.name, kind: "street", cat: "shopping", lat: st.lat, lng: st.lng,
+      pool.push({ id: `street/${normName(st.name)}`, src: "osm", name: (!LATIN.test(st.name) && toLatin(st.name)) || st.name, local: st.name, kind: "street", cat: "shopping", lat: st.lat, lng: st.lng,
         shops: st.n, brands: st.brands || 0, topShare: st.topShare ?? (st.kinds?.[0] ? st.kinds[0][1] / st.n : 0.6), streetLen: st.len || 0, shopKinds: [...new Set(kinds)].slice(0, 3), ends: st.ends || null, wikidata: null, website: null });
     }
     const streetNames = pool.filter(p => p.kind === "street").map(p => ({ p, n: normName(p.local) })).filter(x => x.n.length >= 5);
