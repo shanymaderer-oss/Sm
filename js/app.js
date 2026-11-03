@@ -2970,7 +2970,11 @@ cloud.on(st => {
   }
   // the avatar in the search bar
   const g = $("gearBtn");
-  if (g) g.innerHTML = st.status === "in" && st.user?.photo ? `<img class="avatar" src="${esc(safeUrl(st.user.photo))}" alt="" referrerpolicy="no-referrer">` : GEAR_SVG;
+  if (g) {
+    g.innerHTML = st.status === "in" && st.user?.photo ? `<img class="avatar" src="${esc(safeUrl(st.user.photo))}" alt="" referrerpolicy="no-referrer">` : GEAR_SVG;
+    // no internet (or the photo is gone): the settings gear instead of a broken picture
+    g.querySelector("img")?.addEventListener("error", () => { g.innerHTML = GEAR_SVG; }, { once: true });
+  }
   if (["settings", "home"].includes(S.screen) || (S.screen === "plan" && S.trip)) rerenderKeepScroll();
   if (st.error === "token" || st.error === "state") { toast("ההתחברות לא הושלמה. נסו שוב."); st.error = null; }
 });
