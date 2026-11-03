@@ -7101,8 +7101,8 @@
   ]
  },
  "bologna": {
-  "at": "2026-11-02T18:20:45.625Z",
-  "seconds": 868,
+  "at": "2026-11-03T10:33:05.956Z",
+  "seconds": 624,
   "osm": {
    "sights": 125,
    "sights2": 25,
@@ -7111,7 +7111,7 @@
    "hotels": 137,
    "shopping": 274,
    "diet": 5,
-   "extra": 0,
+   "extra": 110,
    "fitness": 16,
    "landmarks": 29,
    "streets": 7
@@ -7152,28 +7152,24 @@
    "Via Luigi Carlo Farini (16)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de ok 125 35067ms",
-   "overpass-api.de ok 25 32541ms",
-   "overpass-api.de HTTP 504 50556ms",
-   "overpass-api.de ok 336 44249ms",
-   "overpass-api.de ok 248 40855ms",
-   "overpass-api.de ok 137 39938ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de HTTP 502 421ms",
-   "overpass-api.de ok 274 45358ms",
-   "overpass-api.de HTTP 502 492ms",
-   "overpass-api.de ok 5 46177ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de HTTP 502 421ms",
-   "overpass-api.de HTTP 502 493ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 16 32005ms",
-   "overpass-api.de ok 29 34249ms",
-   "overpass-api.de ok 326 35919ms",
+   "overpass-api.de HTTP 502 384ms",
+   "overpass-api.de ok 125 35973ms",
+   "overpass-api.de ok 25 39075ms",
+   "overpass-api.de HTTP 502 383ms",
+   "overpass-api.de ok 336 40045ms",
+   "overpass-api.de ok 248 40357ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 137 33290ms",
+   "overpass-api.de ok 274 35335ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de ok 5 41400ms",
+   "overpass-api.de ok 110 34860ms",
+   "overpass-api.de ok 16 39929ms",
+   "overpass-api.de ok 29 38962ms",
+   "overpass-api.de HTTP 504 49319ms",
+   "overpass-api.de ok 326 43222ms",
    "streets: 326 shops",
-   "fame: 161 of 161"
+   "fame: 252 of 252"
   ]
  },
  "granada": {
