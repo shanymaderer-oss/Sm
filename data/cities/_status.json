@@ -2845,18 +2845,18 @@
   ]
  },
  "seville": {
-  "at": "2026-11-02T17:10:21.500Z",
-  "seconds": 583,
+  "at": "2026-11-03T09:49:51.189Z",
+  "seconds": 1032,
   "osm": {
    "sights": 89,
-   "sights2": 53,
+   "sights2": 0,
    "restaurants": 450,
    "cafes": 264,
    "hotels": 283,
    "shopping": 300,
    "diet": 4,
    "extra": 70,
-   "fitness": 28,
+   "fitness": 0,
    "landmarks": 50,
    "streets": 10
   },
@@ -2870,7 +2870,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 15,
    "en": 90
   },
   "streetsV": 2,
@@ -2896,24 +2896,32 @@
    "Calle Monte Carmelo (10)"
   ],
   "log": [
-   "overpass-api.de ok 89 40052ms",
-   "overpass-api.de ok 53 33258ms",
-   "overpass-api.de HTTP 502 404ms",
-   "overpass-api.de ok 450 43213ms",
-   "overpass-api.de ok 264 34650ms",
-   "overpass-api.de ok 283 38188ms",
-   "overpass-api.de HTTP 502 409ms",
-   "overpass-api.de ok 300 36990ms",
-   "overpass-api.de ok 4 41960ms",
-   "overpass-api.de HTTP 502 414ms",
-   "overpass-api.de ok 70 32742ms",
-   "overpass-api.de HTTP 502 379ms",
-   "overpass-api.de HTTP 502 398ms",
-   "overpass-api.de ok 28 45589ms",
-   "overpass-api.de ok 50 41717ms",
-   "overpass-api.de ok 283 33826ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de HTTP 502 280ms",
+   "overpass-api.de ok 89 31707ms",
+   "overpass-api.de HTTP 502 363ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60003ms",
+   "overpass-api.de ok 450 35974ms",
+   "overpass-api.de ok 264 32567ms",
+   "overpass-api.de ok 283 44098ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 300 45879ms",
+   "overpass-api.de ok 4 32582ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 70 39646ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de HTTP 502 356ms",
+   "overpass-api.de HTTP 502 358ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
+   "overpass-api.de ok 50 38786ms",
+   "overpass-api.de ok 283 37791ms",
    "streets: 283 shops",
-   "fame: 195 of 245"
+   "kept 97 places from the last good data",
+   "fame: 246 of 246"
   ]
  },
  "valencia": {
