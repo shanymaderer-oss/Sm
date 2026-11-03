@@ -81,8 +81,8 @@
   ]
  },
  "rome": {
-  "at": "2026-11-02T16:21:18.646Z",
-  "seconds": 991,
+  "at": "2026-11-03T08:52:25.542Z",
+  "seconds": 538,
   "osm": {
    "sights": 500,
    "sights2": 120,
@@ -92,17 +92,17 @@
    "shopping": 233,
    "diet": 27,
    "extra": 200,
-   "fitness": 0,
+   "fitness": 5,
    "landmarks": 92,
    "streets": 14
   },
   "voyage": {
-   "eat": 72,
-   "drink": 17,
-   "buy": 16,
-   "see": 180,
-   "sleep": 131,
-   "withCoords": 387,
+   "eat": 64,
+   "drink": 14,
+   "buy": 15,
+   "see": 168,
+   "sleep": 106,
+   "withCoords": 336,
    "districts": 8
   },
   "wiki": {
@@ -121,7 +121,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Via Nazionale (71)",
@@ -131,27 +132,18 @@
    "Via del Tritone (18)"
   ],
   "log": [
-   "overpass-api.de ok 500 48755ms",
-   "overpass-api.de ok 120 50168ms",
-   "overpass-api.de ok 450 36595ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 300 39332ms",
-   "overpass-api.de ok 350 43824ms",
-   "overpass-api.de ok 233 43383ms",
-   "overpass-api.de HTTP 502 374ms",
-   "overpass-api.de ok 27 30369ms",
-   "overpass-api.de HTTP 502 388ms",
-   "overpass-api.de ok 200 41215ms",
-   "overpass-api.de HTTP 502 427ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 92 48145ms",
-   "overpass-api.de HTTP 502 386ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de ok 880 38098ms",
+   "overpass-api.de ok 500 31999ms",
+   "overpass-api.de ok 120 40756ms",
+   "overpass-api.de ok 450 18670ms",
+   "overpass-api.de ok 300 33783ms",
+   "overpass-api.de ok 350 24388ms",
+   "overpass-api.de HTTP 502 297ms",
+   "overpass-api.de ok 233 27662ms",
+   "overpass-api.de ok 27 38211ms",
+   "overpass-api.de ok 200 30922ms",
+   "overpass-api.de ok 5 24131ms",
+   "overpass-api.de ok 92 32652ms",
+   "overpass-api.de ok 880 26496ms",
    "streets: 880 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -160,8 +152,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 533 of 683"
+   "fame: 683 of 683"
   ]
  },
  "barcelona": {
