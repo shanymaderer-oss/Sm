@@ -4308,19 +4308,19 @@
   ]
  },
  "bruges": {
-  "at": "2026-11-02T20:21:41.419Z",
-  "seconds": 1334,
+  "at": "2026-11-03T11:56:14.403Z",
+  "seconds": 552,
   "osm": {
    "sights": 97,
    "sights2": 45,
-   "restaurants": 0,
-   "cafes": 0,
+   "restaurants": 258,
+   "cafes": 97,
    "hotels": 129,
    "shopping": 91,
    "diet": 2,
    "extra": 42,
    "fitness": 3,
-   "landmarks": 0,
+   "landmarks": 40,
    "streets": 2
   },
   "voyage": {
@@ -4333,7 +4333,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 4,
    "en": 38
   },
   "streetsV": 2,
@@ -4356,36 +4356,24 @@
    "Noordzandstraat (9)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de ok 97 37545ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de ok 45 32263ms",
-   "overpass-api.de HTTP 502 525ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de HTTP 502 461ms",
-   "overpass.private.coffee timeout 60002ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 524ms",
-   "overpass-api.de HTTP 502 521ms",
-   "overpass-api.de HTTP 504 54813ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 461ms",
-   "overpass-api.de HTTP 502 524ms",
-   "overpass-api.de ok 129 49276ms",
-   "overpass-api.de ok 91 35351ms",
-   "overpass-api.de HTTP 502 522ms",
-   "overpass-api.de ok 2 34815ms",
-   "overpass-api.de ok 42 41687ms",
-   "overpass-api.de ok 3 41603ms",
-   "overpass-api.de HTTP 502 522ms",
-   "overpass-api.de HTTP 502 461ms",
-   "overpass-api.de HTTP 502 525ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 85 35861ms",
+   "overpass-api.de ok 97 39303ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 45 30508ms",
+   "overpass-api.de ok 258 24349ms",
+   "overpass-api.de HTTP 502 356ms",
+   "overpass-api.de ok 97 50549ms",
+   "overpass-api.de ok 129 32332ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 91 25391ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 2 37318ms",
+   "overpass-api.de ok 42 38294ms",
+   "overpass-api.de ok 3 35447ms",
+   "overpass-api.de ok 40 42696ms",
+   "overpass-api.de ok 85 36316ms",
    "streets: 85 shops",
-   "fame: 129 of 129"
+   "fame: 152 of 152"
   ]
  },
  "santorini": {
