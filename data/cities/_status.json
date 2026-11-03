@@ -705,8 +705,8 @@
   ]
  },
  "lisbon": {
-  "at": "2026-11-02T16:29:28.127Z",
-  "seconds": 668,
+  "at": "2026-11-03T09:13:15.645Z",
+  "seconds": 816,
   "osm": {
    "sights": 267,
    "sights2": 99,
@@ -717,7 +717,7 @@
    "diet": 31,
    "extra": 110,
    "fitness": 24,
-   "landmarks": 115,
+   "landmarks": 0,
    "streets": 14
   },
   "voyage": {
@@ -756,29 +756,29 @@
    "Rua da Prata (16)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 486ms",
-   "overpass-api.de ok 267 41858ms",
-   "overpass-api.de ok 99 32172ms",
-   "overpass-api.de HTTP 504 48166ms",
-   "overpass-api.de ok 450 29208ms",
-   "overpass-api.de ok 300 33667ms",
-   "overpass-api.de HTTP 502 494ms",
-   "overpass-api.de HTTP 502 522ms",
-   "overpass-api.de ok 350 36197ms",
-   "overpass-api.de HTTP 502 415ms",
-   "overpass-api.de ok 300 45646ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass-api.de HTTP 502 490ms",
-   "overpass-api.de ok 31 43981ms",
-   "overpass-api.de ok 110 26946ms",
-   "overpass-api.de ok 24 32411ms",
-   "overpass-api.de ok 115 38274ms",
-   "overpass-api.de ok 519 28001ms",
+   "overpass-api.de ok 267 38679ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass-api.de ok 99 47303ms",
+   "overpass-api.de ok 450 39966ms",
+   "overpass-api.de ok 300 44965ms",
+   "overpass-api.de ok 350 39872ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de ok 300 38222ms",
+   "overpass-api.de HTTP 502 408ms",
+   "overpass-api.de ok 31 29835ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de ok 110 44383ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass-api.de ok 24 32591ms",
+   "overpass-api.de HTTP 502 407ms",
+   "overpass-api.de HTTP 502 402ms",
+   "overpass-api.de HTTP 502 403ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 519 30113ms",
    "streets: 519 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 244 of 444"
+   "kept 40 places from the last good data",
+   "fame: 444 of 444"
   ]
  },
  "porto": {
