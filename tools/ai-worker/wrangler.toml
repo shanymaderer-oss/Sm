@@ -4,3 +4,7 @@ main = "worker.js"
 compatibility_date = "2026-10-01"
 account_id = "d5ea56bc513ecb0a20377fc582eb6e70"
 workers_dev = true
+
+# public settings (not secrets): our Travelpayouts partner id, added to every flight booking link
+[vars]
+TP_MARKER = "799451"
