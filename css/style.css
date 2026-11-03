@@ -1015,3 +1015,12 @@ a.btn{text-decoration:none}
 .fitlist small{display:block;color:var(--muted);font-size:.8rem}
 .card.pwanote p{display:flex;gap:8px;align-items:flex-start;margin:0 0 8px;font-size:.92rem;line-height:1.5}
 .card.pwanote p svg{flex:none;width:18px;height:18px;margin-top:2px;color:var(--sky)}
+/* before the first trip: sign in with Google, the trip is kept in the account */
+.screen.gate{display:flex;flex-direction:column;gap:14px}
+.card.gatecard{padding:22px 18px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.card.gatecard h1{font-size:1.35rem;line-height:1.35;margin:0}
+.card.gatecard .lead{margin:0}
+.card.gatecard .small{margin:0;line-height:1.55}
+.gateicon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
+.gateicon svg{width:26px;height:26px}
+.screen.gate .linkbtn{align-self:center}

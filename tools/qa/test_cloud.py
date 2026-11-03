@@ -45,6 +45,18 @@ async def main():
         t = (await trips(a1))[0]
         check(bool(t["cloudId"]), "a new trip is saved to the account")
 
+        # Dana, signed out, builds her first trip: the sign-in step comes first, and the trip is built right after it
+        dctx, d1 = await user(b, "dana")
+        await dctx.add_init_script("localStorage.setItem('masa-gate','1')")
+        await d1.goto(URL + "/index.html"); await d1.wait_for_function("window.Masa && Masa.cloud", timeout=20000)
+        await d1.fill("#gq", "פראג"); await d1.press("#gq", "Enter"); await d1.wait_for_timeout(400); await Q.to_goals(d1)
+        await d1.click("#buildBtn"); await d1.wait_for_selector("#gateIn", timeout=10000)
+        check(True, "signed out: building a trip asks to sign in with Google first")
+        await d1.click("#gateIn")
+        await d1.wait_for_selector(".triphero", timeout=30000)
+        await d1.wait_for_function("JSON.parse(localStorage.getItem('masa-trips')||'[]')[0]?.cloudId", timeout=15000)
+        check((await trips(d1))[0]["city"] == "פראג", "after signing in the trip is built by itself and saved to the account")
+
         # Alice, second device: the trip arrives by itself
         _, a2 = await user(b, "alice")
         await a2.goto(URL + "/index.html"); await signed_in(a2)

@@ -857,12 +857,67 @@ async function translateStop(s) {
 }
 function openFeedback() { S.prev = S.screen === "settings" ? S.prev : S.screen; S.openFeedback = true; go("settings"); }
 
+/* ---------- a trip is built into the traveler's Google account (the owner's decision, Nov 2026) ----------
+   Before the first trip, one sign-in with Google; the trip then lives in the account on every device and in the app.
+   What they chose is kept for the trip to the sign-in page and back, and the trip is built as soon as they return.
+   The sample trip and browsing stay open without an account. Automated browsers (tests) skip it unless masa-gate=1. */
+const gateOff = () => { try { return navigator.webdriver && localStorage.getItem("masa-gate") !== "1"; } catch { return !!navigator.webdriver; } };
+async function signedInForBuild() {
+  if (!cloud.configured() || gateOff()) return true;
+  if (cloud.state.status === "loading") await new Promise(ok => { const off = cloud.on(st => { if (st.status !== "loading") { off(); ok(); } }); setTimeout(() => { off(); ok(); }, 6000); });
+  return cloud.state.status === "in";
+}
+SCREENS.gate = {
+  view() {
+    const he = S.dest?.he || "";
+    return `<div class="screen gate">
+      <div class="topnav"><button class="iconbtn" id="backGate" aria-label="חזרה">${ic("back")}</button><span></span><span style="width:38px"></span></div>
+      <div class="card gatecard">
+        <span class="gateicon" aria-hidden="true">${ic("shield", 2)}</span>
+        <h1>הטיול${he ? ` ל${esc(he)}` : ""} יישמר בחשבון Google שלכם</h1>
+        <p class="lead">מתחברים פעם אחת, והטיולים שלכם שמורים בחשבון: הם מופיעים בכל טלפון ומחשב שמתחברים ממנו, גם באפליקציה וגם בלי אינטרנט, ולא נמחקים כשמנקים את הדפדפן.</p>
+        <button type="button" class="btn coral block" id="gateIn">התחברות עם Google והמשך</button>
+        <p class="muted small">אחרי ההתחברות נבנה את הטיול לבד, עם כל מה שבחרתם. אנחנו שומרים רק את השם, המייל והטיולים שלכם, ואפשר למחוק הכול בהגדרות. <a href="privacy.html">פרטיות</a> · <a href="terms.html">תנאי שימוש</a></p>
+        <p class="status" id="gateStatus" aria-live="polite">${S.gateErr ? esc(S.gateErr) : ""}</p>
+      </div>
+      <button type="button" class="linkbtn" id="gateSample">רוצים קודם לראות איך זה נראה? לטיול לדוגמה</button>
+    </div>`;
+  },
+  bind() {
+    track("prompt_show", null, 3, "gate");
+    $("backGate").onclick = () => { S.gateErr = null; go(S.gateBack || "goals"); };
+    $("gateSample").onclick = () => { S.gateErr = null; loadSample(); };
+    $("gateIn").onclick = () => {
+      track("prompt_tap", null, 3);
+      const f = S.form || {};
+      sset("masa-pending-build", JSON.stringify({ dest: S.dest, form: { ...f, touched: [...(f.touched || [])] } }));
+      S.gateErr = null;
+      $("gateIn").disabled = true; $("gateStatus").textContent = "מעבירים אתכם ל-Google…";
+      cloud.signIn();
+    };
+    $("gateIn").focus();
+  }
+};
+/* back from Google: the choices they made before signing in, and the trip is built */
+function resumeBuild(ok) {
+  const raw = sget("masa-pending-build");
+  if (!raw) return false;
+  sset("masa-pending-build", null);
+  let p = null; try { p = JSON.parse(raw); } catch {}
+  if (!p?.dest?.q) return false;
+  S.dest = p.dest; S.form = { ...S.form, ...p.form, touched: new Set(p.form?.touched || []) };
+  if (ok) { toast("התחברתם. בונים את הטיול…"); setTimeout(() => build(), 0); }
+  else { S.gateErr = "ההתחברות לא הושלמה. אפשר לנסות שוב."; go("gate"); }
+  return true;
+}
+
 async function build() {
   // no internet: a new trip can only be built for a city whose data is already on the phone
   if (navigator.onLine === false) {
     const c = Masa.cities.findCity(S.dest?.q || ""), have = c && self.caches ? await caches.match(`data/cities/${c.slug}.json`, { ignoreSearch: true }).catch(() => null) : null;
     if (!have) { $("buildStatus") && ($("buildStatus").textContent = "אין חיבור לאינטרנט. כדי לבנות טיול חדש צריך אינטרנט. הטיולים ששמרתם נפתחים גם בלי, מהמסך הראשי."); return; }
   }
+  if (!(await signedInForBuild())) { S.gateBack = ["goals", "gate"].includes(S.screen) ? "goals" : S.screen; go("gate"); return; }
   if (wishAiWanted() && S.form.aiWish?.text !== S.form.notes) {
     clearTimeout(wishAiT);
     await Promise.race([guideWish().catch(() => null), new Promise(r => setTimeout(r, 6000))]);
@@ -2963,6 +3018,8 @@ cloud.init({
 });
 cloud.on(st => {
   if (st.status === "in") track("signin", null, null, "signin");
+  if (st.status === "in" && resumeBuild(true)) return;
+  if (st.error && st.status !== "loading" && sget("masa-pending-build") && resumeBuild(false)) { st.error = null; return; }
   if (st.status === "in" && sget("masa-return-trip")) {
     const id = sget("masa-return-trip"); sset("masa-return-trip", null);
     const t = savedTrips().find(x => x.id === id);
