@@ -458,8 +458,8 @@
   ]
  },
  "vienna": {
-  "at": "2026-11-02T16:19:31.880Z",
-  "seconds": 761,
+  "at": "2026-11-03T08:56:16.238Z",
+  "seconds": 649,
   "osm": {
    "sights": 658,
    "sights2": 157,
@@ -509,23 +509,22 @@
    "Kärntner Straße (25)"
   ],
   "log": [
-   "overpass-api.de ok 658 44090ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de ok 157 44897ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 450 43510ms",
-   "overpass-api.de ok 300 51772ms",
-   "overpass-api.de ok 350 49900ms",
-   "overpass-api.de HTTP 502 399ms",
-   "overpass-api.de ok 300 44479ms",
-   "overpass-api.de ok 114 49388ms",
-   "overpass-api.de ok 200 35567ms",
-   "overpass-api.de HTTP 502 424ms",
-   "overpass-api.de ok 92 40048ms",
-   "overpass-api.de HTTP 502 417ms",
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de ok 150 43877ms",
-   "overpass-api.de ok 1218 36792ms",
+   "overpass-api.de HTTP 502 607ms",
+   "overpass-api.de ok 658 36278ms",
+   "overpass-api.de ok 157 26955ms",
+   "overpass-api.de ok 450 29184ms",
+   "overpass-api.de ok 300 34626ms",
+   "overpass-api.de ok 350 32041ms",
+   "overpass-api.de HTTP 502 368ms",
+   "overpass-api.de HTTP 502 286ms",
+   "overpass-api.de ok 300 32153ms",
+   "overpass-api.de HTTP 502 282ms",
+   "overpass-api.de ok 114 49482ms",
+   "overpass-api.de ok 200 38771ms",
+   "overpass-api.de ok 92 33933ms",
+   "overpass-api.de HTTP 502 370ms",
+   "overpass-api.de ok 150 34363ms",
+   "overpass-api.de ok 1218 33833ms",
    "streets: 1218 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
@@ -534,7 +533,7 @@
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 500 of 898"
+   "fame: 898 of 898"
   ]
  },
  "berlin": {
