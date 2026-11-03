@@ -3441,15 +3441,15 @@
   ]
  },
  "geneva": {
-  "at": "2026-11-02T17:55:17.466Z",
-  "seconds": 819,
+  "at": "2026-11-03T10:03:25.496Z",
+  "seconds": 579,
   "osm": {
    "sights": 102,
    "sights2": 45,
    "restaurants": 450,
    "cafes": 231,
    "hotels": 109,
-   "shopping": 0,
+   "shopping": 206,
    "diet": 11,
    "extra": 83,
    "fitness": 34,
@@ -3466,7 +3466,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 17,
    "en": 100
   },
   "streetsV": 2,
@@ -3488,27 +3488,24 @@
    "Rue de Carouge (9)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 459ms",
-   "overpass-api.de ok 102 40478ms",
-   "overpass-api.de ok 45 40792ms",
-   "overpass-api.de ok 450 34613ms",
-   "overpass-api.de ok 231 46960ms",
-   "overpass-api.de HTTP 502 522ms",
-   "overpass-api.de HTTP 502 458ms",
-   "overpass-api.de ok 109 34883ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de HTTP 502 454ms",
-   "overpass-api.de HTTP 502 453ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de ok 11 43206ms",
-   "overpass-api.de ok 83 39000ms",
-   "overpass-api.de ok 34 39428ms",
-   "overpass-api.de ok 54 44604ms",
-   "overpass-api.de ok 150 34597ms",
+   "overpass-api.de ok 102 33284ms",
+   "overpass-api.de HTTP 502 338ms",
+   "overpass-api.de ok 45 21858ms",
+   "overpass-api.de ok 450 40140ms",
+   "overpass-api.de ok 231 45404ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 109 48170ms",
+   "overpass-api.de ok 206 45125ms",
+   "overpass-api.de ok 11 31176ms",
+   "overpass-api.de ok 83 34533ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de ok 34 45442ms",
+   "overpass-api.de HTTP 502 293ms",
+   "overpass-api.de ok 54 47613ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 150 36485ms",
    "streets: 150 shops",
-   "fame: 180 of 180"
+   "fame: 130 of 180"
   ]
  },
  "brussels": {
