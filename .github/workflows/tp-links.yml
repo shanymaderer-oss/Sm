@@ -1,0 +1,16 @@
+name: Partner link check (Travelpayouts)
+# Run by hand: asks the Travelpayouts links API which brand pages we can turn into partner links (the programs our site is
+# connected to). The links are public (they carry the partner id, not the token).
+on: { workflow_dispatch: {} }
+permissions: { contents: read }
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask
+        env: { TP_TOKEN: "${{ secrets.TP_TOKEN }}" }
+        run: |
+          ask() { curl -sS -X POST https://api.travelpayouts.com/links/v1/create -H "X-Access-Token: $TP_TOKEN" -H "Content-Type: application/json" -d "{\"trs\":594662,\"marker\":799451,\"shorten\":false,\"links\":[$1]}" | python3 -c "import json,sys;d=json.load(sys.stdin);[print('::notice::'+l.get('code','')+' | '+l.get('url','')+' | '+(l.get('partner_url') or l.get('message',''))[:160]) for l in (d.get('result') or {}).get('links',[])] or print('::notice::'+json.dumps(d)[:300])"; }
+          ask '{"url":"https://www.booking.com/"},{"url":"https://www.viator.com/"},{"url":"https://www.thefork.com/"},{"url":"https://www.welcomepickups.com/"},{"url":"https://www.airalo.com/"},{"url":"https://saily.com/"},{"url":"https://www.discovercars.com/"},{"url":"https://www.rentalcars.com/"},{"url":"https://www.getyourguide.com/"},{"url":"https://www.skyscanner.net/"}'
+          ask '{"url":"https://www.agoda.com/"},{"url":"https://www.trip.com/"},{"url":"https://www.expedia.com/"},{"url":"https://www.hotels.com/"},{"url":"https://www.aviasales.com/"},{"url":"https://www.kiwi.com/"},{"url":"https://www.localrent.com/"},{"url":"https://www.kiwitaxi.com/"},{"url":"https://www.yesim.app/"},{"url":"https://www.ektatraveling.com/"}'
