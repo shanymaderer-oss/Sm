@@ -79,6 +79,8 @@ function partnerUrl(href) {
     return u.toString();
   } catch { return href; }
 }
+/* Aviasales search, Tel Aviv to the trip's airport and back (DDMM dates); our partner id is added by partnerUrl */
+const aviaUrl = (iata, a, b, n) => { const dm = d => String(d.getDate()).padStart(2, "0") + String(d.getMonth() + 1).padStart(2, "0"); return `https://www.aviasales.com/search/TLV${dm(a)}${iata}${dm(b)}${Math.max(1, Math.min(9, n || 1))}`; };
 const gSearch = q => `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 let toastT = null;
 function toast(t) { const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 2800); }
@@ -1449,18 +1451,18 @@ function kitItems(t = S.trip) {
   const I = (k, icn, title, when, why, links, extra = {}) => ({ k, icn, title, when, why, links, ...extra });
   return [
     I("flights", "fwd", "טיסות", 60, `טיסה מתל אביב ל${t.city}${iata ? ` (${iata})` : ""}, ${fmtDay(start)}–${fmtDay(end)}, ${people} נוסעים. כדאי להשוות בשני אתרים: המחיר לאותה טיסה משתנה בין האתרים.`,
-      [["Google Flights", flightsUrl()], ...(iata ? [["Skyscanner", `https://www.skyscanner.co.il/transport/flights/tlv/${iata.toLowerCase()}/${yymmdd(start)}/${yymmdd(end)}/?adultsv2=${people}`], ["Kayak", `https://www.kayak.com/flights/TLV-${iata}/${isoDate(start)}/${isoDate(end)}/${people}adults`]] : [])]),
+      [...(iata ? [["Aviasales", aviaUrl(iata, start, end, people)]] : []), ["Google Flights", flightsUrl()], ...(iata ? [["Skyscanner", `https://www.skyscanner.co.il/transport/flights/tlv/${iata.toLowerCase()}/${yymmdd(start)}/${yymmdd(end)}/?adultsv2=${people}`], ["Kayak", `https://www.kayak.com/flights/TLV-${iata}/${isoDate(start)}/${isoDate(end)}/${people}adults`]] : [])]),
     I("hotel", "bed", "לינה", 60, t.hotel ? `כבר בחרתם: ${t.hotel.name}. אם עוד לא הזמנתם, אפשר לבדוק את המחיר שלו בכמה אתרים.` : `הכי נוח לישון קרוב לרוב התחנות שלכם${near ? `, באזור של ${near.name}` : ""}. החיפוש כבר מסונן לאזור הזה ולתאריכים.`,
       t.hotel ? [["Booking", bookingUrl(t.hotel)], ["Hotels.com", hotelsComUrl(t.hotel)], ["Google", googleHotelsUrl(t.hotel)]] : [["Booking באזור", bookingAreaUrl()], ["Airbnb באזור", airbnbAreaUrl()]], { go: "hotels" }),
     I("insurance", "shield", "ביטוח נסיעות", 10, "בדקו קודם מה כבר כלול בכרטיס האשראי שלכם, ואז השוו. ברוב הפוליסות הישראליות קונים לפני היציאה מהארץ. שימו לב לכיסוי למחלה קיימת, לכבודה ולספורט.",
       [["PassportCard", "https://www.passportcard.co.il/"], ["הראל", "https://www.harel-group.co.il/"], ["מגדל", "https://www.migdal.co.il/"], ["הפניקס", "https://www.fnx.co.il/"], ["כלל", "https://www.clalbit.co.il/"]]),
     ...(tickets.length ? [I("tickets", "ticket", `כרטיסים מראש (${tickets.length})`, 30, `${tickets.slice(0, 3).map(x => x.s.name).join(", ")}${tickets.length > 3 ? " ועוד" : ""}. לרובם נפתחת מכירה כמה שבועות מראש, ובעונה הכרטיסים נגמרים.`, [], { below: true })] : []),
     I("transfer", "bus", "מהשדה לעיר", 7, easy ? `הכי נוח מ${ap[0].he}: ${easy.n}, ${easy.min} דקות, ${easy.p}. רוצים שיחכו לכם עם שלט? אפשר להזמין הסעה מראש.` : "אפשר להזמין הסעה פרטית מראש, או לבדוק רכבת ואוטובוס מהשדה.",
-      [["Welcome Pickups", "https://www.welcomepickups.com/"]], { go: "move" }),
+      [["Welcome Pickups", "https://www.welcomepickups.com/"], ["Kiwitaxi", "https://kiwitaxi.com/"]], { go: "move" }),
     I("esim", "sim", "אינטרנט בחו״ל (eSIM)", 5, "חבילת גלישה דיגיטלית, בדרך כלל הרבה יותר זולה מחבילת חו״ל של החברה הסלולרית. קונים מהארץ ומפעילים כשנוחתים.",
-      [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["השוואה ב-eSIMDB", "https://esimdb.com/"]], { go: "info" }),
+      [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["Yesim", "https://yesim.app/"]], { go: "info" }),
     ...(car ? [I("car", "car", "השכרת רכב", 30, `${fmtDay(start)}–${fmtDay(end)}${iata ? `, איסוף מ-${iata}` : ""}. השוו ביטוח השתתפות עצמית, ובדקו אם צריך רישיון נהיגה בינלאומי.`,
-      [["Discover Cars", "https://www.discovercars.com/"], ["Rentalcars", "https://www.rentalcars.com/"]])] : []),
+      [["Localrent", "https://localrent.com/"], ["Discover Cars", "https://www.discovercars.com/"]])] : []),
     I("tours", "users", "סיורים וטיולי יום", 14, `סיור מודרך בעברית או באנגלית, סיור הליכה חינמי (משלמים טיפ בסוף), וטיולי יום מ${t.city}.`,
       [["Klook", `https://www.klook.com/en-US/search/result/?query=${encodeURIComponent(city)}`], ["Tiqets", `https://www.tiqets.com/en/search?q=${encodeURIComponent(city)}`], ["Viator", `https://www.viator.com/searchResults/all?text=${encodeURIComponent(city)}`], ["סיור חינמי", gSearch(`free walking tour ${city}`)], ["סיורים בעברית", gSearch(`סיור מודרך בעברית ${t.city}`)]]),
     ...(dinners.length ? [I("tables", "food", "שולחן לארוחות ערב", 7, `${dinners.slice(0, 3).map(x => x.s.name).join(", ")}. בסופי שבוע כדאי לשריין שולחן כמה ימים מראש.`,

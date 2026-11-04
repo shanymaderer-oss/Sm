@@ -24,4 +24,4 @@ window.MASA_AI = { proxy: "https://masa-ai.sivanmad7.workers.dev" };
 /* partner programs: when a partnership is approved, its id goes here and is added to every link to that site.
    Example: { "booking.com": { aid: "1234567" }, "getyourguide.com": { partner_id: "ABC123" }, "viator.com": { pid: "P00012345", mcid: "42383" } }
    While this is null, no link carries a partner id and the "partner links" notice is not shown. */
-window.MASA_PARTNERS = { "aviasales.com": { marker: "799451" }, "tiqets.com": { tp: { c: 89, p: 2074 } }, "klook.com": { tp: { c: 137, p: 4110 } } }; // Travelpayouts partner id (marker; public, not a secret)
+window.MASA_PARTNERS = { "aviasales.com": { marker: "799451" }, "tiqets.com": { tp: { c: 89, p: 2074 } }, "klook.com": { tp: { c: 137, p: 4110 } }, "airalo.com": { tp: { c: 541, p: 8310 } }, "saily.com": { tp: { c: 629, p: 8979 } }, "yesim.app": { tp: { c: 224, p: 5998 } }, "welcomepickups.com": { tp: { c: 627, p: 8919 } }, "kiwitaxi.com": { tp: { c: 1, p: 647 } }, "localrent.com": { tp: { c: 87, p: 2043 } } }; // Travelpayouts partner id (marker; public, not a secret)

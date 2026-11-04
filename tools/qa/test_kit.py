@@ -42,6 +42,10 @@ async def main():
         tp = [l for l in links if l.startswith("https://tp.media/r?")]
         check(any("klook.com" in l and "Rome" in l for l in tp) and any("tiqets.com" in l and "Rome" in l for l in tp), "tours are searched in the trip's city, through our Klook and Tiqets partner links")
         check(all("marker=799451" in l and "trs=594662" in l for l in tp), "every partner redirect carries our partner id and site id")
+        for brand in ["airalo.com", "saily.com", "welcomepickups.com", "kiwitaxi.com"]:
+            check(any(brand in l for l in tp) and not any(brand in l for l in links if not l.startswith("https://tp.media/")), f"{brand} links go through our partner redirect")
+        av = [l for l in links if "aviasales.com/search/TLV" in l]
+        check(av and "marker=799451" in av[0], f"flights on Aviasales, with our partner id ({av[:1]})")
         # partnerships (Travelpayouts): Aviasales, Tiqets and Klook only; no id on other sites, and the notice says links may be partner links
         check(not any("aid=" in l or "marker=" in l for l in links if "aviasales" not in l and not l.startswith("https://tp.media/r?")) and await pg.locator("text=חלק מהקישורים הם של שותפים").count() > 0, "partner ids only where there is a partnership, and the partner notice is shown")
         # mark closed, kept after reload
