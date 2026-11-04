@@ -257,7 +257,7 @@ textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface-2);bo
 .quick button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:700;cursor:pointer}
 .composer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface)}
 .composer input{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--surface-2);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
-.nav{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:var(--surface)}
+.nav{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border-top:1px solid var(--line);background:var(--surface)}
 .nav button{border:0;background:transparent;padding:9px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.72rem;font-weight:700;color:var(--muted);cursor:pointer;position:relative}
 .nav button svg{width:22px;height:22px}
 .nav button[aria-current="true"]{color:var(--primary)}
