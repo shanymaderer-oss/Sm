@@ -1,0 +1,36 @@
+PASS the kit lists what a trip needs (['לינה', 'טיסות', 'דרכון וכניסה למדינה', 'מה קורה בעיר בתאריכים שלכם', 'כרטיסים מראש (6)', 'סיורים וטיולי יום', 'ביטוח נסיעות', 'שולחן לארוחות ערב', 'מהשדה לעיר', 'אינטרנט בחו״ל (eSIM)'])
+PASS kit has 'טיסות'
+PASS kit has 'לינה'
+PASS kit has 'ביטוח'
+PASS kit has 'מהשדה'
+PASS kit has 'eSIM'
+PASS kit has 'סיורים'
+PASS kit has 'כניסה'
+PASS every link we build is https (a restaurant's own site may be http) ([])
+PASS flights are filled with the airport and dates (['https://www.skyscanner.co.il/transport/flights/tlv/fco/261125/261128/?adultsv2=2'])
+PASS lodging search has the dates
+PASS tours are searched in the trip's city, through our Klook and Tiqets partner links
+PASS every partner redirect carries our partner id and site id
+PASS airalo.com links go through our partner redirect
+PASS saily.com links go through our partner redirect
+PASS welcomepickups.com links go through our partner redirect
+PASS kiwitaxi.com links go through our partner redirect
+PASS flights on Aviasales, with our partner id (['https://www.aviasales.com/search/TLV2511FCO28112?marker=799451'])
+PASS partner ids only where there is a partnership, and the partner notice is shown
+PASS a closed item stays closed
+PASS a closed item is folded
+PASS the partner id is on every Booking link
+PASS and only on Booking links
+PASS a bad partner value is ignored
+PASS with partners, the notice is shown
+SKIP live events search: needs the local test server
+PASS the calendar file has the stops at Rome time (38 events)
+PASS it reminds when to close what is still open
+PASS long lines are folded as calendars expect
+PASS the trip becomes a picture to share (masa-rome.png, 151KB)
+PASS before you fly: emergency number, plugs and tap water for the country
+PASS no phrases card
+PASS taxi and transport apps to download
+PASS a city that is not ready: bookings, discover and the guide open with no errors []
+PASS no page errors []
+ALL PASSED []
