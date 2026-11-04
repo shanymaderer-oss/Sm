@@ -36,7 +36,9 @@ async def main():
     await pg.click("#buildBtn"); await pg.wait_for_timeout(2500)
     built = await pg.locator(".triphero").count() > 0 or "אין חיבור" in (await pg.inner_text("#buildStatus") if await pg.locator("#buildStatus").count() else "")
     print("offline, a city whose data is on the phone builds (or says why not):", built)
-    await pg.click("#nav button[data-k=home]") if await pg.locator("#nav button[data-k=home]").is_visible() else None
+    # the bottom bar exists only inside a built trip; when the build said "no internet" we are still on the goals step
+    if await pg.locator("#nav button[data-k=home]").is_visible(): await pg.click("#nav button[data-k=home]")
+    else: await pg.reload(); await pg.wait_for_timeout(1500)
     await pg.wait_for_selector("#destInput", timeout=8000)
     await pg.fill("#destInput", "פוזנן, פולין"); await pg.press("#destInput", "Enter"); await pg.wait_for_selector("#whenNext, #buildBtn", timeout=15000); await Q.to_goals(pg)
     await pg.click("#buildBtn"); await pg.wait_for_timeout(1500)
