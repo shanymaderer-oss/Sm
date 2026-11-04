@@ -63,6 +63,7 @@ function harden(root) {
 }
 /* partner programs (window.MASA_PARTNERS in cloud-config.js): our partner id is added to every link to that site, in one
    place, so a new partnership is one line of settings. Only letters, digits, "-" and "_" are accepted as values. */
+const TP_TRS = 594662; // our site's project id at Travelpayouts (public)
 function partnerUrl(href) {
   const P = window.MASA_PARTNERS;
   if (!P) return href;
@@ -70,6 +71,10 @@ function partnerUrl(href) {
     const u = new URL(href), host = u.hostname.replace(/^www\./, "");
     const key = Object.keys(P).find(k => host === k || host.endsWith("." + k));
     if (!key) return href;
+    // a Travelpayouts brand (Tiqets, Klook): the page is opened through their redirect, which counts the booking for us
+    const tp = P[key]?.tp, tpm = P["aviasales.com"]?.marker;
+    if (tp) return /^\d{1,8}$/.test(String(tp.c)) && /^\d{1,8}$/.test(String(tp.p)) && /^\d{1,12}$/.test(String(tpm)) && u.protocol === "https:"
+      ? `https://tp.media/r?campaign_id=${tp.c}&marker=${tpm}&p=${tp.p}&trs=${TP_TRS}&u=${encodeURIComponent(u.toString())}` : href;
     for (const [k, v] of Object.entries(P[key] || {})) if (/^[\w-]{1,40}$/.test(k) && /^[\w-]{1,80}$/.test(String(v)) && !u.searchParams.has(k)) u.searchParams.set(k, v);
     return u.toString();
   } catch { return href; }
@@ -1457,7 +1462,7 @@ function kitItems(t = S.trip) {
     ...(car ? [I("car", "car", "השכרת רכב", 30, `${fmtDay(start)}–${fmtDay(end)}${iata ? `, איסוף מ-${iata}` : ""}. השוו ביטוח השתתפות עצמית, ובדקו אם צריך רישיון נהיגה בינלאומי.`,
       [["Discover Cars", "https://www.discovercars.com/"], ["Rentalcars", "https://www.rentalcars.com/"]])] : []),
     I("tours", "users", "סיורים וטיולי יום", 14, `סיור מודרך בעברית או באנגלית, סיור הליכה חינמי (משלמים טיפ בסוף), וטיולי יום מ${t.city}.`,
-      [["GetYourGuide", `https://www.getyourguide.com/s/?q=${encodeURIComponent(city)}&date_from=${isoDate(start)}&date_to=${isoDate(end)}`], ["Viator", `https://www.viator.com/searchResults/all?text=${encodeURIComponent(city)}`], ["סיור חינמי", gSearch(`free walking tour ${city}`)], ["סיורים בעברית", gSearch(`סיור מודרך בעברית ${t.city}`)]]),
+      [["Klook", `https://www.klook.com/en-US/search/result/?query=${encodeURIComponent(city)}`], ["Tiqets", `https://www.tiqets.com/en/search?q=${encodeURIComponent(city)}`], ["Viator", `https://www.viator.com/searchResults/all?text=${encodeURIComponent(city)}`], ["סיור חינמי", gSearch(`free walking tour ${city}`)], ["סיורים בעברית", gSearch(`סיור מודרך בעברית ${t.city}`)]]),
     ...(dinners.length ? [I("tables", "food", "שולחן לארוחות ערב", 7, `${dinners.slice(0, 3).map(x => x.s.name).join(", ")}. בסופי שבוע כדאי לשריין שולחן כמה ימים מראש.`,
       dinners.slice(0, 3).map(x => [x.s.name, safeUrl(x.s.website) || `https://www.thefork.com/search?queryText=${encodeURIComponent(`${x.s.local || x.s.name} ${city}`)}`]))] : []),
     I("events", "sparkle", "מה קורה בעיר בתאריכים שלכם", 30, "הופעות, משחקים, פסטיבלים ושווקים מיוחדים. שווה לבדוק לפני שסוגרים את המסלול.",
@@ -2379,9 +2384,9 @@ function brokerRow(p) {
   if (["museum", "gallery", "attraction", "sight", "zoo", "themepark", "view", "church"].includes(p.kind) || p.booking?.needed) {
     return `<div class="broker"><span>כרטיסים וסיורים</span><div class="chiprow">
       ${p.website ? `<a class="chipbtn" href="${esc(safeUrl(p.website))}" target="_blank" rel="noopener">${ic("shield")}אתר רשמי</a>` : `<a class="chipbtn" href="${gSearch(`${p.local || p.name} official site tickets`)}" target="_blank" rel="noopener">${ic("shield")}חיפוש האתר הרשמי</a>`}
-      <a class="chipbtn" href="https://www.getyourguide.com/s/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">${ic("ext")}GetYourGuide</a>
-      <a class="chipbtn" href="https://www.tiqets.com/en/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener">${ic("ext")}Tiqets</a></div>
-      <small class="muted">באתר הרשמי בדרך כלל הכי זול. באתרים האחרים יש סיורים מודרכים וכרטיסי דילוג על התור.</small></div>`;
+      <a class="chipbtn" href="${esc(partnerUrl(`https://www.tiqets.com/en/search?q=${encodeURIComponent(q)}`))}" target="_blank" rel="noopener sponsored">${ic("ext")}Tiqets</a>
+      <a class="chipbtn" href="${esc(partnerUrl(`https://www.klook.com/en-US/search/result/?query=${encodeURIComponent(q)}`))}" target="_blank" rel="noopener sponsored">${ic("ext")}Klook</a></div>
+      <small class="muted">באתר הרשמי בדרך כלל הכי זול. ב-Tiqets וב-Klook יש סיורים מודרכים וכרטיסי דילוג על התור. אלה קישורי שותפים: אם תזמינו דרכם, מסע עשוי לקבל עמלה, בלי תוספת למחיר שלכם.</small></div>`;
   }
   return "";
 }

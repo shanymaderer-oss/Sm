@@ -39,9 +39,11 @@ async def main():
         check(sky and "/tlv/fco/" in sky[0] and yy in sky[0], f"flights are filled with the airport and dates ({sky[:1]})")
         bk = [l for l in links if "booking.com" in l]
         check(bk and f"checkin={start}" in bk[0], "lodging search has the dates")
-        check(any("getyourguide" in l and "Rome" in l for l in links), "tours are searched in the trip's city")
-        # the only partnership so far is Aviasales (Travelpayouts): no id on other sites, and the notice says links may be partner links
-        check(not any("aid=" in l or "marker=" in l for l in links if "aviasales" not in l) and await pg.locator("text=חלק מהקישורים הם של שותפים").count() > 0, "partner ids only where there is a partnership, and the partner notice is shown")
+        tp = [l for l in links if l.startswith("https://tp.media/r?")]
+        check(any("klook.com" in l and "Rome" in l for l in tp) and any("tiqets.com" in l and "Rome" in l for l in tp), "tours are searched in the trip's city, through our Klook and Tiqets partner links")
+        check(all("marker=799451" in l and "trs=594662" in l for l in tp), "every partner redirect carries our partner id and site id")
+        # partnerships (Travelpayouts): Aviasales, Tiqets and Klook only; no id on other sites, and the notice says links may be partner links
+        check(not any("aid=" in l or "marker=" in l for l in links if "aviasales" not in l and not l.startswith("https://tp.media/r?")) and await pg.locator("text=חלק מהקישורים הם של שותפים").count() > 0, "partner ids only where there is a partnership, and the partner notice is shown")
         # mark closed, kept after reload
         await pg.click("[data-kit=insurance]"); await pg.wait_for_timeout(300)
         await pg.reload(); await pg.wait_for_timeout(1000)
