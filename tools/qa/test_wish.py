@@ -25,7 +25,7 @@ FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths'
        ("חם לנו, נעדיף מקומות סגורים כשיורד גשם",'indoor',True),("if it rains, indoors",'indoor',True),("אוהבים פארקים",'indoor',False),
        ("אוהבים כדורגל",'football',True),("רוצים לראות משחק בסטדיום",'football',True),("בלי כדורגל",'football',False),("soccer fans",'football',True)]
 # words that only look like a rule: (text, a piece of a label that must or must not show)
-LABELS=[("אני צליאקית","ללא גלוטן",True),("אוכל ללא גלוטן","ללא גלוטן",True),("רוצים מדבר וסוק","מדבר",True),("המדריך מדבר עברית","מדבר:",False),("רוצים לראות סוק","שווקים",True),("הבזאר הגדול","שווקים",True),("סוקר מקומות","שווקים",False),("אוהבים שוקולד","שווקים",False),("שוקולד בלגי","קינוחים",True),("שוק פשפשים","שווקים",True),("שוקי איכרים","שווקים",True),
+LABELS=[("חורף, קר מאוד, כמה שיותר בפנים","קר בחוץ",True),("חורף, קר מאוד, כמה שיותר בפנים","קצב מלא",False),("לראות כמה שיותר","קצב מלא",True),("כמה שיותר מקומות","קצב מלא",True),("אוהבים ג'אז","מוזיקה חיה",True),("רוצים מוזיקה חיה","מוזיקה חיה",True),("שיט בתעלות","תעלות",True),("לשכור אופניים","אופניים",True),("עיסוי תאילנדי","עיסוי",True),("מקורי וטעים","קר בחוץ",False),("אני צליאקית","ללא גלוטן",True),("אוכל ללא גלוטן","ללא גלוטן",True),("רוצים מדבר וסוק","מדבר",True),("המדריך מדבר עברית","מדבר:",False),("רוצים לראות סוק","שווקים",True),("הבזאר הגדול","שווקים",True),("סוקר מקומות","שווקים",False),("אוהבים שוקולד","שווקים",False),("שוקולד בלגי","קינוחים",True),("שוק פשפשים","שווקים",True),("שוקי איכרים","שווקים",True),
         ("נוסעים באוטובוס","ברכב",False),("נוסעים באוטובוס","ציבורית",True),("שוכרים אוטו","ברכב",True)]
 # diet: vegan is its own diet, not vegetarian ("טבעונים, בלי בשר" stays vegan)
 DIET=[("אנחנו טבעונים","טבעוני"),("אוכלים טבעוני","טבעוני"),("vegan food","טבעוני"),("טבעונים, בלי בשר","טבעוני"),
@@ -88,6 +88,34 @@ async def main():
       bad=[s["name"] for d in t["days"] for s in d["stops"] if not re.search(r"[A-Za-zÀ-ɏ֐-׿]",s["name"])]
       ok=len(bad)<=most; print("NAMES","ok " if ok else "BAD",city,"unreadable:",bad)
       if not ok: FAILS.append("names "+city)
+    # an evening of live music, a stop on the water, a cold day inside, and a sentence we did not understand is said aloud
+    build="""async ([q,notes,days,ints]) => await Masa.planner.build({ query:q, days, interests:ints, budget:"בינוני", pace:"מאוזן", diet:"הכול", move:"walk", notes, start:"2026-12-05", people:2 }, ()=>{}, null)"""
+    stops=lambda t:[s for d in t["days"] for s in d["stops"]]
+    t=await pg.evaluate(build,["ניו יורק","אוהבים ג'אז, ערב במועדון",2,["art","night"]])
+    bars=[s["name"] for s in stops(t) if s.get("meal")=="drinks"]
+    ok=len(bars)==2 and all(re.search("jazz|blues|vanguard",b,re.I) for b in bars) and not re.search("wine",bars[0]+bars[1],re.I); print("MUSIC","ok " if ok else "BAD",bars)
+    if not ok: FAILS.append("music")
+    t=await pg.evaluate(build,["פריז","אוהבים ג'אז",1,["art"]])
+    ok="מועדון ג'אז או בלוז" in t["wish"]["missed"] and not any("מוזיקה חיה" in l for l in t["wish"]["labels"]); print("MUSIC none","ok " if ok else "BAD",t["wish"])
+    if not ok: FAILS.append("music none")
+    for city,want in [("אמסטרדם","rachten|canal"),("ונציה","ondol")]:
+      t=await pg.evaluate(build,[city,"רוצים שיט בתעלות",2,["history"]])
+      names=[f'{s.get("local") or ""} {s["name"]}' for s in stops(t)]
+      ok=any(re.search(want,n,re.I) for n in names) and not t["wish"]["missed"]; print("WATER","ok " if ok else "BAD",city,names[:4])
+      if not ok: FAILS.append("water "+city)
+    t=await pg.evaluate(build,["רומא","שיט בתעלות",1,["history"]])
+    ok="תעלות או שיט" in t["wish"]["missed"]; print("WATER none","ok " if ok else "BAD",t["wish"]["missed"])
+    if not ok: FAILS.append("water none")
+    plain=await pg.evaluate(build,["בודפשט","",2,["history"]]); cold=await pg.evaluate(build,["בודפשט","קר מאוד, כמה שיותר בפנים",2,["history"]])
+    out=lambda t:sum(s.get("kind") in ("park","view","bridge","square","beach","street") for s in stops(t))
+    ok=out(cold)<out(plain); print("COLD","ok " if ok else "BAD",out(plain),"->",out(cold))
+    if not ok: FAILS.append("cold")
+    t=await pg.evaluate(build,["רומא","הכלב בא איתנו לכל מקום, אוהבים היסטוריה",1,["history"]])
+    ok=t["wish"]["unread"]==["הכלב בא איתנו לכל מקום"]; print("UNREAD","ok " if ok else "BAD",t["wish"]["unread"])
+    if not ok: FAILS.append("unread")
+    t=await pg.evaluate(build,["ברלין","אנדרטת השואה וחומת ברלין, אוהבים היסטוריה",1,["history"]])
+    ok=not t["wish"]["unread"]; print("UNREAD place","ok " if ok else "BAD",t["wish"]["unread"])
+    if not ok: FAILS.append("unread place")
     await pg.close()
     for i in sel:
       city,txt=CASES[i]

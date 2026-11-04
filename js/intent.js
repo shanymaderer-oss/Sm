@@ -57,6 +57,13 @@ Masa.intent = (() => {
     T([word("גג(?:ות)?(?=\\s|$)"), word("רופטופ"), /\brooftops?\b/], { rooftop: true, label: "ברים ומקומות על הגג" }),
     T([word("מרחצ"), word("ספא(?=\\s|$)"), word("ח(?:א)?מאם"), word("מעיינות חמ"), word("בריכות תרמ"), /\b(spa|thermal baths?|hammam|bath ?house|hot springs)\b/], { baths: true, label: "מרחצאות: מרחץ תרמי או חמאם במסלול" }),
     T([word("גשם"), word("גשום"), word("מקומות סגורים"), word("מקור(?:ה|ים|ות)(?=\\s|$)"), /\b(rain(?:s|y|ing)?|indoors?)\b/], { indoor: true, boost: { museum: 2, gallery: 2, market: 2 }, label: "גשם: נעדיף מקומות מקורים, וכשיש גשם בתחזית נציע להחליף תחנות שבחוץ" }),
+    // cold and "inside" is a wish for this trip, unlike rain, which only asks to swap when it really rains
+    T([word("בפנים(?=\\s|$)"), word("קר מאוד"), word("קר בחוץ"), word("קר לנו"), word("בקור(?=\\s|$)"), /\b(freezing|very cold|stay inside)\b/], { indoor: true, cold: true, boost: { museum: 3, gallery: 2, market: 2 }, label: "קר בחוץ: בעיקר מקומות סגורים" }),
+    T([word("ג['׳’`]א?ז(?=\\s|$)"), word("בלוז"), word("מוזיקה חיה"), word("הופע(?:ה|ות) חי(?:ה|ות)"), /\b(jazz|blues|live music)\b/], { add: ["night"], music: true, label: "מוזיקה חיה: מועדון ג'אז או בלוז בערב" }),
+    T([word("תעל(?:ה|ות)(?=\\s|$)"), word("שיט(?=\\s|$)"), word("גונדול"), /\b(canals?|gondolas?|boat (?:tour|ride|trip)s?)\b/], { canals: true, label: "תעלות ושיט: תחנה אחת על המים" }),
+    // no data for these yet, so say so instead of promising
+    T([word("אופני(?:ים|י)(?=\\s|$)"), /\b(bikes?|bicycles?|cycling)\b/], { label: "אופניים: המסלול נבנה ברגל ואין לנו מידע על השכרה, אפשר לשאול במלון" }),
+    T([word("עיסוי"), word("מסאז"), /\bmassages?\b/], { label: "עיסוי: כמעט אין לנו מקומות עיסוי במפה, אפשר לשאול במלון" }),
     T([word("להתאמן"), word("אימו(?:ן|נים)"), word("כושר"), word("חדר כושר"), word("מכון כושר"), word("יוגה"), word("פילאטיס"), word("קרוספיט"), word("ריצ(?:ה|ות)"), word("לרוץ"), word("שחי(?:ה|יה)"), word("לשחות"), /\b(gym|fitness|yoga|pilates|workout|crossfit|running|swim(?:ming)?)\b/], { fitness: true, label: "אימונים: מכוני כושר, שיעורים ומסלול ריצה ליד המלון" }),
     T([word("כדורגל"), word("אצטדיו"), word("סטדיו"), /\b(football|soccer|stadium)\b/], { football: true, label: "כדורגל: האצטדיון המפורסם של העיר במסלול" }),
     T([word("גן חיות"), word("אקווריום"), /\b(zoo|aquarium)\b/], { add: ["family"], boost: { zoo: 8 }, label: "גן חיות או אקווריום" }),
@@ -66,7 +73,7 @@ Masa.intent = (() => {
     T([word("חינם"), word("בחינם"), /\bfree\b/], { free: true, budget: "חסכוני", label: "הרבה דברים בחינם" }),
     // pace, budget, moving around, time of day
     T([word("רגוע"), word("בנחת"), word("לא לחוץ"), word("לא להתאמץ"), word("לנוח"), word("מנוחה"), word("לאט(?=\\s|$)"), /\b(relaxed|slow|chill|easy)\b/], { pace: "רגוע", label: "קצב רגוע" }),
-    T([word("אינטנסיבי"), word("כמה שיותר"), word("לראות הכ(?:ו)?ל"), word("מקסימום"), word("לא לבזבז זמן"), /\b(intense|packed|see everything|as much as)\b/], { pace: "אינטנסיבי", label: "קצב מלא: יותר תחנות ביום" }),
+    T([word("אינטנסיבי"), word("כמה שיותר(?=\\s*$|\\s+(?:מקומות|דברים|תחנות|אתרים|אטרקציות))"), word("לראות הכ(?:ו)?ל"), word("מקסימום"), word("לא לבזבז זמן"), /\b(intense|packed|see everything|as much as)\b/], { pace: "אינטנסיבי", label: "קצב מלא: יותר תחנות ביום" }),
     T([word("זול"), word("חסכוני"), word("תקציב (?:נמוך|מוגבל|קטן)"), word("בלי להוציא הרבה"), word("סטודנט"), /\b(cheap|budget|low cost|students?)\b/], { budget: "חסכוני", label: "תקציב חסכוני" }),
     T([word("יוקר"), word("מפנק"), word("לפנק"), word("מישלן"), word("פיין דיינינג"), /\b(luxury|fancy|michelin|fine dining|splurge)\b/], { budget: "מפנק", label: "מפנקים: מסעדות טובות במיוחד" }),
     T([word("רכב(?!ת)"), word("אוטו(?!ב|סטר)"), word("שוכרים רכב"), /\b(car|rent a car|driving)\b/], { move: "car", label: "מתניידים ברכב" }),
@@ -129,14 +136,16 @@ Masa.intent = (() => {
       } else want.push(c);
     }
     w.wantText = want.join(", "); w.skipText = skip.join(", ");
+    const nohit = [];
     for (const c of clauses(text)) {
       const cn = c.toLowerCase();
+      let any = false;
       const beenHere = BEEN.test(c);
       for (const r of RULES) {
         let found = null;
         for (const re of r.re) { found = hit(cn, re); if (found) break; }
         if (!found) continue;
-        used(found.m);
+        used(found.m); any = true;
         // "כבר היינו בפארק גואל" is about one park, not about parks: only "כבר ראינו הרבה מוזיאונים" means less of a kind
         if (beenHere) {
           const mw = norm(found.m).split(" ").map(x => x.replace(/^[ובלמהשכ]{1,3}(?=[א-ת]{3})/, "")).filter(x => x.length >= 3);
@@ -150,17 +159,18 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "football", "fitness"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }
       for (const [he, en, keys] of CUISINES) {
         const f = hit(cn, word(he)) || hit(cn, new RegExp(`\\b${en}\\b`));
         if (!f) continue;
-        used(f.m);
+        used(f.m); any = true;
         (f.neg ? w.dislikeCuisine : w.likeCuisine).push(...keys);
         say(f.neg ? `בלי ${he}` : `מסעדות: ${he}`);
       }
+      if (!any) nohit.push(c);
     }
     // numbers of people: "אנחנו 4", "משפחה של 5", "זוג"
     const ppl = w.text.match(/(?:אנחנו|משפחה של|קבוצה של|we are|family of)\s*(\d{1,2})/i) || w.text.match(/(\d{1,2})\s*(?:אנשים|מבוגרים|חברים|נפשות|people|adults)/i);
@@ -212,7 +222,10 @@ Masa.intent = (() => {
     const rw = [...w.ruleWords].filter(x => x.length >= 4);
     w.skips = w.skips.filter(n => !norm(n).split(" ").every(x => FILL.has(x) || GENERIC.has(x) || w.ruleWords.has(x) || rw.some(r => x.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(r) || x.startsWith(r))));
     if (w.skips.length) say(`לא נכניס למסלול: ${w.skips.join(", ")}`);
-    w.empty = !w.labels.length && !w.asks.length && !w.hotelName && !w.skips.length;
+    // a sentence nothing above understood: the planner says so, unless it turns out to name a place
+    w.unread = nohit.filter(c => c.split(/\s+/).length >= 2 && !/\d/.test(c) && !BEEN.test(c) && !SKIP.test(c) && c.search(ASK) < 0 && !/מלון|hotel/i.test(c)
+      && !/^(?:אנחנו|אני|זוג|טסים|נוסעים|מגיעים|יש לנו|we are|we're|i am|i'm)(?=\s)/i.test(c));
+    w.empty = !w.unread.length && !w.labels.length && !w.asks.length && !w.hotelName && !w.skips.length;
     return w;
   }
 

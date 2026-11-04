@@ -987,9 +987,11 @@ function wishCard(t) {
   (w.labels || []).filter(l => !l.startsWith("לא נכניס")).slice(0, 6).forEach(l => rows.push(`<li>${ic("check", 2.6)}<span>${esc(l)}</span></li>`));
   if (w.skipped?.length) rows.push(`<li class="skip">${ic("minus", 2.6)}<span>לא במסלול, כמו שכתבתם: ${w.skipped.map(esc).join(", ")}</span></li>`);
   const miss = [...(w.missed || []).map(m => `לא מצאנו את „${esc(m)}" במפה של ${esc(t.city)}. אפשר לחפש אותו בשורת החיפוש למעלה ולהוסיף למסלול.`),
-    ...(w.hotelMissed ? [`לא מצאנו מלון בשם „${esc(w.hotelMissed)}". אפשר לבחור אותו בכרטיס המלון.`] : [])];
+    ...(w.hotelMissed ? [`לא מצאנו מלון בשם „${esc(w.hotelMissed)}". אפשר לבחור אותו בכרטיס המלון.`] : []),
+    ...(w.unread || []).map(c => `לא בטוח שהבנו: „${esc(c)}". אם זה חשוב, אפשר לנסח את זה אחרת לסוכן.`)];
+  const notFound = miss.length - (w.unread || []).length;
   if (!rows.length && !miss.length) return "";
-  return `<details class="wishcard"${miss.length ? " open" : ""}><summary><span>מה שביקשתם</span><small>${rows.length} דברים נכנסו למסלול${miss.length ? ` · ${miss.length} לא נמצאו` : ""}</small></summary>
+  return `<details class="wishcard"${miss.length ? " open" : ""}><summary><span>מה שביקשתם</span><small>${rows.length} דברים נכנסו למסלול${notFound ? ` · ${notFound} לא נמצאו` : ""}</small></summary>
     <ul>${rows.join("")}</ul>${miss.map(m => `<p class="miss">${ic("info")}<span>${m}</span></p>`).join("")}</details>`;
 }
 /* ================= changing the day on the spot ================= */
