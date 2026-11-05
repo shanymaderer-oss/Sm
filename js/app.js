@@ -382,6 +382,28 @@ function bindNudge() {
   $("nudgeIn").onclick = () => { track("prompt_tap", null, n); if (S.trip?.id) sset("masa-return-trip", S.trip.id); cloud.signIn(); };
   $("nudgeNo").onclick = () => { track("prompt_no", null, n); sset("masa-nudge", "no"); el.remove(); };
 }
+/* during the beta: a short question under the trip, so feedback comes from travelers who would not open the settings.
+   Not for the sample; once answered it does not come back for that trip; "not now" hides it for the session. */
+const askedKey = t => "masa-asked-" + (t.id || "");
+function askCard(t) {
+  if (!t || t.source === "sample" || !t.id || store.get(askedKey(t), false) || sget("masa-ask") === "no") return "";
+  return `<div class="card askcard" id="askCard"><h2>${ic("chat")} איך המסלול?</h2>
+    <p class="lead">מסע בגרסת ניסיון. משפט אחד מכם עוזר לנו לשפר: מה טוב, מה חסר, מה הפריע.</p>
+    <textarea id="askText" rows="2" maxlength="1500" aria-label="מה דעתכם על המסלול" placeholder="למשל: היום השני עמוס מדי, ואין מספיק מסעדות כשרות"></textarea>
+    <div class="chiprow"><button type="button" class="btn small" id="askSend">שליחה</button><button type="button" class="chipbtn" id="askNo">לא עכשיו</button></div>
+    <p class="status" id="askStatus" aria-live="polite"></p></div>`;
+}
+function bindAsk(t) {
+  if (!$("askCard")) return;
+  $("askNo").onclick = () => { sset("masa-ask", "no"); $("askCard").remove(); };
+  $("askSend").onclick = async () => {
+    const text = $("askText").value.trim();
+    if (text.length < 3) { $("askStatus").textContent = "כתבו כמה מילים, ואז שליחה."; $("askText").focus(); return; }
+    $("askSend").disabled = true;
+    try { await sendFeedback(text, "", "trip"); store.set(askedKey(t), true); $("askCard").innerHTML = `<p class="lead">${ic("check")} תודה! קיבלנו.</p>`; }
+    catch { $("askSend").disabled = false; $("askStatus").textContent = "לא הצלחנו לשלוח. בדקו את החיבור ונסו שוב."; }
+  };
+}
 function saveTrip(t) {
   if (t.source === "sample") return;
   const list = savedTrips().filter(x => x.id !== t.id);
@@ -841,8 +863,8 @@ function track(e, city, n, once) {
   if (once) { if (sentOnce.has(once)) return; sentOnce.add(once); }
   fsCreate("events", { e, city: city ? String(city).slice(0, 40) : null, n: Number.isFinite(n) ? Math.max(0, Math.min(30, n)) : null }).catch(() => {});
 }
-async function sendFeedback(text, contact) {
-  await fsCreate("feedback", { text: text.slice(0, 1500), contact: contact.slice(0, 120), screen: (S.prev || S.screen || "").slice(0, 30), city: (S.trip?.slug || S.trip?.cityEn || "").slice(0, 60) });
+async function sendFeedback(text, contact, where) {
+  await fsCreate("feedback", { text: text.slice(0, 1500), contact: contact.slice(0, 120), screen: (where || S.prev || S.screen || "").slice(0, 30), city: (S.trip?.slug || S.trip?.cityEn || "").slice(0, 60) });
   track("feedback");
 }
 /* English texts on a place page become Hebrew once, through the smart guide; the original stays for the source line */
@@ -1111,6 +1133,7 @@ SCREENS.plan = {
         ${s._added ? `<span class="tag new">הוספתם</span>` : s.notKosher ? `<span class="tag">לא מסומן כשר</span>` : s.booking?.needed ? `<span class="tag book">כדאי להזמין</span>` : "<span></span>"}</button>${S.edit ? editBar(t, d, s, i) : ""}`;
     }).join("")}</div>
     ${saveNudge(t)}
+    ${askCard(t)}
     ${ideas.length ? `<div class="ideas"><h2>נשאר לכם זמן היום? רעיונות בדרך</h2>
       ${ideas.map(n => `<div class="idea"><span class="ic" style="background:${cv(CATS[catOf(n)].c)}">${ic(catOf(n))}</span><span><b>${esc(n.name)}</b><small>ליד ${esc(n._near)} · ${esc(n.why)}</small></span><button type="button" class="btn small soft" data-add="${esc(n.name)}">${ic("plus")}הוספה</button></div>`).join("")}</div>` : ""}
     ${t.wish ? wishCard(t) : ""}${t.wish?.fitness ? fitnessCard(t) : ""}
@@ -1139,6 +1162,7 @@ SCREENS.plan = {
     $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
     bindNow();
     bindNudge();
+    bindAsk(t);
     bindAgent(t);
     bindTripTop();
   }
@@ -1191,6 +1215,24 @@ SCREENS.before = {
     document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
   }
 };
+/* when something breaks on a traveler's device: a short anonymous note to the owner screen (kept with the feedback,
+   screen "error"): what broke, on which screen, the kind of device. No text the traveler wrote, no addresses with
+   their details. At most 3 per visit, the same error once; never from tests or local work. */
+const errSent = new Set();
+function reportError(msg, src) {
+  try {
+    if (statsOff() || errSent.size >= 3 || navigator.webdriver || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
+    let m = String(msg || "").replace(/https?:\/\/[^\s)]+/g, u => u.split(/[?#]/)[0]).replace(/\s+/g, " ").slice(0, 300);
+    if (!m || /ResizeObserver|Script error\.?$|Load failed|Failed to fetch|NetworkError|network-request-failed|AbortError/i.test(m)) return;
+    const key = m.slice(0, 80); if (errSent.has(key)) return; errSent.add(key);
+    const ua = navigator.userAgent, dev = /iPhone|iPad/.test(ua) ? "iPhone/iPad" : /Android/.test(ua) ? "Android" : /Mac/.test(ua) ? "Mac" : /Windows/.test(ua) ? "Windows" : "אחר";
+    const br = /CriOS|Chrome/.test(ua) && !/Edg/.test(ua) ? "Chrome" : /Edg/.test(ua) ? "Edge" : /Firefox|FxiOS/.test(ua) ? "Firefox" : /Safari/.test(ua) ? "Safari" : "";
+    const where = (src || "").replace(/^.*\//, "").split(/[?#]/)[0].slice(0, 40);
+    fsCreate("feedback", { text: `תקלה: ${m}${where ? ` (${where})` : ""} · ${dev}${br ? " " + br : ""}`, screen: "error", city: (S.trip?.slug || S.trip?.cityEn || "").slice(0, 60) }).catch(() => {});
+  } catch {}
+}
+addEventListener("error", e => { if (e.error || e.message) reportError(e.message || e.error?.message, `${e.filename || ""}:${e.lineno || ""}`); });
+addEventListener("unhandledrejection", e => { const r = e.reason; reportError(r?.message || String(r || ""), (r?.stack || "").split("\n")[1]?.trim()); });
 /* the owner screen lives in js/admin.js, loaded when the owner opens it from the settings */
 let adminLoad = null, adminIn = false;
 function openAdmin() {

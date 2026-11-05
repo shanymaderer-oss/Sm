@@ -1041,3 +1041,7 @@ a.btn{text-decoration:none}
 .adminfb li{padding:10px;border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:4px}
 .adminfb p{margin:0;white-space:pre-wrap;line-height:1.5}
 .adminfb .linkbtn{align-self:flex-start}
+.card.askcard{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.card.askcard h2{margin:0}
+.card.askcard .lead{margin:0}
+.card.askcard textarea{width:100%;resize:vertical}

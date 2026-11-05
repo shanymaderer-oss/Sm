@@ -19,11 +19,11 @@
     st.loading = true; st.err = ""; U.rerenderKeepScroll();
     try {
       const [ev, fb] = await Promise.all([U.cloud.ownerRead("events", st.days), U.cloud.ownerRead("feedback", Math.max(st.days, 30))]);
-      st.ev = ev.filter(x => x.at && +x.at >= from()); st.fb = fb.filter(f => !isProbe(f)).sort((a, b) => (b.at || 0) - (a.at || 0));
+      st.ev = ev.filter(x => x.at && +x.at >= from()); st.fb = fb.filter(f => !isProbe(f) && f.at && +f.at >= from()).sort((a, b) => (b.at || 0) - (a.at || 0));
     } catch (e) { st.err = /permission|insufficient/i.test(String(e?.message || e)) ? "אין הרשאה. צריך לפרסם את כללי האבטחה החדשים ב-Firebase." : "לא הצלחנו לטעון. בדקו את החיבור ונסו שוב."; }
     st.loading = false; U.rerenderKeepScroll();
   }
-  const count = (e, f = () => true) => (st.ev || []).filter(x => x.e === e && f(x)).length;
+  const count = (e, f = () => true) => e === "feedback" ? (st.fb || []).filter(x => x.screen !== "error").length : (st.ev || []).filter(x => x.e === e && f(x)).length;
 
   function view() {
     const { esc, ic } = U;
@@ -37,7 +37,7 @@
     const brands = Object.entries((st.ev || []).filter(x => x.e === "book").reduce((m, x) => (m[x.city || "?"] = (m[x.city || "?"] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]);
     const days = []; for (let i = Math.min(st.days, 30) - 1; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5); days.push({ d, n: builds.filter(x => x.at && x.at.toDateString() === d.toDateString()).length }); }
     const max = Math.max(1, ...days.map(x => x.n));
-    const fbList = st.fb || [];
+    const fbList = (st.fb || []).filter(f => f.screen !== "error"), errList = (st.fb || []).filter(f => f.screen === "error");
     return `<div class="screen admin">${top}${seg}
       ${st.loading ? `<p class="status">מעדכנים…</p>` : ""}
       <div class="admingrid">${Object.entries(NAMES).map(([k, he]) => `<div class="card adminstat"><b>${count(k)}</b><span>${he}</span></div>`).join("")}</div>
@@ -48,7 +48,9 @@
       ${cities.length ? `<div class="card"><h2>${ic("pin")} הערים הכי מבוקשות</h2><ol class="adminlist">${cities.map(([c, n]) => `<li><span>${esc(c)}</span><b>${n}</b></li>`).join("")}</ol></div>` : ""}
       ${brands.length ? `<div class="card"><h2>${ic("ticket")} לחיצות על הזמנה לפי אתר</h2><ol class="adminlist">${brands.map(([c, n]) => `<li><span>${esc(c)}</span><b>${n}</b></li>`).join("")}</ol><p class="muted small">ההזמנות עצמן והעמלות מופיעות ב-Travelpayouts.</p></div>` : ""}
       <div class="card"><h2>${ic("chat")} משוב מהמשתמשים (${fbList.length})</h2>
-        ${fbList.length ? `<ul class="adminfb">${fbList.map(f => `<li><p>${esc(f.text || "")}</p><small class="muted">${esc(time(f.at))}${f.screen ? ` · מסך: ${esc(f.screen)}` : ""}${f.city ? ` · ${esc(f.city)}` : ""}${f.contact ? ` · ליצירת קשר: ${esc(f.contact)}` : ""}</small><button type="button" class="linkbtn" data-fbdel="${esc(f.id)}">מחיקה</button></li>`).join("")}</ul>` : `<p class="muted">עוד אין משוב${st.days < 30 ? " בחודש האחרון" : ""}.</p>`}</div>
+        ${fbList.length ? `<ul class="adminfb">${fbList.map(f => `<li><p>${esc(f.text || "")}</p><small class="muted">${esc(time(f.at))}${f.screen ? ` · ${f.screen === "trip" ? "מתחת לטיול" : `מסך: ${esc(f.screen)}`}` : ""}${f.city ? ` · ${esc(f.city)}` : ""}${f.contact ? ` · ליצירת קשר: ${esc(f.contact)}` : ""}</small><button type="button" class="linkbtn" data-fbdel="${esc(f.id)}">מחיקה</button></li>`).join("")}</ul>` : `<p class="muted">עוד אין משוב${st.days < 30 ? " בחודש האחרון" : ""}.</p>`}</div>
+      <div class="card"><h2>${ic("info")} תקלות אצל משתמשים (${errList.length})</h2>
+        ${errList.length ? `<ul class="adminfb">${errList.map(f => `<li><p>${esc(f.text || "")}</p><small class="muted">${esc(time(f.at))}${f.city ? ` · ${esc(f.city)}` : ""}</small><button type="button" class="linkbtn" data-fbdel="${esc(f.id)}">מחיקה</button></li>`).join("")}</ul><p class="muted small">נשלח אוטומטית כשמשהו נשבר במכשיר של מישהו, בלי פרטים אישיים. שלחו לי את זה ואתקן.</p>` : `<p class="muted">אין תקלות. 🎉</p>`}</div>
       <div class="card"><h2>${ic("clock")} מאיזה רגע סופרים</h2>
         <p class="muted">סופרים מ-${esc(time(new Date(from())))}. מה שהיה לפני זה (הבדיקות שלנו) לא מוצג.</p>
         <button type="button" class="chipbtn" id="adminFromNow">להתחיל לספור מעכשיו</button></div>
