@@ -9219,18 +9219,18 @@
   ]
  },
  "bordeaux": {
-  "at": "2026-11-03T12:05:07.750Z",
-  "seconds": 874,
+  "at": "2026-11-05T20:34:06.372Z",
+  "seconds": 574,
   "osm": {
    "sights": 66,
    "sights2": 42,
    "restaurants": 450,
    "cafes": 300,
-   "hotels": 101,
+   "hotels": 102,
    "shopping": 252,
    "diet": 10,
    "extra": 37,
-   "fitness": 0,
+   "fitness": 29,
    "landmarks": 13,
    "streets": 14
   },
@@ -9259,7 +9259,8 @@
    "diet": 1,
    "extra": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "fitness": 1
   },
   "streets": [
    "Rue Sainte-Catherine (74)",
@@ -9269,30 +9270,22 @@
    "Avenue de la Libération Charles de Gaulle (18)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 402ms",
-   "overpass-api.de ok 66 34900ms",
-   "overpass-api.de ok 42 25621ms",
-   "overpass-api.de HTTP 502 397ms",
-   "overpass-api.de ok 450 30736ms",
-   "overpass-api.de ok 300 34572ms",
-   "overpass-api.de ok 101 26874ms",
-   "overpass-api.de ok 252 43758ms",
-   "overpass-api.de HTTP 502 414ms",
-   "overpass-api.de ok 10 33615ms",
-   "overpass-api.de HTTP 502 372ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 37 33343ms",
-   "overpass-api.de HTTP 502 371ms",
-   "overpass-api.de HTTP 502 426ms",
-   "overpass-api.de HTTP 502 429ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de HTTP 502 423ms",
-   "overpass-api.de ok 13 51443ms",
-   "overpass-api.de HTTP 504 56945ms",
-   "overpass-api.de ok 576 53100ms",
+   "overpass-api.de ok 66 35166ms",
+   "overpass-api.de ok 42 35157ms",
+   "overpass-api.de ok 450 38730ms",
+   "overpass-api.de ok 300 27020ms",
+   "overpass-api.de ok 102 40343ms",
+   "overpass-api.de HTTP 502 393ms",
+   "overpass-api.de ok 252 34610ms",
+   "overpass-api.de ok 10 27019ms",
+   "overpass-api.de ok 37 31334ms",
+   "overpass-api.de ok 29 34416ms",
+   "overpass-api.de HTTP 504 49280ms",
+   "overpass-api.de HTTP 502 523ms",
+   "overpass-api.de ok 13 45966ms",
+   "overpass-api.de ok 576 40461ms",
    "streets: 576 shops",
-   "fame: 106 of 106"
+   "fame: 107 of 107"
   ]
  },
  "luxembourg": {
