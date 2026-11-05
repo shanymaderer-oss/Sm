@@ -29,6 +29,8 @@ Masa.intent = (() => {
     // food and diet
     // no restaurant in our data says gluten free (0 of 135 cities), so say that plainly instead of promising
     T([word("גלוטן"), word("צליאק"), /\b(gluten|celiac|coeliac)\b/], { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }, { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }),
+    // flight times do not move the day's stops yet, so say that plainly instead of building a full day in silence
+    T([word("נוחת\\S*"), word("נחית\\S*"), word("טס\\S* חזרה"), word("טיסת? חזר\\S*"), word("המרא\\S*"), /\b(we land|landing|flight back|fly back)\b/], { label: "שעות הטיסה: המסלול עוד לא מתחשב בהן, ביום הנחיתה וביום החזרה כדאי להוריד תחנות" }),
     T([word("סהרה"), /(?:^|\s)(?:רוצ\S*|לראות|טיול\S*|יום|לילה)\s+[בלה]{0,2}מדבר(?=[\s,.]|$)/], { label: "מדבר: רחוק מהעיר ולא נכנס למסלול, כדאי טיול יום מאורגן" }),
     T([word("צמחוני"), /\b(vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
     T([word("טבעוני"), word("ויגן"), /\bvegan\b/], { diet: "טבעוני", label: "אוכל טבעוני" }),
