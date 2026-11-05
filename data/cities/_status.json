@@ -8572,20 +8572,20 @@
   ]
  },
  "ho-chi-minh": {
-  "at": "2026-11-03T11:02:01.161Z",
-  "seconds": 527,
+  "at": "2026-11-05T19:55:50.368Z",
+  "seconds": 689,
   "osm": {
    "sights": 14,
    "sights2": 28,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
-   "shopping": 149,
+   "shopping": 148,
    "diet": 250,
    "extra": 18,
    "fitness": 15,
    "landmarks": 3,
-   "streets": 5
+   "streets": 7
   },
   "voyage": {
    "eat": 22,
@@ -8617,27 +8617,29 @@
   },
   "streets": [
    "Đường Nguyễn Trãi (69)",
-   "Đường Trần Hưng Ðạo (17)",
+   "Đường Trần Phú (26)",
+   "Đường Trần Hưng Ðạo (19)",
    "Đường Lê Hồng Phong (9)",
-   "Đường Phan Văn Trị (7)",
-   "Đường Nhiêu Tâm (7)"
+   "Đường Nhiêu Tâm (9)"
   ],
   "log": [
-   "overpass-api.de ok 14 43017ms",
-   "overpass-api.de ok 28 40670ms",
-   "overpass-api.de HTTP 502 349ms",
-   "overpass-api.de ok 450 36232ms",
-   "overpass-api.de ok 300 35309ms",
-   "overpass-api.de ok 350 31554ms",
-   "overpass-api.de ok 149 34731ms",
-   "overpass-api.de ok 250 32189ms",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de ok 18 45552ms",
-   "overpass-api.de HTTP 502 349ms",
-   "overpass-api.de ok 15 33832ms",
-   "overpass-api.de ok 3 40284ms",
-   "overpass-api.de ok 274 30517ms",
-   "streets: 274 shops",
+   "overpass-api.de ok 14 36692ms",
+   "overpass-api.de ok 28 46542ms",
+   "overpass-api.de ok 450 38269ms",
+   "overpass-api.de HTTP 504 47229ms",
+   "overpass-api.de ok 300 35083ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de HTTP 502 369ms",
+   "overpass-api.de ok 350 33225ms",
+   "overpass-api.de ok 148 52507ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de HTTP 504 48312ms",
+   "overpass-api.de ok 250 37957ms",
+   "overpass-api.de ok 18 33705ms",
+   "overpass-api.de ok 15 34779ms",
+   "overpass-api.de ok 3 43941ms",
+   "overpass-api.de ok 318 39380ms",
+   "streets: 318 shops",
    "fame: 34 of 34"
   ]
  },
