@@ -1530,8 +1530,8 @@
   ]
  },
  "batumi": {
-  "at": "2026-11-03T09:13:34.644Z",
-  "seconds": 476,
+  "at": "2026-11-05T18:01:30.063Z",
+  "seconds": 582,
   "osm": {
    "sights": 11,
    "sights2": 13,
@@ -1581,18 +1581,25 @@
    "ნიკოლოზ ბარათაშვილის ქუჩა (9)"
   ],
   "log": [
-   "overpass-api.de ok 11 36596ms",
-   "overpass-api.de ok 13 37487ms",
-   "overpass-api.de ok 125 33083ms",
-   "overpass-api.de ok 173 29935ms",
-   "overpass-api.de ok 228 34271ms",
-   "overpass-api.de ok 87 30521ms",
-   "overpass-api.de ok 3 36235ms",
-   "overpass-api.de ok 8 33117ms",
-   "overpass-api.de ok 4 31803ms",
-   "overpass-api.de HTTP 502 305ms",
-   "overpass-api.de ok 2 32305ms",
-   "overpass-api.de ok 188 39028ms",
+   "overpass-api.de HTTP 502 478ms",
+   "overpass-api.de ok 11 35046ms",
+   "overpass-api.de HTTP 502 446ms",
+   "overpass-api.de ok 13 31937ms",
+   "overpass-api.de HTTP 502 461ms",
+   "overpass-api.de HTTP 502 464ms",
+   "overpass-api.de ok 125 33451ms",
+   "overpass-api.de ok 173 40893ms",
+   "overpass-api.de HTTP 502 514ms",
+   "overpass-api.de ok 228 36403ms",
+   "overpass-api.de HTTP 502 448ms",
+   "overpass-api.de ok 87 40169ms",
+   "overpass-api.de ok 3 36165ms",
+   "overpass-api.de HTTP 502 456ms",
+   "overpass-api.de ok 8 34331ms",
+   "overpass-api.de ok 4 32652ms",
+   "overpass-api.de HTTP 502 479ms",
+   "overpass-api.de ok 2 35247ms",
+   "overpass-api.de ok 188 41578ms",
    "streets: 188 shops",
    "fame: 22 of 22"
   ]
