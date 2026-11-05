@@ -712,8 +712,8 @@
   ]
  },
  "lisbon": {
-  "at": "2026-11-03T09:13:15.645Z",
-  "seconds": 816,
+  "at": "2026-11-05T17:55:15.740Z",
+  "seconds": 808,
   "osm": {
    "sights": 267,
    "sights2": 99,
@@ -724,8 +724,7 @@
    "diet": 31,
    "extra": 110,
    "fitness": 24,
-   "landmarks": 0,
-   "streets": 14
+   "landmarks": 115
   },
   "voyage": {
    "eat": 62,
@@ -763,28 +762,25 @@
    "Rua da Prata (16)"
   ],
   "log": [
-   "overpass-api.de ok 267 38679ms",
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 99 47303ms",
-   "overpass-api.de ok 450 39966ms",
-   "overpass-api.de ok 300 44965ms",
-   "overpass-api.de ok 350 39872ms",
-   "overpass-api.de HTTP 502 392ms",
-   "overpass-api.de ok 300 38222ms",
-   "overpass-api.de HTTP 502 408ms",
-   "overpass-api.de ok 31 29835ms",
-   "overpass-api.de HTTP 502 420ms",
-   "overpass-api.de ok 110 44383ms",
-   "overpass-api.de HTTP 502 389ms",
-   "overpass-api.de ok 24 32591ms",
-   "overpass-api.de HTTP 502 407ms",
-   "overpass-api.de HTTP 502 402ms",
-   "overpass-api.de HTTP 502 403ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de ok 267 34306ms",
+   "overpass-api.de ok 99 47651ms",
+   "overpass-api.de ok 450 36257ms",
+   "overpass-api.de ok 300 38414ms",
+   "overpass-api.de ok 350 46365ms",
+   "overpass-api.de ok 300 43513ms",
+   "overpass-api.de ok 31 33328ms",
+   "overpass-api.de HTTP 502 447ms",
+   "overpass-api.de HTTP 502 442ms",
+   "overpass-api.de ok 110 34492ms",
+   "overpass-api.de ok 24 27908ms",
+   "overpass-api.de ok 115 42205ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de HTTP 502 426ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass.private.coffee timeout 60002ms",
    "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 519 30113ms",
-   "streets: 519 shops",
-   "kept 40 places from the last good data",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
    "fame: 444 of 444"
   ]
  },
