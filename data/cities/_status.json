@@ -394,8 +394,8 @@
   ]
  },
  "budapest": {
-  "at": "2026-11-03T08:53:21.749Z",
-  "seconds": 494,
+  "at": "2026-11-05T17:40:22.524Z",
+  "seconds": 549,
   "osm": {
    "sights": 198,
    "sights2": 211,
@@ -410,12 +410,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 104,
-   "drink": 66,
-   "buy": 74,
-   "see": 244,
-   "sleep": 76,
-   "withCoords": 598,
+   "eat": 75,
+   "drink": 28,
+   "buy": 71,
+   "see": 239,
+   "sleep": 68,
+   "withCoords": 502,
    "districts": 8
   },
   "wiki": {
@@ -445,20 +445,22 @@
    "Kossuth Lajos utca (20)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 688ms",
-   "overpass-api.de HTTP 502 492ms",
-   "overpass-api.de ok 198 26398ms",
-   "overpass-api.de ok 211 28002ms",
-   "overpass-api.de ok 450 28387ms",
-   "overpass-api.de ok 300 40123ms",
-   "overpass-api.de ok 350 33433ms",
-   "overpass-api.de ok 300 30434ms",
-   "overpass-api.de ok 43 35588ms",
-   "overpass-api.de ok 105 33306ms",
-   "overpass-api.de ok 68 28169ms",
-   "overpass-api.de ok 49 27024ms",
-   "overpass-api.de ok 951 39303ms",
-   "streets: 951 shops",
+   "overpass-api.de ok 198 38722ms",
+   "overpass-api.de ok 211 43051ms",
+   "overpass-api.de ok 450 33841ms",
+   "overpass-api.de ok 300 29141ms",
+   "overpass-api.de ok 350 32939ms",
+   "overpass-api.de HTTP 502 293ms",
+   "overpass-api.de ok 300 45790ms",
+   "overpass-api.de ok 43 29152ms",
+   "overpass-api.de HTTP 502 293ms",
+   "overpass-api.de ok 105 36290ms",
+   "overpass-api.de ok 68 36197ms",
+   "overpass-api.de ok 49 40412ms",
+   "overpass-api.de ok 948 28064ms",
+   "streets: 948 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
    "wikidata HTTP 429",
    "fame: 408 of 408"
   ]
