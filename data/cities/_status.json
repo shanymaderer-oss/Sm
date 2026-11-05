@@ -468,11 +468,11 @@
   ]
  },
  "vienna": {
-  "at": "2026-11-03T08:56:16.238Z",
-  "seconds": 649,
+  "at": "2026-11-05T17:43:32.400Z",
+  "seconds": 718,
   "osm": {
-   "sights": 658,
-   "sights2": 157,
+   "sights": 659,
+   "sights2": 159,
    "restaurants": 450,
    "cafes": 300,
    "hotels": 350,
@@ -484,12 +484,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 108,
-   "drink": 91,
-   "buy": 51,
-   "see": 115,
-   "sleep": 50,
-   "withCoords": 413,
+   "eat": 109,
+   "drink": 97,
+   "buy": 53,
+   "see": 105,
+   "sleep": 46,
+   "withCoords": 410,
    "districts": 8
   },
   "wiki": {
@@ -519,31 +519,29 @@
    "Kärntner Straße (25)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 607ms",
-   "overpass-api.de ok 658 36278ms",
-   "overpass-api.de ok 157 26955ms",
-   "overpass-api.de ok 450 29184ms",
-   "overpass-api.de ok 300 34626ms",
-   "overpass-api.de ok 350 32041ms",
-   "overpass-api.de HTTP 502 368ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de ok 300 32153ms",
-   "overpass-api.de HTTP 502 282ms",
-   "overpass-api.de ok 114 49482ms",
-   "overpass-api.de ok 200 38771ms",
-   "overpass-api.de ok 92 33933ms",
-   "overpass-api.de HTTP 502 370ms",
-   "overpass-api.de ok 150 34363ms",
-   "overpass-api.de ok 1218 33833ms",
-   "streets: 1218 shops",
+   "overpass-api.de ok 659 30952ms",
+   "overpass-api.de ok 159 33780ms",
+   "overpass-api.de ok 450 37685ms",
+   "overpass-api.de ok 300 34231ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 350 33405ms",
+   "overpass-api.de ok 300 37654ms",
+   "overpass-api.de HTTP 504 48175ms",
+   "overpass-api.de HTTP 502 398ms",
+   "overpass-api.de ok 114 54135ms",
+   "overpass-api.de ok 200 42317ms",
+   "overpass-api.de HTTP 502 402ms",
+   "overpass-api.de ok 92 40798ms",
+   "overpass-api.de ok 150 43443ms",
+   "overpass-api.de ok 1216 41952ms",
+   "streets: 1216 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 898 of 898"
+   "fame: 899 of 899"
   ]
  },
  "berlin": {
