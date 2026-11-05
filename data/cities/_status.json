@@ -1015,8 +1015,8 @@
   ]
  },
  "milan": {
-  "at": "2026-11-03T09:04:42.035Z",
-  "seconds": 667,
+  "at": "2026-11-05T17:51:18.177Z",
+  "seconds": 629,
   "osm": {
    "sights": 364,
    "sights2": 62,
@@ -1026,7 +1026,7 @@
    "shopping": 300,
    "diet": 36,
    "extra": 156,
-   "fitness": 42,
+   "fitness": 43,
    "landmarks": 84,
    "streets": 14
   },
@@ -1066,28 +1066,29 @@
    "Via Dante (31)"
   ],
   "log": [
-   "overpass-api.de ok 364 43562ms",
-   "overpass-api.de ok 62 31952ms",
-   "overpass-api.de ok 450 35892ms",
-   "overpass-api.de HTTP 502 435ms",
-   "overpass-api.de ok 300 28523ms",
-   "overpass-api.de ok 350 29897ms",
-   "overpass-api.de HTTP 502 430ms",
-   "overpass-api.de ok 300 33549ms",
-   "overpass-api.de ok 36 53993ms",
-   "overpass-api.de ok 156 45988ms",
-   "overpass-api.de HTTP 502 480ms",
-   "overpass-api.de ok 42 42411ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de ok 84 46742ms",
-   "overpass-api.de ok 1492 44477ms",
-   "streets: 1492 shops",
+   "overpass-api.de ok 364 39730ms",
+   "overpass-api.de HTTP 502 345ms",
+   "overpass-api.de ok 62 33973ms",
+   "overpass-api.de ok 450 30192ms",
+   "overpass-api.de ok 300 38477ms",
+   "overpass-api.de ok 350 28443ms",
+   "overpass-api.de ok 300 35526ms",
+   "overpass-api.de HTTP 502 292ms",
+   "overpass-api.de ok 36 42667ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 156 28038ms",
+   "overpass-api.de HTTP 502 297ms",
+   "overpass-api.de HTTP 502 349ms",
+   "overpass-api.de ok 43 46288ms",
+   "overpass-api.de ok 84 42887ms",
+   "overpass-api.de HTTP 502 345ms",
+   "overpass-api.de ok 1495 30337ms",
+   "streets: 1495 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 542 of 592"
+   "fame: 592 of 592"
   ]
  },
  "florence": {
