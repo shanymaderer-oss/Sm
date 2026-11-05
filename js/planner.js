@@ -1239,7 +1239,7 @@ Masa.planner = (() => {
     let dietRest = null;
     // a day is never left without lunch or dinner: when nothing is close, look a little farther (a short ride, the route says so)
     const wider = (anchor, far, extra) => nearBest(anyRestaurants, anchor, far * 2.5, extra) || nearBest(anyRestaurants, anchor, far * 5, extra);
-    const mealPick = (anchor, near, far, extra) => {
+    const mealPick = (anchor, near, far, extra, best) => {
       if (opts.diet && opts.diet !== "הכול") {
         dietRest = dietRest || anyRestaurants.filter(dietOk);
         const d = nearBest(dietRest, anchor, opts.diet === "כשר" ? 3.5 : 1.5, extra);
@@ -1248,7 +1248,7 @@ Masa.planner = (() => {
         if (any) any._dietMiss = true;
         return any;
       }
-      return nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra) || nearBest(anyRestaurants, anchor, far, extra) || wider(anchor, far, extra);
+      return (best && nearBest(picked, anchor, far, extra)) || nearBest(restaurants, anchor, near, extra) || nearBest(restaurants, anchor, far, extra) || nearBest(anyRestaurants, anchor, near, extra) || nearBest(anyRestaurants, anchor, far, extra) || wider(anchor, far, extra);
     };
     // named places that did not get a day of their own join the day whose main place is nearest
     const extraOf = anchors.map(() => []);
@@ -1362,6 +1362,8 @@ Masa.planner = (() => {
     const allRestaurants = by(["restaurant"]).filter(p => !p.brand && !CHAIN.test(p.local || ""));
     const restaurants = allRestaurants.filter(goodRest);
     const anyRestaurants = allRestaurants;
+    // the restaurants the smart guide knows to be good: dinner goes a little farther for one (budget trips eat simpler)
+    const picked = restaurants.filter(p => p.pick === "good" || (p.pick === "fine" && budget !== "חסכוני"));
     const cafes = by(["cafe", "bakery"]);
     const treats = by(["dessert", "market", "deli", "bakery"]); // "deli" only when asked (see avoid above)
     const kosherFood = opts.diet === "כשר" ? by(["cafe", "bakery", "dessert"]).filter(p => p.kosher && !p.brand) : null; // breakfast: places open in the morning
@@ -1426,7 +1428,7 @@ Masa.planner = (() => {
         if (tr && kosherFood && !tr.kosher && tr.kind !== "market" && !named.treat) tr._dietMiss = true;
         if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
       }
-      const dinner = named.dinner || mealPick(last, M.dinner[0], M.dinner[1], dinnerBoost);
+      const dinner = named.dinner || mealPick(last, M.dinner[0], M.dinner[1], dinnerBoost, true);
       if (dinner) list.push({ p: dinner, meal: "dinner" });
       if (wantNight) {
         const bar = named.drinks || (wish?.music && nearBest(bars.filter(b => JAZZ.test(placeText(b))), dinner || last, 6)) || nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
