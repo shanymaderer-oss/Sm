@@ -837,7 +837,7 @@ async function fsCreate(col, fields) {
 const sentOnce = new Set();
 function track(e, city, n, once) {
   if (statsOff()) return;
-  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && !window.MASA_STATS_TEST) return; // tests and local work are not counted
+  if ((/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || navigator.webdriver) && !window.MASA_STATS_TEST) return; // tests (also the automatic checks of the live site) and local work are not counted
   if (once) { if (sentOnce.has(once)) return; sentOnce.add(once); }
   fsCreate("events", { e, city: city ? String(city).slice(0, 40) : null, n: Number.isFinite(n) ? Math.max(0, Math.min(30, n)) : null }).catch(() => {});
 }
