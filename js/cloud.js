@@ -58,7 +58,7 @@ Masa.cloud = (() => {
   async function emuSignIn(sub, name) {
     await load();
     sub = sub || ls.get("masa-cloud-emu-user") || "tester";
-    const tok = JSON.stringify({ sub, email: `${sub}@example.com`, email_verified: true, name: name || sub });
+    const tok = JSON.stringify({ sub, email: ls.get("masa-cloud-emu-email") || `${sub}@example.com`, email_verified: true, name: name || sub });
     await F.signInWithCredential(auth, F.GoogleAuthProvider.credential(tok));
   }
   const b64json = s => JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/")))));
@@ -94,7 +94,7 @@ Masa.cloud = (() => {
     unsubTrips?.(); unsubTrips = null;
     if (!u) { S.user = null; S.status = "off"; emit(); return; }
     ls.set("masa-cloud-on", "1");
-    S.user = { uid: u.uid, name: (u.displayName || "").split(" ")[0] || "", fullName: u.displayName || "", photo: u.photoURL || "", email: u.email || "" };
+    S.user = { uid: u.uid, name: (u.displayName || "").split(" ")[0] || "", fullName: u.displayName || "", photo: u.photoURL || "", email: u.email || "", verified: !!u.emailVerified };
     S.status = "in"; S.error = null;
     emit();
     try { await syncProfile(); } catch {}
@@ -222,6 +222,16 @@ Masa.cloud = (() => {
     ls.set("masa-cloud-on", null);
   }
 
+  /* ---------- the owner screen: feedback and the anonymous counts (the rules let only the owner read them) ---------- */
+  const OWNER = "sivanmad7@gmail.com";
+  const isOwner = () => S.status === "in" && S.user?.verified && S.user.email === OWNER;
+  async function ownerRead(col, days) {
+    if (!isOwner()) throw new Error("owner");
+    const snap = await F.getDocs(F.query(F.collection(db, col), F.where("at", ">=", new Date(Date.now() - days * 864e5))));
+    return snap.docs.map(d => { const x = d.data(); return { ...x, id: d.id, at: x.at?.toDate ? x.at.toDate() : null }; });
+  }
+  async function ownerDelete(col, id) { if (!isOwner()) throw new Error("owner"); await F.deleteDoc(F.doc(db, col, id)); }
+
   /* ---------- start ---------- */
   async function init(h) {
     hooks = h;
@@ -236,7 +246,7 @@ Masa.cloud = (() => {
   }
 
   return {
-    get state() { return S; }, configured, pendingInvite: () => !!ss.get("masa-join"), init, signIn, signOut, deleteAccount, pushTrip, saveProfile, invite, join, leave, removeMember,
+    get state() { return S; }, configured, pendingInvite: () => !!ss.get("masa-join"), init, signIn, signOut, deleteAccount, pushTrip, saveProfile, invite, join, leave, removeMember, isOwner, ownerRead, ownerDelete,
     on: f => { listeners.add(f); return () => listeners.delete(f); }, _emuSignIn: emuSignIn
   };
 })();

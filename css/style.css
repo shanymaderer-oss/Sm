@@ -1024,3 +1024,20 @@ a.btn{text-decoration:none}
 .gateicon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
 .gateicon svg{width:26px;height:26px}
 .screen.gate .linkbtn{align-self:center}
+/* the owner screen */
+.screen.admin{display:flex;flex-direction:column;gap:12px}
+.admingrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.card.adminstat{padding:10px;display:flex;flex-direction:column;gap:2px;text-align:center}
+.card.adminstat b{font-size:1.4rem;font-variant-numeric:tabular-nums}
+.card.adminstat span{font-size:.75rem;color:var(--muted);line-height:1.3}
+.adminbars{display:flex;align-items:flex-end;gap:3px;height:110px;padding-top:6px}
+.adminbars span{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px}
+.adminbars i{display:block;width:100%;min-height:2px;border-radius:3px 3px 0 0;background:var(--primary)}
+.adminbars small{font-size:.65rem;color:var(--muted);font-variant-numeric:tabular-nums;min-height:.8rem}
+.adminlist{margin:0;padding:0;list-style:none}
+.adminlist li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.adminlist li:last-child{border-bottom:0}
+.adminfb{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.adminfb li{padding:10px;border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:4px}
+.adminfb p{margin:0;white-space:pre-wrap;line-height:1.5}
+.adminfb .linkbtn{align-self:flex-start}

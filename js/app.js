@@ -1191,6 +1191,25 @@ SCREENS.before = {
     document.querySelectorAll("[data-move]").forEach(b => b.onclick = () => { if ((S.trip.opts?.move || "walk") !== b.dataset.move) rebuildWith({ move: b.dataset.move }, { walk: "המסלול עכשיו ברגל: כל יום באזור אחד", transit: "המסלול עכשיו עם תחבורה ציבורית", car: "המסלול עכשיו ברכב: אפשר להגיע רחוק יותר" }[b.dataset.move]); });
   }
 };
+/* the owner screen lives in js/admin.js, loaded when the owner opens it from the settings */
+let adminLoad = null, adminIn = false;
+function openAdmin() {
+  adminLoad = adminLoad || new Promise(res => { const el = document.createElement("script"); el.src = "js/min/admin.js"; el.onload = el.onerror = () => res(); document.head.append(el); });
+  adminLoad.then(() => {
+    if (!Masa.admin) return toast("לא הצלחנו לפתוח. נסו שוב.");
+    if (!adminIn) { Masa.admin.install({ S, SCREENS, $, esc, ic, go, toast, rerenderKeepScroll, cloud }); adminIn = true; }
+    Masa.admin.reload(); go("admin");
+  });
+}
+/* a tap on a booking link of a partner (Travelpayouts redirect or Aviasales): one anonymous count, with the site's name */
+document.addEventListener("click", e => {
+  const a = e.target.closest?.("a[href]"); if (!a) return;
+  try {
+    const u = new URL(a.href);
+    const brand = u.hostname === "tp.media" ? new URL(u.searchParams.get("u") || "").hostname : /(^|\.)aviasales\.com$/.test(u.hostname) && u.searchParams.has("marker") ? u.hostname : "";
+    if (brand) track("book", brand.replace(/^www\./, ""));
+  } catch {}
+}, true);
 /* the packing list lives in js/pack.js, loaded when opened */
 let packLoad = null, packIn = false;
 function openPack() {
@@ -3054,7 +3073,7 @@ function accountCard() {
   const st = cloud.state, u = st.user;
   if (st.status === "in") return `<div class="card account"><h2>${u.photo ? `<img class="avatar" src="${esc(safeUrl(u.photo))}" alt="" referrerpolicy="no-referrer">` : ic("users")} ${esc(u.fullName || u.name || "החשבון שלי")}</h2>
       <p>הטיולים שלכם נשמרים בחשבון ומופיעים בכל מכשיר שמתחברים ממנו. ${u.email ? `<span class="muted">(${esc(u.email)})</span>` : ""}</p>
-      <div class="chiprow"><button type="button" class="chipbtn" id="accOut">התנתקות</button><button type="button" class="chipbtn" id="accDel">${ic("trash")}מחיקת החשבון והמידע</button></div>
+      <div class="chiprow"><button type="button" class="chipbtn" id="accOut">התנתקות</button><button type="button" class="chipbtn" id="accDel">${ic("trash")}מחיקת החשבון והמידע</button>${cloud.isOwner?.() ? `<button type="button" class="chipbtn" id="accAdmin">${ic("chart")}מסך מנהל</button>` : ""}</div>
       <div class="confirm" id="accDelAsk" hidden><span>למחוק את החשבון, את הטיולים שבחשבון ואת ההשתתפות בטיולים משותפים? בטיולים במכשיר הזה לא נוגעים.</span><button type="button" class="btn small coral" id="accDelYes">מחיקה</button><button type="button" class="btn small soft" id="accDelNo">ביטול</button></div></div>`;
   return `<div class="card account"><h2>${ic("users")} החשבון שלי</h2>
       <p>מתחברים עם Google כדי שהטיולים יישמרו גם אם מחליפים טלפון, יופיעו בכל מכשיר, ואפשר יהיה לתכנן טיול יחד עם המשפחה בזמן אמת.</p>
@@ -3065,6 +3084,7 @@ function bindAccount() {
   $("accIn") && ($("accIn").onclick = () => cloud.signIn());
   $("accOut") && ($("accOut").onclick = async () => { await cloud.signOut(); toast("התנתקתם. הטיולים נשארו במכשיר."); rerenderKeepScroll(); });
   $("accDel") && ($("accDel").onclick = () => { $("accDelAsk").hidden = false; });
+  $("accAdmin") && ($("accAdmin").onclick = openAdmin);
   $("accDelNo") && ($("accDelNo").onclick = () => { $("accDelAsk").hidden = true; });
   $("accDelYes") && ($("accDelYes").onclick = async () => {
     try { await cloud.deleteAccount(); toast("החשבון והמידע שבו נמחקו"); }

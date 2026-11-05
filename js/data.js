@@ -1,6 +1,8 @@
 /* מסע · data. Generated from the prototype, then extended. */
 window.MASA_DATA = (() => {
 const P = {
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
   down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
   play:'<rect x="3" y="5" width="18" height="14" rx="4"/><path d="M10 9.5v5l4.5-2.5z"/>',

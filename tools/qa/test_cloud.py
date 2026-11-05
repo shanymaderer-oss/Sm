@@ -11,9 +11,9 @@ def check(ok, what):
     print(("PASS " if ok else "FAIL ") + what)
     if not ok: FAILS.append(what)
 
-async def user(b, name):
+async def user(b, name, email=None):
     ctx = await b.new_context(viewport={"width": 400, "height": 860}, bypass_csp=True)
-    await ctx.add_init_script(f"localStorage.setItem('masa-cloud-emu','1'); localStorage.setItem('masa-cloud-emu-user','{name}');")
+    await ctx.add_init_script(f"localStorage.setItem('masa-cloud-emu','1'); localStorage.setItem('masa-cloud-emu-user','{name}');" + (f"localStorage.setItem('masa-cloud-emu-email','{email}');" if email else ""))
     async def r(route):
         u = route.request.url
         if u.startswith(URL) or u.startswith("http://localhost:9099") or u.startswith("http://localhost:8080"): return await route.continue_()
@@ -56,6 +56,28 @@ async def main():
         await d1.wait_for_selector(".triphero", timeout=30000)
         await d1.wait_for_function("JSON.parse(localStorage.getItem('masa-trips')||'[]')[0]?.cloudId", timeout=15000)
         check((await trips(d1))[0]["city"] == "פראג", "after signing in the trip is built by itself and saved to the account")
+
+        # the site's owner: the owner screen shows real feedback (not the daily probe) and the counts; nobody else sees it
+        import urllib.request
+        def seed(col, id_, fields):
+            body = json.dumps({"writes": [{"update": {"name": f"projects/demo-masa/databases/(default)/documents/{col}/{id_}", "fields": fields}, "currentDocument": {"exists": False}, "updateTransforms": [{"fieldPath": "at", "setToServerValue": "REQUEST_TIME"}]}]}).encode()
+            urllib.request.urlopen(urllib.request.Request("http://localhost:8080/v1/projects/demo-masa/databases/(default)/documents:commit", data=body, headers={"Content-Type": "application/json"})).read()
+        seed("feedback", "real1", {"text": {"stringValue": "המפה של פריז לא נטענה"}, "screen": {"stringValue": "plan"}})
+        seed("feedback", "probe123", {"text": {"stringValue": "בדיקה אוטומטית של שליחת משוב"}, "screen": {"stringValue": "probe"}})
+        seed("events", "ev1", {"e": {"stringValue": "build"}, "city": {"stringValue": "rome"}})
+        seed("events", "ev2", {"e": {"stringValue": "prompt_show"}, "n": {"integerValue": "3"}})
+        check(await d1.evaluate("!Masa.cloud.isOwner()"), "a traveler is not the owner")
+        _, own = await user(b, "owner", "sivanmad7@gmail.com")
+        await own.goto(URL + "/index.html"); await signed_in(own)
+        await own.click("#gearBtn"); await own.wait_for_selector("#accAdmin", timeout=10000)
+        await own.click("#accAdmin"); await own.wait_for_selector(".adminfb, .screen.admin .status", timeout=15000)
+        await own.wait_for_function("document.querySelector('.admingrid')", timeout=15000)
+        txt = await own.inner_text(".screen.admin")
+        check("המפה של פריז לא נטענה" in txt and "בדיקה אוטומטית" not in txt, "the owner screen shows real feedback, not the daily probe")
+        check("rome" in txt, "and the most wanted cities")
+        await own.click("[data-fbdel='real1']"); await own.wait_for_timeout(800)
+        check("המפה של פריז לא נטענה" not in await own.inner_text(".screen.admin"), "the owner can delete a feedback note")
+        check(not own.errs, f"no page errors on the owner screen {own.errs[:2]}")
 
         # Alice, second device: the trip arrives by itself
         _, a2 = await user(b, "alice")

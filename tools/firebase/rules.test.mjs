@@ -12,6 +12,7 @@ after(async () => { await env?.cleanup(); });
 beforeEach(async () => { await env.clearFirestore(); });
 
 const db = uid => (uid ? env.authenticatedContext(uid) : env.unauthenticatedContext()).firestore();
+const ownerDb = (email = "sivanmad7@gmail.com", verified = true) => env.authenticatedContext("owner1", { email, email_verified: verified }).firestore();
 const trip = (owner, extra = {}) => ({ owner, members: [owner], names: { [owner]: "Owner" }, data: "{}", fam: {}, updatedAt: serverTimestamp(), v: 1, ...extra });
 async function seedTrip(id = "T1", owner = "alice", members = [owner]) {
   await env.withSecurityRulesDisabled(async c => {
@@ -139,8 +140,22 @@ test("counts are anonymous, of known events only, and cannot be read", async () 
   await assertFails(setDoc(doc(db(null), "events", "e2"), { e: "build", city: "rome", uid: "alice", at: serverTimestamp() }));
   await assertFails(setDoc(doc(db(null), "events", "e3"), { e: "anything", at: serverTimestamp() }));
   await assertFails(setDoc(doc(db(null), "events", "e4"), { e: "build", n: 9999, at: serverTimestamp() }));
-  for (const e of ["flights", "prompt_show", "prompt_tap", "prompt_no"]) await assertSucceeds(setDoc(doc(db(null), "events", "p_" + e), { e, n: 1, at: serverTimestamp() }));
+  for (const e of ["flights", "prompt_show", "prompt_tap", "prompt_no", "book"]) await assertSucceeds(setDoc(doc(db(null), "events", "p_" + e), { e, n: 1, at: serverTimestamp() }));
   await assertFails(getDocs(collection(db("alice"), "events")));
+});
+test("only the site's owner (verified Google email) may read feedback and counts, and delete feedback", async () => {
+  await env.withSecurityRulesDisabled(async c => {
+    await setDoc(doc(c.firestore(), "feedback", "f1"), { text: "המפה לא נטענה", at: new Date() });
+    await setDoc(doc(c.firestore(), "events", "e1"), { e: "build", at: new Date() });
+  });
+  await assertSucceeds(getDocs(collection(ownerDb(), "feedback")));
+  await assertSucceeds(getDocs(query(collection(ownerDb(), "events"), where("at", ">=", new Date(2020, 0, 1)))));
+  await assertFails(updateDoc(doc(ownerDb(), "feedback", "f1"), { text: "changed" }));
+  await assertFails(getDocs(collection(ownerDb("someone@gmail.com"), "feedback")));
+  await assertFails(getDocs(collection(ownerDb("sivanmad7@gmail.com", false), "feedback")));
+  await assertFails(deleteDoc(doc(db("alice"), "feedback", "f1")));
+  await assertFails(deleteDoc(doc(ownerDb(), "events", "e1")));
+  await assertSucceeds(deleteDoc(doc(ownerDb(), "feedback", "f1")));
 });
 test("feedback sent the way the site sends it (REST commit with a server time) is accepted", async () => {
   const host = process.env.FIRESTORE_EMULATOR_HOST || "127.0.0.1:8080";
