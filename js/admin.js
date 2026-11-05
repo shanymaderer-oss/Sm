@@ -6,6 +6,10 @@
   "use strict";
   let U = null;
   const st = { days: 7, ev: null, fb: null, err: "", loading: false };
+  // counting starts here: what came before was our own testing (the owner can choose another start, kept on this device)
+  const FROM0 = Date.parse("2026-11-05T08:30:00Z");
+  const fromKey = "masa-admin-from";
+  const from = () => { try { return +localStorage.getItem(fromKey) || FROM0; } catch { return FROM0; } };
   const NAMES = { build: "טיולים שנבנו", signin: "התחברויות", book: "לחיצות על הזמנה", flights: "חיפושי טיסות", share_link: "שיתוף בקישור", share_image: "שיתוף כתמונה", kit_open: "פתיחת מסך ההזמנות", guide_ai: "שאלות לסוכן", feedback: "משובים" };
   const isProbe = f => /^probe/.test(f.id) || f.screen === "probe";
   const day = d => d ? `${d.getDate()}.${d.getMonth() + 1}` : "";
@@ -15,7 +19,7 @@
     st.loading = true; st.err = ""; U.rerenderKeepScroll();
     try {
       const [ev, fb] = await Promise.all([U.cloud.ownerRead("events", st.days), U.cloud.ownerRead("feedback", Math.max(st.days, 30))]);
-      st.ev = ev; st.fb = fb.filter(f => !isProbe(f)).sort((a, b) => (b.at || 0) - (a.at || 0));
+      st.ev = ev.filter(x => x.at && +x.at >= from()); st.fb = fb.filter(f => !isProbe(f)).sort((a, b) => (b.at || 0) - (a.at || 0));
     } catch (e) { st.err = /permission|insufficient/i.test(String(e?.message || e)) ? "אין הרשאה. צריך לפרסם את כללי האבטחה החדשים ב-Firebase." : "לא הצלחנו לטעון. בדקו את החיבור ונסו שוב."; }
     st.loading = false; U.rerenderKeepScroll();
   }
@@ -45,12 +49,16 @@
       ${brands.length ? `<div class="card"><h2>${ic("ticket")} לחיצות על הזמנה לפי אתר</h2><ol class="adminlist">${brands.map(([c, n]) => `<li><span>${esc(c)}</span><b>${n}</b></li>`).join("")}</ol><p class="muted small">ההזמנות עצמן והעמלות מופיעות ב-Travelpayouts.</p></div>` : ""}
       <div class="card"><h2>${ic("chat")} משוב מהמשתמשים (${fbList.length})</h2>
         ${fbList.length ? `<ul class="adminfb">${fbList.map(f => `<li><p>${esc(f.text || "")}</p><small class="muted">${esc(time(f.at))}${f.screen ? ` · מסך: ${esc(f.screen)}` : ""}${f.city ? ` · ${esc(f.city)}` : ""}${f.contact ? ` · ליצירת קשר: ${esc(f.contact)}` : ""}</small><button type="button" class="linkbtn" data-fbdel="${esc(f.id)}">מחיקה</button></li>`).join("")}</ul>` : `<p class="muted">עוד אין משוב${st.days < 30 ? " בחודש האחרון" : ""}.</p>`}</div>
+      <div class="card"><h2>${ic("clock")} מאיזה רגע סופרים</h2>
+        <p class="muted">סופרים מ-${esc(time(new Date(from())))}. מה שהיה לפני זה (הבדיקות שלנו) לא מוצג.</p>
+        <button type="button" class="chipbtn" id="adminFromNow">להתחיל לספור מעכשיו</button></div>
       <p class="muted small">הבדיקות האוטומטיות היומיות לא נספרות כאן. הספירות אנונימיות: בלי שמות ובלי מכשירים.</p>
     </div>`;
   }
   function bind() {
     U.$("backAdmin").onclick = () => U.go("settings");
     document.querySelectorAll("[data-days]").forEach(b => b.onclick = () => { st.days = +b.dataset.days; st.ev = null; load(); });
+    U.$("adminFromNow") && (U.$("adminFromNow").onclick = () => { try { localStorage.setItem(fromKey, String(Date.now())); } catch {} st.ev = null; load(); U.toast("מעכשיו סופרים מחדש"); });
     U.$("adminRetry") && (U.$("adminRetry").onclick = load);
     document.querySelectorAll("[data-fbdel]").forEach(b => b.onclick = async () => {
       try { await U.cloud.ownerDelete("feedback", b.dataset.fbdel); st.fb = st.fb.filter(f => f.id !== b.dataset.fbdel); U.rerenderKeepScroll(); U.toast("נמחק"); }
