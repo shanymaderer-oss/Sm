@@ -8398,8 +8398,8 @@
   ]
  },
  "marrakech": {
-  "at": "2026-11-03T10:52:54.094Z",
-  "seconds": 687,
+  "at": "2026-11-05T19:44:03.699Z",
+  "seconds": 570,
   "osm": {
    "sights": 16,
    "sights2": 36,
@@ -8427,7 +8427,7 @@
    "en": 52
   },
   "streetsV": 2,
-  "fameV": 0,
+  "fameV": 3,
   "qv": {
    "sights": 2,
    "sights2": 1,
@@ -8441,26 +8441,21 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de HTTP 504 50948ms",
-   "overpass-api.de ok 16 30966ms",
-   "overpass-api.de HTTP 502 294ms",
-   "overpass-api.de HTTP 502 297ms",
-   "overpass-api.de ok 36 27679ms",
-   "overpass-api.de ok 186 36892ms",
-   "overpass-api.de ok 83 44140ms",
-   "overpass-api.de ok 350 52266ms",
-   "overpass-api.de ok 42 37365ms",
-   "overpass-api.de HTTP 502 351ms",
-   "overpass-api.de ok 3 39479ms",
-   "overpass-api.de ok 9 32907ms",
-   "overpass-api.de HTTP 502 294ms",
-   "overpass-api.de HTTP 504 55863ms",
-   "overpass-api.de ok 4 27855ms",
-   "overpass-api.de ok 0 31053ms",
-   "overpass-api.de HTTP 502 347ms",
-   "overpass-api.de ok 30 37486ms",
+   "overpass-api.de HTTP 504 46127ms",
+   "overpass-api.de ok 16 37645ms",
+   "overpass-api.de ok 36 33491ms",
+   "overpass-api.de ok 186 37211ms",
+   "overpass-api.de ok 83 37903ms",
+   "overpass-api.de ok 350 55205ms",
+   "overpass-api.de HTTP 502 360ms",
+   "overpass-api.de ok 42 33073ms",
+   "overpass-api.de ok 3 36220ms",
+   "overpass-api.de ok 9 36089ms",
+   "overpass-api.de ok 4 29978ms",
+   "overpass-api.de ok 0 36562ms",
+   "overpass-api.de ok 30 40157ms",
    "streets: 30 shops",
-   "fame: 0 of 22"
+   "fame: 22 of 22"
   ]
  },
  "washington": {
