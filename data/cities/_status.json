@@ -7624,8 +7624,8 @@
   ]
  },
  "tirana": {
-  "at": "2026-11-03T10:50:45.494Z",
-  "seconds": 758,
+  "at": "2026-11-05T19:27:33.189Z",
+  "seconds": 545,
   "osm": {
    "sights": 28,
    "sights2": 20,
@@ -7636,7 +7636,7 @@
    "diet": 4,
    "extra": 14,
    "fitness": 9,
-   "landmarks": 0,
+   "landmarks": 7,
    "streets": 13
   },
   "voyage": {
@@ -7649,7 +7649,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 11,
    "en": 89
   },
   "streetsV": 2,
@@ -7675,26 +7675,23 @@
    "Rruga Xhanfize Keko (10)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 332ms",
-   "overpass-api.de ok 28 37495ms",
-   "overpass-api.de ok 20 35146ms",
-   "overpass-api.de ok 250 32891ms",
-   "overpass-api.de ok 300 44449ms",
-   "overpass-api.de ok 300 30322ms",
-   "overpass-api.de HTTP 502 318ms",
-   "overpass-api.de ok 284 36609ms",
-   "overpass-api.de HTTP 502 301ms",
-   "overpass-api.de ok 4 39226ms",
-   "overpass-api.de ok 14 33585ms",
-   "overpass-api.de ok 9 30995ms",
-   "overpass-api.de HTTP 502 297ms",
-   "overpass-api.de HTTP 502 312ms",
-   "overpass-api.de HTTP 502 317ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60002ms",
-   "overpass-api.de ok 293 43350ms",
+   "overpass-api.de HTTP 502 519ms",
+   "overpass-api.de ok 28 31181ms",
+   "overpass-api.de HTTP 502 519ms",
+   "overpass-api.de HTTP 502 533ms",
+   "overpass-api.de ok 20 33444ms",
+   "overpass-api.de ok 250 49109ms",
+   "overpass-api.de ok 300 32164ms",
+   "overpass-api.de ok 300 40544ms",
+   "overpass-api.de ok 284 53765ms",
+   "overpass-api.de ok 4 34836ms",
+   "overpass-api.de ok 14 34507ms",
+   "overpass-api.de HTTP 502 460ms",
+   "overpass-api.de ok 9 30730ms",
+   "overpass-api.de ok 7 28250ms",
+   "overpass-api.de ok 293 32506ms",
    "streets: 293 shops",
-   "fame: 59 of 59"
+   "fame: 63 of 63"
   ]
  },
  "osaka": {
