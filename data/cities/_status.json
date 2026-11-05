@@ -1670,8 +1670,8 @@
   ]
  },
  "larnaca": {
-  "at": "2026-11-03T09:21:45.969Z",
-  "seconds": 556,
+  "at": "2026-11-05T18:03:46.376Z",
+  "seconds": 506,
   "osm": {
    "sights": 11,
    "sights2": 13,
@@ -1721,20 +1721,20 @@
    "Archiepiskopou Kyprianou Avenue (6)"
   ],
   "log": [
-   "overpass-api.de ok 11 39892ms",
-   "overpass-api.de ok 13 31174ms",
-   "overpass-api.de ok 73 31297ms",
-   "overpass-api.de HTTP 504 52549ms",
-   "overpass-api.de ok 85 38739ms",
-   "overpass-api.de HTTP 502 281ms",
-   "overpass-api.de ok 61 41601ms",
-   "overpass-api.de ok 27 32597ms",
-   "overpass-api.de ok 1 33856ms",
-   "overpass-api.de ok 9 35535ms",
-   "overpass-api.de ok 5 36534ms",
-   "overpass-api.de HTTP 502 364ms",
-   "overpass-api.de ok 2 31937ms",
-   "overpass-api.de ok 172 27873ms",
+   "overpass-api.de ok 11 33834ms",
+   "overpass-api.de ok 13 27978ms",
+   "overpass-api.de ok 73 40115ms",
+   "overpass-api.de ok 85 38323ms",
+   "overpass-api.de ok 61 27048ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 27 34609ms",
+   "overpass-api.de ok 1 30366ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de ok 9 33667ms",
+   "overpass-api.de ok 5 33310ms",
+   "overpass-api.de ok 2 44257ms",
+   "overpass-api.de ok 172 30785ms",
    "streets: 172 shops",
    "fame: 22 of 22"
   ]
