@@ -3460,8 +3460,8 @@
   ]
  },
  "geneva": {
-  "at": "2026-11-03T10:03:25.496Z",
-  "seconds": 579,
+  "at": "2026-11-05T18:58:13.690Z",
+  "seconds": 515,
   "osm": {
    "sights": 102,
    "sights2": 45,
@@ -3507,24 +3507,20 @@
    "Rue de Carouge (9)"
   ],
   "log": [
-   "overpass-api.de ok 102 33284ms",
-   "overpass-api.de HTTP 502 338ms",
-   "overpass-api.de ok 45 21858ms",
-   "overpass-api.de ok 450 40140ms",
-   "overpass-api.de ok 231 45404ms",
-   "overpass-api.de HTTP 502 294ms",
-   "overpass-api.de ok 109 48170ms",
-   "overpass-api.de ok 206 45125ms",
-   "overpass-api.de ok 11 31176ms",
-   "overpass-api.de ok 83 34533ms",
-   "overpass-api.de HTTP 502 349ms",
-   "overpass-api.de ok 34 45442ms",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 54 47613ms",
-   "overpass-api.de HTTP 502 295ms",
-   "overpass-api.de ok 150 36485ms",
+   "overpass-api.de ok 102 33277ms",
+   "overpass-api.de ok 45 38629ms",
+   "overpass-api.de HTTP 502 439ms",
+   "overpass-api.de ok 450 37065ms",
+   "overpass-api.de ok 231 45944ms",
+   "overpass-api.de ok 109 42478ms",
+   "overpass-api.de ok 206 35997ms",
+   "overpass-api.de ok 11 33174ms",
+   "overpass-api.de ok 83 32784ms",
+   "overpass-api.de ok 34 30708ms",
+   "overpass-api.de ok 54 43901ms",
+   "overpass-api.de ok 150 34417ms",
    "streets: 150 shops",
-   "fame: 130 of 180"
+   "fame: 180 of 180"
   ]
  },
  "brussels": {
