@@ -2359,8 +2359,8 @@
   ]
  },
  "bucharest": {
-  "at": "2026-11-03T09:33:47.765Z",
-  "seconds": 591,
+  "at": "2026-11-05T18:25:25.857Z",
+  "seconds": 556,
   "osm": {
    "sights": 102,
    "sights2": 76,
@@ -2384,7 +2384,7 @@
    "districts": 0
   },
   "wiki": {
-   "he": 0,
+   "he": 41,
    "en": 100
   },
   "streetsV": 2,
@@ -2410,25 +2410,21 @@
    "Strada Lipscani (20)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de ok 102 36167ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de HTTP 502 433ms",
-   "overpass-api.de ok 76 43845ms",
-   "overpass-api.de ok 294 30408ms",
-   "overpass-api.de HTTP 502 431ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de ok 252 43313ms",
-   "overpass-api.de HTTP 502 487ms",
-   "overpass-api.de ok 191 25372ms",
-   "overpass-api.de ok 193 37249ms",
-   "overpass-api.de HTTP 502 432ms",
-   "overpass-api.de HTTP 502 489ms",
-   "overpass-api.de ok 11 32073ms",
-   "overpass-api.de ok 70 42006ms",
-   "overpass-api.de ok 10 33567ms",
-   "overpass-api.de ok 21 25542ms",
-   "overpass-api.de ok 337 31341ms",
+   "overpass-api.de ok 102 39301ms",
+   "overpass-api.de ok 76 34556ms",
+   "overpass-api.de ok 294 36175ms",
+   "overpass-api.de HTTP 502 383ms",
+   "overpass-api.de HTTP 502 385ms",
+   "overpass-api.de ok 252 37358ms",
+   "overpass-api.de ok 191 33173ms",
+   "overpass-api.de ok 193 35235ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de ok 11 37459ms",
+   "overpass-api.de HTTP 502 418ms",
+   "overpass-api.de ok 70 39072ms",
+   "overpass-api.de ok 10 39142ms",
+   "overpass-api.de ok 21 39209ms",
+   "overpass-api.de ok 337 37366ms",
    "streets: 337 shops",
    "fame: 171 of 171"
   ]
