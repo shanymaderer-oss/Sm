@@ -6743,8 +6743,8 @@
   ]
  },
  "helsinki": {
-  "at": "2026-11-03T10:01:18.372Z",
-  "seconds": 585,
+  "at": "2026-11-05T18:45:35.983Z",
+  "seconds": 653,
   "osm": {
    "sights": 127,
    "sights2": 89,
@@ -6759,16 +6759,16 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 160,
-   "drink": 86,
-   "buy": 61,
+   "eat": 174,
+   "drink": 106,
+   "buy": 70,
    "see": 93,
-   "sleep": 50,
-   "withCoords": 503,
+   "sleep": 53,
+   "withCoords": 557,
    "districts": 8
   },
   "wiki": {
-   "he": 0,
+   "he": 21,
    "en": 100
   },
   "streetsV": 2,
@@ -6794,27 +6794,30 @@
    "Korkeavuorenkatu (21)"
   ],
   "log": [
-   "overpass-api.de ok 127 26858ms",
-   "overpass-api.de ok 89 38362ms",
-   "overpass-api.de ok 450 30323ms",
-   "overpass-api.de ok 239 32510ms",
-   "overpass-api.de ok 83 32165ms",
-   "overpass-api.de ok 286 27724ms",
-   "overpass-api.de ok 25 37196ms",
-   "overpass-api.de HTTP 502 354ms",
-   "overpass-api.de ok 107 42479ms",
-   "overpass-api.de ok 46 55282ms",
-   "overpass-api.de HTTP 502 296ms",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 35 31302ms",
-   "overpass-api.de HTTP 502 358ms",
-   "overpass-api.de HTTP 502 297ms",
-   "overpass-api.de ok 506 28227ms",
+   "overpass-api.de ok 127 39038ms",
+   "overpass-api.de ok 89 46004ms",
+   "overpass-api.de ok 450 29637ms",
+   "overpass-api.de HTTP 502 549ms",
+   "overpass-api.de HTTP 502 476ms",
+   "overpass-api.de ok 239 42244ms",
+   "overpass-api.de ok 83 32781ms",
+   "overpass-api.de HTTP 502 554ms",
+   "overpass-api.de ok 286 29564ms",
+   "overpass-api.de ok 25 39057ms",
+   "overpass-api.de ok 107 37598ms",
+   "overpass-api.de ok 46 31675ms",
+   "overpass-api.de HTTP 502 520ms",
+   "overpass-api.de ok 35 31189ms",
+   "overpass-api.de HTTP 502 560ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de ok 506 35568ms",
    "streets: 506 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "fame: 265 of 265"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 215 of 265"
   ]
  },
  "zagreb": {
