@@ -8728,8 +8728,8 @@
   ]
  },
  "vancouver": {
-  "at": "2026-11-03T11:25:29.333Z",
-  "seconds": 645,
+  "at": "2026-11-05T19:59:05.783Z",
+  "seconds": 609,
   "osm": {
    "sights": 41,
    "sights2": 36,
@@ -8744,12 +8744,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 63,
+   "eat": 77,
    "drink": 26,
-   "buy": 35,
-   "see": 46,
-   "sleep": 27,
-   "withCoords": 203,
+   "buy": 41,
+   "see": 52,
+   "sleep": 47,
+   "withCoords": 248,
    "districts": 8
   },
   "wiki": {
@@ -8779,27 +8779,28 @@
    "Water Street (24)"
   ],
   "log": [
-   "overpass-api.de ok 41 57302ms",
-   "overpass-api.de ok 36 41601ms",
-   "overpass-api.de HTTP 502 300ms",
-   "overpass-api.de ok 450 35861ms",
-   "overpass-api.de ok 300 32197ms",
-   "overpass-api.de HTTP 502 351ms",
-   "overpass-api.de ok 107 43286ms",
-   "overpass-api.de ok 179 33962ms",
-   "overpass-api.de ok 48 32293ms",
-   "overpass-api.de ok 35 36780ms",
-   "overpass-api.de ok 65 44812ms",
-   "overpass-api.de ok 6 40631ms",
-   "overpass-api.de HTTP 502 351ms",
-   "overpass-api.de ok 597 43298ms",
+   "overpass-api.de ok 41 29966ms",
+   "overpass-api.de ok 36 36957ms",
+   "overpass-api.de ok 450 35820ms",
+   "overpass-api.de ok 300 46685ms",
+   "overpass-api.de ok 107 38176ms",
+   "overpass-api.de ok 179 31622ms",
+   "overpass-api.de ok 48 35012ms",
+   "overpass-api.de HTTP 502 458ms",
+   "overpass-api.de ok 35 47891ms",
+   "overpass-api.de HTTP 502 459ms",
+   "overpass-api.de HTTP 502 454ms",
+   "overpass-api.de ok 65 35766ms",
+   "overpass-api.de HTTP 502 560ms",
+   "overpass-api.de HTTP 502 555ms",
+   "overpass-api.de ok 6 26453ms",
+   "overpass-api.de ok 597 28033ms",
    "streets: 597 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 83 of 133"
+   "fame: 133 of 133"
   ]
  },
  "cancun": {
