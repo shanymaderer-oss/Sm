@@ -7467,8 +7467,8 @@
   ]
  },
  "singapore": {
-  "at": "2026-11-05T19:40:17.062Z",
-  "seconds": 799,
+  "at": "2026-11-06T16:00:09.736Z",
+  "seconds": 482,
   "osm": {
    "sights": 42,
    "sights2": 87,
@@ -7479,7 +7479,8 @@
    "diet": 65,
    "extra": 76,
    "fitness": 66,
-   "landmarks": 19
+   "landmarks": 19,
+   "streets": 10
   },
   "voyage": {
    "eat": 98,
@@ -7517,26 +7518,21 @@
    "North Bridge Road (7)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 298ms",
-   "overpass-api.de HTTP 502 350ms",
-   "overpass-api.de ok 42 37057ms",
-   "overpass-api.de ok 87 37243ms",
-   "overpass-api.de ok 450 36197ms",
-   "overpass-api.de ok 300 42531ms",
-   "overpass-api.de ok 350 30493ms",
-   "overpass-api.de ok 300 33668ms",
-   "overpass-api.de ok 65 37195ms",
-   "overpass-api.de HTTP 502 293ms",
-   "overpass-api.de ok 76 37627ms",
-   "overpass-api.de ok 66 29982ms",
-   "overpass-api.de ok 19 38299ms",
-   "overpass-api.de HTTP 502 348ms",
-   "overpass-api.de HTTP 502 298ms",
-   "overpass-api.de HTTP 502 294ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
+   "overpass-api.de ok 42 35025ms",
+   "overpass-api.de ok 87 32770ms",
+   "overpass-api.de ok 450 29731ms",
+   "overpass-api.de ok 300 31129ms",
+   "overpass-api.de ok 350 35083ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 300 31908ms",
+   "overpass-api.de ok 65 28727ms",
+   "overpass-api.de HTTP 502 359ms",
+   "overpass-api.de ok 76 23712ms",
+   "overpass-api.de ok 66 33066ms",
+   "overpass-api.de ok 19 35242ms",
+   "overpass-api.de HTTP 502 364ms",
+   "overpass-api.de ok 367 33420ms",
+   "streets: 367 shops",
    "wikidata HTTP 429",
    "fame: 174 of 174"
   ]
