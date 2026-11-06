@@ -5969,8 +5969,8 @@
   ]
  },
  "melbourne": {
-  "at": "2026-11-05T20:21:25.823Z",
-  "seconds": 597,
+  "at": "2026-11-06T16:41:12.227Z",
+  "seconds": 584,
   "osm": {
    "sights": 48,
    "sights2": 86,
@@ -5985,12 +5985,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 72,
-   "drink": 38,
-   "buy": 50,
+   "eat": 71,
+   "drink": 40,
+   "buy": 46,
    "see": 91,
-   "sleep": 37,
-   "withCoords": 283,
+   "sleep": 39,
+   "withCoords": 284,
    "districts": 8
   },
   "wiki": {
@@ -6020,27 +6020,26 @@
    "Bourke Street (15)"
   ],
   "log": [
-   "overpass-api.de ok 48 40506ms",
-   "overpass-api.de ok 86 47889ms",
-   "overpass-api.de ok 450 38758ms",
-   "overpass-api.de ok 300 31700ms",
-   "overpass-api.de ok 220 35019ms",
-   "overpass-api.de ok 300 35530ms",
-   "overpass-api.de ok 41 29801ms",
-   "overpass-api.de ok 56 33035ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de HTTP 502 417ms",
-   "overpass-api.de ok 46 32594ms",
-   "overpass-api.de ok 23 31570ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 447 30785ms",
-   "streets: 447 shops",
+   "overpass-api.de ok 48 31899ms",
+   "overpass-api.de ok 86 36483ms",
+   "overpass-api.de ok 450 29360ms",
+   "overpass-api.de HTTP 502 309ms",
+   "overpass-api.de HTTP 502 388ms",
+   "overpass-api.de ok 300 25882ms",
+   "overpass-api.de ok 220 35676ms",
+   "overpass-api.de ok 300 39756ms",
+   "overpass-api.de HTTP 502 315ms",
+   "overpass-api.de ok 41 43749ms",
+   "overpass-api.de ok 56 24631ms",
+   "overpass-api.de ok 46 50698ms",
+   "overpass-api.de ok 23 42047ms",
+   "overpass-api.de ok 446 37551ms",
+   "streets: 446 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 82 of 132"
+   "fame: 132 of 132"
   ]
  },
  "marseille": {
