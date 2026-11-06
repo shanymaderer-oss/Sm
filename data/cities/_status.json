@@ -9179,8 +9179,8 @@
   ]
  },
  "cape-town": {
-  "at": "2026-11-05T20:22:51.637Z",
-  "seconds": 497,
+  "at": "2026-11-06T16:29:07.875Z",
+  "seconds": 510,
   "osm": {
    "sights": 43,
    "sights2": 33,
@@ -9226,18 +9226,20 @@
    "Regent Road (8)"
   ],
   "log": [
-   "overpass-api.de ok 43 37190ms",
-   "overpass-api.de ok 33 47341ms",
-   "overpass-api.de ok 226 26597ms",
-   "overpass-api.de ok 107 23255ms",
-   "overpass-api.de ok 222 42523ms",
-   "overpass-api.de ok 85 32931ms",
-   "overpass-api.de ok 7 29131ms",
-   "overpass-api.de HTTP 502 360ms",
-   "overpass-api.de ok 33 37703ms",
-   "overpass-api.de ok 11 39516ms",
-   "overpass-api.de ok 4 43882ms",
-   "overpass-api.de ok 44 32212ms",
+   "overpass-api.de ok 43 36232ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 33 37770ms",
+   "overpass-api.de ok 226 30395ms",
+   "overpass-api.de ok 107 42143ms",
+   "overpass-api.de ok 222 31413ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 85 24250ms",
+   "overpass-api.de ok 7 37231ms",
+   "overpass-api.de HTTP 502 417ms",
+   "overpass-api.de ok 33 38222ms",
+   "overpass-api.de ok 11 35529ms",
+   "overpass-api.de ok 4 40951ms",
+   "overpass-api.de ok 44 30392ms",
    "streets: 44 shops",
    "fame: 117 of 117"
   ]
