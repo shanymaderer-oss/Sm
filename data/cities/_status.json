@@ -6198,8 +6198,8 @@
   ]
  },
  "corfu": {
-  "at": "2026-11-05T20:38:35.579Z",
-  "seconds": 793,
+  "at": "2026-11-06T17:05:02.601Z",
+  "seconds": 516,
   "osm": {
    "sights": 42,
    "sights2": 9,
@@ -6208,7 +6208,7 @@
    "hotels": 20,
    "shopping": 23,
    "diet": 2,
-   "extra": 0,
+   "extra": 25,
    "fitness": 1,
    "landmarks": 5,
    "streets": 1
@@ -6245,26 +6245,18 @@
    "Ιωάννου Θεοτόκη (6)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 476ms",
-   "overpass-api.de ok 42 33114ms",
-   "overpass-api.de HTTP 502 529ms",
-   "overpass-api.de ok 9 34388ms",
-   "overpass-api.de ok 63 34882ms",
-   "overpass-api.de HTTP 502 528ms",
-   "overpass-api.de ok 71 26568ms",
-   "overpass-api.de ok 20 48007ms",
-   "overpass-api.de ok 23 41050ms",
-   "overpass-api.de ok 2 39472ms",
-   "overpass-api.de HTTP 502 775ms",
-   "overpass-api.de HTTP 502 476ms",
-   "overpass-api.de HTTP 502 560ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60001ms",
-   "overpass-api.de ok 1 49871ms",
-   "overpass-api.de ok 5 34036ms",
-   "overpass-api.de ok 18 56037ms",
+   "overpass-api.de ok 42 44959ms",
+   "overpass-api.de ok 9 48198ms",
+   "overpass-api.de ok 63 23559ms",
+   "overpass-api.de ok 71 34922ms",
+   "overpass-api.de ok 20 41807ms",
+   "overpass-api.de ok 23 36648ms",
+   "overpass-api.de ok 2 33265ms",
+   "overpass-api.de ok 25 40066ms",
+   "overpass-api.de ok 1 46102ms",
+   "overpass-api.de ok 5 32365ms",
+   "overpass-api.de ok 18 42389ms",
    "streets: 18 shops",
-   "kept 22 places from the last good data",
    "fame: 61 of 61"
   ]
  },
