@@ -9434,8 +9434,8 @@
   ]
  },
  "luxembourg": {
-  "at": "2026-11-05T20:27:46.437Z",
-  "seconds": 523,
+  "at": "2026-11-06T17:11:57.558Z",
+  "seconds": 551,
   "osm": {
    "sights": 56,
    "sights2": 23,
@@ -9485,19 +9485,22 @@
    "Rue Philippe II (6)"
   ],
   "log": [
-   "overpass-api.de ok 56 28454ms",
-   "overpass-api.de ok 23 37650ms",
-   "overpass-api.de ok 220 39998ms",
-   "overpass-api.de HTTP 502 452ms",
-   "overpass-api.de ok 81 39706ms",
-   "overpass-api.de ok 62 47343ms",
-   "overpass-api.de HTTP 502 513ms",
-   "overpass-api.de ok 140 34349ms",
-   "overpass-api.de ok 12 29491ms",
-   "overpass-api.de ok 31 36743ms",
-   "overpass-api.de ok 11 32964ms",
-   "overpass-api.de ok 33 40481ms",
-   "overpass-api.de ok 116 40239ms",
+   "overpass-api.de ok 56 28081ms",
+   "overpass-api.de ok 23 24129ms",
+   "overpass-api.de HTTP 504 52392ms",
+   "overpass-api.de ok 220 38148ms",
+   "overpass-api.de ok 81 29674ms",
+   "overpass-api.de HTTP 502 346ms",
+   "overpass-api.de ok 62 41869ms",
+   "overpass-api.de HTTP 502 346ms",
+   "overpass-api.de ok 140 28803ms",
+   "overpass-api.de HTTP 502 346ms",
+   "overpass-api.de ok 12 29475ms",
+   "overpass-api.de ok 31 36060ms",
+   "overpass-api.de ok 11 32075ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 33 28035ms",
+   "overpass-api.de ok 116 37066ms",
    "streets: 116 shops",
    "fame: 138 of 138"
   ]
