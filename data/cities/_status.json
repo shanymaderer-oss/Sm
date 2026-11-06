@@ -1954,8 +1954,8 @@
   ]
  },
  "nice": {
-  "at": "2026-11-05T18:15:36.938Z",
-  "seconds": 526,
+  "at": "2026-11-06T14:37:07.324Z",
+  "seconds": 504,
   "osm": {
    "sights": 50,
    "sights2": 19,
@@ -2002,19 +2002,19 @@
    "Avenue Notre-Dame (7)"
   ],
   "log": [
-   "overpass-api.de ok 50 27094ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 19 43724ms",
-   "overpass-api.de ok 450 36906ms",
-   "overpass-api.de ok 300 43227ms",
-   "overpass-api.de ok 177 33506ms",
-   "overpass-api.de ok 168 37648ms",
-   "overpass-api.de ok 11 27439ms",
-   "overpass-api.de ok 71 39836ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de ok 19 48199ms",
-   "overpass-api.de ok 5 41013ms",
-   "overpass-api.de ok 121 31837ms",
+   "overpass-api.de ok 50 38643ms",
+   "overpass-api.de ok 19 28904ms",
+   "overpass-api.de ok 450 40037ms",
+   "overpass-api.de ok 300 28705ms",
+   "overpass-api.de ok 177 37313ms",
+   "overpass-api.de ok 168 40159ms",
+   "overpass-api.de ok 11 30644ms",
+   "overpass-api.de HTTP 502 392ms",
+   "overpass-api.de HTTP 502 380ms",
+   "overpass-api.de ok 71 34591ms",
+   "overpass-api.de ok 19 29693ms",
+   "overpass-api.de ok 5 31586ms",
+   "overpass-api.de ok 121 38567ms",
    "streets: 121 shops",
    "fame: 145 of 145"
   ]
