@@ -2691,8 +2691,8 @@
   ]
  },
  "dublin": {
-  "at": "2026-11-05T18:35:17.916Z",
-  "seconds": 552,
+  "at": "2026-11-06T14:36:58.905Z",
+  "seconds": 526,
   "osm": {
    "sights": 80,
    "sights2": 54,
@@ -2742,22 +2742,22 @@
    "Mary Street (12)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 438ms",
-   "overpass-api.de ok 80 33758ms",
-   "overpass-api.de HTTP 502 443ms",
-   "overpass-api.de ok 54 43862ms",
+   "overpass-api.de ok 80 34864ms",
+   "overpass-api.de ok 54 33063ms",
+   "overpass-api.de HTTP 502 422ms",
+   "overpass-api.de ok 408 34361ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de ok 300 30273ms",
+   "overpass-api.de ok 258 31241ms",
+   "overpass-api.de ok 300 34683ms",
+   "overpass-api.de HTTP 502 374ms",
+   "overpass-api.de ok 16 32376ms",
+   "overpass-api.de HTTP 502 374ms",
    "overpass-api.de HTTP 502 436ms",
-   "overpass-api.de ok 408 29062ms",
-   "overpass-api.de ok 300 34901ms",
-   "overpass-api.de HTTP 502 439ms",
-   "overpass-api.de ok 258 43100ms",
-   "overpass-api.de ok 300 43897ms",
-   "overpass-api.de ok 16 29805ms",
-   "overpass-api.de ok 57 35352ms",
-   "overpass-api.de HTTP 502 444ms",
-   "overpass-api.de ok 61 43337ms",
-   "overpass-api.de ok 24 32916ms",
-   "overpass-api.de ok 484 31718ms",
+   "overpass-api.de ok 57 33684ms",
+   "overpass-api.de ok 61 36018ms",
+   "overpass-api.de ok 24 32302ms",
+   "overpass-api.de ok 484 33681ms",
    "streets: 484 shops",
    "fame: 213 of 213"
   ]
