@@ -2355,23 +2355,6 @@ function replaceStop(p) {
   toast(`${p.name} נכנס/ה במקום ${old.name}`);
   go("place");
 }
-function replaceStopOld(p) {
-  const R2 = S.replace, d = S.trip.days[R2.day], old = d?.stops[R2.stop];
-  if (!old) { S.replace = null; return; }
-  const ns = { ...old, name: p.name, local: p.local || p.name, kind: p.kind, kindHe: planner.KIND[p.kind]?.he, cat: p.cat || "food", lat: +p.lat, lng: +p.lng, osm: p.id,
-    cuisine: p.cuisine || null, priceClass: p.priceClass || null, price: p.price || null, mich: p.mich || 0, wheel: p.wheel || null, signals: p.signals || [], hours: p.hours || null, phone: p.phone || null,
-    address: p.address || null, website: p.website || null, why: p.vtext || planner.KIND[p.kind]?.he || "", whyLang: p.vtext ? "en" : "he", history: "", image: null, wikidata: null, nearby: [], tip: "", _added: true,
-    booking: { needed: false, steps: [p.hours ? `שעות פתיחה: ${p.hours}` : "בודקים שעות פתיחה בגוגל מפות.", p.website ? "אפשר לבדוק באתר אם יש הזמנת שולחן." : "בערב במקומות מבוקשים כדאי להתקשר ולהזמין."], query: `${p.local || p.name} reservation`, url: p.website || null } };
-  d.stops[R2.stop] = ns;
-  d.route = null; d.legs = null;
-  planner.assignTimes(d);
-  S.replace = null;
-  saveEdit();
-  S.day = R2.day; S.stop = R2.stop;
-  toast(`${p.name} נכנס/ה במקום ${old.name}`);
-  go("place");
-  planner.computeRoute(d).then(() => { if (S.trip?.days.includes(d)) { renderMap(); if (["plan", "place"].includes(S.screen)) rerenderKeepScroll(); } });
-}
 function addPlace(p, dayIdx = S.day) {
   addToDay({ ...p, why: p.vtext || planner.KIND[p.kind]?.he || "", osm: p.id }, dayIdx);
   const d = S.trip.days[dayIdx], st = d.stops.find(s => s.name === p.name);
