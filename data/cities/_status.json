@@ -2829,8 +2829,8 @@
   ]
  },
  "copenhagen": {
-  "at": "2026-11-05T18:37:38.444Z",
-  "seconds": 593,
+  "at": "2026-11-06T14:58:23.620Z",
+  "seconds": 639,
   "osm": {
    "sights": 133,
    "sights2": 58,
@@ -2854,7 +2854,7 @@
    "districts": 8
   },
   "wiki": {
-   "he": 35,
+   "he": 36,
    "en": 100
   },
   "streetsV": 2,
@@ -2873,25 +2873,29 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 133 34269ms",
-   "overpass-api.de ok 58 41418ms",
-   "overpass-api.de ok 424 42166ms",
-   "overpass-api.de ok 300 32728ms",
-   "overpass-api.de ok 130 41012ms",
-   "overpass-api.de ok 300 28712ms",
-   "overpass-api.de HTTP 502 345ms",
-   "overpass-api.de ok 19 43480ms",
-   "overpass-api.de ok 121 35248ms",
-   "overpass-api.de ok 31 33664ms",
-   "overpass-api.de ok 98 39759ms",
-   "overpass-api.de ok 0 32163ms",
+   "overpass-api.de HTTP 502 284ms",
+   "overpass-api.de ok 133 40775ms",
+   "overpass-api.de ok 58 42703ms",
+   "overpass-api.de ok 424 40707ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de HTTP 502 281ms",
+   "overpass-api.de ok 300 34590ms",
+   "overpass-api.de HTTP 502 358ms",
+   "overpass-api.de ok 130 33420ms",
+   "overpass-api.de HTTP 502 293ms",
+   "overpass-api.de ok 300 37672ms",
+   "overpass-api.de ok 19 39414ms",
+   "overpass-api.de HTTP 502 285ms",
+   "overpass-api.de ok 121 25140ms",
+   "overpass-api.de ok 31 42245ms",
+   "overpass-api.de ok 98 37265ms",
+   "overpass-api.de ok 0 40550ms",
    "streets: 0 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 344 of 394"
+   "fame: 394 of 394"
   ]
  },
  "seville": {
