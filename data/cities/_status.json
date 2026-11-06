@@ -2097,8 +2097,8 @@
   ]
  },
  "dubai": {
-  "at": "2026-11-05T18:25:45.814Z",
-  "seconds": 539,
+  "at": "2026-11-06T14:27:54.399Z",
+  "seconds": 481,
   "osm": {
    "sights": 12,
    "sights2": 14,
@@ -2147,25 +2147,21 @@
    "Jumeira Street (7)"
   ],
   "log": [
-   "overpass-api.de ok 12 27076ms",
-   "overpass-api.de ok 14 48298ms",
-   "overpass-api.de ok 182 32397ms",
-   "overpass-api.de HTTP 502 440ms",
-   "overpass-api.de ok 90 34222ms",
-   "overpass-api.de ok 112 32640ms",
-   "overpass-api.de ok 58 42903ms",
-   "overpass-api.de ok 13 39231ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 12 29545ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de HTTP 502 434ms",
-   "overpass-api.de ok 4 34600ms",
-   "overpass-api.de HTTP 502 440ms",
-   "overpass-api.de ok 1 27817ms",
-   "overpass-api.de HTTP 502 360ms",
-   "overpass-api.de ok 196 25612ms",
+   "overpass-api.de ok 12 32478ms",
+   "overpass-api.de ok 14 23937ms",
+   "overpass-api.de ok 182 35853ms",
+   "overpass-api.de ok 90 36181ms",
+   "overpass-api.de ok 112 28938ms",
+   "overpass-api.de ok 58 43562ms",
+   "overpass-api.de HTTP 502 398ms",
+   "overpass-api.de ok 13 38859ms",
+   "overpass-api.de HTTP 502 380ms",
+   "overpass-api.de ok 12 41823ms",
+   "overpass-api.de ok 4 30890ms",
+   "overpass-api.de ok 1 26382ms",
+   "overpass-api.de ok 196 29100ms",
    "streets: 196 shops",
-   "fame: 67 of 67"
+   "fame: 68 of 68"
   ]
  },
  "krakow": {
