@@ -23,12 +23,14 @@ Masa.intent = (() => {
     // who is coming
     T([word("ילד"), word("ילדים"), word("תינוק"), word("פעוט"), word("משפחה"), word("משפחתי"), /\b(kids?|children|family|toddler|baby)\b/], { add: ["family"], kids: true, label: "עם ילדים: פארקים, גני חיות ופחות שעות במוזיאונים" }),
     T([word("עגל(?:ה|ת)"), word("טיולון"), /\bstroller|pram\b/], { mobility: "stroller", label: "עם עגלה: מקומות נגישים ופחות מדרגות" }),
-    T([word("כיסא גלגלים"), word("כסא גלגלים"), word("נכה"), word("נגיש"), /\bwheelchair\b/], { mobility: "wheelchair", label: "כיסא גלגלים: מקומות נגישים בלבד כשאפשר" }),
+    T([word("כיסא גלגלים"), word("כסא גלגלים"), word("נכה"), word("נגיש"), /\bwheelchair\b/], { mobility: "wheelchair", label: "כיסא גלגלים: על רבים אין לנו מידע, כדאי לוודא" }),
     T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("לא הרבה הליכה"), word("הורים מבוגרים"), word("אנשים מבוגרים"), word("קשישים"), word("גיל הזהב"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
     T([word("ירח דבש"), word("רומנטי"), word("יום נישואין"), word("זוגי"), /\b(honeymoon|romantic|anniversary)\b/], { romantic: true, boost: { view: 3, dessert: 2 }, label: "טיול זוגי: תצפיות, שקיעות וארוחת ערב טובה" }),
     // food and diet
     // no restaurant in our data says gluten free (0 of 135 cities), so say that plainly instead of promising
     T([word("גלוטן"), word("צליאק"), /\b(gluten|celiac|coeliac)\b/], { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }, { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }),
+    // same for halal: no data on the restaurants, and a steakhouse can stay in the trip
+    T(word("חלאל"), { label: "חלאל: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }, { label: "חלאל: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }),
     // flight times do not move the day's stops yet, so say that plainly instead of building a full day in silence
     T([word("נוחת\\S*"), word("נחית\\S*"), word("טס\\S* חזרה"), word("טיסת? חזר\\S*"), word("המרא\\S*"), /\b(we land|landing|flight back|fly back)\b/], { label: "שעות הטיסה: המסלול עוד לא מתחשב בהן, ביום הנחיתה וביום החזרה כדאי להוריד תחנות" }),
     T([word("סהרה"), /(?:^|\s)(?:רוצ\S*|לראות|טיול\S*|יום|לילה)\s+[בלה]{0,2}מדבר(?=[\s,.]|$)/], { label: "מדבר: רחוק מהעיר ולא נכנס למסלול, כדאי טיול יום מאורגן" }),
@@ -81,8 +83,10 @@ Masa.intent = (() => {
     T([word("רכב(?!ת)"), word("אוטו(?!ב|סטר)"), word("שוכרים רכב"), /\b(car|rent a car|driving)\b/], { move: "car", label: "מתניידים ברכב" }),
     T([word("תחבורה ציבורית"), word("מטרו"), word("רכבת תחתית"), word("אוטובוס"), /\b(metro|subway|public transport|bus)\b/], { move: "transit", label: "תחבורה ציבורית" }),
     T([word("ברגל"), word("ללכת ברגל"), /\bon foot|walking\b/], { move: "walk", label: "הכול ברגל" }),
+    // crowds are not a place to leave out, and we have no data on them
+    T(word("(?:לא \\S+|בלי) (?:תיירים|תורים)"), { label: "אין לנו מידע על עומס" }),
     T([word("קמים מאוחר"), word("לא מוקדם"), word("לישון עד מאוחר"), word("בלי השכמות"), /\b(sleep in|late start|not early)\b/], { start: 600, label: "מתחילים את היום ב-10:00" }),
-    T([word("קמים מוקדם"), word("להתחיל מוקדם"), word("מוקדם בבוקר"), /\b(early start|early bird)\b/], { start: 480, label: "מתחילים את היום ב-8:00" })
+    T([word("קמים מוקדם"), word("להתחיל מוקדם"), word("מוקדם בבוקר"), /\b(early start|early bird)\b/], { start: 480, label: "מתחילים את היום ב-8:00: קודם הרוב סגור" })
   ];
   const CUISINES = [
     ["פיצה", "pizza", ["pizza"]], ["סושי", "sushi", ["sushi"]], ["ראמן", "ramen", ["ramen", "noodle"]], ["המבורגר", "burger", ["burger"]],
@@ -99,7 +103,7 @@ Masa.intent = (() => {
      and a kind of place there ("כבר היינו בהרבה מוזיאונים") counts as "less of it" */
   const BEEN = /(?:^|\s)(?:ו?כבר\s+(?:\S+\s+)?(?:היינו|הייתי|ראינו|ראיתי|ביקרנו|ביקרתי|עשינו|עשיתי|הלכנו|טיילנו|עלינו|נכנסנו)|(?:היינו|הייתי|ראינו|ראיתי|ביקרנו|ביקרתי|עשינו)\s+כבר|(?:have|we've|i've|already)\s+(?:been|seen|visited|done|saw)|been\s+to)(?=\s|$)/i;
   const SKIP = /(?:^|\s)(?:ו?לא\s+(?:רוצ\S*|צריכ\S*|צריך|מעוניינ\S*|מתעניינ\S*|אוהב\S*|בא\s+(?:לנו|לי))(?:\s+(?:לראות|לבקר|ללכת|להגיע|לעלות|להיכנס|לעשות))?|ו?בלי|ו?ללא|חוץ\s+מ|לדלג\s+על|לוותר\s+על|תוותר\S*\s+על|תוריד\S*|don'?t\s+want|no|skip|except|not)(?=\s|$)/i;
-  const FILL = new Set("בלי ללא לא את הרבה מספיק יותר פחות כל מדי שום דבר דברים מקומות מקום אתרים תורים עוד too many much more any".split(" "));
+  const FILL = new Set("בלי ללא לא את הרבה מספיק יותר פחות כל מדי שום דבר דברים מקומות מקום אתרים תורים תיירים עוד too many much more any".split(" "));
   /* the names in "את X ואת Y": "כיכר ואצלב" and "מוזיאון ואן גוך" stay one name */
   function splitNames(part) {
     part = part.split(/\s+(?:כי|אבל|גם|ובערב|בערב|ביום|ואז|but|because)\s/)[0].trim().replace(/^(?:את|the)\s+/i, "");
