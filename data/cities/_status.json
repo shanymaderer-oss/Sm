@@ -6132,8 +6132,8 @@
   ]
  },
  "valletta": {
-  "at": "2026-11-05T20:46:29.016Z",
-  "seconds": 548,
+  "at": "2026-11-06T17:00:03.842Z",
+  "seconds": 520,
   "osm": {
    "sights": 80,
    "sights2": 36,
@@ -6183,21 +6183,22 @@
    "Triq Manwel Dimech (6)"
   ],
   "log": [
-   "overpass-api.de ok 80 37639ms",
-   "overpass-api.de ok 36 48153ms",
-   "overpass-api.de HTTP 502 350ms",
-   "overpass-api.de ok 214 30398ms",
-   "overpass-api.de ok 89 35548ms",
-   "overpass-api.de HTTP 502 298ms",
-   "overpass-api.de ok 154 40337ms",
-   "overpass-api.de ok 116 36227ms",
-   "overpass-api.de ok 2 29851ms",
-   "overpass-api.de HTTP 502 298ms",
-   "overpass-api.de ok 52 25685ms",
-   "overpass-api.de HTTP 502 349ms",
-   "overpass-api.de ok 6 39977ms",
-   "overpass-api.de ok 11 39649ms",
-   "overpass-api.de ok 111 47329ms",
+   "overpass-api.de HTTP 502 547ms",
+   "overpass-api.de HTTP 502 355ms",
+   "overpass-api.de ok 80 23481ms",
+   "overpass-api.de ok 36 38328ms",
+   "overpass-api.de ok 214 26302ms",
+   "overpass-api.de HTTP 502 358ms",
+   "overpass-api.de ok 89 33284ms",
+   "overpass-api.de ok 154 40546ms",
+   "overpass-api.de ok 116 30741ms",
+   "overpass-api.de HTTP 502 358ms",
+   "overpass-api.de ok 2 27387ms",
+   "overpass-api.de ok 52 35399ms",
+   "overpass-api.de ok 6 42970ms",
+   "overpass-api.de ok 11 36473ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 111 28107ms",
    "streets: 111 shops",
    "fame: 166 of 166"
   ]
