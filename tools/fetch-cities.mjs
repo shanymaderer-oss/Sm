@@ -144,7 +144,7 @@ async function doCity(c) {
   const got = prev?.fame && st0?.fameV === FAME_V && !els.length ? prev.fame : await getFame(allEls, log, prev?.voyage || []);
   const before = old?.fame?.n || {};
   const fame = Object.keys(got.n).length < Object.keys(before).length ? { n: { ...before, ...got.n }, he: { ...(old.fame.he || {}), ...got.he } } : got;
-  const data = { city: c, fetchedAt: prev ? prev.fetchedAt : new Date().toISOString(), els: allEls, streets, fame, voyage: v.list, wiki: { he, en }, ...((prev || old)?.picks ? { picks: (prev || old).picks, picksV: (prev || old).picksV } : {}) }; // the restaurant picks (tools/ai-picks.mjs) stay
+  const data = { city: c, fetchedAt: prev ? prev.fetchedAt : new Date().toISOString(), els: allEls, streets, fame, voyage: v.list, wiki: { he, en } };
   const by = t => v.list.filter(x => x.type === t).length;
   status[c.slug] = { at: data.fetchedAt, seconds: Math.round((Date.now() - t0) / 1000) + (prev ? st0.seconds || 0 : 0), osm: counts,
     voyage: prev ? st0.voyage : { eat: by("eat"), drink: by("drink"), buy: by("buy"), see: by("see"), sleep: by("sleep"), withCoords: v.list.filter(x => x.lat).length, districts: v.districts.length },

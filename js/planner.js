@@ -977,7 +977,9 @@ Masa.planner = (() => {
   /* a light index of a ready city's named places, for showing which named places were recognized while the traveler types */
   /* a ready city's file is fetched once per visit and shared: the wishes preview, the build and a rebuild all use it */
   const READY = {};
-  const readyCity = slug => READY[slug] || (READY[slug] = svc.getJSON(`data/cities/${slug}.json`, {}, 15000).then(d => { if (!d?.els?.length) throw new Error("empty"); return d; }).catch(e => { delete READY[slug]; throw e; }));
+  // the city's places, and the restaurants the smart guide knows to be good (data/picks, made by tools/ai-picks.mjs; optional)
+  const readyCity = slug => READY[slug] || (READY[slug] = Promise.all([svc.getJSON(`data/cities/${slug}.json`, {}, 15000), svc.getJSON(`data/picks/${slug}.json`, {}, 8000).catch(() => null)])
+    .then(([d, pk]) => { if (!d?.els?.length) throw new Error("empty"); if (pk?.picks && typeof pk.picks === "object") d.picks = pk.picks; return d; }).catch(e => { delete READY[slug]; throw e; }));
   /* start loading while the traveler is still choosing (called when a destination is picked) */
   const prefetch = q => { const c = CITIES.findCity(q || ""); if (c) readyCity(c.slug).catch(() => {}); loadTA(); };
   let HEN = null;

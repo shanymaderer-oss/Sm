@@ -1,10 +1,11 @@
 // The restaurants worth recommending in each ready city, chosen once by the smart guide (Gemini) from the city's own
 // list of real restaurants (OpenStreetMap): the ones known to be good (in the Michelin Guide, on critics' lists, local
 // institutions, consistently loved). It only picks from the list, never adds a place, and leaves out what it is unsure
-// of. Saved as "picks" in data/cities/<slug>.json ({ "node/123": "fine" | "good" }); fetch-cities.mjs keeps them.
+// of. Saved in data/picks/<slug>.json ({ v, at, picks: { "node/123": "fine" | "good" } }), apart from the city data so
+// the daily city refresh never touches them; the planner reads both.
 // Usage: GEMINI_KEY=… node tools/ai-picks.mjs [slug …]   (no slugs: every ready city without picks of this version)
 // Run by .github/workflows/ai-picks.yml, which commits each city as it is done.
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
@@ -53,21 +54,20 @@ async function city(c) {
     .map(e => ({ id: `${e.type}/${e.id}`, name: e.tags["name:en"] && e.tags["name:en"] !== e.tags.name ? `${e.tags.name} (${e.tags["name:en"]})` : e.tags.name, cuisine: (e.tags.cuisine || "").replace(/;/g, ", ").slice(0, 40), street: (e.tags["addr:street"] || "").slice(0, 40) }));
   if (list.length < 5) return { picks: {}, n: list.length };
   const picks = {};
-  for (let s = 0; s < list.length; s += 120) {
-    const chunk = list.slice(s, s + 120);
+  for (let s = 0; s < list.length; s += 160) {
+    const chunk = list.slice(s, s + 160);
     const got = await ask(`${c.en || c.slug} (${(c.cc || "").toUpperCase()})`, chunk);
     for (const p of got) picks[chunk[p.i].id] = p.tier;
     await sleep(4500); // the free tier allows about 15 requests a minute
   }
-  // re-read before writing: the city refresh may have written this file meanwhile
-  const now = JSON.parse(readFileSync(path, "utf8"));
-  now.picks = picks; now.picksV = PICKS_V;
-  writeFileSync(path, JSON.stringify(now));
+  mkdirSync("data/picks", { recursive: true });
+  writeFileSync(`data/picks/${c.slug}.json`, JSON.stringify({ v: PICKS_V, at: new Date().toISOString().slice(0, 10), picks }));
   return { picks, n: list.length };
 }
 
 const want = process.argv.slice(2);
-const todo = CITIES.filter(c => want.length ? want.includes(c.slug) : (() => { try { return JSON.parse(readFileSync(`data/cities/${c.slug}.json`, "utf8")).picksV !== PICKS_V; } catch { return false; } })());
+const done = slug => { try { return JSON.parse(readFileSync(`data/picks/${slug}.json`, "utf8")).v === PICKS_V; } catch { return false; } };
+const todo = CITIES.filter(c => existsSync(`data/cities/${c.slug}.json`) && (want.length ? want.includes(c.slug) : !done(c.slug)));
 console.log(`cities: ${todo.length}`);
 for (const c of todo) {
   try {
@@ -76,8 +76,9 @@ for (const c of todo) {
     const fine = Object.values(r.picks).filter(t => t === "fine").length, good = Object.values(r.picks).length - fine;
     console.log(`${c.slug}: ${r.n} restaurants → ${fine} fine, ${good} good`);
     if (process.env.COMMIT_EACH) {
-      execSync(`git add data/cities/${c.slug}.json && git commit -qm "בחירת מסעדות: ${c.slug}" || true`, { stdio: "inherit" });
-      for (let a = 0; a < 5; a++) { try { execSync("git pull -q --rebase && git push -q", { stdio: "inherit" }); break; } catch { await sleep(5000 * (a + 1)); } }
+      execSync(`git add data/picks/${c.slug}.json && git commit -qm "בחירת מסעדות: ${c.slug}" || true`, { stdio: "inherit" });
+      // only our own file changes, so a rebase on the city refresh's commits never conflicts
+      for (let a = 0; a < 5; a++) { try { execSync("git pull -q --rebase && git push -q", { stdio: "inherit" }); break; } catch { try { execSync("git rebase --abort", { stdio: "ignore" }); } catch {} await sleep(5000 * (a + 1)); } }
     }
   } catch (e) { console.log(`${c.slug}: failed (${e.message})`); }
 }
