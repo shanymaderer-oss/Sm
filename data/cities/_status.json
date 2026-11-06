@@ -9073,8 +9073,8 @@
   ]
  },
  "cartagena": {
-  "at": "2026-11-05T20:24:52.447Z",
-  "seconds": 725,
+  "at": "2026-11-06T16:39:13.049Z",
+  "seconds": 519,
   "osm": {
    "sights": 6,
    "sights2": 41,
@@ -9085,7 +9085,8 @@
    "diet": 1,
    "extra": 7,
    "fitness": 3,
-   "landmarks": 1
+   "landmarks": 1,
+   "streets": 0
   },
   "voyage": {
    "eat": 0,
@@ -9116,22 +9117,22 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de HTTP 502 446ms",
-   "overpass-api.de ok 6 34473ms",
-   "overpass-api.de ok 41 34254ms",
-   "overpass-api.de ok 196 39458ms",
-   "overpass-api.de ok 73 38532ms",
-   "overpass-api.de ok 220 47802ms",
-   "overpass-api.de ok 71 23489ms",
-   "overpass-api.de ok 1 42067ms",
-   "overpass-api.de ok 7 31334ms",
-   "overpass-api.de ok 3 28249ms",
-   "overpass-api.de ok 1 33189ms",
-   "overpass-api.de HTTP 502 458ms",
-   "overpass-api.de HTTP 502 425ms",
-   "overpass-api.de HTTP 502 421ms",
-   "overpass.private.coffee timeout 60000ms",
-   "overpass.kumi.systems timeout 60002ms",
+   "overpass-api.de ok 6 35163ms",
+   "overpass-api.de ok 41 34893ms",
+   "overpass-api.de ok 196 39694ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 73 31466ms",
+   "overpass-api.de HTTP 502 413ms",
+   "overpass-api.de ok 220 26719ms",
+   "overpass-api.de HTTP 502 426ms",
+   "overpass-api.de ok 71 28730ms",
+   "overpass-api.de ok 1 40380ms",
+   "overpass-api.de HTTP 502 391ms",
+   "overpass-api.de ok 7 30649ms",
+   "overpass-api.de ok 3 32838ms",
+   "overpass-api.de ok 1 48961ms",
+   "overpass-api.de ok 6 37294ms",
+   "streets: 6 shops",
    "fame: 10 of 10"
   ]
  },
