@@ -9302,8 +9302,8 @@
   ]
  },
  "auckland": {
-  "at": "2026-11-05T20:30:07.394Z",
-  "seconds": 510,
+  "at": "2026-11-06T16:58:13.909Z",
+  "seconds": 583,
   "osm": {
    "sights": 57,
    "sights2": 26,
@@ -9320,10 +9320,10 @@
   "voyage": {
    "eat": 20,
    "drink": 12,
-   "buy": 7,
-   "see": 36,
+   "buy": 8,
+   "see": 41,
    "sleep": 25,
-   "withCoords": 94,
+   "withCoords": 103,
    "districts": 4
   },
   "wiki": {
@@ -9353,21 +9353,26 @@
    "Osborne Street (10)"
   ],
   "log": [
-   "overpass-api.de ok 57 31959ms",
-   "overpass-api.de ok 26 50266ms",
-   "overpass-api.de ok 381 45829ms",
-   "overpass-api.de HTTP 502 399ms",
-   "overpass-api.de ok 247 26525ms",
-   "overpass-api.de ok 139 45077ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de ok 180 30875ms",
-   "overpass-api.de ok 4 29496ms",
-   "overpass-api.de ok 91 30422ms",
-   "overpass-api.de HTTP 502 378ms",
-   "overpass-api.de ok 32 28349ms",
-   "overpass-api.de ok 25 30922ms",
-   "overpass-api.de ok 307 26189ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 57 49029ms",
+   "overpass-api.de ok 26 35740ms",
+   "overpass-api.de HTTP 502 351ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 381 32217ms",
+   "overpass-api.de ok 247 37565ms",
+   "overpass-api.de ok 139 22322ms",
+   "overpass-api.de ok 180 32729ms",
+   "overpass-api.de ok 4 31018ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 91 34740ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de HTTP 502 351ms",
+   "overpass-api.de ok 32 33914ms",
+   "overpass-api.de ok 25 28907ms",
+   "overpass-api.de ok 307 36119ms",
    "streets: 307 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
    "wikidata HTTP 429",
    "fame: 218 of 218"
   ]
