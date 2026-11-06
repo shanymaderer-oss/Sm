@@ -6249,10 +6249,10 @@
   ]
  },
  "zurich": {
-  "at": "2026-11-05T18:58:06.491Z",
-  "seconds": 573,
+  "at": "2026-11-06T15:06:45.968Z",
+  "seconds": 754,
   "osm": {
-   "sights": 160,
+   "sights": 161,
    "sights2": 105,
    "restaurants": 450,
    "cafes": 300,
@@ -6261,8 +6261,7 @@
    "diet": 53,
    "extra": 67,
    "fitness": 69,
-   "landmarks": 96,
-   "streets": 14
+   "landmarks": 96
   },
   "voyage": {
    "eat": 42,
@@ -6300,24 +6299,23 @@
    "Viaduktstrasse (18)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 413ms",
-   "overpass-api.de ok 160 47767ms",
-   "overpass-api.de HTTP 502 403ms",
-   "overpass-api.de ok 105 39520ms",
-   "overpass-api.de ok 450 38261ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de ok 300 32116ms",
-   "overpass-api.de HTTP 502 422ms",
-   "overpass-api.de ok 138 39992ms",
-   "overpass-api.de ok 295 31872ms",
-   "overpass-api.de ok 53 39754ms",
-   "overpass-api.de ok 67 43449ms",
-   "overpass-api.de ok 69 28978ms",
-   "overpass-api.de HTTP 502 393ms",
-   "overpass-api.de ok 96 34932ms",
-   "overpass-api.de HTTP 502 399ms",
-   "overpass-api.de ok 545 34094ms",
-   "streets: 545 shops",
+   "overpass-api.de ok 161 22805ms",
+   "overpass-api.de ok 105 32762ms",
+   "overpass-api.de ok 450 30799ms",
+   "overpass-api.de HTTP 502 389ms",
+   "overpass-api.de ok 300 37204ms",
+   "overpass-api.de ok 138 35797ms",
+   "overpass-api.de ok 295 39441ms",
+   "overpass-api.de ok 53 40890ms",
+   "overpass-api.de ok 67 32517ms",
+   "overpass-api.de ok 69 45799ms",
+   "overpass-api.de HTTP 502 355ms",
+   "overpass-api.de ok 96 44925ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de HTTP 502 388ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60000ms",
    "fame: 286 of 286"
   ]
  },
