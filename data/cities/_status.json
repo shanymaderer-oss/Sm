@@ -2762,8 +2762,8 @@
   ]
  },
  "edinburgh": {
-  "at": "2026-11-05T18:21:32.920Z",
-  "seconds": 601,
+  "at": "2026-11-06T14:41:22.947Z",
+  "seconds": 583,
   "osm": {
    "sights": 130,
    "sights2": 76,
@@ -2778,12 +2778,12 @@
    "streets": 14
   },
   "voyage": {
-   "eat": 84,
-   "drink": 57,
-   "buy": 32,
-   "see": 122,
-   "sleep": 96,
-   "withCoords": 300,
+   "eat": 87,
+   "drink": 60,
+   "buy": 36,
+   "see": 127,
+   "sleep": 101,
+   "withCoords": 321,
    "districts": 8
   },
   "wiki": {
@@ -2813,26 +2813,28 @@
    "Canongate (26)"
   ],
   "log": [
-   "overpass-api.de ok 130 26596ms",
-   "overpass-api.de ok 76 30068ms",
-   "overpass-api.de HTTP 502 455ms",
-   "overpass-api.de ok 361 39639ms",
-   "overpass-api.de ok 300 44430ms",
-   "overpass-api.de ok 350 31814ms",
-   "overpass-api.de ok 300 43626ms",
-   "overpass-api.de ok 27 32061ms",
-   "overpass-api.de ok 62 42789ms",
-   "overpass-api.de ok 29 46013ms",
-   "overpass-api.de HTTP 502 452ms",
-   "overpass-api.de ok 23 35865ms",
-   "overpass-api.de ok 592 33415ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 130 27288ms",
+   "overpass-api.de ok 76 38796ms",
+   "overpass-api.de ok 361 35771ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 300 35974ms",
+   "overpass-api.de ok 350 28903ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 300 35463ms",
+   "overpass-api.de ok 27 32617ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 62 38463ms",
+   "overpass-api.de ok 29 31022ms",
+   "overpass-api.de ok 23 37948ms",
+   "overpass-api.de ok 592 31918ms",
    "streets: 592 shops",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
    "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 176 of 226"
+   "fame: 226 of 226"
   ]
  },
  "copenhagen": {
