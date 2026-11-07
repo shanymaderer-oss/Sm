@@ -9916,150 +9916,9 @@
    "fame: 128 of 128"
   ]
  },
- "pisa": {
-  "at": "2026-11-07T10:32:55.726Z",
-  "seconds": 544,
-  "osm": {
-   "sights": 93,
-   "sights2": 7,
-   "restaurants": 200,
-   "cafes": 126,
-   "hotels": 101,
-   "shopping": 64,
-   "diet": 2,
-   "extra": 62,
-   "fitness": 8,
-   "landmarks": 32,
-   "streets": 4
-  },
-  "voyage": {
-   "eat": 20,
-   "drink": 5,
-   "buy": 0,
-   "see": 21,
-   "sleep": 13,
-   "withCoords": 44,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 6,
-   "en": 75
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "fitness": 1,
-   "landmarks": 1,
-   "streets": 1
-  },
-  "streets": [
-   "Corso Italia (61)",
-   "Borgo Stretto (23)",
-   "Via Guglielmo Oberdan (22)",
-   "Via Giosuè Carducci (8)"
-  ],
-  "log": [
-   "overpass-api.de ok 93 36331ms",
-   "overpass-api.de ok 7 34699ms",
-   "overpass-api.de HTTP 502 385ms",
-   "overpass-api.de ok 200 39330ms",
-   "overpass-api.de ok 126 33763ms",
-   "overpass-api.de HTTP 502 390ms",
-   "overpass-api.de HTTP 502 419ms",
-   "overpass-api.de ok 101 35319ms",
-   "overpass-api.de HTTP 502 420ms",
-   "overpass-api.de ok 64 36499ms",
-   "overpass-api.de ok 2 36504ms",
-   "overpass-api.de ok 62 41724ms",
-   "overpass-api.de HTTP 502 377ms",
-   "overpass-api.de ok 8 31096ms",
-   "overpass-api.de ok 32 26792ms",
-   "overpass-api.de ok 183 34414ms",
-   "streets: 183 shops",
-   "fame: 174 of 174"
-  ]
- },
- "siena": {
-  "at": "2026-11-07T10:32:38.909Z",
-  "seconds": 508,
-  "osm": {
-   "sights": 117,
-   "sights2": 32,
-   "restaurants": 152,
-   "cafes": 101,
-   "hotels": 193,
-   "shopping": 11,
-   "diet": 1,
-   "extra": 60,
-   "fitness": 5,
-   "landmarks": 22,
-   "streets": 11
-  },
-  "voyage": {
-   "eat": 6,
-   "drink": 3,
-   "buy": 1,
-   "see": 17,
-   "sleep": 19,
-   "withCoords": 25,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 11,
-   "en": 100
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "fitness": 1,
-   "landmarks": 1,
-   "streets": 1
-  },
-  "streets": [
-   "Banchi di Sopra (37)",
-   "Via di Città (27)",
-   "Via dei Montanini (22)",
-   "Banchi di Sotto (13)",
-   "Via dei Termini (8)"
-  ],
-  "log": [
-   "overpass-api.de ok 117 28135ms",
-   "overpass-api.de ok 32 34614ms",
-   "overpass-api.de ok 152 29632ms",
-   "overpass-api.de HTTP 502 390ms",
-   "overpass-api.de HTTP 502 381ms",
-   "overpass-api.de ok 101 36502ms",
-   "overpass-api.de ok 193 33230ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de ok 11 35398ms",
-   "overpass-api.de ok 1 33878ms",
-   "overpass-api.de ok 60 26595ms",
-   "overpass-api.de ok 5 39504ms",
-   "overpass-api.de ok 22 31922ms",
-   "overpass-api.de ok 223 41544ms",
-   "streets: 223 shops",
-   "fame: 167 of 167"
-  ]
- },
  "tiberias": {
-  "at": "2026-11-07T10:33:43.858Z",
-  "seconds": 613,
+  "at": "2026-11-07T10:32:23.583Z",
+  "seconds": 529,
   "osm": {
    "sights": 2,
    "sights2": 0,
@@ -10099,23 +9958,21 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 2 35264ms",
-   "overpass-api.de ok 0 31758ms",
-   "overpass-api.de ok 11 30960ms",
-   "overpass-api.de timeout 60002ms",
-   "overpass-api.de ok 2 38983ms",
-   "overpass-api.de ok 29 36160ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 4 37377ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass-api.de ok 7 49326ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de ok 7 26971ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de HTTP 502 365ms",
-   "overpass-api.de ok 0 28999ms",
-   "overpass-api.de ok 0 35869ms",
-   "overpass-api.de ok 0 39196ms",
+   "overpass-api.de ok 2 34994ms",
+   "overpass-api.de ok 0 28091ms",
+   "overpass-api.de ok 11 31010ms",
+   "overpass-api.de ok 2 50840ms",
+   "overpass-api.de HTTP 502 401ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 29 35508ms",
+   "overpass-api.de ok 4 34256ms",
+   "overpass-api.de ok 7 33819ms",
+   "overpass-api.de ok 7 37310ms",
+   "overpass-api.de ok 0 31288ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 0 32088ms",
+   "overpass-api.de ok 0 28099ms",
    "streets: 0 shops",
    "fame: 13 of 13"
   ]
@@ -10433,34 +10290,34 @@
    "fame: 264 of 264"
   ]
  },
- "interlaken": {
-  "at": "2026-11-07T10:41:13.623Z",
-  "seconds": 473,
+ "cannes": {
+  "at": "2026-11-07T10:41:04.669Z",
+  "seconds": 492,
   "osm": {
    "sights": 4,
-   "sights2": 22,
-   "restaurants": 65,
-   "cafes": 16,
-   "hotels": 71,
-   "shopping": 23,
-   "diet": 2,
-   "extra": 5,
-   "fitness": 8,
-   "landmarks": 3,
-   "streets": 0
+   "sights2": 13,
+   "restaurants": 183,
+   "cafes": 81,
+   "hotels": 74,
+   "shopping": 33,
+   "diet": 6,
+   "extra": 21,
+   "fitness": 5,
+   "landmarks": 1,
+   "streets": 2
   },
   "voyage": {
-   "eat": 6,
+   "eat": 5,
    "drink": 0,
-   "buy": 0,
+   "buy": 1,
    "see": 0,
-   "sleep": 13,
-   "withCoords": 13,
+   "sleep": 14,
+   "withCoords": 2,
    "districts": 0
   },
   "wiki": {
-   "he": 1,
-   "en": 17
+   "he": 3,
+   "en": 23
   },
   "streetsV": 2,
   "fameV": 3,
@@ -10474,26 +10331,31 @@
    "diet": 1,
    "extra": 1,
    "fitness": 1,
-   "landmarks": 1
+   "landmarks": 1,
+   "streets": 1
   },
-  "streets": [],
+  "streets": [
+   "Rue d'Antibes (31)",
+   "Rue des Serbes (10)"
+  ],
   "log": [
-   "overpass-api.de ok 4 38256ms",
-   "overpass-api.de HTTP 502 420ms",
-   "overpass-api.de HTTP 502 416ms",
-   "overpass-api.de ok 22 28266ms",
-   "overpass-api.de ok 65 29548ms",
-   "overpass-api.de ok 16 27370ms",
+   "overpass-api.de ok 4 32152ms",
+   "overpass-api.de ok 13 24286ms",
+   "overpass-api.de ok 183 44519ms",
+   "overpass-api.de ok 81 32467ms",
+   "overpass-api.de ok 74 26940ms",
+   "overpass-api.de ok 33 31384ms",
    "overpass-api.de HTTP 502 415ms",
-   "overpass-api.de ok 71 34968ms",
-   "overpass-api.de ok 23 37438ms",
-   "overpass-api.de ok 2 36094ms",
-   "overpass-api.de ok 5 25131ms",
-   "overpass-api.de ok 8 32546ms",
-   "overpass-api.de ok 3 29383ms",
-   "overpass-api.de ok 7 22218ms",
-   "streets: 7 shops",
-   "fame: 14 of 14"
+   "overpass-api.de ok 6 37709ms",
+   "overpass-api.de ok 21 26237ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 5 33223ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 1 31399ms",
+   "overpass-api.de ok 88 29663ms",
+   "streets: 88 shops",
+   "fame: 31 of 31"
   ]
  },
  "como": {
@@ -10563,6 +10425,76 @@
    "overpass-api.de ok 71 29839ms",
    "streets: 71 shops",
    "fame: 80 of 80"
+  ]
+ },
+ "siena": {
+  "at": "2026-11-07T10:32:38.909Z",
+  "seconds": 508,
+  "osm": {
+   "sights": 117,
+   "sights2": 32,
+   "restaurants": 152,
+   "cafes": 101,
+   "hotels": 193,
+   "shopping": 11,
+   "diet": 1,
+   "extra": 60,
+   "fitness": 5,
+   "landmarks": 22,
+   "streets": 11
+  },
+  "voyage": {
+   "eat": 6,
+   "drink": 3,
+   "buy": 1,
+   "see": 17,
+   "sleep": 19,
+   "withCoords": 25,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 11,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Banchi di Sopra (37)",
+   "Via di Città (27)",
+   "Via dei Montanini (22)",
+   "Banchi di Sotto (13)",
+   "Via dei Termini (8)"
+  ],
+  "log": [
+   "overpass-api.de ok 117 28135ms",
+   "overpass-api.de ok 32 34614ms",
+   "overpass-api.de ok 152 29632ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de ok 101 36502ms",
+   "overpass-api.de ok 193 33230ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 11 35398ms",
+   "overpass-api.de ok 1 33878ms",
+   "overpass-api.de ok 60 26595ms",
+   "overpass-api.de ok 5 39504ms",
+   "overpass-api.de ok 22 31922ms",
+   "overpass-api.de ok 223 41544ms",
+   "streets: 223 shops",
+   "fame: 167 of 167"
   ]
  },
  "ibiza": {
@@ -10825,34 +10757,34 @@
    "fame: 171 of 171"
   ]
  },
- "cannes": {
-  "at": "2026-11-07T10:39:04.401Z",
-  "seconds": 482,
+ "pisa": {
+  "at": "2026-11-07T10:32:55.726Z",
+  "seconds": 544,
   "osm": {
-   "sights": 4,
-   "sights2": 13,
-   "restaurants": 183,
-   "cafes": 81,
-   "hotels": 74,
-   "shopping": 33,
-   "diet": 6,
-   "extra": 21,
-   "fitness": 5,
-   "landmarks": 1,
-   "streets": 2
+   "sights": 93,
+   "sights2": 7,
+   "restaurants": 200,
+   "cafes": 126,
+   "hotels": 101,
+   "shopping": 64,
+   "diet": 2,
+   "extra": 62,
+   "fitness": 8,
+   "landmarks": 32,
+   "streets": 4
   },
   "voyage": {
-   "eat": 5,
-   "drink": 0,
-   "buy": 1,
-   "see": 0,
-   "sleep": 14,
-   "withCoords": 2,
+   "eat": 20,
+   "drink": 5,
+   "buy": 0,
+   "see": 21,
+   "sleep": 13,
+   "withCoords": 44,
    "districts": 0
   },
   "wiki": {
-   "he": 3,
-   "en": 23
+   "he": 6,
+   "en": 75
   },
   "streetsV": 2,
   "fameV": 3,
@@ -10870,25 +10802,93 @@
    "streets": 1
   },
   "streets": [
-   "Rue d'Antibes (31)",
-   "Rue des Serbes (10)"
+   "Corso Italia (61)",
+   "Borgo Stretto (23)",
+   "Via Guglielmo Oberdan (22)",
+   "Via Giosuè Carducci (8)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 381ms",
-   "overpass-api.de ok 4 31470ms",
-   "overpass-api.de ok 13 37382ms",
-   "overpass-api.de ok 183 27237ms",
-   "overpass-api.de ok 81 35512ms",
-   "overpass-api.de ok 74 38208ms",
-   "overpass-api.de ok 33 37254ms",
-   "overpass-api.de ok 6 29118ms",
-   "overpass-api.de ok 21 32149ms",
-   "overpass-api.de ok 5 39943ms",
-   "overpass-api.de HTTP 502 383ms",
-   "overpass-api.de ok 1 26177ms",
-   "overpass-api.de ok 88 36728ms",
-   "streets: 88 shops",
-   "fame: 31 of 31"
+   "overpass-api.de ok 93 36331ms",
+   "overpass-api.de ok 7 34699ms",
+   "overpass-api.de HTTP 502 385ms",
+   "overpass-api.de ok 200 39330ms",
+   "overpass-api.de ok 126 33763ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 101 35319ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de ok 64 36499ms",
+   "overpass-api.de ok 2 36504ms",
+   "overpass-api.de ok 62 41724ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 8 31096ms",
+   "overpass-api.de ok 32 26792ms",
+   "overpass-api.de ok 183 34414ms",
+   "streets: 183 shops",
+   "fame: 174 of 174"
+  ]
+ },
+ "interlaken": {
+  "at": "2026-11-07T10:41:13.623Z",
+  "seconds": 473,
+  "osm": {
+   "sights": 4,
+   "sights2": 22,
+   "restaurants": 65,
+   "cafes": 16,
+   "hotels": 71,
+   "shopping": 23,
+   "diet": 2,
+   "extra": 5,
+   "fitness": 8,
+   "landmarks": 3,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 6,
+   "drink": 0,
+   "buy": 0,
+   "see": 0,
+   "sleep": 13,
+   "withCoords": 13,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 1,
+   "en": 17
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 4 38256ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de HTTP 502 416ms",
+   "overpass-api.de ok 22 28266ms",
+   "overpass-api.de ok 65 29548ms",
+   "overpass-api.de ok 16 27370ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de ok 71 34968ms",
+   "overpass-api.de ok 23 37438ms",
+   "overpass-api.de ok 2 36094ms",
+   "overpass-api.de ok 5 25131ms",
+   "overpass-api.de ok 8 32546ms",
+   "overpass-api.de ok 3 29383ms",
+   "overpass-api.de ok 7 22218ms",
+   "streets: 7 shops",
+   "fame: 14 of 14"
   ]
  }
 }
