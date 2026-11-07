@@ -9916,6 +9916,71 @@
    "fame: 128 of 128"
   ]
  },
+ "tel-aviv": {
+  "at": "2026-11-07T10:31:17.566Z",
+  "seconds": 567,
+  "osm": {
+   "sights": 54,
+   "sights2": 13,
+   "restaurants": 199,
+   "cafes": 187,
+   "hotels": 110,
+   "shopping": 171,
+   "diet": 250,
+   "extra": 76,
+   "fitness": 15,
+   "landmarks": 23,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 68,
+   "drink": 56,
+   "buy": 50,
+   "see": 115,
+   "sleep": 89,
+   "withCoords": 415,
+   "districts": 7
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 54 30159ms",
+   "overpass-api.de ok 13 33858ms",
+   "overpass-api.de ok 199 24731ms",
+   "overpass-api.de ok 187 29598ms",
+   "overpass-api.de ok 110 27877ms",
+   "overpass-api.de ok 171 42085ms",
+   "overpass-api.de ok 250 50846ms",
+   "overpass-api.de ok 76 36066ms",
+   "overpass-api.de HTTP 504 44923ms",
+   "overpass-api.de ok 15 39129ms",
+   "overpass-api.de HTTP 502 344ms",
+   "overpass-api.de ok 23 28186ms",
+   "overpass-api.de ok 83 32977ms",
+   "streets: 83 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 196 of 196"
+  ]
+ },
  "eilat": {
   "at": "2026-11-07T10:31:09.947Z",
   "seconds": 493,
