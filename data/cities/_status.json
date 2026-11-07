@@ -9916,6 +9916,76 @@
    "fame: 128 of 128"
   ]
  },
+ "siena": {
+  "at": "2026-11-07T10:32:38.909Z",
+  "seconds": 508,
+  "osm": {
+   "sights": 117,
+   "sights2": 32,
+   "restaurants": 152,
+   "cafes": 101,
+   "hotels": 193,
+   "shopping": 11,
+   "diet": 1,
+   "extra": 60,
+   "fitness": 5,
+   "landmarks": 22,
+   "streets": 11
+  },
+  "voyage": {
+   "eat": 6,
+   "drink": 3,
+   "buy": 1,
+   "see": 17,
+   "sleep": 19,
+   "withCoords": 25,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 11,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Banchi di Sopra (37)",
+   "Via di Città (27)",
+   "Via dei Montanini (22)",
+   "Banchi di Sotto (13)",
+   "Via dei Termini (8)"
+  ],
+  "log": [
+   "overpass-api.de ok 117 28135ms",
+   "overpass-api.de ok 32 34614ms",
+   "overpass-api.de ok 152 29632ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 502 381ms",
+   "overpass-api.de ok 101 36502ms",
+   "overpass-api.de ok 193 33230ms",
+   "overpass-api.de HTTP 502 387ms",
+   "overpass-api.de ok 11 35398ms",
+   "overpass-api.de ok 1 33878ms",
+   "overpass-api.de ok 60 26595ms",
+   "overpass-api.de ok 5 39504ms",
+   "overpass-api.de ok 22 31922ms",
+   "overpass-api.de ok 223 41544ms",
+   "streets: 223 shops",
+   "fame: 167 of 167"
+  ]
+ },
  "tiberias": {
   "at": "2026-11-07T10:32:23.583Z",
   "seconds": 529,
