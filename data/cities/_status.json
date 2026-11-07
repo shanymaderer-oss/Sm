@@ -9916,6 +9916,65 @@
    "fame: 128 of 128"
   ]
  },
+ "akko": {
+  "at": "2026-11-07T10:30:54.599Z",
+  "seconds": 464,
+  "osm": {
+   "sights": 6,
+   "sights2": 12,
+   "restaurants": 8,
+   "cafes": 4,
+   "hotels": 10,
+   "shopping": 1,
+   "diet": 4,
+   "extra": 17,
+   "fitness": 1,
+   "landmarks": 0,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 0,
+   "drink": 0,
+   "buy": 0,
+   "see": 0,
+   "sleep": 0,
+   "withCoords": 0,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 54,
+   "en": 26
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 6 25368ms",
+   "overpass-api.de ok 12 42060ms",
+   "overpass-api.de ok 8 34282ms",
+   "overpass-api.de ok 4 26685ms",
+   "overpass-api.de ok 10 31850ms",
+   "overpass-api.de ok 1 32001ms",
+   "overpass-api.de ok 4 38371ms",
+   "overpass-api.de ok 17 39502ms",
+   "overpass-api.de ok 1 38671ms",
+   "overpass-api.de ok 0 31465ms",
+   "overpass-api.de ok 0 32963ms",
+   "streets: 0 shops",
+   "fame: 21 of 21"
+  ]
+ },
  "haifa": {
   "at": "2026-11-07T10:30:40.216Z",
   "seconds": 489,
