@@ -9916,6 +9916,67 @@
    "fame: 128 of 128"
   ]
  },
+ "tiberias": {
+  "at": "2026-11-07T10:32:23.583Z",
+  "seconds": 529,
+  "osm": {
+   "sights": 2,
+   "sights2": 0,
+   "restaurants": 11,
+   "cafes": 2,
+   "hotels": 29,
+   "shopping": 4,
+   "diet": 7,
+   "extra": 7,
+   "fitness": 0,
+   "landmarks": 0,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 3,
+   "drink": 0,
+   "buy": 3,
+   "see": 17,
+   "sleep": 12,
+   "withCoords": 33,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 38,
+   "en": 13
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 2 34994ms",
+   "overpass-api.de ok 0 28091ms",
+   "overpass-api.de ok 11 31010ms",
+   "overpass-api.de ok 2 50840ms",
+   "overpass-api.de HTTP 502 401ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 29 35508ms",
+   "overpass-api.de ok 4 34256ms",
+   "overpass-api.de ok 7 33819ms",
+   "overpass-api.de ok 7 37310ms",
+   "overpass-api.de ok 0 31288ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 0 32088ms",
+   "overpass-api.de ok 0 28099ms",
+   "streets: 0 shops",
+   "fame: 13 of 13"
+  ]
+ },
  "haifa": {
   "at": "2026-11-07T10:31:34.629Z",
   "seconds": 540,
