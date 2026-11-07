@@ -9915,5 +9915,70 @@
    "streets: 55 shops",
    "fame: 128 of 128"
   ]
+ },
+ "jerusalem": {
+  "at": "2026-11-07T10:30:13.239Z",
+  "seconds": 483,
+  "osm": {
+   "sights": 105,
+   "sights2": 28,
+   "restaurants": 108,
+   "cafes": 95,
+   "hotels": 143,
+   "shopping": 51,
+   "diet": 250,
+   "extra": 126,
+   "fitness": 2,
+   "landmarks": 13,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 70,
+   "drink": 19,
+   "buy": 12,
+   "see": 224,
+   "sleep": 87,
+   "withCoords": 364,
+   "districts": 7
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "מאה שערים (16)"
+  ],
+  "log": [
+   "overpass-api.de ok 105 30877ms",
+   "overpass-api.de ok 28 34590ms",
+   "overpass-api.de ok 108 31386ms",
+   "overpass-api.de ok 95 32193ms",
+   "overpass-api.de ok 143 40620ms",
+   "overpass-api.de ok 51 32920ms",
+   "overpass-api.de HTTP 502 298ms",
+   "overpass-api.de ok 250 31642ms",
+   "overpass-api.de ok 126 29325ms",
+   "overpass-api.de ok 2 37940ms",
+   "overpass-api.de ok 13 40261ms",
+   "overpass-api.de ok 47 27350ms",
+   "streets: 47 shops",
+   "wikidata HTTP 429",
+   "fame: 264 of 264"
+  ]
  }
 }
