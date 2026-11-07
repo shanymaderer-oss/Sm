@@ -9916,6 +9916,67 @@
    "fame: 128 of 128"
   ]
  },
+ "tiberias": {
+  "at": "2026-11-07T10:32:23.583Z",
+  "seconds": 529,
+  "osm": {
+   "sights": 2,
+   "sights2": 0,
+   "restaurants": 11,
+   "cafes": 2,
+   "hotels": 29,
+   "shopping": 4,
+   "diet": 7,
+   "extra": 7,
+   "fitness": 0,
+   "landmarks": 0,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 3,
+   "drink": 0,
+   "buy": 3,
+   "see": 17,
+   "sleep": 12,
+   "withCoords": 33,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 38,
+   "en": 13
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 2 34994ms",
+   "overpass-api.de ok 0 28091ms",
+   "overpass-api.de ok 11 31010ms",
+   "overpass-api.de ok 2 50840ms",
+   "overpass-api.de HTTP 502 401ms",
+   "overpass-api.de HTTP 502 395ms",
+   "overpass-api.de ok 29 35508ms",
+   "overpass-api.de ok 4 34256ms",
+   "overpass-api.de ok 7 33819ms",
+   "overpass-api.de ok 7 37310ms",
+   "overpass-api.de ok 0 31288ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 0 32088ms",
+   "overpass-api.de ok 0 28099ms",
+   "streets: 0 shops",
+   "fame: 13 of 13"
+  ]
+ },
  "haifa": {
   "at": "2026-11-07T10:31:34.629Z",
   "seconds": 540,
@@ -10233,6 +10294,74 @@
    "fame: 264 of 264"
   ]
  },
+ "cannes": {
+  "at": "2026-11-07T10:41:04.669Z",
+  "seconds": 492,
+  "osm": {
+   "sights": 4,
+   "sights2": 13,
+   "restaurants": 183,
+   "cafes": 81,
+   "hotels": 74,
+   "shopping": 33,
+   "diet": 6,
+   "extra": 21,
+   "fitness": 5,
+   "landmarks": 1,
+   "streets": 2
+  },
+  "voyage": {
+   "eat": 5,
+   "drink": 0,
+   "buy": 1,
+   "see": 0,
+   "sleep": 14,
+   "withCoords": 2,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 3,
+   "en": 23
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Rue d'Antibes (31)",
+   "Rue des Serbes (10)"
+  ],
+  "log": [
+   "overpass-api.de ok 4 32152ms",
+   "overpass-api.de ok 13 24286ms",
+   "overpass-api.de ok 183 44519ms",
+   "overpass-api.de ok 81 32467ms",
+   "overpass-api.de ok 74 26940ms",
+   "overpass-api.de ok 33 31384ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de ok 6 37709ms",
+   "overpass-api.de ok 21 26237ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de HTTP 502 421ms",
+   "overpass-api.de ok 5 33223ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 1 31399ms",
+   "overpass-api.de ok 88 29663ms",
+   "streets: 88 shops",
+   "fame: 31 of 31"
+  ]
+ },
  "como": {
   "at": "2026-11-07T10:41:10.845Z",
   "seconds": 557,
@@ -10374,69 +10503,6 @@
    "overpass-api.de ok 223 28408ms",
    "streets: 223 shops",
    "fame: 166 of 166"
-  ]
- },
- "tiberias": {
-  "at": "2026-11-07T10:33:43.858Z",
-  "seconds": 613,
-  "osm": {
-   "sights": 2,
-   "sights2": 0,
-   "restaurants": 11,
-   "cafes": 2,
-   "hotels": 29,
-   "shopping": 4,
-   "diet": 7,
-   "extra": 7,
-   "fitness": 0,
-   "landmarks": 0,
-   "streets": 0
-  },
-  "voyage": {
-   "eat": 3,
-   "drink": 0,
-   "buy": 3,
-   "see": 17,
-   "sleep": 12,
-   "withCoords": 33,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 38,
-   "en": 13
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1
-  },
-  "streets": [],
-  "log": [
-   "overpass-api.de ok 2 35264ms",
-   "overpass-api.de ok 0 31758ms",
-   "overpass-api.de ok 11 30960ms",
-   "overpass-api.de timeout 60002ms",
-   "overpass-api.de ok 2 38983ms",
-   "overpass-api.de ok 29 36160ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 4 37377ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass-api.de ok 7 49326ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de ok 7 26971ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de HTTP 502 365ms",
-   "overpass-api.de ok 0 28999ms",
-   "overpass-api.de ok 0 35869ms",
-   "overpass-api.de ok 0 39196ms",
-   "streets: 0 shops",
-   "fame: 13 of 13"
   ]
  },
  "ibiza": {
@@ -10772,74 +10838,6 @@
    "fame: 174 of 174"
   ]
  },
- "cannes": {
-  "at": "2026-11-07T10:41:04.669Z",
-  "seconds": 492,
-  "osm": {
-   "sights": 4,
-   "sights2": 13,
-   "restaurants": 183,
-   "cafes": 81,
-   "hotels": 74,
-   "shopping": 33,
-   "diet": 6,
-   "extra": 21,
-   "fitness": 5,
-   "landmarks": 1,
-   "streets": 2
-  },
-  "voyage": {
-   "eat": 5,
-   "drink": 0,
-   "buy": 1,
-   "see": 0,
-   "sleep": 14,
-   "withCoords": 2,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 3,
-   "en": 23
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "fitness": 1,
-   "landmarks": 1,
-   "streets": 1
-  },
-  "streets": [
-   "Rue d'Antibes (31)",
-   "Rue des Serbes (10)"
-  ],
-  "log": [
-   "overpass-api.de ok 4 32152ms",
-   "overpass-api.de ok 13 24286ms",
-   "overpass-api.de ok 183 44519ms",
-   "overpass-api.de ok 81 32467ms",
-   "overpass-api.de ok 74 26940ms",
-   "overpass-api.de ok 33 31384ms",
-   "overpass-api.de HTTP 502 415ms",
-   "overpass-api.de ok 6 37709ms",
-   "overpass-api.de ok 21 26237ms",
-   "overpass-api.de HTTP 502 371ms",
-   "overpass-api.de HTTP 502 421ms",
-   "overpass-api.de ok 5 33223ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 1 31399ms",
-   "overpass-api.de ok 88 29663ms",
-   "streets: 88 shops",
-   "fame: 31 of 31"
-  ]
- },
  "interlaken": {
   "at": "2026-11-07T10:51:07.826Z",
   "seconds": 577,
@@ -10902,6 +10900,74 @@
    "overpass-api.de ok 7 35888ms",
    "streets: 7 shops",
    "fame: 14 of 14"
+  ]
+ },
+ "plovdiv": {
+  "at": "2026-11-07T10:51:43.885Z",
+  "seconds": 597,
+  "osm": {
+   "sights": 35,
+   "sights2": 27,
+   "restaurants": 99,
+   "cafes": 103,
+   "hotels": 84,
+   "shopping": 52,
+   "diet": 1,
+   "extra": 20,
+   "fitness": 9,
+   "landmarks": 4,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 11,
+   "drink": 2,
+   "buy": 0,
+   "see": 12,
+   "sleep": 6,
+   "withCoords": 31,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 5,
+   "en": 39
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "бул. Руски (9)"
+  ],
+  "log": [
+   "overpass-api.de ok 35 27269ms",
+   "overpass-api.de HTTP 502 414ms",
+   "overpass-api.de ok 27 46173ms",
+   "overpass-api.de ok 99 33473ms",
+   "overpass-api.de HTTP 502 383ms",
+   "overpass-api.de ok 103 38472ms",
+   "overpass-api.de ok 84 30262ms",
+   "overpass-api.de ok 52 32789ms",
+   "overpass-api.de ok 1 35487ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass-api.de ok 20 37031ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de HTTP 504 57172ms",
+   "overpass-api.de ok 9 33175ms",
+   "overpass-api.de ok 4 36390ms",
+   "overpass-api.de ok 31 35918ms",
+   "streets: 31 shops",
+   "fame: 69 of 69"
   ]
  },
  "san-diego": {
@@ -11037,74 +11103,6 @@
    "overpass-api.de ok 74 31125ms",
    "streets: 74 shops",
    "fame: 6 of 6"
-  ]
- },
- "plovdiv": {
-  "at": "2026-11-07T10:49:23.428Z",
-  "seconds": 676,
-  "osm": {
-   "sights": 35,
-   "sights2": 27,
-   "restaurants": 99,
-   "cafes": 103,
-   "hotels": 84,
-   "shopping": 52,
-   "diet": 1,
-   "extra": 20,
-   "fitness": 9,
-   "landmarks": 0,
-   "streets": 1
-  },
-  "voyage": {
-   "eat": 11,
-   "drink": 2,
-   "buy": 0,
-   "see": 12,
-   "sleep": 6,
-   "withCoords": 31,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 0,
-   "en": 39
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "fitness": 1,
-   "streets": 1
-  },
-  "streets": [
-   "бул. Руски (9)"
-  ],
-  "log": [
-   "overpass-api.de ok 35 36974ms",
-   "overpass-api.de ok 27 24271ms",
-   "overpass-api.de ok 99 27574ms",
-   "overpass-api.de ok 103 25709ms",
-   "overpass-api.de ok 84 28952ms",
-   "overpass-api.de ok 52 36338ms",
-   "overpass-api.de ok 1 29442ms",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de ok 20 30557ms",
-   "overpass-api.de ok 9 32095ms",
-   "overpass-api.de HTTP 502 297ms",
-   "overpass-api.de HTTP 502 357ms",
-   "overpass-api.de HTTP 502 352ms",
-   "overpass.private.coffee timeout 60001ms",
-   "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de HTTP 502 351ms",
-   "overpass-api.de ok 31 20504ms",
-   "streets: 31 shops",
-   "fame: 66 of 66"
   ]
  },
  "varna": {
