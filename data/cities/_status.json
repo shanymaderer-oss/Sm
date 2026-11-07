@@ -9916,137 +9916,9 @@
    "fame: 128 of 128"
   ]
  },
- "tel-aviv": {
-  "at": "2026-11-07T10:31:15.437Z",
-  "seconds": 557,
-  "osm": {
-   "sights": 54,
-   "sights2": 13,
-   "restaurants": 199,
-   "cafes": 187,
-   "hotels": 110,
-   "shopping": 171,
-   "diet": 250,
-   "extra": 76,
-   "fitness": 15,
-   "landmarks": 23,
-   "streets": 0
-  },
-  "voyage": {
-   "eat": 68,
-   "drink": 56,
-   "buy": 50,
-   "see": 115,
-   "sleep": 89,
-   "withCoords": 415,
-   "districts": 7
-  },
-  "wiki": {
-   "he": 100,
-   "en": 100
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "fitness": 1,
-   "landmarks": 1
-  },
-  "streets": [],
-  "log": [
-   "overpass-api.de ok 54 29021ms",
-   "overpass-api.de ok 13 31671ms",
-   "overpass-api.de ok 199 34149ms",
-   "overpass-api.de ok 187 30804ms",
-   "overpass-api.de ok 110 34574ms",
-   "overpass-api.de ok 171 27910ms",
-   "overpass-api.de HTTP 502 466ms",
-   "overpass-api.de HTTP 502 513ms",
-   "overpass-api.de ok 250 32810ms",
-   "overpass-api.de HTTP 502 506ms",
-   "overpass-api.de ok 76 37403ms",
-   "overpass-api.de HTTP 502 482ms",
-   "overpass-api.de HTTP 502 512ms",
-   "overpass-api.de ok 15 30022ms",
-   "overpass-api.de ok 23 38144ms",
-   "overpass-api.de ok 83 45928ms",
-   "streets: 83 shops",
-   "wikidata HTTP 429",
-   "wikidata HTTP 429",
-   "fame: 196 of 196"
-  ]
- },
- "akko": {
-  "at": "2026-11-07T10:31:12.025Z",
-  "seconds": 477,
-  "osm": {
-   "sights": 6,
-   "sights2": 12,
-   "restaurants": 8,
-   "cafes": 4,
-   "hotels": 10,
-   "shopping": 1,
-   "diet": 4,
-   "extra": 17,
-   "fitness": 1,
-   "landmarks": 0,
-   "streets": 0
-  },
-  "voyage": {
-   "eat": 0,
-   "drink": 0,
-   "buy": 0,
-   "see": 0,
-   "sleep": 0,
-   "withCoords": 0,
-   "districts": 0
-  },
-  "wiki": {
-   "he": 54,
-   "en": 26
-  },
-  "streetsV": 2,
-  "fameV": 3,
-  "qv": {
-   "sights": 2,
-   "sights2": 1,
-   "restaurants": 1,
-   "cafes": 1,
-   "hotels": 1,
-   "shopping": 1,
-   "diet": 1,
-   "extra": 1,
-   "fitness": 1
-  },
-  "streets": [],
-  "log": [
-   "overpass-api.de ok 6 33864ms",
-   "overpass-api.de ok 12 29272ms",
-   "overpass-api.de ok 8 33571ms",
-   "overpass-api.de ok 4 26426ms",
-   "overpass-api.de ok 10 34979ms",
-   "overpass-api.de HTTP 502 302ms",
-   "overpass-api.de ok 1 38489ms",
-   "overpass-api.de ok 4 38145ms",
-   "overpass-api.de ok 17 31512ms",
-   "overpass-api.de ok 1 38063ms",
-   "overpass-api.de ok 0 26905ms",
-   "overpass-api.de HTTP 502 343ms",
-   "overpass-api.de ok 0 34353ms",
-   "streets: 0 shops",
-   "fame: 21 of 21"
-  ]
- },
  "haifa": {
-  "at": "2026-11-07T10:31:34.629Z",
-  "seconds": 540,
+  "at": "2026-11-07T10:30:40.216Z",
+  "seconds": 489,
   "osm": {
    "sights": 23,
    "sights2": 9,
@@ -10088,20 +9960,18 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 23 42593ms",
-   "overpass-api.de ok 9 28165ms",
-   "overpass-api.de HTTP 502 297ms",
-   "overpass-api.de ok 45 33429ms",
-   "overpass-api.de ok 36 39900ms",
-   "overpass-api.de ok 31 42825ms",
-   "overpass-api.de ok 27 38285ms",
-   "overpass-api.de HTTP 502 301ms",
-   "overpass-api.de ok 52 35068ms",
-   "overpass-api.de HTTP 502 357ms",
-   "overpass-api.de ok 29 38262ms",
-   "overpass-api.de ok 0 33239ms",
-   "overpass-api.de ok 3 38779ms",
-   "overpass-api.de ok 4 45756ms",
+   "overpass-api.de ok 23 31038ms",
+   "overpass-api.de HTTP 502 425ms",
+   "overpass-api.de ok 9 28249ms",
+   "overpass-api.de ok 45 35900ms",
+   "overpass-api.de ok 36 33799ms",
+   "overpass-api.de ok 31 39039ms",
+   "overpass-api.de ok 27 39969ms",
+   "overpass-api.de ok 52 44263ms",
+   "overpass-api.de ok 29 40483ms",
+   "overpass-api.de ok 0 33907ms",
+   "overpass-api.de ok 3 28044ms",
+   "overpass-api.de ok 4 31481ms",
    "streets: 4 shops",
    "fame: 62 of 62"
   ]
@@ -10229,6 +10099,201 @@
    "streets: 47 shops",
    "wikidata HTTP 429",
    "fame: 264 of 264"
+  ]
+ },
+ "catania": {
+  "at": "2026-11-07T10:39:47.180Z",
+  "seconds": 520,
+  "osm": {
+   "sights": 69,
+   "sights2": 24,
+   "restaurants": 210,
+   "cafes": 175,
+   "hotels": 162,
+   "shopping": 63,
+   "diet": 2,
+   "extra": 80,
+   "fitness": 1,
+   "landmarks": 17,
+   "streets": 1
+  },
+  "voyage": {
+   "eat": 18,
+   "drink": 3,
+   "buy": 4,
+   "see": 31,
+   "sleep": 24,
+   "withCoords": 60,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 5,
+   "en": 84
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Via Etnea (11)"
+  ],
+  "log": [
+   "overpass-api.de ok 69 32995ms",
+   "overpass-api.de ok 24 34424ms",
+   "overpass-api.de ok 210 26758ms",
+   "overpass-api.de ok 175 40042ms",
+   "overpass-api.de ok 162 37306ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de HTTP 502 430ms",
+   "overpass-api.de ok 63 33089ms",
+   "overpass-api.de ok 2 27782ms",
+   "overpass-api.de ok 80 27054ms",
+   "overpass-api.de ok 1 43597ms",
+   "overpass-api.de ok 17 27054ms",
+   "overpass-api.de HTTP 502 441ms",
+   "overpass-api.de HTTP 502 423ms",
+   "overpass-api.de ok 30 32138ms",
+   "streets: 30 shops",
+   "fame: 171 of 171"
+  ]
+ },
+ "tel-aviv": {
+  "at": "2026-11-07T10:31:15.437Z",
+  "seconds": 557,
+  "osm": {
+   "sights": 54,
+   "sights2": 13,
+   "restaurants": 199,
+   "cafes": 187,
+   "hotels": 110,
+   "shopping": 171,
+   "diet": 250,
+   "extra": 76,
+   "fitness": 15,
+   "landmarks": 23,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 68,
+   "drink": 56,
+   "buy": 50,
+   "see": 115,
+   "sleep": 89,
+   "withCoords": 415,
+   "districts": 7
+  },
+  "wiki": {
+   "he": 100,
+   "en": 100
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 54 29021ms",
+   "overpass-api.de ok 13 31671ms",
+   "overpass-api.de ok 199 34149ms",
+   "overpass-api.de ok 187 30804ms",
+   "overpass-api.de ok 110 34574ms",
+   "overpass-api.de ok 171 27910ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de HTTP 502 513ms",
+   "overpass-api.de ok 250 32810ms",
+   "overpass-api.de HTTP 502 506ms",
+   "overpass-api.de ok 76 37403ms",
+   "overpass-api.de HTTP 502 482ms",
+   "overpass-api.de HTTP 502 512ms",
+   "overpass-api.de ok 15 30022ms",
+   "overpass-api.de ok 23 38144ms",
+   "overpass-api.de ok 83 45928ms",
+   "streets: 83 shops",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 196 of 196"
+  ]
+ },
+ "akko": {
+  "at": "2026-11-07T10:31:12.025Z",
+  "seconds": 477,
+  "osm": {
+   "sights": 6,
+   "sights2": 12,
+   "restaurants": 8,
+   "cafes": 4,
+   "hotels": 10,
+   "shopping": 1,
+   "diet": 4,
+   "extra": 17,
+   "fitness": 1,
+   "landmarks": 0,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 0,
+   "drink": 0,
+   "buy": 0,
+   "see": 0,
+   "sleep": 0,
+   "withCoords": 0,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 54,
+   "en": 26
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 6 33864ms",
+   "overpass-api.de ok 12 29272ms",
+   "overpass-api.de ok 8 33571ms",
+   "overpass-api.de ok 4 26426ms",
+   "overpass-api.de ok 10 34979ms",
+   "overpass-api.de HTTP 502 302ms",
+   "overpass-api.de ok 1 38489ms",
+   "overpass-api.de ok 4 38145ms",
+   "overpass-api.de ok 17 31512ms",
+   "overpass-api.de ok 1 38063ms",
+   "overpass-api.de ok 0 26905ms",
+   "overpass-api.de HTTP 502 343ms",
+   "overpass-api.de ok 0 34353ms",
+   "streets: 0 shops",
+   "fame: 21 of 21"
   ]
  },
  "pisa": {
