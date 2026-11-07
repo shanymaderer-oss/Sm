@@ -9916,6 +9916,77 @@
    "fame: 128 of 128"
   ]
  },
+ "pisa": {
+  "at": "2026-11-07T10:32:55.726Z",
+  "seconds": 544,
+  "osm": {
+   "sights": 93,
+   "sights2": 7,
+   "restaurants": 200,
+   "cafes": 126,
+   "hotels": 101,
+   "shopping": 64,
+   "diet": 2,
+   "extra": 62,
+   "fitness": 8,
+   "landmarks": 32,
+   "streets": 4
+  },
+  "voyage": {
+   "eat": 20,
+   "drink": 5,
+   "buy": 0,
+   "see": 21,
+   "sleep": 13,
+   "withCoords": 44,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 6,
+   "en": 75
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1,
+   "landmarks": 1,
+   "streets": 1
+  },
+  "streets": [
+   "Corso Italia (61)",
+   "Borgo Stretto (23)",
+   "Via Guglielmo Oberdan (22)",
+   "Via Giosuè Carducci (8)"
+  ],
+  "log": [
+   "overpass-api.de ok 93 36331ms",
+   "overpass-api.de ok 7 34699ms",
+   "overpass-api.de HTTP 502 385ms",
+   "overpass-api.de ok 200 39330ms",
+   "overpass-api.de ok 126 33763ms",
+   "overpass-api.de HTTP 502 390ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 101 35319ms",
+   "overpass-api.de HTTP 502 420ms",
+   "overpass-api.de ok 64 36499ms",
+   "overpass-api.de ok 2 36504ms",
+   "overpass-api.de ok 62 41724ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 8 31096ms",
+   "overpass-api.de ok 32 26792ms",
+   "overpass-api.de ok 183 34414ms",
+   "streets: 183 shops",
+   "fame: 174 of 174"
+  ]
+ },
  "siena": {
   "at": "2026-11-07T10:32:38.909Z",
   "seconds": 508,
