@@ -9916,6 +9916,66 @@
    "fame: 128 of 128"
   ]
  },
+ "eilat": {
+  "at": "2026-11-07T10:30:44.881Z",
+  "seconds": 474,
+  "osm": {
+   "sights": 4,
+   "sights2": 5,
+   "restaurants": 49,
+   "cafes": 20,
+   "hotels": 56,
+   "shopping": 20,
+   "diet": 18,
+   "extra": 22,
+   "fitness": 1,
+   "landmarks": 0,
+   "streets": 0
+  },
+  "voyage": {
+   "eat": 13,
+   "drink": 1,
+   "buy": 3,
+   "see": 7,
+   "sleep": 22,
+   "withCoords": 43,
+   "districts": 0
+  },
+  "wiki": {
+   "he": 63,
+   "en": 12
+  },
+  "streetsV": 2,
+  "fameV": 3,
+  "qv": {
+   "sights": 2,
+   "sights2": 1,
+   "restaurants": 1,
+   "cafes": 1,
+   "hotels": 1,
+   "shopping": 1,
+   "diet": 1,
+   "extra": 1,
+   "fitness": 1
+  },
+  "streets": [],
+  "log": [
+   "overpass-api.de ok 4 34568ms",
+   "overpass-api.de ok 5 29943ms",
+   "overpass-api.de ok 49 27098ms",
+   "overpass-api.de ok 20 31759ms",
+   "overpass-api.de ok 56 30924ms",
+   "overpass-api.de HTTP 502 388ms",
+   "overpass-api.de ok 20 30435ms",
+   "overpass-api.de ok 18 36863ms",
+   "overpass-api.de ok 22 36508ms",
+   "overpass-api.de ok 1 37873ms",
+   "overpass-api.de ok 0 38200ms",
+   "overpass-api.de ok 0 39160ms",
+   "streets: 0 shops",
+   "fame: 39 of 39"
+  ]
+ },
  "jerusalem": {
   "at": "2026-11-07T10:30:13.239Z",
   "seconds": 483,
