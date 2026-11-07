@@ -2,6 +2,10 @@
    (tools/fetch-cities.mjs → data/cities/<slug>.json), so these trips load almost instantly. */
 (function (root) {
   const TZ = {"rome": "Europe/Rome", "paris": "Europe/Paris", "barcelona": "Europe/Madrid", "london": "Europe/London", "prague": "Europe/Prague", "budapest": "Europe/Budapest", "vienna": "Europe/Vienna", "berlin": "Europe/Berlin", "amsterdam": "Europe/Amsterdam", "lisbon": "Europe/Lisbon", "porto": "Europe/Lisbon", "madrid": "Europe/Madrid", "athens": "Europe/Athens", "milan": "Europe/Rome", "florence": "Europe/Rome", "venice": "Europe/Rome", "new-york": "America/New_York", "bangkok": "Asia/Bangkok", "tokyo": "Asia/Tokyo", "istanbul": "Europe/Istanbul",
+    "tel-aviv": "Asia/Jerusalem", "jerusalem": "Asia/Jerusalem", "haifa": "Asia/Jerusalem", "eilat": "Asia/Jerusalem", "akko": "Asia/Jerusalem", "tiberias": "Asia/Jerusalem",
+    "pisa": "Europe/Rome", "siena": "Europe/Rome", "como": "Europe/Rome", "bari": "Europe/Rome", "catania": "Europe/Rome", "cannes": "Europe/Paris", "monaco": "Europe/Monaco", "strasbourg": "Europe/Paris",
+    "interlaken": "Europe/Zurich", "ibiza": "Europe/Madrid", "varna": "Europe/Sofia", "plovdiv": "Europe/Sofia", "san-diego": "America/Los_Angeles", "seattle": "America/Los_Angeles",
+    "pattaya": "Asia/Bangkok", "da-nang": "Asia/Ho_Chi_Minh", "hoi-an": "Asia/Ho_Chi_Minh",
     "batumi": "Asia/Tbilisi", "tbilisi": "Asia/Tbilisi", "larnaca": "Asia/Nicosia", "limassol": "Asia/Nicosia", "paphos": "Asia/Nicosia", "nice": "Europe/Paris", "munich": "Europe/Berlin",
     "dubai": "Asia/Dubai", "krakow": "Europe/Warsaw", "warsaw": "Europe/Warsaw", "sofia": "Europe/Sofia", "bucharest": "Europe/Bucharest", "thessaloniki": "Europe/Athens", "naples": "Europe/Rome",
     "belgrade": "Europe/Belgrade", "dublin": "Europe/Dublin", "edinburgh": "Europe/London", "copenhagen": "Europe/Copenhagen", "seville": "Europe/Madrid", "valencia": "Europe/Madrid",
@@ -146,10 +150,34 @@
     C("palma", "פלמה דה מיורקה", "Palma", "Palma", "ספרד", "es", 39.5700, 2.6500, 2600),
     C("funchal", "מדיירה", "Funchal", "Funchal", "פורטוגל", "pt", 32.6500, -16.9100, 2400),
     C("turin", "טורינו", "Turin", "Torino", "איטליה", "it", 45.0700, 7.6860, 2600),
-    C("lucerne", "לוצרן", "Lucerne", "Luzern", "שווייץ", "ch", 47.0510, 8.3070, 1800)
+    C("lucerne", "לוצרן", "Lucerne", "Luzern", "שווייץ", "ch", 47.0510, 8.3070, 1800),
+    // Israel: trips at home (no flights, no eSIM; Shabbat matters)
+    C("tel-aviv", "תל אביב", "Tel Aviv", "תל אביב-יפו", "ישראל", "il", 32.0700, 34.7700, 3200),
+    C("jerusalem", "ירושלים", "Jerusalem", "ירושלים", "ישראל", "il", 31.7780, 35.2250, 2800),
+    C("haifa", "חיפה", "Haifa", "חיפה", "ישראל", "il", 32.8140, 34.9900, 3000),
+    C("eilat", "אילת", "Eilat", "אילת", "ישראל", "il", 29.5560, 34.9480, 3500),
+    C("akko", "עכו", "Acre", "עכו", "ישראל", "il", 32.9230, 35.0710, 1500),
+    C("tiberias", "טבריה", "Tiberias", "טבריה", "ישראל", "il", 32.7920, 35.5390, 2000),
+    C("pisa", "פיזה", "Pisa", "Pisa", "איטליה", "it", 43.7180, 10.4010, 1800),
+    C("siena", "סיינה", "Siena", "Siena", "איטליה", "it", 43.3188, 11.3308, 1500),
+    C("como", "קומו", "Como", "Como", "איטליה", "it", 45.8110, 9.0850, 1800),
+    C("bari", "בארי", "Bari", "Bari", "איטליה", "it", 41.1250, 16.8680, 2000),
+    C("catania", "קטניה", "Catania", "Catania", "איטליה", "it", 37.5025, 15.0873, 2000),
+    C("cannes", "קאן", "Cannes", "Cannes", "צרפת", "fr", 43.5513, 7.0128, 2000),
+    C("monaco", "מונקו", "Monaco", "Monaco", "מונקו", "mc", 43.7384, 7.4246, 1800),
+    C("strasbourg", "שטרסבורג", "Strasbourg", "Strasbourg", "צרפת", "fr", 48.5830, 7.7480, 2000),
+    C("interlaken", "אינטרלאקן", "Interlaken", "Interlaken", "שווייץ", "ch", 46.6863, 7.8632, 1800),
+    C("ibiza", "איביזה", "Ibiza", "Eivissa", "ספרד", "es", 38.9089, 1.4329, 2000),
+    C("varna", "ורנה", "Varna", "Варна", "בולגריה", "bg", 43.2047, 27.9105, 2500),
+    C("plovdiv", "פלובדיב", "Plovdiv", "Пловдив", "בולגריה", "bg", 42.1450, 24.7490, 1800),
+    C("san-diego", "סן דייגו", "San Diego", "San Diego", "ארצות הברית", "us", 32.7157, -117.1611, 3500),
+    C("seattle", "סיאטל", "Seattle", "Seattle", "ארצות הברית", "us", 47.6062, -122.3321, 3000),
+    C("pattaya", "פטאיה", "Pattaya", "พัทยา", "תאילנד", "th", 12.9276, 100.8771, 3000),
+    C("da-nang", "דה נאנג", "Da Nang", "Đà Nẵng", "וייטנאם", "vn", 16.0544, 108.2022, 3500),
+    C("hoi-an", "הוי אן", "Hoi An", "Hội An", "וייטנאם", "vn", 15.8801, 108.3380, 1800)
   ];
   /* the short names people write */
-  const ALT = { rio: ["ריו", "rio"], "ho-chi-minh": ["סייגון", "saigon", "הו צי מין"], palma: ["מיורקה", "mallorca", "majorca", "פלמה"], funchal: ["פונשל", "madeira"],
+  const ALT = { "tel-aviv": ["תל-אביב", "תל אביב יפו", "יפו", "jaffa", "tlv", "ת״א", "ת\"א"], jerusalem: ["ירושלם", "העיר העתיקה"], akko: ["acre", "akko", "עכו"], rio: ["ריו", "rio"], "ho-chi-minh": ["סייגון", "saigon", "הו צי מין"], palma: ["מיורקה", "mallorca", "majorca", "פלמה"], funchal: ["פונשל", "madeira"],
     ubud: ["באלי", "bali"], "new-york": ["ניו-יורק", "nyc", "מנהטן"], "los-angeles": ["לוס אנג'לס"], "hong-kong": ["הונג-קונג"], "mexico-city": ["מקסיקו"],
     "kuala-lumpur": ["קואלה למפור"], "cape-town": ["קייפ טאון"], washington: ["וושינגטון די סי"], "buenos-aires": ["בואנוס-איירס"],
     heraklion: ["כרתים", "crete"], valletta: ["מלטה", "malta"], santorini: ["פירה", "fira"], "abu-dhabi": ["אבו-דאבי"] };

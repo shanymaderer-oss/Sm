@@ -30,7 +30,7 @@
     const w = weather(t), n = t.days.length, wish = t.wish || {}, kinds = new Set(t.days.flatMap(d => d.stops.map(s => s.kind)));
     const kids = !!wish.kids || /ילד|תינוק|פעוט/.test(t.opts?.notes || ""), stroller = t.opts?.mobility === "stroller", wheel = t.opts?.mobility === "wheelchair";
     const ci = U.countryInfo(t.cc), plug = ci?.plug || "";
-    const needsAdapter = plug && !/\b[CEF]\b/.test(plug);
+    const needsAdapter = plug && !/\b[CEF]\b/.test(plug), home = t.cc === "il"; // a trip in Israel: no passport, adapter or eSIM
     const walk = U.totalWalk(t) / Math.max(1, n);
     const shirts = Math.min(n + 1, 7), cold = w.lo < 8, hot = w.hi >= 27, rainy = w.rain >= 40;
     const I = (cat, k, text, why) => ({ cat, k, text, why: why || "" });
@@ -40,7 +40,7 @@
       I("docs", "insurance", "פוליסת ביטוח נסיעות"),
       I("docs", "cards", "כרטיס אשראי ומעט מזומן במטבע המקומי", ci?.curHe ? `המטבע: ${ci.curHe}` : ""),
       I("docs", "license", "רישיון נהיגה", t.opts?.move === "car" ? "ייתכן שצריך גם רישיון בינלאומי" : "")
-    ].filter(x => x.k !== "license" || t.opts?.move === "car");
+    ].filter(x => x.k !== "license" || t.opts?.move === "car").filter(x => !(home && ["passport", "tickets", "insurance"].includes(x.k)));
     L.push(
       I("clothes", "shirts", `${shirts} חולצות`, hot ? "קלות ומנדפות" : ""),
       I("clothes", "pants", cold ? `${Math.min(3, Math.ceil(n / 3) + 1)} מכנסיים ארוכים` : `${Math.min(4, Math.ceil(n / 2) + 1)} מכנסיים או חצאיות`),
@@ -64,8 +64,8 @@
     );
     L.push(
       I("tech", "phone", "מטען לטלפון וסוללה ניידת", "הניווט והמסלול בטלפון כל היום"),
-      ...(needsAdapter ? [I("tech", "adapter", `מתאם לשקע (סוג ${plug})`, "התקע הישראלי לא נכנס שם")] : [I("tech", "adapter", "מתאם לשקע, ליתר ביטחון", plug ? `השקעים שם: ${plug}` : "")]),
-      I("tech", "esim", "eSIM או חבילת גלישה, מופעלת לפני הנחיתה"),
+      ...(home ? [] : needsAdapter ? [I("tech", "adapter", `מתאם לשקע (סוג ${plug})`, "התקע הישראלי לא נכנס שם")] : [I("tech", "adapter", "מתאם לשקע, ליתר ביטחון", plug ? `השקעים שם: ${plug}` : "")]),
+      ...(home ? [] : [I("tech", "esim", "eSIM או חבילת גלישה, מופעלת לפני הנחיתה")]),
       I("tech", "offline", "המסלול שמור בטלפון לשימוש בלי אינטרנט", "פותחים אותו פעם אחת לפני הטיסה")
     );
     if (kids) L.push(

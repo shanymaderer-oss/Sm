@@ -1169,12 +1169,15 @@ SCREENS.plan = {
 };
 /* ---------- the trip's folders: the route, before the flight, bookings, together ----------
    One short header (the trip, its numbers, share) and four folders, so each kind of thing has its place. */
+/* a trip in Israel: no flights, travel insurance, airport transfer, eSIM or passport */
+const domestic = t => t?.cc === "il";
+const HOME_SKIP = new Set(["flights", "insurance", "transfer", "esim", "entry"]);
 const FOLDERS = [["plan", "route", "המסלול"], ["before", "info", "לפני הטיסה"], ["book", "ticket", "הזמנות"], ["together", "users", "ביחד"]];
 const bookPending = t => t.days.flatMap(d => d.stops).filter(s => s.booking?.needed && !(s.booking.steps || []).every((_, i) => checks[ckey(s, i)])).length;
 function tripTop(t, active) {
   const all = t.days.flatMap(d => d.stops), pend = bookPending(t);
   const nums = [`${all.length} תחנות`, `${totalWalk(t).toFixed(1)} ק״מ הליכה`, (t.opts?.move || "walk") !== "walk" ? `${totalDrive(t).toFixed(0)} ${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}` : "", all.filter(s => s.booking?.needed).length ? `${all.filter(s => s.booking?.needed).length} להזמין` : ""].filter(Boolean);
-  const list = FOLDERS.filter(([k]) => !(k === "together" && t.source === "sample"));
+  const list = FOLDERS.filter(([k]) => !(k === "together" && t.source === "sample")).map(f => f[0] === "before" && domestic(t) ? [f[0], f[1], "לפני היציאה"] : f);
   return `<div class="triphero" style="${cityColor(t.city).style}"><div class="throw"><div><div class="stepof">${esc(t.country || "")}${t.source === "sample" ? ", טיול לדוגמה" : ""}</div>
       <h1>${t.days.length === 1 ? "יום אחד" : t.days.length + " ימים"} ב${esc(t.city)}</h1><p class="thnums">${nums.map(esc).join(" · ")}</p></div>
       <button type="button" class="sharetrip" id="shareTrip">${ic("share")}שיתוף</button></div>${t.pending ? `<div class="pending"><i></i>מוסיפים סיפורים, תמונות ומסלולי הליכה…</div>` : ""}</div>
@@ -1532,7 +1535,7 @@ function kitItems(t = S.trip) {
       [["אירועים", gSearch(`events in ${city} ${enMonth(start)}`)], ["הופעות", gSearch(`concerts ${city} ${enMonth(start)}`)]], { fresh: true }),
     I("entry", "info", "דרכון וכניסה למדינה", 30, `בדקו שהדרכון בתוקף עוד חצי שנה לפחות אחרי החזרה, ומה צריך כדי להיכנס ל${t.country || t.city} (ויזה או אישור כניסה מקוון).`,
       [["דרישות כניסה", gSearch(`דרישות כניסה ${t.country || t.city} לישראלים`)], ["אזהרות מסע", gSearch(`אזהרת מסע ${t.country || t.city} המטה לביטחון לאומי`)]])
-  ];
+  ].filter(x => !(domestic(t) && HOME_SKIP.has(x.k)));
 }
 function kitView(t = S.trip) {
   const done = kitDone(), items = kitItems(t), { start } = tripDates(t);

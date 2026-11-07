@@ -222,22 +222,26 @@ Masa.journey = (() => {
        the steps stay there for later */
     const quickBuild = () => `<button class="linkbtn quickbuild" id="quickBuild" type="button">${ic("sparkle", 2.2)} דלגו, תבנו לי טיול עכשיו</button>`;
     const bindQuick = () => { const b = $("quickBuild"); if (b) b.onclick = () => U.build(); };
+    // a trip in Israel: no flights to look for
+    const atHome = () => Masa.cities.findCity(S.dest?.q || "")?.cc === "il";
     SCREENS.when = {
       view() {
-        const f = S.form;
+        const f = S.form, home = atHome();
         return `<div class="screen">
         <div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 2 מתוך 4</span><span style="width:38px"></span></div>
-        <div><h1>מתי טסים ל${esc(S.dest?.he || "יעד")}?</h1><p class="lead">נמצא את הטיסות הכי זולות לתאריכים שלכם, וגם ימים קרובים שזולים יותר.</p></div>
+        ${home ? `<div><h1>מתי יוצאים ל${esc(S.dest?.he || "טיול")}?</h1><p class="lead">בוחרים יום ומספר ימים, ונבנה מסלול לפי שעות הפתיחה, השבת ומזג האוויר.</p></div>`
+          : `<div><h1>מתי טסים ל${esc(S.dest?.he || "יעד")}?</h1><p class="lead">נמצא את הטיסות הכי זולות לתאריכים שלכם, וגם ימים קרובים שזולים יותר.</p></div>`}
         ${steppers(f)}
-        <div class="card flights" id="flights">${flightsHtml()}</div>
+        ${home ? "" : `<div class="card flights" id="flights">${flightsHtml()}</div>`}
         <button class="btn coral block" id="whenNext" type="button">המשך: איפה ישנים</button>
-        <button class="linkbtn" id="whenSkip" type="button">כבר יש לנו טיסה, ממשיכים</button>
+        ${home ? "" : `<button class="linkbtn" id="whenSkip" type="button">כבר יש לנו טיסה, ממשיכים</button>`}
         ${quickBuild()}
       </div>`;
       },
       bind() {
         $("backHome").onclick = () => go("home");
         let t = null;
+        if (atHome()) { bindSteppers(() => {}); $("whenNext").onclick = () => go("stay"); bindQuick(); return; }
         bindSteppers(() => { clearTimeout(t); t = setTimeout(loadFlights, 450); });
         bindFlights();
         $("whenNext").onclick = $("whenSkip").onclick = () => go("stay");
