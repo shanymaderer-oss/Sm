@@ -415,21 +415,6 @@ Masa.planner = (() => {
     }
     return out;
   }
-  function splitDays(pts, days) {
-    if (days <= 1 || pts.length <= 1) return [pts];
-    const c = { lat: pts.reduce((a, p) => a + p.lat, 0) / pts.length, lng: pts.reduce((a, p) => a + p.lng, 0) / pts.length };
-    const k = Math.cos(c.lat * Math.PI / 180);
-    const arr = pts.map(p => ({ p, a: Math.atan2(p.lat - c.lat, (p.lng - c.lng) * k) })).sort((x, y) => x.a - y.a);
-    let start = 0, best = -1;
-    for (let i = 0; i < arr.length; i++) {
-      const gap = (arr[(i + 1) % arr.length].a - arr[i].a + 2 * Math.PI) % (2 * Math.PI);
-      if (gap > best) { best = gap; start = (i + 1) % arr.length; }
-    }
-    const rot = [...arr.slice(start), ...arr.slice(0, start)].map(x => x.p);
-    const out = [];
-    for (let d = 0; d < days; d++) out.push(rot.slice(Math.round(d * rot.length / days), Math.round((d + 1) * rot.length / days)));
-    return out;
-  }
   function orderDay(pts, start) {
     if (!pts.length) return pts;
     if (pts.length <= 2 && !start) return pts;
