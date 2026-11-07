@@ -295,10 +295,12 @@ Masa.planner = (() => {
       }
     }
     // how famous: Wikipedia languages with an article about the place, and its Hebrew article when there is one
-    const F = data.fame || {}, PK = data.picks || {};
+    const F = data.fame || {}, PK = data.picks || {}, SG = data.sights || {};
     pool.forEach(p => {
       p.dist = km(geo, p);
       if (PK[p.id]) p.pick = PK[p.id]; // a restaurant the smart guide knows to be good (tools/ai-picks.mjs)
+      const g = SG[p.id]; // the smart guide's grade of a sight (tools/ai-sights.mjs): must / good / skip, minutes, a tip
+      if (Array.isArray(g)) { p.grade = g[0]; if (g[1] >= 10 && g[1] <= 240) p.gradeMin = g[1]; if (g[2]) p.gradeTip = String(g[2]).slice(0, 110); }
       if (p.wikidata && F.n?.[p.wikidata] != null) p.fame = F.n[p.wikidata];
       if (p.wikidata && F.he?.[p.wikidata] && !p._he) p._he = F.he[p.wikidata];
     });
@@ -329,6 +331,9 @@ Masa.planner = (() => {
     }
     if (p.michelin) { q += 6; sig.push(`כוכב מישלן${p.michelin > 1 ? ` ×${p.michelin}` : ""}`); if (p.michelin >= 2 && budget !== "מפנק") q -= 9; } // two or three stars are a splurge
     if (p.voyage) { q += 4; sig.push("מומלץ ב-Wikivoyage"); }
+    if (p.grade === "must") { q += 7; sig.push("חובה לראות"); }
+    else if (p.grade === "good") q += 2.5;
+    else if (p.grade === "skip") q -= 6;
     if (p.pick === "fine") { q += 5; sig.push("מסעדה מוערכת במיוחד"); if (budget === "חסכוני") q -= 5; }
     else if (p.pick === "good") { q += 4; sig.push("מסעדה מוכרת וטובה"); }
     if (p.wikidata) { q += 2.5; if (p.cat === "food" || p.cat === "night" || p.cat === "shopping") sig.push("מקום מוכר"); }
@@ -534,14 +539,14 @@ Masa.planner = (() => {
   const MEAL_MIN = { hotel: 0, breakfast: 45, lunch: 75, treat: 30, dinner: 90, drinks: 90 };
   function toStop(p, budget, meal = null) {
     const busy = busyFor(p);
-    const min = meal ? MEAL_MIN[meal] : (KIND[p.kind]?.min || 60);
+    const min = meal ? MEAL_MIN[meal] : (p.gradeMin ? Math.round(p.gradeMin / 15) * 15 || 15 : KIND[p.kind]?.min || 60);
     if (meal === "hotel") return { name: p.name, local: p.local, cat: "sleep", kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: MEAL.hotel, lat: p.lat, lng: p.lng, time: "", duration: "", _min: 0, cost: "", why: "המלון שבחרתם. כל יום יוצא מכאן.", whyLang: "he", history: "", histLang: "he", fact: "", busy: null, best: "", tip: "", nearby: [], booking: { needed: false, steps: [], query: p.local }, website: p.website || null, phone: p.phone || null, address: p.address || null, image: null, hours: null, signals: p.signals || [], q: p.q, priceClass: p.priceClass || null, osm: p.id, isHotel: true };
     const why = p.voyage?.text ? p.voyage.text : p.kind === "street" ? streetWhy(p) : p.area ? "אזור שביקשתם לראות. הכי טוב לשוטט בו ברגל, בלי תוכנית מדויקת." : WHY[p.kind] || WHY.attraction;
     return {
       name: p.name, local: p.local, cat: p.cat, kind: p.kind, kindHe: KIND[p.kind]?.he, meal, mealHe: meal ? MEAL[meal] : null,
       lat: p.lat, lng: p.lng, time: "", duration: fmtDur(min), _min: min, cost: costText(p, budget),
       why, whyLang: p.voyage?.text ? "en" : "he", history: "", histLang: "he", wikiUrl: null, fact: "",
-      busy, busySrc: "est", best: bestTime(busy, p), tip: TIPS[p.kind] || "", nearby: [],
+      busy, busySrc: "est", best: bestTime(busy, p), tip: p.gradeTip || TIPS[p.kind] || "", nearby: [],
       booking: bookingFor(p, meal), website: p.website || null, phone: p.phone || null, address: p.address || null, image: null, hours: p.hours || p.voyage?.hours || null,
       cuisine: p.cuisine || null, signals: p.signals || [], q: p.q, priceClass: p.voyage?.priceClass || null,
       price: p.voyage?.price || null, fee: p.fee || null, mich: p.michelin || 0, wheel: p.wheel || null, shops: p.shops || 0, ends: p.ends || null,
@@ -963,8 +968,8 @@ Masa.planner = (() => {
   /* a ready city's file is fetched once per visit and shared: the wishes preview, the build and a rebuild all use it */
   const READY = {};
   // the city's places, and the restaurants the smart guide knows to be good (data/picks, made by tools/ai-picks.mjs; optional)
-  const readyCity = slug => READY[slug] || (READY[slug] = Promise.all([svc.getJSON(`data/cities/${slug}.json`, {}, 15000), svc.getJSON(`data/picks/${slug}.json`, {}, 8000).catch(() => null)])
-    .then(([d, pk]) => { if (!d?.els?.length) throw new Error("empty"); if (pk?.picks && typeof pk.picks === "object") d.picks = pk.picks; return d; }).catch(e => { delete READY[slug]; throw e; }));
+  const readyCity = slug => READY[slug] || (READY[slug] = Promise.all([svc.getJSON(`data/cities/${slug}.json`, {}, 15000), svc.getJSON(`data/picks/${slug}.json`, {}, 8000).catch(() => null), svc.getJSON(`data/sights/${slug}.json`, {}, 8000).catch(() => null)])
+    .then(([d, pk, sg]) => { if (!d?.els?.length) throw new Error("empty"); if (pk?.picks && typeof pk.picks === "object") d.picks = pk.picks; if (sg?.s && typeof sg.s === "object") d.sights = sg.s; return d; }).catch(e => { delete READY[slug]; throw e; }));
   /* start loading while the traveler is still choosing (called when a destination is picked) */
   const prefetch = q => { const c = CITIES.findCity(q || ""); if (c) readyCity(c.slug).catch(() => {}); loadTA(); };
   let HEN = null;

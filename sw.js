@@ -3,7 +3,7 @@
    City data is served from the cache and refreshed in the background. Map tiles of places already seen stay
    available offline (a limited number). Everything else (Wikipedia, routing, weather, AI) goes straight to the network.
    VERSION is written by tools/stamp-sw.py from a hash of the shell files; a new version refreshes the saved copy. */
-const VERSION = "87d47c57ed";
+const VERSION = "7e84f27e51";
 const SHELL_CACHE = "masa-shell-" + VERSION, DATA_CACHE = "masa-data-v1", TILE_CACHE = "masa-tiles-v1";
 const SHELL = [
   "./", "index.html", "privacy.html", "accessibility.html", "terms.html", "manifest.webmanifest", "css/style.css", "css/fonts.css",
@@ -51,7 +51,7 @@ self.addEventListener("fetch", e => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin === location.origin) {
-    if (url.pathname.includes("/data/")) return e.respondWith(staleWhileRevalidate(req, DATA_CACHE, MAX_CITIES * 2 + 2));
+    if (url.pathname.includes("/data/")) return e.respondWith(staleWhileRevalidate(req, DATA_CACHE, MAX_CITIES * 3 + 2));
     // fonts, icons and the pinned map library never change under the same name: cache first
     if (/\/(vendor|fonts|icons)\//.test(url.pathname)) return e.respondWith(caches.match(req).then(hit => hit || fetch(req)));
     // the app itself: always the newest when online (so pages and scripts match), the saved copy when offline or very slow
