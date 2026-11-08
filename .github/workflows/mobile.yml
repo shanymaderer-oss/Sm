@@ -9,7 +9,7 @@ permissions: { contents: write }
 concurrency: { group: mobile, cancel-in-progress: true }
 jobs:
   phones:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright does not support ubuntu-latest (26.04) yet
     timeout-minutes: 25
     env:
       QA_URL: https://shanymaderer-oss.github.io/Sm

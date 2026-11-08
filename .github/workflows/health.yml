@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright does not support ubuntu-latest (26.04) yet
     timeout-minutes: 30
     env:
       QA_URL: https://shanymaderer-oss.github.io/Sm

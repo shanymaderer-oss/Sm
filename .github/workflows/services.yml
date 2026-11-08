@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   live:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright does not support ubuntu-latest (26.04) yet
     permissions:
       contents: write
     timeout-minutes: 30
@@ -45,7 +45,7 @@ jobs:
           cp -r /tmp/rep/. .
           git add -A && git commit -qm "report $(date -u +%F-%H%M)" && git push -qf origin HEAD:refs/heads/qa-report-live
   cloud:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright does not support ubuntu-latest (26.04) yet
     permissions:
       contents: write
     timeout-minutes: 20

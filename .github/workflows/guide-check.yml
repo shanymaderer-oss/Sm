@@ -4,7 +4,7 @@ on: workflow_dispatch
 permissions: { contents: read }
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright does not support ubuntu-latest (26.04) yet
     steps:
       - name: Ask the guide
         run: |
