@@ -588,6 +588,30 @@ Masa.planner = (() => {
       t += (s._min || 60) + Math.min(legMinutes(day, i), day.move === "car" ? 60 : 45) + 10;
     });
   }
+  /* the landing day and the flight-home day: the day starts after reaching the hotel (90 minutes after landing) and ends
+     two and a half hours before the flight home. Meals outside those hours go, then the latest sights until the day fits. */
+  const MEAL_AT = { lunch: 780, treat: 960, dinner: 1170, drinks: 1275 };
+  function flightTrim(d, from, to) {
+    let st = Math.max(d.startMin || 540, from);
+    const early = to - st < 120;
+    if (early) st = Math.max(420, Math.min(st, to - 60)); // an early flight: a short morning, breakfast and out
+    d.startMin = st = Math.ceil(st / 15) * 15;
+    d.stops = d.stops.filter(s => !s.meal || s.meal === "hotel" || (s.meal === "breakfast" ? st < 660 && st + 30 <= to : MEAL_AT[s.meal] >= st - 30 && MEAL_AT[s.meal] + 45 <= to));
+    if (early) { // only a short walk outside (nothing is open yet), and only if there is time before leaving for the airport
+      const acts = d.stops.filter(s => !s.meal), walk = acts.find(s => ["street", "square", "park", "view", "bridge", "beach", "canal"].includes(s.kind)) || acts[0];
+      d.stops = d.stops.filter(s => s.meal || s === walk);
+      if (walk) { walk._min = Math.min(walk._min || 60, 30); walk.tip = "יום הטיסה: הליכה קצרה בבוקר, רק אם יש זמן לפני הנסיעה לשדה."; }
+    }
+    const end = s => { const [h, m] = s.time.split(":"); return (+h < 5 ? 1440 : 0) + +h * 60 + +m + (s._min || 60); };
+    for (let n = 0; n < 40; n++) {
+      assignTimes(d);
+      if (d.stops.length <= 1 || end(d.stops[d.stops.length - 1]) <= to) break;
+      let k = -1;
+      d.stops.forEach((s, j) => { if (!s.meal && !s.asked) k = j; });
+      if (k < 0) d.stops.forEach((s, j) => { if (!s.meal) k = j; });
+      d.stops.splice(k < 0 ? d.stops.length - 1 : k, 1);
+    }
+  }
   /* ---------- the order of a day: the shortest sensible walk, with meals at meal times ----------
      Breakfast opens the day and dinner (then drinks) closes it; lunch lands around 13:00 and the sweet break in the afternoon.
      A sunset stop stays the last sight. Everything else is ordered for the least walking (or driving). */
@@ -1474,6 +1498,8 @@ Masa.planner = (() => {
         if (satDay(i)) { d.shabbat = true; d.theme = "שבת · " + d.theme; }
         optimizeDay(d);
         assignTimes(d);
+        if (i === 0 && wish?.arrive != null) flightTrim(d, wish.arrive + 90, 23 * 60);
+        if (i === dayPlans.length - 1 && wish?.depart != null) flightTrim(d, 0, wish.depart - 150);
         return d;
       }).filter(d => d.stops.length),
       places: placeList,

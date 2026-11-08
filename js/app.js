@@ -341,6 +341,13 @@ function setNav() {
 const SCREENS = {};
 function renderPanel() {
   $("composerSlot").innerHTML = "";
+  if (!SCREENS[S.screen]) {
+    const n = S.screen;
+    $("screen").innerHTML = `<div class="screen"><p class="lead" role="status">רגע, טוענים…</p></div>`;
+    setNav();
+    needScreen(n).then(() => { if (S.screen !== n) return; if (SCREENS[n]) return rerenderKeepScroll(); toast("לא הצלחנו לפתוח את המסך. נסו שוב."); go(S.trip && n === "book" ? "plan" : "home"); });
+    return;
+  }
   $("screen").innerHTML = SCREENS[S.screen].view();
   harden($("screen"));
   SCREENS[S.screen].bind?.();
@@ -1492,167 +1499,6 @@ SCREENS.discover = {
   }
 };
 
-/* ---------- bookings ---------- */
-const allBook = () => S.trip.days.flatMap(d => d.stops.map(s => ({ s, day: d.label }))).filter(x => x.s.booking?.needed);
-function ring(p, col) { const r = 15, c = 2 * Math.PI * r; return `<svg class="ring" viewBox="0 0 38 38"><circle cx="19" cy="19" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="5"/><circle cx="19" cy="19" r="${r}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${c * p} ${c}" transform="rotate(-90 19 19)"/><text x="19" y="23" text-anchor="middle" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink)">${Math.round(p * 100)}%</text></svg>`; }
-/* ================= the trip kit: everything a trip needs, in the order to close it, each one tap away and already
-   filled in with the city, the dates and the number of travelers. We only send people to the sites; we never sell. ================= */
-const KIT_KEY = "masa-kit";
-const kitDone = () => { const all = store.get(KIT_KEY, {}); return all[S.trip?.id] || {}; };
-function kitToggle(k) { const all = store.get(KIT_KEY, {}), id = S.trip.id, m = all[id] || {}; m[k] = !m[k]; all[id] = m; const ids = Object.keys(all); if (ids.length > 40) delete all[ids[0]]; store.set(KIT_KEY, all); }
-const enMonth = d => d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-const yymmdd = d => isoDate(d).slice(2).replace(/-/g, "");
-function kitItems(t = S.trip) {
-  const { start, end, people } = tripDates(t), city = cityName(), slug = t.slug || Masa.cities.findCity(t.city)?.slug;
-  const ap = slug && tr() ? TR.airport(slug, { family: !!t.opts?.notes?.match(/ילד/), mobility: t.opts?.mobility }) : null;
-  const iata = ap?.[0]?.code || "";
-  const all = t.days.flatMap((d, di) => d.stops.map(s => ({ s, di })));
-  const tickets = all.filter(x => x.s.booking?.needed);
-  const dinners = all.filter(x => x.s.meal === "dinner");
-  const c = tripCenter(t), near = all.filter(x => !x.s.isHotel && !x.s.meal && hasXY(x.s)).sort((a, b) => km(a.s, c) - km(b.s, c))[0]?.s;
-  const car = t.opts?.move === "car";
-  const easy = ap?.[0]?.list.find(o => o.easy);
-  const I = (k, icn, title, when, why, links, extra = {}) => ({ k, icn, title, when, why, links, ...extra });
-  return [
-    I("flights", "fwd", "טיסות", 60, `טיסה מתל אביב ל${t.city}${iata ? ` (${iata})` : ""}, ${fmtDay(start)}–${fmtDay(end)}, ${people} נוסעים. כדאי להשוות בשני אתרים: המחיר לאותה טיסה משתנה בין האתרים.`,
-      [...(iata ? [["Aviasales", aviaUrl(iata, start, end, people)], ["Kiwi.com", `https://www.kiwi.com/en/search/results/tel-aviv-israel/${iata.toLowerCase()}/${isoDate(start)}/${isoDate(end)}`]] : []), ["Google Flights", flightsUrl()], ...(iata ? [["Skyscanner", `https://www.skyscanner.co.il/transport/flights/tlv/${iata.toLowerCase()}/${yymmdd(start)}/${yymmdd(end)}/?adultsv2=${people}`], ["Kayak", `https://www.kayak.com/flights/TLV-${iata}/${isoDate(start)}/${isoDate(end)}/${people}adults`]] : [])]),
-    I("hotel", "bed", "לינה", 60, t.hotel ? `כבר בחרתם: ${t.hotel.name}. אם עוד לא הזמנתם, אפשר לבדוק את המחיר שלו בכמה אתרים.` : `הכי נוח לישון קרוב לרוב התחנות שלכם${near ? `, באזור של ${near.name}` : ""}. החיפוש כבר מסונן לאזור הזה ולתאריכים.`,
-      t.hotel ? [["Booking", bookingUrl(t.hotel)], ["Hotels.com", hotelsComUrl(t.hotel)], ["Google", googleHotelsUrl(t.hotel)]] : [["Booking באזור", bookingAreaUrl()], ["Airbnb באזור", airbnbAreaUrl()]], { go: "hotels" }),
-    I("insurance", "shield", "ביטוח נסיעות", 10, "בדקו קודם מה כבר כלול בכרטיס האשראי שלכם, ואז השוו. ברוב הפוליסות הישראליות קונים לפני היציאה מהארץ. שימו לב לכיסוי למחלה קיימת, לכבודה ולספורט.",
-      [["PassportCard", "https://www.passportcard.co.il/"], ["הראל", "https://www.harel-group.co.il/"], ["מגדל", "https://www.migdal.co.il/"], ["הפניקס", "https://www.fnx.co.il/"], ["כלל", "https://www.clalbit.co.il/"]]),
-    ...(tickets.length ? [I("tickets", "ticket", `כרטיסים מראש (${tickets.length})`, 30, `${tickets.slice(0, 3).map(x => x.s.name).join(", ")}${tickets.length > 3 ? " ועוד" : ""}. לרובם נפתחת מכירה כמה שבועות מראש, ובעונה הכרטיסים נגמרים.`, [], { below: true })] : []),
-    I("transfer", "bus", "מהשדה לעיר", 7, easy ? `הכי נוח מ${ap[0].he}: ${easy.n}, ${easy.min} דקות, ${easy.p}. רוצים שיחכו לכם עם שלט? אפשר להזמין הסעה מראש.` : "אפשר להזמין הסעה פרטית מראש, או לבדוק רכבת ואוטובוס מהשדה.",
-      [["Welcome Pickups", "https://www.welcomepickups.com/"], ["Kiwitaxi", "https://kiwitaxi.com/"]], { go: "move" }),
-    I("esim", "sim", "אינטרנט בחו״ל (eSIM)", 5, "חבילת גלישה דיגיטלית, בדרך כלל הרבה יותר זולה מחבילת חו״ל של החברה הסלולרית. קונים מהארץ ומפעילים כשנוחתים.",
-      [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["Yesim", "https://yesim.app/"]], { go: "info" }),
-    ...(car ? [I("car", "car", "השכרת רכב", 30, `${fmtDay(start)}–${fmtDay(end)}${iata ? `, איסוף מ-${iata}` : ""}. השוו ביטוח השתתפות עצמית, ובדקו אם צריך רישיון נהיגה בינלאומי.`,
-      [["Localrent", "https://localrent.com/"], ["Discover Cars", "https://www.discovercars.com/"]])] : []),
-    I("tours", "users", "סיורים וטיולי יום", 14, `סיור מודרך בעברית או באנגלית, סיור הליכה חינמי (משלמים טיפ בסוף), וטיולי יום מ${t.city}.`,
-      [["Klook", `https://www.klook.com/en-US/search/result/?query=${encodeURIComponent(city)}`], ["Tiqets", `https://www.tiqets.com/en/search?q=${encodeURIComponent(city)}`], ["Viator", `https://www.viator.com/searchResults/all?text=${encodeURIComponent(city)}`], ["סיור חינמי", gSearch(`free walking tour ${city}`)], ["סיורים בעברית", gSearch(`סיור מודרך בעברית ${t.city}`)]]),
-    ...(dinners.length ? [I("tables", "food", "שולחן לארוחות ערב", 7, `${dinners.slice(0, 3).map(x => x.s.name).join(", ")}. בסופי שבוע כדאי לשריין שולחן כמה ימים מראש.`,
-      dinners.slice(0, 3).map(x => [x.s.name, safeUrl(x.s.website) || `https://www.thefork.com/search?queryText=${encodeURIComponent(`${x.s.local || x.s.name} ${city}`)}`]))] : []),
-    I("events", "sparkle", "מה קורה בעיר בתאריכים שלכם", 30, "הופעות, משחקים, פסטיבלים ושווקים מיוחדים. שווה לבדוק לפני שסוגרים את המסלול.",
-      [["אירועים", gSearch(`events in ${city} ${enMonth(start)}`)], ["הופעות", gSearch(`concerts ${city} ${enMonth(start)}`)]], { fresh: true }),
-    I("entry", "info", "דרכון וכניסה למדינה", 30, `בדקו שהדרכון בתוקף עוד חצי שנה לפחות אחרי החזרה, ומה צריך כדי להיכנס ל${t.country || t.city} (ויזה או אישור כניסה מקוון).`,
-      [["דרישות כניסה", gSearch(`דרישות כניסה ${t.country || t.city} לישראלים`)], ["אזהרות מסע", gSearch(`אזהרת מסע ${t.country || t.city} המטה לביטחון לאומי`)]])
-  ].filter(x => !(domestic(t) && HOME_SKIP.has(x.k)));
-}
-function kitView(t = S.trip) {
-  const done = kitDone(), items = kitItems(t), { start } = tripDates(t);
-  const left = Math.ceil((start - new Date()) / 864e5);
-  const closed = items.filter(x => done[x.k]).length;
-  const order = [...items].sort((a, b) => (!!done[a.k] - !!done[b.k]) || (a.when < b.when ? 1 : -1));
-  const whenTxt = x => left <= x.when ? `<span class="tag book">כדאי לסגור עכשיו</span>` : `<span class="tag free">עד ${x.when === 60 ? "חודשיים" : x.when === 30 ? "חודש" : x.when + " ימים"} לפני</span>`;
-  return `<div><div class="eyebrow">כל מה שצריך לטיול</div><h1 style="margin-top:4px">${closed} מתוך ${items.length} סגורים</h1></div>
-    <div class="progress"><i style="width:${closed / items.length * 100}%"></i></div>
-    <p class="lead">${left > 0 ? `עוד ${left} ימים לטיול. ` : ""}כל קישור כבר כולל את העיר, התאריכים ומספר הנוסעים. מסמנים מה כבר סגרתם.</p>
-    <button type="button" class="btn soft block" id="toCal">${ic("clock")}הוספה ליומן: כל יום בטיול, ותזכורת מתי לסגור כל דבר</button>
-    ${order.map(x => `<div class="kit${done[x.k] ? " done" : ""}"><div class="kithead"><span class="ic">${ic(x.icn)}</span><b>${esc(x.title)}</b>${done[x.k] ? `<span class="tag free">סגור</span>` : whenTxt(x)}</div>
-      ${done[x.k] ? "" : `<p>${esc(x.why)}</p>${x.links.length ? `<div class="chiprow">${x.links.map(([l, u]) => `<a class="chipbtn" href="${esc(u)}" target="_blank" rel="noopener">${ic("ext")}${esc(l)}</a>`).join("")}</div>` : ""}`}
-      ${!done[x.k] && x.fresh && ai.hasSearch() ? freshEventsHtml(t) : ""}
-      <div class="kitfoot">${!done[x.k] && x.go ? `<button type="button" class="btn small soft" data-kitgo="${x.go}">${x.go === "hotels" ? "המלונות שלנו" : x.go === "move" ? "כל הדרכים מהשדה" : "פרטים"}</button>` : ""}${!done[x.k] && x.below ? `<button type="button" class="btn small soft" data-kitscroll>לרשימת הכרטיסים</button>` : ""}<label class="switchrow"><input type="checkbox" data-kit="${x.k}" ${done[x.k] ? "checked" : ""}><span>${done[x.k] ? "סגרתי" : "סימון שסגרתי"}</span></label></div></div>`).join("")}
-    ${partnerNote()}`;
-}
-/* events found by a live web search (Tavily): kept in memory for this visit only, never saved */
-const freshMem = new Map();
-function freshEventsHtml(t) {
-  const f = freshMem.get(t.id);
-  if (!f) return `<button type="button" class="btn small" id="freshEvents">${ic("search")}חיפוש עכשיו: מה מתוכנן בעיר בתאריכים שלכם</button>`;
-  if (f === "loading") return `<div class="skeleton" style="height:60px"></div>`;
-  if (f.err) return `<p class="muted">${esc(f.err)}</p>`;
-  if (!f.list.length) return `<p class="muted">החיפוש לא מצא אירועים מיוחדים. אפשר לנסות בקישורים למטה.</p>`;
-  return `<ul class="freshlist">${f.list.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener"><b>${esc(x.title)}</b></a><small>${esc(siteName(x.url))}</small>${x.snippet ? `<p dir="auto">${esc(x.snippet)}</p>` : ""}</li>`).join("")}</ul><small class="muted">תוצאות חיפוש מהרשת (Tavily). בדקו תאריכים ומחירים באתר של האירוע.</small>`;
-}
-async function loadFreshEvents() {
-  const t = S.trip, { start } = tripDates(t);
-  freshMem.set(t.id, "loading"); rerenderKeepScroll();
-  try {
-    const list = await ai.events(t.cityEn || t.cityLocal || t.city, enMonth(start));
-    freshMem.set(t.id, list ? { list } : { err: "החיפוש לא זמין כרגע.", list: [] });
-  } catch (e) { freshMem.set(t.id, { err: e.code === "shared_quota" ? "הגענו למכסת החיפושים להיום. נסו שוב מחר." : "החיפוש לא הצליח. נסו שוב.", list: [] }); }
-  if (S.screen === "book") rerenderKeepScroll();
-}
-/* the trip in the phone's calendar: every stop at its time, and a reminder for each thing still to close before the
-   trip, on the day it is best closed (an .ics file that Google, Apple and Outlook calendars open) */
-function tripIcs(t) {
-  const { start } = tripDates(t), tz = t.tz || "", now = new Date();
-  const pad = n => String(n).padStart(2, "0");
-  const ymd = d => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
-  const escI = x => String(x || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
-  const fold = line => { const out = []; let cur = ""; for (const ch of line) { if (new TextEncoder().encode(cur + ch).length > 73) { out.push(cur); cur = " " + ch; } else cur += ch; } out.push(cur); return out.join("\r\n"); };
-  const stamp = `${ymd(now)}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}00Z`;
-  const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Masa//Trip//HE", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${escI("טיול ל" + t.city)}`];
-  let n = 0;
-  t.days.forEach((d, di) => {
-    const day = addDays(start, di);
-    d.stops.forEach(s => {
-      const m = /^(\d{1,2}):(\d{2})$/.exec(s.time || ""); if (!m) return;
-      const mins = Math.max(15, Math.min(240, +s._min || 60));
-      const a = new Date(day); a.setHours(+m[1], +m[2], 0, 0); const b = new Date(a.getTime() + mins * 60000);
-      const dt = x => `${ymd(x)}T${pad(x.getHours())}${pad(x.getMinutes())}00`;
-      L.push("BEGIN:VEVENT", `UID:masa-${t.id}-${di}-${n++}@masa`, `DTSTAMP:${stamp}`,
-        tz ? `DTSTART;TZID=${tz}:${dt(a)}` : `DTSTART:${dt(a)}`, tz ? `DTEND;TZID=${tz}:${dt(b)}` : `DTEND:${dt(b)}`,
-        `SUMMARY:${escI((s.mealHe ? s.mealHe + ": " : "") + s.name)}`,
-        ...(hasXY(s) ? [`LOCATION:${escI(s.address || s.local || s.name)}`, `GEO:${(+s.lat).toFixed(5)};${(+s.lng).toFixed(5)}`] : []),
-        `DESCRIPTION:${escI(`${d.label || ""}. ${String(s.whyHe || s.why || "").slice(0, 200)}`)}`, "END:VEVENT");
-    });
-  });
-  // reminders for what is still open in the trip kit
-  const done = kitDone();
-  for (const x of kitItems(t)) {
-    if (done[x.k]) continue;
-    let when = addDays(start, -x.when); if (when < now) when = addDays(now, 1);
-    if (when >= start) continue;
-    L.push("BEGIN:VEVENT", `UID:masa-${t.id}-kit-${x.k}@masa`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${ymd(when)}`, `DTEND;VALUE=DATE:${ymd(addDays(when, 1))}`,
-      `SUMMARY:${escI(`לסגור לטיול ל${t.city}: ${x.title}`)}`, `DESCRIPTION:${escI(x.why)}`,
-      "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${escI(x.title)}`, "TRIGGER:PT9H", "END:VALARM", "END:VEVENT");
-  }
-  L.push("END:VCALENDAR");
-  return L.map(fold).join("\r\n") + "\r\n";
-}
-function downloadIcs(t) {
-  const blob = new Blob([tripIcs(t)], { type: "text/calendar;charset=utf-8" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `masa-${(t.cityEn || "trip").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.ics`;
-  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  toast("הקובץ ירד. פותחים אותו, והטיול נכנס ליומן");
-}
-const partnerNote = () => window.MASA_PARTNERS ? `<div class="disclaim">${ic("info")}<span>חלק מהקישורים הם של שותפים: אם תזמינו דרכם, ייתכן שמסע יקבל עמלה קטנה, בלי שום תוספת למחיר שלכם. ככה האפליקציה נשארת חינמית.</span></div>` : "";
-SCREENS.book = {
-  view() {
-    const list = allBook();
-    if (!list.length) return `<div class="screen">${tripTop(S.trip, "book")}${kitView()}<div class="disclaim">${ic("shield")}<span>מסע לא גובה תשלום ולא שומר פרטי אשראי. ההזמנה עצמה נעשית תמיד באתר של המקום.</span></div></div>`;
-    const stat = list.map(({ s }) => { const n = s.booking.steps.length, d = s.booking.steps.filter((_, i) => checks[ckey(s, i)]).length; return { n, d }; });
-    const complete = stat.filter(x => x.d === x.n).length;
-    return `<div class="screen">${tripTop(S.trip, "book")}${kitView()}
-    <div id="bookList"><div class="eyebrow">כרטיסים מראש</div><h2 style="margin-top:4px">${complete} מתוך ${list.length} הזמנות הושלמו</h2></div>
-    <div class="progress"><i style="width:${complete / list.length * 100}%"></i></div>
-    <p class="lead">סמנו כל שלב כשסיימתם. ההתקדמות נשמרת בדפדפן הזה.</p>
-    ${list.map(({ s, day }, bi) => { const st = stat[bi], open = S.openBook === s.name, c = CATS[catOf(s)], url = safeUrl(s.website || s.booking.url);
-      return `<div class="bookcard" data-b="${bi}"><button type="button" class="bookhead" data-name="${esc(s.name)}" aria-expanded="${open}"><span class="ic" style="background:${cv(c.c)}">${ic(catOf(s))}</span>
-        <span class="grow"><h3>${esc(s.name)}</h3><span class="meta"><span>${esc(day)}</span>${s.time ? `<span>${ic("clock")}${esc(s.time)}</span>` : ""}${s.cost ? `<span>${ic("coin")}${esc(s.cost)}</span>` : ""}</span></span>${ring(st.n ? st.d / st.n : 0, st.d === st.n ? cv("--teal") : cv("--coral"))}</button>
-        ${open ? `<ul class="checks">${s.booking.steps.map((x, i) => `<li><label class="${checks[ckey(s, i)] ? "done" : ""}"><input type="checkbox" data-i="${i}" ${checks[ckey(s, i)] ? "checked" : ""}><span><span class="stepn">שלב ${i + 1}</span>${esc(x)}</span></label></li>`).join("")}</ul>
-        ${s.best ? `<div class="besttime" style="margin:0 12px 10px">${ic("clock")}<span>שעה מומלצת לביקור: ${esc(s.best)}</span></div>` : ""}
-        <div class="linkrow" style="padding:0 12px 12px">${url ? `<a class="lnk primary wide" href="${esc(safeUrl(url))}" target="_blank" rel="noopener">${ic("shield")}לאתר הרשמי ${ic("ext")}</a>` : `<a class="lnk primary wide" href="${gSearch(s.booking.query || s.local)}" target="_blank" rel="noopener">${ic("search")}למציאת האתר הרשמי ${ic("ext")}</a>`}</div>` : ""}</div>`; }).join("")}
-    <div class="disclaim">${ic("shield")}<span>מסע לא גובה תשלום ולא שומר פרטי אשראי. ההזמנה עצמה נעשית תמיד באתר של המקום.</span></div>
-  </div>`;
-  },
-  bind() {
-    bindTripTop();
-    $("freshEvents") && ($("freshEvents").onclick = loadFreshEvents);
-    $("toCal") && ($("toCal").onclick = () => downloadIcs(S.trip));
-    track("kit_open", S.trip?.slug || S.trip?.cityEn, null, "kit:" + S.trip?.id);
-    document.querySelectorAll("[data-kit]").forEach(b => b.onchange = () => { kitToggle(b.dataset.kit); rerenderKeepScroll(); });
-    document.querySelectorAll("[data-kitgo]").forEach(b => b.onclick = () => { S.prev = "book"; b.dataset.kitgo === "hotels" ? openList("hotel") : go(b.dataset.kitgo); });
-    document.querySelectorAll("[data-kitscroll]").forEach(b => b.onclick = () => $("bookList")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
-    document.querySelectorAll(".bookhead[data-name]").forEach(b => b.onclick = () => {
-      S.openBook = S.openBook === b.dataset.name ? null : b.dataset.name;
-      rerenderKeepScroll();
-      const x = allBook().find(x => x.s.name === S.openBook);
-      if (x) flyCenter(x.s, 16);
-    });
-    bindChecks(inp => allBook()[+inp.closest("[data-b]").dataset.b].s);
-  }
-};
 
 /* ---------- guide ---------- */
 /* ================= the guide: answers from the trip itself, free and offline; the AI only for open questions ================= */
@@ -1915,94 +1761,6 @@ Traveler is currently viewing: ${t.days[S.day].label}, stop ${S.stop + 1}: ${cur
   }
 }
 
-/* ---------- settings ---------- */
-SCREENS.settings = {
-  view() {
-    const on = ai.enabled();
-    return `<div class="screen">
-    <div class="topnav"><button class="iconbtn" id="backPrev" aria-label="חזרה">${ic("back")}</button><h1 style="font-size:1.5rem">הגדרות</h1><span style="width:38px"></span></div>
-    ${accountCard()}
-    <div class="card fbcard" id="fbCard"><h2>${ic("chat")} משהו לא עבד?</h2>
-      <p class="lead">ספרו מה קרה או מה חסר לכם. זה מגיע ישר אלינו.</p>
-      <textarea id="fbText" rows="3" maxlength="1500" placeholder="למשל: בבנייה של טיול לפראג המסך נתקע"></textarea>
-      <input id="fbContact" type="text" class="select" maxlength="120" placeholder="מייל או טלפון, אם תרצו שנחזור אליכם (לא חובה)" autocomplete="email">
-      <button type="button" class="btn" id="fbSend">שליחה</button>
-      <div class="status" id="fbStatus" aria-live="polite"></div>
-    </div>
-    <div class="card"><h2>${ic("access")} נגישות ותצוגה</h2>
-      <div class="section-label">גודל טקסט</div>
-      <div class="seg" id="a11ySize">${[["100", "רגיל"], ["115", "גדול"], ["130", "גדול מאוד"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${A11Y.size === v}">${l}</button>`).join("")}</div>
-      <label class="switchrow"><input type="checkbox" id="a11yHc" ${A11Y.hc ? "checked" : ""}><span>ניגודיות גבוהה וקווים עבים יותר</span></label>
-      <label class="switchrow"><input type="checkbox" id="a11yMotion" ${A11Y.still ? "checked" : ""}><span>בלי אנימציות במפה</span></label>
-      <label class="switchrow"><input type="checkbox" id="a11yLinks" ${A11Y.links ? "checked" : ""}><span>קו תחתון לכל הקישורים</span></label>
-    </div>
-    <div class="card"><h2>המדריך החכם <span class="tag ${on ? "free" : "book"}">${ai.shared() ? "פעיל לכולם" : on ? "פעיל" : "כבוי"}</span></h2>
-      ${ai.shared() ? `<p>המדריך החכם פועל לכל מי שמשתמש במסע, בלי מפתח ובלי הרשמה: צ׳אט עם מדריך, סיפורים בעברית לכל מקום וטיפים אישיים.</p>
-      <div class="disclaim">${ic("shield")}<span>השאלות שלכם עוברות דרך השרת של מסע אל Google Gemini, בלי שם ובלי פרטים מזהים, ולא נשמרות אצלנו. Google עשויה להשתמש בהן כדי לשפר את המודלים, אז לא כותבים למדריך פרטים אישיים.</span></div>
-      <details class="ownkey"><summary>יש לכם מפתח Gemini משלכם? (לא חובה)</summary>` : ""}
-      <p>בלי המדריך, מסע עובד עם מידע פתוח מ-OpenStreetMap ומוויקיפדיה. עם מפתח חינמי של Google Gemini מקבלים גם צ׳אט עם מדריך, סיפורים בעברית לכל מקום, טיפים אישיים ומנות מקומיות.</p>
-      <ol class="howto">
-        <li>נכנסים ל-<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> עם חשבון גוגל.</li>
-        <li>לוחצים על Create API key ומעתיקים את המפתח.</li>
-        <li>מדביקים אותו כאן ולוחצים על שמירה.</li>
-        <li>מומלץ: בהגדרות המפתח ב-Google Cloud מגבילים אותו לאתר הזה (Website restrictions), כדי שגם מי שישיג אותו לא יוכל להשתמש בו.</li>
-      </ol>
-      <form id="keyForm" class="keyrow"><input id="keyInput" type="password" placeholder="${on ? "מפתח חדש" : "AIza..."}" aria-label="מפתח Gemini" autocomplete="off" dir="ltr"><button class="btn" type="submit">שמירה</button></form>
-      <div class="status ok" id="keyStatus">${ai.own() && ai.model() ? `מחובר. המודל: ${esc(ai.model())}` : ""}</div>
-      ${ai.own() ? `<button type="button" class="btn small soft" id="keyDel">${ic("trash")}מחיקת המפתח</button>` : ""}
-      <div class="disclaim">${ic("shield")}<span>המפתח נשמר רק בדפדפן הזה ונשלח רק ל-Google. בשכבה החינמית Google עשויה להשתמש בשאלות כדי לשפר את המודלים, אז לא כותבים למדריך פרטים אישיים.</span></div>
-      ${ai.shared() ? "</details>" : ""}
-    </div>
-    <div class="card"><h2>${ic("info")} מאיפה המידע מגיע</h2>
-      <ul class="etiq">
-        <li>${ic("check")}<span>מפה ומקומות: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (רישיון ODbL)</span></li>
-        <li>${ic("check")}<span>היסטוריה ותמונות: <a href="https://he.wikipedia.org" target="_blank" rel="noopener">ויקיפדיה</a> ו-Wikidata (רישיון CC BY-SA)</span></li>
-        <li>${ic("check")}<span>מסלולי הליכה: שרת הניתוב של FOSSGIS (OSRM)</span></li>
-        <li>${ic("check")}<span>עומסים: הערכה לפי סוג המקום, לא נתון חי</span></li>
-      </ul></div>
-    <div class="card"><h2>${ic("info")} תנאי שימוש ופרטיות</h2>
-      <p class="lead"><a href="terms.html">תנאי שימוש</a> · <a href="privacy.html">מדיניות פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
-      <label class="switchrow"><input type="checkbox" id="statsOn" ${statsOff() ? "" : "checked"} ${navigator.doNotTrack === "1" ? "disabled" : ""}><span>לשלוח ספירה אנונימית (כמה טיולים נבנו ובאיזו עיר), כדי שנדע מה לשפר. בלי שם, בלי מזהה ובלי עוגיות.</span></label>
-    </div>
-    <div class="card"><h2>${ic("save")} נתונים שמורים</h2>
-      <p class="lead">${savedTrips().length} טיולים שמורים בדפדפן הזה.</p>
-      <button type="button" class="btn small soft" id="clearData">${ic("trash")}מחיקת הטיולים וההתקדמות</button>
-      <div class="confirm" id="confirmClear" hidden><span>למחוק את כל הטיולים השמורים וסימוני ההזמנות?</span><button type="button" class="btn small coral" id="clearYes">כן, למחוק</button><button type="button" class="btn small soft" id="clearNo">ביטול</button></div>
-    </div>
-  </div>`;
-  },
-  bind() {
-    $("statsOn") && ($("statsOn").onchange = e => store.set(STATS_KEY, !e.target.checked));
-    $("fbSend") && ($("fbSend").onclick = async () => {
-      const text = $("fbText").value.trim(), contact = $("fbContact").value.trim();
-      if (text.length < 3) { $("fbStatus").textContent = "כתבו כמה מילים על מה שקרה."; $("fbText").focus(); return; }
-      $("fbSend").disabled = true; $("fbStatus").textContent = "שולחים…";
-      try { await sendFeedback(text, contact); $("fbText").value = ""; $("fbContact").value = ""; $("fbStatus").textContent = "תודה! קיבלנו."; toast("תודה! קיבלנו את ההודעה"); }
-      catch { $("fbStatus").textContent = "לא הצלחנו לשלוח. בדקו את החיבור לאינטרנט ונסו שוב, או כתבו ל-Sivanmad7@gmail.com."; }
-      finally { $("fbSend").disabled = false; }
-    });
-    if (S.openFeedback) { S.openFeedback = false; setTimeout(() => { $("fbCard")?.scrollIntoView({ block: "start" }); $("fbText")?.focus(); }, 50); }
-    $("a11ySize").querySelectorAll("button").forEach(b => b.onclick = () => { A11Y.size = b.dataset.v; applyA11y(); rerenderKeepScroll(); });
-    $("a11yHc").onchange = e => { A11Y.hc = e.target.checked; applyA11y(); };
-    $("a11yMotion").onchange = e => { A11Y.still = e.target.checked; applyA11y(); };
-    $("a11yLinks").onchange = e => { A11Y.links = e.target.checked; applyA11y(); };
-    $("backPrev").onclick = () => go(S.prev && S.prev !== "settings" && (S.trip || !TRIP_SCREENS.includes(S.prev)) ? S.prev : "home");
-    $("keyForm").onsubmit = async e => {
-      e.preventDefault();
-      const v = $("keyInput").value.trim();
-      const st = $("keyStatus");
-      if (!v) { st.className = "status"; st.textContent = "הדביקו מפתח כדי לשמור."; return; }
-      st.className = "status ok"; st.textContent = "בודקים את המפתח…";
-      try { const m = await ai.saveKey(v); rerenderKeepScroll(); $("keyStatus").textContent = `מחובר. המודל: ${m}`; toast("המדריך החכם הופעל"); }
-      catch (err) { st.className = "status"; st.textContent = ai.errText(err.code); }
-    };
-    $("keyDel") && ($("keyDel").onclick = async () => { await ai.saveKey(""); rerenderKeepScroll(); toast("המפתח נמחק"); });
-    $("clearData").onclick = () => { $("confirmClear").hidden = false; };
-    $("clearNo").onclick = () => { $("confirmClear").hidden = true; };
-    bindAccount();
-    $("clearYes").onclick = () => { store.set("masa-trips", []); store.set("masa-checks", {}); checks = {}; rerenderKeepScroll(); toast("הנתונים נמחקו"); };
-  }
-};
 
 /* ================= explore, Google Maps style ================= */
 const CUISINE_HE = { creative: "יצירתי", fusion: "פיוז׳ן", italian: "איטלקי", pizza: "פיצה", french: "צרפתי", spanish: "ספרדי", tapas: "טאפאס", japanese: "יפני", sushi: "סושי", ramen: "ראמן",
@@ -3096,30 +2854,6 @@ async function joinFromLink(code) {
   try { const id = await cloud.join(code); openWhenArrives = id; toast("מצטרפים לטיול…"); }
   catch (e) { if (e.message === "gone") toast("ההזמנה הזאת כבר לא בתוקף. בקשו קישור חדש."); else if (e.message !== "signin") toast("לא הצלחנו להצטרף לטיול. נסו שוב."); }
 }
-function accountCard() {
-  if (!cloud.configured()) return "";
-  const st = cloud.state, u = st.user;
-  if (st.status === "in") return `<div class="card account"><h2>${u.photo ? `<img class="avatar" src="${esc(safeUrl(u.photo))}" alt="" referrerpolicy="no-referrer">` : ic("users")} ${esc(u.fullName || u.name || "החשבון שלי")}</h2>
-      <p>הטיולים שלכם נשמרים בחשבון ומופיעים בכל מכשיר שמתחברים ממנו. ${u.email ? `<span class="muted">(${esc(u.email)})</span>` : ""}</p>
-      <div class="chiprow"><button type="button" class="chipbtn" id="accOut">התנתקות</button><button type="button" class="chipbtn" id="accDel">${ic("trash")}מחיקת החשבון והמידע</button>${cloud.isOwner?.() ? `<button type="button" class="chipbtn" id="accAdmin">${ic("chart")}מסך מנהל</button>` : ""}</div>
-      <div class="confirm" id="accDelAsk" hidden><span>למחוק את החשבון, את הטיולים שבחשבון ואת ההשתתפות בטיולים משותפים? בטיולים במכשיר הזה לא נוגעים.</span><button type="button" class="btn small coral" id="accDelYes">מחיקה</button><button type="button" class="btn small soft" id="accDelNo">ביטול</button></div></div>`;
-  return `<div class="card account"><h2>${ic("users")} החשבון שלי</h2>
-      <p>מתחברים עם Google כדי שהטיולים יישמרו גם אם מחליפים טלפון, יופיעו בכל מכשיר, ואפשר יהיה לתכנן טיול יחד עם המשפחה בזמן אמת.</p>
-      <button type="button" class="btn block" id="accIn" ${st.status === "loading" ? "disabled" : ""}>${st.status === "loading" ? "מתחברים…" : "התחברות עם Google"}</button>
-      <div class="disclaim">${ic("shield")}<span>נשמרים רק השם, התמונה והטיולים שלכם. אפשר למחוק הכול בכל רגע. <a href="privacy.html">מדיניות הפרטיות</a>, <a href="terms.html">תנאי השימוש</a></span></div></div>`;
-}
-function bindAccount() {
-  $("accIn") && ($("accIn").onclick = () => cloud.signIn());
-  $("accOut") && ($("accOut").onclick = async () => { await cloud.signOut(); toast("התנתקתם. הטיולים נשארו במכשיר."); rerenderKeepScroll(); });
-  $("accDel") && ($("accDel").onclick = () => { $("accDelAsk").hidden = false; });
-  $("accAdmin") && ($("accAdmin").onclick = openAdmin);
-  $("accDelNo") && ($("accDelNo").onclick = () => { $("accDelAsk").hidden = true; });
-  $("accDelYes") && ($("accDelYes").onclick = async () => {
-    try { await cloud.deleteAccount(); toast("החשבון והמידע שבו נמחקו"); }
-    catch (e) { toast(e.message === "relogin" ? "המידע נמחק. כדי למחוק גם את החשבון עצמו, התחברו שוב ולחצו על מחיקה." : "המחיקה לא הצליחה. נסו שוב."); }
-    rerenderKeepScroll();
-  });
-}
 function liveShareCard(t) {
   if (!cloud.configured() || t.source === "sample") return "";
   const st = cloud.state;
@@ -3159,6 +2893,20 @@ applyA11y();
 if (me.form) S.form = { ...S.form, ...me.form };
 renderPanel();
 renderMap();
+/* rare screens live in their own files, loaded the first time they are opened (sw.js keeps them for offline);
+   until the file arrives the screen shows a short wait, then draws itself */
+var LAZY = { book: "book", settings: "settings" }, lazyLoad = {};
+function needScreen(n) {
+  const f = LAZY[n];
+  return lazyLoad[f] || (lazyLoad[f] = new Promise(res => {
+    const el = document.createElement("script"); el.src = `js/min/${f}.js`;
+    el.onload = () => { try { Masa[f].install(LAZY_U); } catch {} res(); };
+    el.onerror = () => { lazyLoad[f] = null; res(); }; /* try again the next time it is opened */
+    document.head.append(el);
+  }));
+}
+const LAZY_U = { get checks() { return checks; }, get reduced() { return reduced; }, get TR() { return TR; }, clearChecks: () => { checks = {}; },
+  $, A11Y, CATS, HOME_SKIP, S, SCREENS, STATS_KEY, TRIP_SCREENS, addDays, ai, airbnbAreaUrl, applyA11y, aviaUrl, bindChecks, bindTripTop, bookingAreaUrl, bookingUrl, catOf, cityName, ckey, cloud, cv, domestic, esc, flightsUrl, flyCenter, fmtDay, gSearch, go, googleHotelsUrl, hasXY, hotelsComUrl, ic, isoDate, km, openAdmin, openList, rerenderKeepScroll, safeUrl, savedTrips, sendFeedback, siteName, statsOff, store, toast, tr, track, tripCenter, tripDates, tripTop };
 importShared();
 addEventListener("hashchange", () => importShared());
 })();

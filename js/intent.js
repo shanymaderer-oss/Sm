@@ -17,6 +17,29 @@ Masa.intent = (() => {
   const word = stem => new RegExp(`(?:^|[^${HE}a-z])(?:[ובלמהשכ]{0,3})${stem}`, "i");
   const NEG = /(?:^|\s)(?:ו?לא|ו?בלי|ללא|אין|פחות|בלי הרבה|שונא\S*|שונאת|מספיק עם|לא אוהב\S*|לא מתחבר\S*|לא רוצ\S*|לא מעניין\S*|לא צריך\S*|לא בא לנו|no|not|without|hate|avoid|skip|dont|don't|less)\s+(?:\S+\s+){0,2}$/i;
 
+  const FLY_LBL = "שעות הטיסה: כתבו את השעה (למשל נוחתים ב-16:00) ונקצר את היום הראשון והאחרון";
+  /* the landing and the flight home, in minutes after midnight: "נוחתים ב-16:00", "טסים חזרה ב-10 בבוקר", "we land at 4pm" */
+  const AT = "\\D{0,14}?(?:ב-?|בשעה\\s*|at\\s*|-)(\\d{1,2})(?:[:.](\\d{2}))?\\s*(בבוקר|בצהריים|אחה\"?צ|אחרי הצהריים|אחר הצהריים|בערב|בלילה|am|pm)?";
+  const FLY_IN = new RegExp(`(?:נוחת\\S*|נחית\\S*|we land|landing|arriv\\S*)${AT}`, "i");
+  const FLY_OUT = new RegExp(`(?:טס\\S* חזרה|טיסת? (?:ה)?חזר\\S*|הטיסה חוזרת|המרא\\S*|flight back|fly back|flying back|fly home)${AT}`, "i");
+  const hourOf = m => {
+    if (!m) return null;
+    let h = +m[1]; const min = +(m[2] || 0), q = (m[3] || "").toLowerCase();
+    if (h > 23 || min > 59) return null;
+    if (h < 12 && (/pm|ערב|צ|צהריים/.test(q) || (q === "בלילה" && h >= 8))) h += 12;
+    if (h === 12 && (q === "am" || q === "בלילה")) h = 0;
+    return h * 60 + min;
+  };
+  const hhmm = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+  function flightTimes(w) {
+    const a = hourOf(FLY_IN.exec(w.text)), d = hourOf(FLY_OUT.exec(w.text));
+    if (a != null) w.arrive = a;
+    if (d != null) w.depart = d;
+    const i = w.labels.indexOf(FLY_LBL);
+    if (i < 0 || (a == null && d == null)) return;
+    w.labels[i] = "שעות הטיסה: " + [a != null && `נחיתה ב-${hhmm(a)}, היום הראשון מתחיל אחרי ההגעה למלון`, d != null && `טיסה חזרה ב-${hhmm(d)}, ביום האחרון מסיימים שעתיים וחצי לפני`].filter(Boolean).join("; ");
+  }
+
   /* each rule: test, what it means, and how it reads back to the traveler */
   const T = (re, on, off) => ({ re: Array.isArray(re) ? re : [re], on, off });
   const RULES = [
@@ -31,8 +54,8 @@ Masa.intent = (() => {
     T([word("גלוטן"), word("צליאק"), /\b(gluten|celiac|coeliac)\b/], { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }, { label: "ללא גלוטן: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }),
     // same for halal: no data on the restaurants, and a steakhouse can stay in the trip
     T(word("חלאל"), { label: "חלאל: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }, { label: "חלאל: אין לנו מידע אמין על המסעדות, כדאי לוודא מולן לפני שמגיעים" }),
-    // flight times do not move the day's stops yet, so say that plainly instead of building a full day in silence
-    T([word("נוחת\\S*"), word("נחית\\S*"), word("טס\\S* חזרה"), word("טיסת? חזר\\S*"), word("המרא\\S*"), /\b(we land|landing|flight back|fly back)\b/], { label: "שעות הטיסה: המסלול עוד לא מתחשב בהן, ביום הנחיתה וביום החזרה כדאי להוריד תחנות" }),
+    // flight times: with an hour written ("נוחתים ב-16:00", "טסים חזרה ב-10") the first and last days are shortened (flightTimes below)
+    T([word("נוחת\\S*"), word("נחית\\S*"), word("טס\\S* חזרה"), word("טיסת? חזר\\S*"), word("המרא\\S*"), /\b(we land|landing|flight back|fly back)\b/], { label: FLY_LBL }),
     T([word("סהרה"), /(?:^|\s)(?:רוצ\S*|לראות|טיול\S*|יום|לילה)\s+[בלה]{0,2}מדבר(?=[\s,.]|$)/], { label: "מדבר: רחוק מהעיר ולא נכנס למסלול, כדאי טיול יום מאורגן" }),
     T([word("צמחוני"), /\b(vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
     T([word("טבעוני"), word("ויגן"), /\bvegan\b/], { diet: "טבעוני", label: "אוכל טבעוני" }),
@@ -228,6 +251,7 @@ Masa.intent = (() => {
     const rw = [...w.ruleWords].filter(x => x.length >= 4);
     w.skips = w.skips.filter(n => !norm(n).split(" ").every(x => FILL.has(x) || GENERIC.has(x) || w.ruleWords.has(x) || rw.some(r => x.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(r) || x.startsWith(r))));
     if (w.skips.length) say(`לא נכניס למסלול: ${w.skips.join(", ")}`);
+    flightTimes(w);
     // a sentence nothing above understood: the planner says so, unless it turns out to name a place
     w.unread = nohit.filter(c => c.split(/\s+/).length >= 2 && !/\d/.test(c) && !BEEN.test(c) && !SKIP.test(c) && c.search(ASK) < 0 && !/מלון|hotel/i.test(c)
       && !/^(?:אנחנו|אני|זוג|טסים|נוסעים|מגיעים|יש לנו|we are|we're|i am|i'm)(?=\s)/i.test(c));

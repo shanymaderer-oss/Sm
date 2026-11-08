@@ -116,6 +116,13 @@ async def main():
     t=await pg.evaluate(build,["רומא","שיט בתעלות",1,["history"]])
     ok="תעלות או שיט" in t["wish"]["missed"]; print("WATER none","ok " if ok else "BAD",t["wish"]["missed"])
     if not ok: FAILS.append("water none")
+    # flight times: landing at 16:00 and flying home at 10:00 shorten the first and the last day
+    t=await pg.evaluate(build,["אמסטרדם","נוחתים ב-16:00 וטסים חזרה ב-10 בבוקר",3,["history"]])
+    hm=lambda x:int(x[:2])*60+int(x[3:5])
+    d1,d3=t["days"][0]["stops"],t["days"][-1]["stops"]
+    ok=len(t["days"])==3 and 1<=len(d1)<=5 and min(hm(s["time"]) for s in d1 if s.get("meal")!="hotel")>=17*60+30 and 1<=len(d3)<=2 and max(hm(s["time"]) for s in d3)<=7*60+30 and any("נחיתה ב-16:00" in l for l in t["wish"]["labels"])
+    print("FLIGHT","ok " if ok else "BAD",[(s["time"],s.get("meal") or "") for s in d1],[(s["time"],s.get("meal") or "") for s in d3])
+    if not ok: FAILS.append("flight times")
     plain=await pg.evaluate(build,["בודפשט","",2,["history"]]); cold=await pg.evaluate(build,["בודפשט","קר מאוד, כמה שיותר בפנים",2,["history"]])
     out=lambda t:sum(s.get("kind") in ("park","view","bridge","square","beach","street") for s in stops(t))
     ok=out(cold)<out(plain); print("COLD","ok " if ok else "BAD",out(plain),"->",out(cold))
