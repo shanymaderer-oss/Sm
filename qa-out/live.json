@@ -1,0 +1,495 @@
+{
+ "failed": {
+  "tiles.openfreemap.org": [
+   "FAILED net::ERR_ABORTED https://tiles.openfreemap.org/planet/20261101_080013_pt/4/8/6.pbf",
+   "FAILED net::ERR_ABORTED https://tiles.openfreemap.org/planet/20261101_080013_pt/4/9/5.pbf",
+   "FAILED net::ERR_ABORTED https://tiles.openfreemap.org/natural_earth/ne2sr/5/17/11.png",
+   "FAILED net::ERR_ABORTED https://tiles.openfreemap.org/natural_earth/ne2sr/5/17/12.png",
+   "FAILED net::ERR_ABORTED https://tiles.openfreemap.org/natural_earth/ne2sr/5/16/11.png",
+   "FAILED net::ERR_ABORTED https://tiles.openfreemap.org/natural_earth/ne2sr/5/16/12.png"
+  ],
+  "gibs.earthdata.nasa.gov": [
+   "FAILED net::ERR_ABORTED https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/8/96/136.jpeg",
+   "FAILED net::ERR_ABORTED https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/8/96/137.jpeg",
+   "FAILED net::ERR_ABORTED https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/8/96/143.jpeg",
+   "FAILED net::ERR_ABORTED https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/8/95/144.jpeg",
+   "FAILED net::ERR_ABORTED https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/8/95/143.jpeg"
+  ],
+  "thumb.wikimedia.org": [
+   "FAILED net::ERR_BLOCKED_BY_ORB https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Archaeological_Museum%252C_Thessaloniki%252C_Greece_%287457978664%29.jpg/330px-Archaeological_Museum%25",
+   "FAILED net::ERR_BLOCKED_BY_ORB https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Archaeological_Museum%252C_Thessaloniki%252C_Greece_%287457978664%29.jpg/330px-Archaeological_Museum%25",
+   "FAILED net::ERR_BLOCKED_BY_ORB https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Archaeological_Museum%252C_Thessaloniki%252C_Greece_%287457978664%29.jpg/330px-Archaeological_Museum%25",
+   "FAILED net::ERR_BLOCKED_BY_ORB https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Archaeological_Museum%252C_Thessaloniki%252C_Greece_%287457978664%29.jpg/330px-Archaeological_Museum%25",
+   "FAILED net::ERR_BLOCKED_BY_ORB https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Archaeological_Museum%252C_Thessaloniki%252C_Greece_%287457978664%29.jpg/330px-Archaeological_Museum%25",
+   "FAILED net::ERR_BLOCKED_BY_ORB https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Archaeological_Museum%252C_Thessaloniki%252C_Greece_%287457978664%29.jpg/330px-Archaeological_Museum%25"
+  ]
+ },
+ "csp": [],
+ "pageerrors": [],
+ "screens": {
+  "home": "לאן נוסעים? /  / כתבו עיר, או לחצו על אחת מהנקודות במפה. /  / המשך / יעדים פופולריים / רומא / איטליה, 3–4 ימים / פריז / צרפת, 4 ימים / ברצלונה / ספרד, 3–4 ימים / טוקיו / יפן, 5 ימים / ניו יורק / ארה״ב, 5 ימים / ליסבון / פורטוגל, 3 ימים / בנגקוק / תאילנד, 3–4 ימים / אתונה / יוון, 2–3 ימים / לראות טיול לדוגמה: 3 ימים ברומא /  / התחברו עם Google כדי לשמור את הטיולים בכל המכשירים ולתכנן יחד עם המשפחה. /  / המקומות במסלול אמיתיים: מסעדות, אתרים ורחובות ",
+  "build רומא seconds": 2.6,
+  "plan רומא": "איטליה / 3 ימים ברומא /  / 29 תחנות · 19.4 ק״מ הליכה · 6 להזמין /  / שיתוף / המסלול / לפני הטיסה / הזמנות / 6 / ביחד / יום 1 / יום 2 / יום 3 / צילום ונופים ואמנות / לשנות את היום / הוספת מקום / 1 / ארוחת בוקר / Babington's / ₪35–55 לאדם · פתוח עכשיו / 09:00 / 45 דקות / בדרך כלל רגוע / 0.7 ק״מ · 9 דק׳ הליכה · / ניווט / 2 / מזרקת טרווי / אטרקציה / 10:00 / 15 דקות / בדרך כלל רגוע / 1.2 ק״מ · 16 דק׳ הליכה · / ניווט / 3 / המוזיאונים הקפיטוליניים / מוזיאון · פתוח עכשיו / 10:4",
+  "photos רומא": 6,
+  "routes רומא": 8,
+  "place רומא": "יום 1 · תחנה 2 מתוך 9 / אטרקציה / מזרקת טרווי / Fontana di Trevi / תמונה: ויקיפדיה / שעה / 10:00 / משך / 15 דקות / עלות / בדרך כלל חינם / אטרקציה / סימון: הייתי כאן / חובה לראות / מהמקומות המפורסמים בעיר /  / מזרקה ברומא, איטליה. /  / ביקורות ותמונות בגוגל / טיקטוק / אינסטגרם / יוטיוב / TripAdvisor / כרטיסים וסיורים / חיפוש האתר הרשמי / Tiqets / Klook / באתר הרשמי בדרך כלל הכי זול. ב-Tiqets וב-Klook יש סיורים מודרכים וכרטיסי דילוג על התור. אלה קישורי",
+  "info רומא": "לפני שטסים / מה צריך לדעת באיטליה / טיסות /  / חיפוש טיסות מתל אביב לרומא בתאריכים של הטיול, בהשוואת מחירים של גוגל. /  / טיסות ב-Google Flights / Skyscanner / כסף: יורו / EUR / = / 35.7 ₪ / 1 EUR = 3.572 ₪, לפי הבנק המרכזי האירופי (2026-11-06) /  / במסופי אשראי ובכספומטים בחרו לשלם במטבע המקומי, לא בשקלים. ההמרה של המסוף יקרה יותר. /  / אינטרנט בחו״ל: eSIM /  / eSIM הוא כרטיס סים דיגיטלי. קונים חבילת גלישה באינטרנט, סורקים קוד, והט",
+  "move רומא": "תחבורה / איך מגיעים ומתניידים ברומא / משדה התעופה פיומיצ׳ינו (FCO) לעיר /  / הכי נוח: Leonardo Express. הכי זול: אוטובוס (Terravision / SIT / TAM). /  / Leonardo Express / רכבת · 32 דק׳ · עד תחנת טרמיני / רכבת ישירה בלי עצירות, כל 15 דקות / הכי נוח / €14 / כ-₪50 לאדם / רכבת FL1 / רכבת · 45 דק׳ · עד טרסטבר / טיבורטינה / €8 / כ-₪30 לאדם / אוטובוס (Terravision / SIT / TAM) / אוטובוס · 55 דק׳ · עד טרמיני / תלוי בפקקים / הכי זול / €7–8 / כ-₪25",
+  "hotels רומא": "250 מקומות / מלונות ברומא / כבר הזמנתם מלון? /  / חפשו אותו לפי שם או כתובת, והמסלול ייבנה סביבו: כל יום יתחיל ויסתיים קרוב אליו. /  / חיפוש / הכי מתאים למסלול / הכי מומלץ / הכי קרוב למסלול / זול / מחיר בינוני / יוקרתי / 3 כוכבים ומעלה / 4 כוכבים ומעלה / מלון / הוסטל / דירה / בית הארחה / נגיש / הדירוג לפי ביקורות Tripadvisor (כשיש), כוכבים, המלצות Wikivoyage, המרחק ממרכז המסלול והתקציב שבחרתם. המחיר המדויק לתאריכים שלכם מופיע באתרי ההזמ",
+  "discover רומא": "גלו עוד ברומא / מה עוד אפשר לעשות? /  / רעיונות מעבר למסלול. רעיון עם מיקום אפשר להוסיף ליום שתבחרו, והוא מסומן גם על המפה. /  / מה ממליצים ברשתות על רומא /  / שם רואים איך המקום נראה באמת ומה אנשים מזמינים. פותחים חיפוש מוכן, ואם מצאתם מקום שאהבתם, מחפשים אותו במסע לפי שם ומוסיפים למסלול. /  / מסעדות (יוצרים ישראלים) / המלצות בעברית / פינות נסתרות / אוכל רחוב / חובה לאכול / מה לעשות / וולוגים בעברית ביוטיוב / מדריכים ביוטיוב / קב",
+  "book רומא": "איטליה / 3 ימים ברומא /  / 29 תחנות · 19.4 ק״מ הליכה · 6 להזמין /  / שיתוף / המסלול / לפני הטיסה / הזמנות / 6 / ביחד / כל מה שצריך לטיול / 0 מתוך 10 סגורים /  / עוד 21 ימים לטיול. כל קישור כבר כולל את העיר, התאריכים ומספר הנוסעים. מסמנים מה כבר סגרתם. /  / הוספה ליומן: כל יום בטיול, ותזכורת מתי לסגור כל דבר / לינה / כדאי לסגור עכשיו /  / הכי נוח לישון קרוב לרוב התחנות שלכם, באזור של סנטה מריה דל אנימה. החיפוש כבר מסונן לאזור הזה ולתאריכ",
+  "guide רומא": "הסוכן של הטיול ברומא /  / משנה את המסלול ועונה על שאלות. כרגע אתם ליד מזרקת טרווי. /  / פחות הליכה ביום 2 / מקום יפה לשקיעה / פחות מוזיאונים / מה הבא? / איפה לאכול כאן קרוב? / יורד גשם, מה משנים? / יש לי שעתיים פנויות / ספר לי על המקום / מה עושים בערב? / אנחנו עייפים, משהו רגוע יותר / לשתף מיקום / שלום! אני הסוכן של הטיול שלכם ברומא. אפשר לבקש שינויים במסלול (\"יום 2 רגוע יותר\", \"בלי מוזיאונים\", \"תוסיפו שוק אוכל\"), ולשאול מה הב",
+  "list רומא": "86 מקומות / מסעדות ברומא / חיפוש / הכי מומלץ / הכי קרוב למסלול / פתוח עכשיו / זול / מחיר בינוני / יוקרתי / נגיש / צמחוני / כשר / איטלקי 33 / מקומי 8 / פיצה 7 / יהודי 2 / פסטה 2 / מקומי 2 / בינלאומי 1 / יצירתי 1 / פירות ים 1 / הדירוג לפי סימני איכות פתוחים: המלצות Wikivoyage, כוכבי מישלן, מקום מוכר, מטבח מקומי ואתר פעיל. לדירוג כוכבים ולביקורות לחצו על \"ביקורות\". \"פתוח עכשיו\" לפי השעה ברומא. / Glass Hostaria / מסעדה · איטלקי · ₪145–230 לאדם / מו",
+  "poi רומא": "מסעדה / מסעדה / Glass Hostaria / איטלקי · €30-50 · 1.6 ק״מ מהמסלול / מומלץ ב-Wikivoyage / מסעדה מוערכת במיוחד / מטבח מקומי / כמה זה יעלה: ₪145–230 לאדם (€40–65, לפי המחירים ב-Wikivoyage) /  / Uber-modern trattoria. /  / המלצה מתוך Wikivoyage, ברישיון CC BY-SA / ביקורות ותמונות בגוגל / אתר / +39 06 58335903 / טיקטוק / אינסטגרם / יוטיוב / TripAdvisor / Vicolo del Cinque 58 / הזמנת שולחן / אתר המסעדה / TheFork / בגוגל מפות / שעות פתיחה: We-Fr 19:3",
+  "build סלוניקי, יוון seconds": 1.2,
+  "plan סלוניקי, יוון": "יוון / 3 ימים בסלוניקי /  / 25 תחנות · 12.4 ק״מ הליכה · 7 להזמין /  / שיתוף / המסלול / לפני הטיסה / הזמנות / 7 / ביחד / יום 1 / יום 2 / יום 3 / היסטוריה ואמנות / לשנות את היום / הוספת מקום / 1 / ארוחת בוקר / Basta! / יווני · קפה · ים תיכוני · ₪25–40 לאדם · פתוח עכשיו / 09:00 / 45 דקות / בדרך כלל רגוע / 0.5 ק״מ · 7 דק׳ הליכה · / ניווט / 2 / האגיה סופיה / מבנה דתי / 10:00 / 30 דקות / עמוס בצהריים / 0.7 ק״מ · 9 דק׳ הליכה · / ניווט / 3 / Aristotelous Square / כיכר / 10:45 / 3",
+  "photos סלוניקי, יוון": 5,
+  "routes סלוניקי, יוון": 8,
+  "place סלוניקי, יוון": "יום 1 · תחנה 2 מתוך 9 / מבנה דתי / האגיה סופיה / Αγία Σοφία / תמונה: ויקיפדיה / שעה / 10:00 / משך / 30 דקות / עלות / תלוי במקום / מבנה דתי / סימון: הייתי כאן / חובה לראות /  / כנסייה יוונית-אורתודוקסית בסלוניקי. /  / ביקורות ותמונות בגוגל / אתר / +30 2310270253 / טיקטוק / אינסטגרם / יוטיוב / TripAdvisor / כרטיסים וסיורים / אתר רשמי / Tiqets / Klook / באתר הרשמי בדרך כלל הכי זול. ב-Tiqets וב-Klook יש סיורים מודרכים וכרטיסי דילוג על התור. אלה קישורי שותפ",
+  "info סלוניקי, יוון": "לפני שטסים / מה צריך לדעת ביוון / טיסות /  / חיפוש טיסות מתל אביב לסלוניקי בתאריכים של הטיול, בהשוואת מחירים של גוגל. /  / טיסות ב-Google Flights / Skyscanner / כסף: יורו / EUR / = / 35.7 ₪ / 1 EUR = 3.572 ₪, לפי הבנק המרכזי האירופי (2026-11-06) /  / במסופי אשראי ובכספומטים בחרו לשלם במטבע המקומי, לא בשקלים. ההמרה של המסוף יקרה יותר. /  / אינטרנט בחו״ל: eSIM /  / eSIM הוא כרטיס סים דיגיטלי. קונים חבילת גלישה באינטרנט, סורקים קוד, וה",
+  "move סלוניקי, יוון": "תחבורה / איך מגיעים ומתניידים בסלוניקי / משדה התעופה מקדוניה (SKG) לעיר /  / הכי נוח: מונית. הכי זול: אוטובוס 01X. /  / אוטובוס 01X / אוטובוס · 50 דק׳ · עד מרכז העיר / תחנת הרכבת / הכי זול / €2 / כ-₪7 לאדם / מונית / מונית · 25 דק׳ · עד מרכז העיר / הכי נוח / כ-€28 ביום / €38 בלילה, מחיר קבוע / כ-₪105 למונית / מסלול מהשדה בגוגל מפות / בתוך העיר / הכי נוח / במרכז הולכים ברגל, וכשהמרחק יותר מ-2 ק״מ לוקחים מונית באפליקציה. המחיר ידוע מראש ",
+  "hotels סלוניקי, יוון": "105 מקומות / מלונות בסלוניקי / כבר הזמנתם מלון? /  / חפשו אותו לפי שם או כתובת, והמסלול ייבנה סביבו: כל יום יתחיל ויסתיים קרוב אליו. /  / חיפוש / הכי מתאים למסלול / הכי מומלץ / הכי קרוב למסלול / זול / מחיר בינוני / יוקרתי / 3 כוכבים ומעלה / 4 כוכבים ומעלה / מלון / הוסטל / דירה / בית הארחה / נגיש / הדירוג לפי ביקורות Tripadvisor (כשיש), כוכבים, המלצות Wikivoyage, המרחק ממרכז המסלול והתקציב שבחרתם. המחיר המדויק לתאריכים שלכם מופיע באתרי ה",
+  "discover סלוניקי, יוון": "גלו עוד בסלוניקי / מה עוד אפשר לעשות? /  / רעיונות מעבר למסלול. רעיון עם מיקום אפשר להוסיף ליום שתבחרו, והוא מסומן גם על המפה. /  / מה ממליצים ברשתות על סלוניקי /  / שם רואים איך המקום נראה באמת ומה אנשים מזמינים. פותחים חיפוש מוכן, ואם מצאתם מקום שאהבתם, מחפשים אותו במסע לפי שם ומוסיפים למסלול. /  / מסעדות (יוצרים ישראלים) / המלצות בעברית / פינות נסתרות / אוכל רחוב / חובה לאכול / מה לעשות / וולוגים בעברית ביוטיוב / מדריכים ביוט",
+  "book סלוניקי, יוון": "יוון / 3 ימים בסלוניקי /  / 25 תחנות · 12.4 ק״מ הליכה · 7 להזמין /  / שיתוף / המסלול / לפני הטיסה / הזמנות / 7 / ביחד / כל מה שצריך לטיול / 0 מתוך 10 סגורים /  / עוד 21 ימים לטיול. כל קישור כבר כולל את העיר, התאריכים ומספר הנוסעים. מסמנים מה כבר סגרתם. /  / הוספה ליומן: כל יום בטיול, ותזכורת מתי לסגור כל דבר / לינה / כדאי לסגור עכשיו /  / הכי נוח לישון קרוב לרוב התחנות שלכם, באזור של האגיה סופיה. החיפוש כבר מסונן לאזור הזה ולתאריכים. /  / B",
+  "guide סלוניקי, יוון": "הסוכן של הטיול בסלוניקי /  / משנה את המסלול ועונה על שאלות. כרגע אתם ליד האגיה סופיה. /  / מקום יפה לשקיעה / פחות מוזיאונים / משהו מיוחד שתיירים לא מכירים / מה הבא? / איפה לאכול כאן קרוב? / יורד גשם, מה משנים? / יש לי שעתיים פנויות / ספר לי על המקום / מה עושים בערב? / אנחנו עייפים, משהו רגוע יותר / לשתף מיקום / שלום! אני הסוכן של הטיול שלכם בסלוניקי. אפשר לבקש שינויים במסלול (\"יום 2 רגוע יותר\", \"בלי מוזיאונים\", \"תוסיפו שוק אוכ",
+  "list סלוניקי, יוון": "242 מקומות / מסעדות בסלוניקי / חיפוש / הכי מומלץ / הכי קרוב למסלול / פתוח עכשיו / זול / מחיר בינוני / יוקרתי / נגיש / צמחוני / כשר / יווני 57 / מקומי 11 / ים תיכוני 8 / פירות ים 7 / דגים 7 / איטלקי 6 / פיצה 5 / אסייתי 4 / סושי 3 / טורקי 3 / הדירוג לפי סימני איכות פתוחים: המלצות Wikivoyage, כוכבי מישלן, מקום מוכר, מטבח מקומי ואתר פעיל. לדירוג כוכבים ולביקורות לחצו על \"ביקורות\". \"פתוח עכשיו\" לפי השעה בסלוניקי. / Poster / מסעדה · יווני · ₪70–105 ל",
+  "poi סלוניקי, יוון": "מסעדה / מסעדה / Poster / יווני · 800 מ׳ מהמסלול / מסעדה מוכרת וטובה / מטבח מקומי / ישיבה בחוץ / כמה זה יעלה: ₪70–105 לאדם (€20–30, הערכה) / ביקורות ותמונות בגוגל / אתר / +30 231 054 7384 / טיקטוק / אינסטגרם / יוטיוב / TripAdvisor / Συγγρού 1 / הזמנת שולחן / אתר המסעדה / TheFork / בגוגל מפות / שעות פתיחה: Fr-Sa 13:30-01:00; Tu-Th 14:00-00:00; Su 13:30-23:00 / הוספה למסלול / יום 1 / יום 2 / יום 3 / הוספה / ניווט / בגוגל מפות / המידע מ-OpenStreetMap. שעות"
+ },
+ "links": {
+  "www.agiasofia.info": [
+   [
+    200,
+    "http://www.agiasofia.info/"
+   ]
+  ],
+  "bolt.eu": [
+   [
+    200,
+    "https://bolt.eu/"
+   ]
+  ],
+  "citymapper.com": [
+   [
+    200,
+    "https://citymapper.com/"
+   ]
+  ],
+  "en.wikivoyage.org": [
+   [
+    200,
+    "https://en.wikivoyage.org/wiki/Rome"
+   ]
+  ],
+  "esim.holafly.com": [
+   [
+    200,
+    "https://esim.holafly.com/"
+   ]
+  ],
+  "esimdb.com": [
+   [
+    200,
+    "https://esimdb.com/"
+   ]
+  ],
+  "glasshostaria.it": [
+   [
+    200,
+    "https://glasshostaria.it/"
+   ]
+  ],
+  "he.wikipedia.org": [
+   [
+    200,
+    "https://he.wikipedia.org/wiki/%D7%94%D7%90%D7%92%D7%99%D7%94_%D7%A1%D7%95%D7%A4%D7%99%D7%94_(%D7%A1%D7%9C%D7%95%D7%A0%D7%99%D7%A7%D7%99)"
+   ],
+   [
+    200,
+    "https://he.wikipedia.org/wiki/%D7%9E%D7%96%D7%A8%D7%A7%D7%AA_%D7%98%D7%A8%D7%95%D7%95%D7%99"
+   ]
+  ],
+  "loupino.business.site": [
+   [
+    404,
+    "https://loupino.business.site/"
+   ]
+  ],
+  "moovitapp.com": [
+   [
+    200,
+    "https://moovitapp.com/"
+   ]
+  ],
+  "posterrestaurant.gr": [
+   [
+    200,
+    "https://posterrestaurant.gr/"
+   ]
+  ],
+  "ramentales.gr": [
+   [
+    200,
+    "https://ramentales.gr/"
+   ]
+  ],
+  "tp.media": [
+   [
+    200,
+    "https://tp.media/r?campaign_id=1&marker=799451&p=647&trs=594662&u=https%3A%2F%2Fkiwitaxi.com%2F"
+   ],
+   [
+    200,
+    "https://tp.media/r?campaign_id=111&marker=799451&p=4136&trs=594662&u=https%3A%2F%2Fwww.kiwi.com%2Fen%2Fsearch%2Fresults%2Ftel-aviv-israel%2Ffco%2F2026-11-30%2F2026-12-03"
+   ],
+   [
+    200,
+    "https://tp.media/r?campaign_id=111&marker=799451&p=4136&trs=594662&u=https%3A%2F%2Fwww.kiwi.com%2Fen%2Fsearch%2Fresults%2Ftel-aviv-israel%2Fskg%2F2026-11-30%2F2026-12-03"
+   ],
+   [
+    403,
+    "https://tp.media/r?campaign_id=137&marker=799451&p=4110&trs=594662&u=https%3A%2F%2Fwww.klook.com%2Fen-US%2Fsearch%2Fresult%2F%3Fquery%3D%25CE%2591%25CE%25B3%25CE%25AF%25CE%25B1%252"
+   ]
+  ],
+  "www.airbnb.com": [
+   [
+    200,
+    "https://www.airbnb.com/s/Rome/homes?checkin=2026-11-30&checkout=2026-12-03&adults=2&ne_lat=41.90615&ne_lng=12.48482&sw_lat=41.89015&sw_lng=12.46282&search_by_map=true"
+   ],
+   [
+    200,
+    "https://www.airbnb.com/s/Thessaloniki/homes?checkin=2026-11-30&checkout=2026-12-03&adults=2&ne_lat=40.64126&ne_lng=22.95591&sw_lat=40.62526&sw_lng=22.93391&search_by_map=true"
+   ]
+  ],
+  "www.aviasales.com": [
+   [
+    200,
+    "https://www.aviasales.com/search/TLV3011FCO03122?marker=799451"
+   ],
+   [
+    200,
+    "https://www.aviasales.com/search/TLV3011SKG03122?marker=799451"
+   ]
+  ],
+  "www.booking.com": [
+   [
+    202,
+    "https://www.booking.com/searchresults.he.html?ss=Rome&latitude=41.88754&longitude=12.46084&radius=1&order=distance_from_search&checkin=2026-11-30&checkout=2026-12-03&group_adults=2"
+   ],
+   [
+    202,
+    "https://www.booking.com/searchresults.he.html?ss=Rome&latitude=41.88786&longitude=12.47432&radius=1&order=distance_from_search&checkin=2026-11-30&checkout=2026-12-03&group_adults=2"
+   ],
+   [
+    202,
+    "https://www.booking.com/searchresults.he.html?ss=Rome&latitude=41.88880&longitude=12.47634&radius=1&order=distance_from_search&checkin=2026-11-30&checkout=2026-12-03&group_adults=2"
+   ],
+   [
+    202,
+    "https://www.booking.com/searchresults.he.html?ss=Rome&latitude=41.88995&longitude=12.46635&radius=1&order=distance_from_search&checkin=2026-11-30&checkout=2026-12-03&group_adults=2"
+   ]
+  ],
+  "www.clalbit.co.il": [
+   [
+    200,
+    "https://www.clalbit.co.il/"
+   ]
+  ],
+  "www.facebook.com": [
+   [
+    400,
+    "https://www.facebook.com/search/groups/?q=%D7%98%D7%99%D7%95%D7%9C%20%D7%9C%D7%A1%D7%9C%D7%95%D7%A0%D7%99%D7%A7%D7%99"
+   ],
+   [
+    400,
+    "https://www.facebook.com/search/groups/?q=%D7%98%D7%99%D7%95%D7%9C%20%D7%9C%D7%A8%D7%95%D7%9E%D7%90"
+   ]
+  ],
+  "www.fnx.co.il": [
+   [
+    200,
+    "https://www.fnx.co.il/"
+   ]
+  ],
+  "www.free-now.com": [
+   [
+    429,
+    "https://www.free-now.com/"
+   ]
+  ],
+  "www.getnomad.app": [
+   [
+    200,
+    "https://www.getnomad.app/"
+   ]
+  ],
+  "www.google.com": [
+   [
+    200,
+    "https://www.google.com/maps"
+   ],
+   [
+    200,
+    "https://www.google.com/maps/dir/?api=1&origin=40.6240823,22.9550613&destination=40.630622,22.9501276&travelmode=walking"
+   ],
+   [
+    200,
+    "https://www.google.com/maps/dir/?api=1&origin=40.6250436,22.9537944&destination=40.6240823,22.9550613&travelmode=walking"
+   ],
+   [
+    200,
+    "https://www.google.com/maps/dir/?api=1&origin=40.6263273,22.9483805&destination=40.6281157,22.9469605&travelmode=walking"
+   ]
+  ],
+  "www.harel-group.co.il": [
+   [
+    200,
+    "https://www.harel-group.co.il/"
+   ]
+  ],
+  "www.instagram.com": [
+   [
+    200,
+    "https://www.instagram.com/explore/tags/fontanaditrevi/"
+   ],
+   [
+    200,
+    "https://www.instagram.com/explore/tags/glasshostaria/"
+   ],
+   [
+    200,
+    "https://www.instagram.com/explore/tags/poster/"
+   ],
+   [
+    200,
+    "https://www.instagram.com/explore/tags/rome/"
+   ]
+  ],
+  "www.kayak.com": [
+   [
+    200,
+    "https://www.kayak.com/flights/TLV-FCO/2026-11-30/2026-12-03/2adults"
+   ],
+   [
+    200,
+    "https://www.kayak.com/flights/TLV-SKG/2026-11-30/2026-12-03/2adults"
+   ]
+  ],
+  "www.migdal.co.il": [
+   [
+    200,
+    "https://www.migdal.co.il/"
+   ]
+  ],
+  "www.passportcard.co.il": [
+   [
+    200,
+    "https://www.passportcard.co.il/"
+   ]
+  ],
+  "www.pizzeriabaffetto.it": [
+   [
+    0,
+    "https://www.pizzeriabaffetto.it/"
+   ]
+  ],
+  "www.reddit.com": [
+   [
+    403,
+    "https://www.reddit.com/search/?q=Rome%20itinerary%20tips"
+   ],
+   [
+    403,
+    "https://www.reddit.com/search/?q=Thessaloniki%20itinerary%20tips"
+   ]
+  ],
+  "www.skyscanner.co.il": [
+   [
+    200,
+    "https://www.skyscanner.co.il/"
+   ],
+   [
+    200,
+    "https://www.skyscanner.co.il/transport/flights/tlv/fco/261130/261203/?adultsv2=2"
+   ],
+   [
+    200,
+    "https://www.skyscanner.co.il/transport/flights/tlv/skg/261130/261203/?adultsv2=2"
+   ]
+  ],
+  "www.thefork.com": [
+   [
+    403,
+    "https://www.thefork.com/search?queryText=Dar%20filettaro%20a%20Santa%20Barbara%20Rome"
+   ],
+   [
+    403,
+    "https://www.thefork.com/search?queryText=Glass%20Hostaria%20Rome"
+   ],
+   [
+    403,
+    "https://www.thefork.com/search?queryText=La%20carbonara%20Rome"
+   ],
+   [
+    403,
+    "https://www.thefork.com/search?queryText=Poster%20Thessaloniki"
+   ]
+  ],
+  "www.tiktok.com": [
+   [
+    200,
+    "https://www.tiktok.com/search?q=%CE%91%CE%B3%CE%AF%CE%B1%20%CE%A3%CE%BF%CF%86%CE%AF%CE%B1%20Thessaloniki"
+   ],
+   [
+    200,
+    "https://www.tiktok.com/search?q=%D7%A1%D7%9C%D7%95%D7%A0%D7%99%D7%A7%D7%99%20%D7%94%D7%9E%D7%9C%D7%A6%D7%95%D7%AA"
+   ],
+   [
+    200,
+    "https://www.tiktok.com/search?q=%D7%A1%D7%9C%D7%95%D7%A0%D7%99%D7%A7%D7%99%20%D7%9E%D7%A1%D7%A2%D7%93%D7%95%D7%AA"
+   ],
+   [
+    200,
+    "https://www.tiktok.com/search?q=%D7%A8%D7%95%D7%9E%D7%90%20%D7%94%D7%9E%D7%9C%D7%A6%D7%95%D7%AA"
+   ]
+  ],
+  "www.tripadvisor.com": [
+   [
+    403,
+    "https://www.tripadvisor.com/Search?q=%CE%91%CE%B3%CE%AF%CE%B1%20%CE%A3%CE%BF%CF%86%CE%AF%CE%B1%20Thessaloniki"
+   ],
+   [
+    403,
+    "https://www.tripadvisor.com/Search?q=Fontana%20di%20Trevi%20Rome"
+   ],
+   [
+    403,
+    "https://www.tripadvisor.com/Search?q=Glass%20Hostaria%20Rome"
+   ],
+   [
+    403,
+    "https://www.tripadvisor.com/Search?q=Poster%20Thessaloniki"
+   ]
+  ],
+  "www.uber.com": [
+   [
+    406,
+    "https://www.uber.com/"
+   ]
+  ],
+  "www.viator.com": [
+   [
+    403,
+    "https://www.viator.com/searchResults/all?text=Rome"
+   ],
+   [
+    403,
+    "https://www.viator.com/searchResults/all?text=Thessaloniki"
+   ]
+  ],
+  "www.youtube.com": [
+   [
+    200,
+    "https://www.youtube.com/results?search_query=%CE%91%CE%B3%CE%AF%CE%B1%20%CE%A3%CE%BF%CF%86%CE%AF%CE%B1%20Thessaloniki"
+   ],
+   [
+    200,
+    "https://www.youtube.com/results?search_query=%D7%A1%D7%9C%D7%95%D7%A0%D7%99%D7%A7%D7%99%20%D7%98%D7%99%D7%95%D7%9C%20%D7%95%D7%95%D7%9C%D7%95%D7%92"
+   ],
+   [
+    200,
+    "https://www.youtube.com/results?search_query=%D7%A8%D7%95%D7%9E%D7%90%20%D7%98%D7%99%D7%95%D7%9C%20%D7%95%D7%95%D7%9C%D7%95%D7%92"
+   ],
+   [
+    200,
+    "https://www.youtube.com/results?search_query=Fontana%20di%20Trevi%20Rome"
+   ]
+  ]
+ },
+ "services": {
+  "OpenFreeMap style": {
+   "status": 200,
+   "ms": 176,
+   "bytes": 43311
+  },
+  "NASA Blue Marble tile": {
+   "status": 200,
+   "ms": 478,
+   "bytes": 17304
+  },
+  "OSM tile (fallback)": {
+   "status": 200,
+   "ms": 58,
+   "bytes": 6725
+  },
+  "Nominatim": {
+   "status": 200,
+   "ms": 401,
+   "bytes": 552
+  },
+  "OSRM foot": {
+   "status": 200,
+   "ms": 533,
+   "bytes": 583
+  },
+  "OSRM car": {
+   "status": 200,
+   "ms": 328,
+   "bytes": 616
+  },
+  "Wikipedia summary he": {
+   "status": 200,
+   "ms": 39,
+   "bytes": 3004
+  },
+  "Wikipedia geosearch": {
+   "status": 200,
+   "ms": 202,
+   "bytes": 570
+  },
+  "Wikidata": {
+   "status": 200,
+   "ms": 150,
+   "bytes": 164
+  },
+  "Wikivoyage": {
+   "status": 200,
+   "ms": 155,
+   "bytes": 84973
+  },
+  "Open-Meteo": {
+   "status": 200,
+   "ms": 245,
+   "bytes": 411
+  },
+  "Frankfurter": {
+   "status": 200,
+   "ms": 334,
+   "bytes": 70
+  },
+  "ExchangeRate (fallback)": {
+   "status": 200,
+   "ms": 97,
+   "bytes": 3051
+  },
+  "Gemini (no key: must answer 400/403)": {
+   "status": 403,
+   "ms": 76,
+   "bytes": 0
+  },
+  "Overpass overpass-api.de": {
+   "status": 406,
+   "ms": 601,
+   "bytes": 0
+  },
+  "Overpass overpass.private.coffee": {
+   "status": 0,
+   "ms": 42151,
+   "bytes": 28
+  },
+  "Overpass overpass.kumi.systems": {
+   "status": 0,
+   "ms": 40617,
+   "bytes": 28
+  }
+ }
+}
