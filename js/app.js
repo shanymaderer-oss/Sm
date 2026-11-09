@@ -2476,8 +2476,8 @@ SCREENS.info = {
     return `<div class="screen">
     <div class="topnav"><button class="iconbtn" id="backInfo" aria-label="חזרה">${ic("back")}</button><span class="eyebrow">לפני שטסים</span><span style="width:38px"></span></div>
     <h1 style="font-size:1.5rem">מה צריך לדעת ב${esc(t.country || t.city)}</h1>
-    <div class="card"><h2>${ic("nav")} טיסות</h2><p>חיפוש טיסות מתל אביב ל${esc(t.city)} בתאריכים של הטיול, בהשוואת מחירים של גוגל.</p>
-      <div class="chiprow"><a class="chipbtn" href="${flightsUrl()}" target="_blank" rel="noopener">${ic("ext")}טיסות ב-Google Flights</a><a class="chipbtn" href="https://www.skyscanner.co.il/" target="_blank" rel="noopener">${ic("ext")}Skyscanner</a></div></div>
+    <div class="card"><h2>${ic("plane")} טיסות</h2><p>הטיסות של הטיול: המחירים הכי זולים לתאריכים שלכם, וכמה עולה להוסיף מזוודה.</p>
+      <div class="chiprow"><button type="button" class="chipbtn" id="infoFlights">${ic("plane")}לטיסות הכי זולות</button></div></div>
     ${wx ? `<div class="card"><h2>${ic("sun")} מזג אוויר בימי הטיול</h2>${wx}</div>` : ""}
     ${ci ? `<div class="card"><h2>${ic("coin")} כסף: ${esc(ci.curHe)}</h2>${money}<p>${esc(ci.pay)}</p></div>` : ""}
     ${esimCard(t)}
@@ -2499,6 +2499,7 @@ SCREENS.info = {
     const key = `${t.lat},${t.lng}`;
     const c = infoCache[key] = infoCache[key] || {};
     $("backInfo").onclick = () => go("before", { noFly: true });
+    $("infoFlights")?.addEventListener("click", () => openTripStep("flights"));
     if (c.weather === undefined && !c.wxLoading) { c.wxLoading = true; svc.weather(+t.lat, +t.lng).then(w => { c.weather = w; c.wxLoading = false; if (S.screen === "info") rerenderKeepScroll(); }); }
     if (ci && c.rate === undefined) svc.rateToILS(ci.cur).then(r => { c.rate = r; if (S.screen === "info") rerenderKeepScroll(); });
     $("convLocal") && ($("convLocal").oninput = e => { const v = parseFloat(e.target.value) || 0; $("convILS").textContent = `${(v * c.rate.rate).toFixed(1)} ₪`; });
@@ -2581,7 +2582,7 @@ function esimCard(t) {
     : cc === "gb" ? "בריטניה לא באיחוד האירופי. ודאו שחבילת \"אירופה\" כוללת אותה, או קנו חבילה לבריטניה."
     : ["ge", "tr", "rs", "ae", "us", "th", "jp"].includes(cc) ? `קנו חבילה ל${esc(t.country)} עצמה. חבילות "אירופה" לא תמיד כוללות אותה.`
     : `קנו חבילה ל${esc(t.country || "מדינה")} או לאזור שלה.`;
-  const prov = [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["Nomad", "https://www.getnomad.app/"], ["Holafly", "https://esim.holafly.com/"]];
+  const prov = [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["Yesim", "https://yesim.app/"]];
   return `<div class="card esimcard"><h2>${ic("sim")} אינטרנט בחו״ל: eSIM</h2>
     <p>eSIM הוא כרטיס סים דיגיטלי. קונים חבילת גלישה באינטרנט, סורקים קוד, והטלפון מתחבר לרשת המקומית ברגע הנחיתה. בדרך כלל זה זול בהרבה מחבילת חו״ל של החברה הישראלית.</p>
     <div class="esimcmp">
@@ -2596,8 +2597,8 @@ function esimCard(t) {
       <li><b>משאירים את הקו הישראלי פעיל</b> כדי לקבל SMS (קודים מהבנק), אבל <b>מכבים בו נדידת נתונים</b> (Data Roaming), כדי לא לשלם לחברה הישראלית.</li>
       <li><b>כשנוחתים:</b> בוחרים את ה-eSIM לנתונים הסלולריים ומפעילים בו נדידת נתונים. וואטסאפ ממשיך לעבוד עם המספר הישראלי.</li>
     </ol>
-    <div class="chiprow">${prov.map(([n, u]) => `<a class="chipbtn" href="${u}" target="_blank" rel="noopener">${ic("ext")}${n}</a>`).join("")}<a class="chipbtn" href="https://esimdb.com/" target="_blank" rel="noopener">${ic("search")}השוואת מחירים (eSIMDB)</a></div>
-    <div class="disclaim">${ic("info")}<span>מחירים לדוגמה מהשוואות שפורסמו בשנה האחרונה, והם משתנים. יש גם eSIM של חברות ישראליות (למשל Tuki של פלאפון). מסע לא מקבל עמלה על הקישורים.</span></div>
+    <div class="chiprow">${prov.map(([n, u]) => `<a class="chipbtn" href="${esc(partnerUrl(u))}" target="_blank" rel="noopener sponsored">${ic("ext")}${n}</a>`).join("")}</div>
+    <div class="disclaim">${ic("info")}<span>מחירים לדוגמה מהשוואות שפורסמו בשנה האחרונה, והם משתנים. יש גם eSIM של חברות ישראליות (למשל Tuki של פלאפון). הקישורים הם של שותפים: קנייה דרכם עשויה לזכות את מסע בעמלה קטנה, בלי תוספת למחיר שלכם.</span></div>
   </div>`;
 }
 

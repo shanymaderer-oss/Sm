@@ -1,7 +1,7 @@
 /* מסע · the start of a trip, before the route: the cheapest flights for the dates (and cheaper days around them), and
    where to sleep so most of what is worth seeing is a walk away. Loaded only when these screens open.
    Flight prices come from Travelpayouts / Aviasales through our guide server (the token stays there); without it, the
-   same searches open ready-made on Aviasales, Kayak and Google Flights. Nothing here books or pays: every booking is on
+   same searches open ready-made on our partners Aviasales and Kiwi.com. Nothing here books or pays: every booking is on
    the booking site itself. */
 window.Masa = window.Masa || {};
 Masa.journey = (() => {
@@ -18,6 +18,12 @@ Masa.journey = (() => {
     TK: "טורקיש", PC: "פגסוס", BA: "בריטיש איירווייז", AF: "אייר פראנס", KL: "KLM", OS: "אוסטריאן", LX: "סוויס", LO: "LOT", OK: "צ׳כיה", RO: "טארום",
     FZ: "פליידובאי", EK: "אמירייטס", BT: "airBaltic", TP: "TAP", IB: "איבריה", UX: "אייר אירופה", SN: "בריסל", EW: "יורווינגס", A9: "ג׳ורג׳יאן",
     FB: "בולגריה אייר", JU: "אייר סרביה", SK: "SAS", D8: "נורוויג׳ן", DY: "נורוויג׳ן", CY: "סייפרוס אייר", TG: "תאי", NH: "ANA", JL: "JAL", EY: "אתיחאד", ET: "אתיופיאן" };
+  /* a checked suitcase (20-23 kg), per traveler, both ways, in shekels: a rough range from published fees (2026), since
+     the cheapest fares are usually without one. Prices move with the route and the date, so it is always "about". */
+  const BAG = { LY: [250, 400], "6H": [350, 500], IZ: [400, 750], H4: [300, 500],
+    W6: [150, 450], W4: [150, 450], W9: [150, 450], "5W": [150, 450], FR: [150, 480], RK: [150, 480], U2: [100, 400], EC: [100, 400], DS: [100, 400] };
+  const BAG_TABLE = [["אל על (כרטיס Lite)", "LY"], ["ישראייר", "6H"], ["ארקיע", "IZ"], ["וויז אייר", "W6"], ["ריינאייר", "FR"], ["איזיג׳ט", "U2"]];
+  const bagCost = c => BAG[c] || null;
   const airFor = slug => CITY_AIR[slug] || null;
   const iso = d => d.toISOString().slice(0, 10);
   const add = (s, n) => { const d = new Date(s + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return iso(d); };
@@ -55,16 +61,16 @@ Masa.journey = (() => {
       if (fast && !fast.tag && fast.minutes < (top[0].minutes || 1e9) - 60) fast.tag = "fast";
     }
     // the best-value one is shown first, then the rest from the cheapest
-    const shown = [...top.filter(x => x.tag === "value"), ...top.filter(x => x.tag !== "value")].slice(0, 5);
+    // the cheapest first (the best value keeps its tag, so it is easy to spot)
+    const shown = [...top].sort((a, b) => a.price - b.price).slice(0, 5);
     return { list: shown, around };
   }
-  /* the same search, ready, on the big sites (no prices needed from us) */
+  /* the same search, ready, on our partner sites (no prices needed from us) */
   function searchLinks(to, depart, back, people) {
     const n = Math.max(1, Math.min(9, people || 1));
     return [
       { name: "Aviasales", url: `https://www.aviasales.com/search/TLV${ddmm(depart)}${to}${ddmm(back)}${n}` },
-      { name: "Kayak", url: `https://www.kayak.com/flights/TLV-${to}/${depart}/${back}/${n}adults?sort=price_a` },
-      { name: "Google Flights", url: `https://www.google.com/travel/flights?hl=iw&q=${encodeURIComponent(`Flights from TLV to ${to} on ${depart} through ${back}`)}` }
+      { name: "Kiwi.com", url: `https://www.kiwi.com/en/search/results/tel-aviv-israel/${to.toLowerCase()}/${depart}/${back}?adults=${n}&sortBy=price` }
     ];
   }
 
@@ -190,21 +196,31 @@ Masa.journey = (() => {
     /* the flights card: the cheapest on their dates, cheaper days around them, and the same search on the big sites */
     function flightsHtml() {
       const J = Masa.journey, f = S.form, to = J.airFor(Masa.cities.findCity(S.dest?.q || "")?.slug), back = backDate(f), F = S.fl;
-      const links = to ? J.searchLinks(to, f.start, back, f.people) : [{ name: "Google Flights", url: `https://www.google.com/travel/flights?hl=iw&q=${encodeURIComponent(`Flights from TLV to ${S.dest?.q || ""} on ${f.start} through ${back}`)}` }];
+      const links = to ? J.searchLinks(to, f.start, back, f.people) : [{ name: "Aviasales", url: "https://www.aviasales.com/" }, { name: "Kiwi.com", url: "https://www.kiwi.com/en/" }];
       const linkRow = `<div class="linkrow">${links.map(l => `<a class="chipbtn" href="${esc(partnerUrl(l.url))}" target="_blank" rel="noopener sponsored">${ic("ext")}${esc(l.name)}</a>`).join("")}</div>`;
       const head = `<h2>${ic("route")} טיסות מתל אביב <small class="muted">${J.short(f.start)}–${J.short(back)}, ${f.people === 1 ? "נוסע אחד" : f.people + " נוסעים"}</small></h2>`;
       const note = window.MASA_PARTNERS ? `<p class="pline muted">חלק מהקישורים הם של שותפים: הזמנה דרכם עשויה לזכות את מסע בעמלה קטנה, בלי תוספת למחיר שלכם.</p>` : "";
-      if (!to || !window.MASA_AI?.proxy || F?.off) return `${head}<p class="lead">השוו מחירים לתאריכים שלכם באתרים הגדולים:</p>${linkRow}${note}`;
+      if (!to || !window.MASA_AI?.proxy || F?.off) return `${head}<p class="lead">החיפוש מוכן לתאריכים שלכם, מסודר מהזול ליקר:</p>${linkRow}${bagHtml()}${note}`;
       if (!F || F.loading) return `${head}<div class="skeleton" style="height:64px"></div><div class="skeleton" style="height:64px"></div>`;
       const per = p => f.people > 1 ? `<small>₪${p.toLocaleString("he-IL")} לאדם · ₪${(p * f.people).toLocaleString("he-IL")} ל-${f.people}</small>` : `<small>לאדם, הלוך ושוב</small>`;
       const stops = n => n === 0 ? "ישירה" : n === 1 ? "עצירה אחת" : `${n} עצירות`;
       const TAG = { cheap: `<span class="tag free">הכי זול</span>`, value: `<span class="tag new">הכי משתלם</span>`, both: `<span class="tag new">הכי זול וגם ישירה</span>`, fast: `<span class="tag">הכי קצרה</span>` };
-      const row = x => `<div class="flrow${x.tag === "value" || x.tag === "both" ? " best" : ""}"><span class="flprice"><b>₪${x.price.toLocaleString("he-IL")}</b>${per(x.price)}</span>
+      const fmt = n => `₪${n.toLocaleString("he-IL")}`;
+      const bagLine = x => { const b = J.bagCost(x.airline); return b ? `<small class="flbag">${ic("bag")}עם מזוודה: בערך ${fmt(x.price + b[0])}–${fmt(x.price + b[1])} לאדם</small>` : `<small class="flbag">${ic("bag")}מזוודה: בדקו באתר אם כלולה במחיר</small>`; };
+      const row = x => `<div class="flrow${x.tag === "value" || x.tag === "both" ? " best" : ""}"><span class="flprice"><b>₪${x.price.toLocaleString("he-IL")}</b>${per(x.price)}${bagLine(x)}</span>
           <span class="flmain">${TAG[x.tag] || ""}<b>${esc(J.airline(x.airline))}</b><small>${stops(x.stops)}${J.hhmm(x.depart) ? ` · יוצאת ${esc(J.hhmm(x.depart))}` : ""}${x.back && J.hhmm(x.back) ? ` · חוזרת ${esc(J.hhmm(x.back))}` : ""}</small></span>
           ${x.link ? `<a class="btn small" href="${esc(x.link)}" target="_blank" rel="noopener sponsored">להזמנה</a>` : ""}</div>`;
       const list = F.list?.length ? F.list.map(row).join("") : `<p class="lead">לא מצאנו מחירים שמורים לתאריכים האלה בדיוק. אפשר לחפש אותם עכשיו באתרים למטה.</p>`;
       const around = F.around?.length ? `<div class="flaround"><small>זול יותר בימים קרובים (אותו מספר ימים):</small>${F.around.map(x => { const d = x.depart.slice(0, 10); return `<button type="button" class="chip" data-fld="${esc(d)}">${J.dayName(d)} ${J.short(d)} · ₪${x.price.toLocaleString("he-IL")}</button>`; }).join("")}</div>` : "";
-      return `${head}${list}${around}<p class="disclaim small">${ic("info")}<span>מחירים מחיפושים אחרונים ב-Aviasales, ויכולים להשתנות. ההזמנה באתר שלהם, ואם תזמינו דרכו מסע עשוי לקבל עמלה קטנה, בלי תוספת למחיר.</span></p><small class="muted">להשוואה:</small>${linkRow}`;
+      return `${head}${list}${around}${bagHtml()}<p class="disclaim small">${ic("info")}<span>מחירים מחיפושים אחרונים ב-Aviasales, ויכולים להשתנות. ההזמנה באתר שלהם, ואם תזמינו דרכו מסע עשוי לקבל עמלה קטנה, בלי תוספת למחיר.</span></p><small class="muted">לחפש בעצמכם (מהזול ליקר):</small>${linkRow}`;
+    }
+    /* how much a suitcase adds: the prices above are usually with a small bag only */
+    function bagHtml() {
+      const J = Masa.journey, f = (n => `₪${n}`);
+      return `<details class="bagbox"><summary>${ic("bag")} כמה עולה להוסיף מזוודה?</summary>
+        <p class="small muted">המחירים כאן הם בדרך כלל עם תיק קטן בלבד. מזוודה של 20–23 ק״ג, לאדם, הלוך ושוב, בערך:</p>
+        <table class="bagtbl">${J.BAG_TABLE.map(([n, c]) => { const b = J.bagCost(c); return `<tr><td>${esc(n)}</td><td>${f(b[0])}–${f(b[1])}</td></tr>`; }).join("")}</table>
+        <p class="small muted">חברות רגילות (לופטהנזה, אגאיין, ITA ועוד): בכרטיס הכי זול לפעמים אין מזוודה. הכי זול להוסיף אותה כבר בהזמנה, ובשדה זה הרבה יותר יקר. המחיר משתנה לפי מסלול ותאריך.</p></details>`;
     }
     let flSeq = 0;
     async function loadFlights() {
@@ -325,6 +341,6 @@ Masa.journey = (() => {
     // the same two screens, opened from inside a trip
     SCREENS.tflights = SCREENS.when; SCREENS.tstay = SCREENS.stay;
   }
-  const J = { airFor, flights, searchLinks, bases, stayLinks, add, iso, dayName, short, hhmm, airline, install };
+  const J = { airFor, flights, searchLinks, bagCost, BAG_TABLE, bases, stayLinks, add, iso, dayName, short, hhmm, airline, install };
   return J;
 })();

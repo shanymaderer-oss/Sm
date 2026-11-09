@@ -28,8 +28,8 @@ function kitItems(t = S.trip) {
   const easy = ap?.[0]?.list.find(o => o.easy);
   const I = (k, icn, title, when, why, links, extra = {}) => ({ k, icn, title, when, why, links, ...extra });
   return [
-    I("flights", "fwd", "טיסות", 60, `טיסה מתל אביב ל${t.city}${iata ? ` (${iata})` : ""}, ${fmtDay(start)}–${fmtDay(end)}, ${people} נוסעים. כדאי להשוות בשני אתרים: המחיר לאותה טיסה משתנה בין האתרים.`,
-      [...(iata ? [["Aviasales", aviaUrl(iata, start, end, people)], ["Kiwi.com", `https://www.kiwi.com/en/search/results/tel-aviv-israel/${iata.toLowerCase()}/${isoDate(start)}/${isoDate(end)}`]] : []), ["Google Flights", flightsUrl()], ...(iata ? [["Skyscanner", `https://www.skyscanner.co.il/transport/flights/tlv/${iata.toLowerCase()}/${yymmdd(start)}/${yymmdd(end)}/?adultsv2=${people}`], ["Kayak", `https://www.kayak.com/flights/TLV-${iata}/${isoDate(start)}/${isoDate(end)}/${people}adults`]] : [])]),
+    I("flights", "fwd", "טיסות", 60, `טיסה מתל אביב ל${t.city}${iata ? ` (${iata})` : ""}, ${fmtDay(start)}–${fmtDay(end)}, ${people} נוסעים. כדאי להשוות בשני האתרים: המחיר לאותה טיסה משתנה ביניהם. המחיר הזול הוא בדרך כלל בלי מזוודה: מזוודה של 20 ק״ג מוסיפה בערך ₪150–750 לאדם הלוך ושוב (תלוי בחברה), והכי זול להוסיף אותה כבר בהזמנה.`,
+      [...(iata ? [["Aviasales", aviaUrl(iata, start, end, people)], ["Kiwi.com", `https://www.kiwi.com/en/search/results/tel-aviv-israel/${iata.toLowerCase()}/${isoDate(start)}/${isoDate(end)}?adults=${people}&sortBy=price`]] : []), ...(iata ? [] : [["Aviasales", "https://www.aviasales.com/"], ["Kiwi.com", "https://www.kiwi.com/en/"]])]),
     I("hotel", "bed", "לינה", 60, t.hotel ? `כבר בחרתם: ${t.hotel.name}. אם עוד לא הזמנתם, אפשר לבדוק את המחיר שלו בכמה אתרים.` : `הכי נוח לישון קרוב לרוב התחנות שלכם${near ? `, באזור של ${near.name}` : ""}. החיפוש כבר מסונן לאזור הזה ולתאריכים.`,
       t.hotel ? [["Booking", bookingUrl(t.hotel)], ["Hotels.com", hotelsComUrl(t.hotel)], ["Google", googleHotelsUrl(t.hotel)]] : [["Booking באזור", bookingAreaUrl()], ["Airbnb באזור", airbnbAreaUrl()]], { go: "hotels" }),
     I("insurance", "shield", "ביטוח נסיעות", 10, "בדקו קודם מה כבר כלול בכרטיס האשראי שלכם, ואז השוו. ברוב הפוליסות הישראליות קונים לפני היציאה מהארץ. שימו לב לכיסוי למחלה קיימת, לכבודה ולספורט.",
@@ -40,9 +40,9 @@ function kitItems(t = S.trip) {
     I("esim", "sim", "אינטרנט בחו״ל (eSIM)", 5, "חבילת גלישה דיגיטלית, בדרך כלל הרבה יותר זולה מחבילת חו״ל של החברה הסלולרית. קונים מהארץ ומפעילים כשנוחתים.",
       [["Airalo", "https://www.airalo.com/"], ["Saily", "https://saily.com/"], ["Yesim", "https://yesim.app/"]], { go: "info" }),
     ...(car ? [I("car", "car", "השכרת רכב", 30, `${fmtDay(start)}–${fmtDay(end)}${iata ? `, איסוף מ-${iata}` : ""}. השוו ביטוח השתתפות עצמית, ובדקו אם צריך רישיון נהיגה בינלאומי.`,
-      [["Localrent", "https://localrent.com/"], ["Discover Cars", "https://www.discovercars.com/"]])] : []),
+      [["Localrent", "https://localrent.com/"]])] : []),
     I("tours", "users", "סיורים וטיולי יום", 14, `סיור מודרך בעברית או באנגלית, סיור הליכה חינמי (משלמים טיפ בסוף), וטיולי יום מ${t.city}.`,
-      [["Klook", `https://www.klook.com/en-US/search/result/?query=${encodeURIComponent(city)}`], ["Tiqets", `https://www.tiqets.com/en/search?q=${encodeURIComponent(city)}`], ["Viator", `https://www.viator.com/searchResults/all?text=${encodeURIComponent(city)}`], ["סיור חינמי", gSearch(`free walking tour ${city}`)], ["סיורים בעברית", gSearch(`סיור מודרך בעברית ${t.city}`)]]),
+      [["Klook", `https://www.klook.com/en-US/search/result/?query=${encodeURIComponent(city)}`], ["Tiqets", `https://www.tiqets.com/en/search?q=${encodeURIComponent(city)}`], ["סיור חינמי", gSearch(`free walking tour ${city}`)], ["סיורים בעברית", gSearch(`סיור מודרך בעברית ${t.city}`)]]),
     ...(dinners.length ? [I("tables", "food", "שולחן לארוחות ערב", 7, `${dinners.slice(0, 3).map(x => x.s.name).join(", ")}. בסופי שבוע כדאי לשריין שולחן כמה ימים מראש.`,
       dinners.slice(0, 3).map(x => [x.s.name, safeUrl(x.s.website) || `https://www.thefork.com/search?queryText=${encodeURIComponent(`${x.s.local || x.s.name} ${city}`)}`]))] : []),
     I("events", "sparkle", "מה קורה בעיר בתאריכים שלכם", 30, "הופעות, משחקים, פסטיבלים ושווקים מיוחדים. שווה לבדוק לפני שסוגרים את המסלול.",

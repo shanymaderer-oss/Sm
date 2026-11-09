@@ -35,7 +35,7 @@ async def run(p, phone, engine, device):
     await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(1200)
     await pg.wait_for_selector("#flights"); await pg.wait_for_timeout(6000)
     fl = await pg.inner_text("#flights")
-    check("טיסות מתל אביב" in fl and ("₪" in fl or "Kayak" in fl), "the flights step shows prices or ready searches", phone)
+    check("טיסות מתל אביב" in fl and ("₪" in fl or "Kiwi" in fl), "the flights step shows prices or ready searches", phone)
     await shot("2-flights")
     await Q.to_stay(pg); await pg.wait_for_timeout(2500)
     check(await pg.locator(".card.base").count() >= 1, "where to sleep: a recommended area", phone)

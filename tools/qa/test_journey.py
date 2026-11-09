@@ -58,11 +58,13 @@ async def main():
         check("marker=12345" in (await a.get_attribute("href") or "") and "sponsored" in (await a.get_attribute("rel") or ""), "the booking link carries our marker and says it is a partner link")
         check("Aviasales" in txt and "עמלה" in txt, "it says where the prices are from and that a booking may earn us a commission")
         check("הכי זול וגם ישירה" in txt, "the cheapest, when it is also direct, says so")
-        # a cheap flight with a stop at 02:30 against a direct one a little dearer: the direct one is the best value, shown first
+        # a cheap flight with a stop at 02:30 against a direct one a little dearer: the cheapest first, the best value marked
         mode["night"] = True
         await pg.click("#pplus"); await pg.wait_for_timeout(1300)
         rows = await pg.locator("#flights .flrow").all_inner_texts()
-        check(len(rows) == 3 and "הכי משתלם" in rows[0] and "ארקיע" in rows[0] and "הכי זול" in rows[1] and "פגסוס" in rows[1], f"best value first, then the cheapest ({[r[:40] for r in rows]})")
+        check(len(rows) == 3 and "הכי זול" in rows[0] and "פגסוס" in rows[0] and "הכי משתלם" in rows[1] and "ארקיע" in rows[1], f"the cheapest first, the best value marked ({[r[:40] for r in rows]})")
+        check("עם מזוודה: בערך" in rows[1] and "בדקו באתר אם כלולה" in rows[0], "each flight says about how much it is with a suitcase (or to check)")
+        check("כמה עולה להוסיף מזוודה" in await pg.inner_text("#flights") and await pg.locator("#flights .bagtbl tr").count() >= 5, "a table of what a suitcase costs on the main airlines")
         mode["night"] = False
         await pg.click("#pminus"); await pg.wait_for_timeout(1300)
         last = asked[-2:]
@@ -80,7 +82,9 @@ async def main():
         mode["off"] = True
         await pg.click("#pplus"); await pg.wait_for_timeout(1500)
         txt = await pg.inner_text("#flights"); hrefs = await pg.eval_on_selector_all("#flights a", "a => a.map(x => x.href)")
-        check("₪" not in txt and any("kayak.com/flights/TLV-ROM/2026-11-17/2026-11-20/3adults" in h for h in hrefs) and any("aviasales.com/search/TLV1711ROM20113" in h for h in hrefs), f"without prices: ready searches with the dates and 3 travelers ({hrefs[:3]})")
+        from urllib.parse import unquote
+        check(any("kiwi.com" in unquote(h) and "2026-11-17/2026-11-20?adults=3" in unquote(h) for h in hrefs) and any("aviasales.com/search/TLV1711ROM20113" in h for h in hrefs), f"without prices: ready searches with the dates and 3 travelers ({hrefs[:3]})")
+        check(not any(x in h for h in hrefs for x in ("kayak.", "google.com/travel", "skyscanner.")), "only our partner sites")
         check(any("aviasales.com/search/" in h and "marker=799451" in h for h in hrefs) and "עמלה" in txt, "the Aviasales search carries our partner id, and says it is a partner link")
         mode["off"] = False
         # where to sleep

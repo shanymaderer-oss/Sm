@@ -34,9 +34,10 @@ async def main():
         links = await pg.evaluate("[...document.querySelectorAll('.kit a.chipbtn')].map(a => a.href)")
         ours = await pg.evaluate("[...document.querySelectorAll('.kit')].filter(k => !k.querySelector('[data-kit=tables]')).flatMap(k => [...k.querySelectorAll('a.chipbtn')].map(a => a.href))")
         bad = [l for l in ours if not l.startswith("https://")]; check(not bad, f"every link we build is https (a restaurant's own site may be http) ({bad[:2]})")
-        sky = [l for l in links if "skyscanner" in l]
-        yy = start[2:4] + start[5:7] + start[8:10]
-        check(sky and "/tlv/fco/" in sky[0] and yy in sky[0], f"flights are filled with the airport and dates ({sky[:1]})")
+        from urllib.parse import unquote
+        kiwi = [unquote(l) for l in links if "kiwi.com" in unquote(l)]
+        check(kiwi and "/fco/" in kiwi[0] and start in kiwi[0], f"flights are filled with the airport and dates ({kiwi[:1]})")
+        check(not any(x in l for l in links for x in ("skyscanner.", "kayak.", "google.com/travel", "discovercars.", "viator.")), "only our partner sites for flights, cars and tours")
         bk = [l for l in links if "booking.com" in l]
         check(bk and f"checkin={start}" in bk[0], "lodging search has the dates")
         tp = [l for l in links if l.startswith("https://tp.media/r?")]

@@ -1049,3 +1049,13 @@ a.btn{text-decoration:none}
 ol.steps{margin:6px 0 10px;padding-inline-start:22px;display:grid;gap:8px;line-height:1.55}
 ol.steps li::marker{font-weight:700;color:var(--coral)}
 .daytools.gmday{margin-top:-4px}
+
+/* flights: what a suitcase adds */
+.flbag{display:flex;align-items:center;gap:4px;color:var(--muted,#5b6478);font-size:.78rem;margin-top:2px}
+.flbag svg{width:13px;height:13px;flex:none}
+.bagbox{margin:10px 0;border:1px solid var(--line,#e3e6ee);border-radius:12px;padding:8px 12px;background:var(--surface)}
+.bagbox summary{cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;min-height:32px}
+.bagbox summary svg{width:16px;height:16px}
+.bagtbl{width:100%;border-collapse:collapse;margin:6px 0;font-size:.9rem}
+.bagtbl td{padding:5px 2px;border-bottom:1px solid var(--line,#e3e6ee)}
+.bagtbl td:last-child{text-align:left;direction:ltr;font-weight:600}
