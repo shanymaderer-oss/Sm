@@ -3,8 +3,10 @@
 (function () {
 "use strict";
 function install(u) {
-const { S, SCREENS, $, esc, ic, go, rerenderKeepScroll, toast, store, ai, CATS, HOME_SKIP, addDays, airbnbAreaUrl, aviaUrl, bindChecks, bindTripTop, bookingAreaUrl, bookingUrl, catOf, cityName, ckey, cv, domestic, flightsUrl, flyCenter, fmtDay, gSearch, googleHotelsUrl, hasXY, hotelsComUrl, isoDate, km, openList, safeUrl, siteName, tr, track, tripCenter, tripDates, tripTop } = u;
+const { S, SCREENS, $, esc, ic, go, rerenderKeepScroll, toast, store, ai, CATS, HOME_SKIP, addDays, airbnbAreaUrl, aviaUrl, bindChecks, bindTripTop, bookingAreaUrl, bookingUrl, catOf, cityName, ckey, cv, domestic, flightsUrl, flyCenter, fmtDay, gSearch, googleHotelsUrl, hasXY, hotelsComUrl, isoDate, km, openList, openTripStep, safeUrl, siteName, tr, track, tripCenter, tripDates, tripTop } = u;
 /* ---------- bookings ---------- */
+/* the flights and where-to-sleep screens, always one tap away at the top of the bookings */
+const stepRow = () => S.trip.source === "sample" ? "" : `<div class="linkrow steprow">${domestic(S.trip) ? "" : `<button type="button" class="chipbtn" id="bkFlights">${ic("plane")}טיסות</button>`}<button type="button" class="chipbtn" id="bkStay">${ic("bed")}איפה לישון</button></div>`;
 const allBook = () => S.trip.days.flatMap(d => d.stops.map(s => ({ s, day: d.label }))).filter(x => x.s.booking?.needed);
 function ring(p, col) { const r = 15, c = 2 * Math.PI * r; return `<svg class="ring" viewBox="0 0 38 38"><circle cx="19" cy="19" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="5"/><circle cx="19" cy="19" r="${r}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${c * p} ${c}" transform="rotate(-90 19 19)"/><text x="19" y="23" text-anchor="middle" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink)">${Math.round(p * 100)}%</text></svg>`; }
 /* ================= the trip kit: everything a trip needs, in the order to close it, each one tap away and already
@@ -132,10 +134,10 @@ const partnerNote = () => window.MASA_PARTNERS ? `<div class="disclaim">${ic("in
 SCREENS.book = {
   view() {
     const list = allBook();
-    if (!list.length) return `<div class="screen">${tripTop(S.trip, "book")}${kitView()}<div class="disclaim">${ic("shield")}<span>מסע לא גובה תשלום ולא שומר פרטי אשראי. ההזמנה עצמה נעשית תמיד באתר של המקום.</span></div></div>`;
+    if (!list.length) return `<div class="screen">${tripTop(S.trip, "book")}${stepRow()}${kitView()}<div class="disclaim">${ic("shield")}<span>מסע לא גובה תשלום ולא שומר פרטי אשראי. ההזמנה עצמה נעשית תמיד באתר של המקום.</span></div></div>`;
     const stat = list.map(({ s }) => { const n = s.booking.steps.length, d = s.booking.steps.filter((_, i) => u.checks[ckey(s, i)]).length; return { n, d }; });
     const complete = stat.filter(x => x.d === x.n).length;
-    return `<div class="screen">${tripTop(S.trip, "book")}${kitView()}
+    return `<div class="screen">${tripTop(S.trip, "book")}${stepRow()}${kitView()}
     <div id="bookList"><div class="eyebrow">כרטיסים מראש</div><h2 style="margin-top:4px">${complete} מתוך ${list.length} הזמנות הושלמו</h2></div>
     <div class="progress"><i style="width:${complete / list.length * 100}%"></i></div>
     <p class="lead">סמנו כל שלב כשסיימתם. ההתקדמות נשמרת בדפדפן הזה.</p>
@@ -150,6 +152,8 @@ SCREENS.book = {
   },
   bind() {
     bindTripTop();
+    $("bkFlights") && ($("bkFlights").onclick = () => openTripStep("flights"));
+    $("bkStay") && ($("bkStay").onclick = () => openTripStep("stay"));
     $("freshEvents") && ($("freshEvents").onclick = loadFreshEvents);
     $("toCal") && ($("toCal").onclick = () => downloadIcs(S.trip));
     track("kit_open", S.trip?.slug || S.trip?.cityEn, null, "kit:" + S.trip?.id);

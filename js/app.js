@@ -104,7 +104,7 @@ const S = {
 };
 let checks = store.get("masa-checks", {});
 const ckey = (s, i) => `${S.trip?.city}|${s.name}|${i}`;
-const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together", "pack", "spend"];
+const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together", "pack", "spend", "tflights", "tstay"];
 
 /* ---------- speech (built into the browser, free) ---------- */
 const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -230,6 +230,14 @@ function renderMap() {
     return;
   }
   const t = S.trip;
+  // where to sleep, opened from the trip: the suggested areas on the map, and the hotel if they have one
+  if (S.screen === "tstay" && S.bases?.list?.length) {
+    setRoute([]);
+    S.bases.list.forEach((b, i) => addMarker(b, dotNode(C(i ? "--sky" : "--coral"), b.name, "destmk sel"), { offset: [0, 7] }));
+    if (t.hotel && hasXY(t.hotel)) addMarker(t.hotel, dotNode(C("--primary"), t.hotel.name, "destmk"), { offset: [0, 7] });
+    fitPoints(S.bases.list, 14);
+    return;
+  }
   if (S.screen === "list" || S.screen === "poi") {
     setRoute([]);
     const items = S.screen === "poi" && S.poi ? [S.poi] : listItems().slice(0, 60);
@@ -330,7 +338,7 @@ function setNav() {
   if (!show) return;
   // four places: the trip (its folders), discover, the agent, home
   const items = [["plan", "route", "הטיול"], ["discover", "compass", "גלו"], ["guide", "sparkle", "הסוכן"], ["home", "home", "בית"]];
-  const inTrip = ["plan", "place", "before", "book", "together", "info", "move", "pack", "spend"].includes(S.screen);
+  const inTrip = ["plan", "place", "before", "book", "together", "info", "move", "pack", "spend", "tflights", "tstay"].includes(S.screen);
   nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && inTrip) || (k === "discover" && (S.screen === "list" || S.screen === "poi"))}">${ic(i)}${l}</button>`).join("");
   nav.querySelectorAll("button").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
@@ -566,10 +574,25 @@ function bindAgent(t) {
 }
 /* the two screens live in js/journey.js; they get what they need from here */
 let journeyIn = false;
+function installJourney() {
+  if (Masa.journey && !journeyIn) { Masa.journey.install({ S, SCREENS, $, esc, ic, go, toast, track, partnerUrl, COST, planner, hasXY, rerenderKeepScroll, renderMap, svc, km, build: () => build(), chooseHotel: p => chooseHotel(p) }); journeyIn = true; }
+}
 async function startJourney() {
-  await loadJourney();
-  if (Masa.journey && !journeyIn) { Masa.journey.install({ S, SCREENS, $, esc, ic, go, toast, track, partnerUrl, COST, planner, hasXY, rerenderKeepScroll, renderMap, svc, km, build: () => build() }); journeyIn = true; }
+  await loadJourney(); installJourney();
   S.fl = null; S.bases = null; go(journeyIn ? "when" : "goals");
+}
+/* the flights and where-to-sleep screens again, from inside a trip (the "before" and "book" folders): with the trip's
+   city, dates and travelers, and a way back to the trip. Changing the dates there only changes the flight search. */
+async function openTripStep(k) {
+  const t = S.trip;
+  if (!t) return;
+  await loadJourney(); installJourney();
+  if (!journeyIn) return toast("לא הצלחנו לפתוח. נסו שוב.");
+  S.dest = { q: t.opts?.query || t.city, he: t.city, lat: t.lat, lng: t.lng };
+  const o = t.opts || {};
+  S.form = { ...S.form, start: o.start || S.form.start, days: t.days.length, people: o.people || S.form.people, interests: o.interests || S.form.interests, budget: o.budget || S.form.budget };
+  S.fl = null; S.bases = null;
+  go(k === "stay" ? "tstay" : "tflights", { noFly: true });
 }
 const MODE_HINT = { auto: "אתם מסמנים מה אתם אוהבים, ואנחנו בונים את כל המסלול.", mine: "כתבו מקומות שאתם מכירים או רוצים, ונבנה את הטיול סביבם, עם ההמלצות שלנו מסביב." };
 SCREENS.goals = {
@@ -1206,7 +1229,9 @@ SCREENS.before = {
     const card = (id, icon, color, small, big) => `<button type="button" class="duocard" id="${id}"><span class="ic" style="background:${color}">${ic(icon)}</span><span><small>${small}</small><b>${big}</b></span>${ic("back")}</button>`;
     return `<div class="screen">${tripTop(t, "before")}
     <div class="folderlist">
-      ${t.source === "sample" ? "" : t.hotel ? card("hotelCard", "bed", "var(--primary)", "המלון שלכם", esc(t.hotel.name)) : card("hotelCard", "bed", "var(--primary)", "איפה לישון?", "המלון שלכם, או מלונות שמתאימים למסלול")}
+      ${t.source === "sample" || domestic(t) ? "" : card("flightsCard", "plane", "var(--coral)", "טיסות", "הטיסות הכי זולות לתאריכים שלכם")}
+      ${t.source === "sample" ? "" : card("stayCard", "bed", "var(--primary)", "איפה לישון", t.hotel ? `המלון שלכם: ${esc(t.hotel.name)}. אזורים ומלונות אחרים` : "האזורים הכי נוחים למסלול, ומלונות")}
+      ${t.source !== "sample" && t.hotel ? card("hotelCard", "pin", "var(--sky)", "המלון שלכם", esc(t.hotel.name)) : ""}
       ${card("infoCard", "info", "var(--teal)", "מידע על היעד", "מזג אוויר, כסף, חשמל, eSIM")}
       ${card("moveCard", "bus", "var(--violet)", "תחבורה", "מהשדה לעיר ובתוך העיר")}
       ${card("packCard", "check", "var(--sun)", "מה לארוז", "רשימה לפי מזג האוויר, הנוסעים והמסלול")}
@@ -1218,6 +1243,8 @@ SCREENS.before = {
   bind() {
     bindTripTop();
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
+    $("flightsCard") && ($("flightsCard").onclick = () => openTripStep("flights"));
+    $("stayCard") && ($("stayCard").onclick = () => openTripStep("stay"));
     $("infoCard").onclick = () => loadCountries().then(() => go("info"));
     $("moveCard").onclick = () => go("move");
     $("packCard").onclick = () => openPack();
@@ -2928,7 +2955,7 @@ function needScreen(n) {
   }));
 }
 const LAZY_U = { get checks() { return checks; }, get reduced() { return reduced; }, get TR() { return TR; }, clearChecks: () => { checks = {}; },
-  $, A11Y, CATS, HOME_SKIP, S, SCREENS, STATS_KEY, TRIP_SCREENS, addDays, ai, airbnbAreaUrl, applyA11y, aviaUrl, bindChecks, bindTripTop, bookingAreaUrl, bookingUrl, catOf, cityName, ckey, cloud, cv, domestic, esc, flightsUrl, flyCenter, fmtDay, gSearch, go, googleHotelsUrl, hasXY, hotelsComUrl, ic, isoDate, km, openAdmin, openList, rerenderKeepScroll, safeUrl, savedTrips, sendFeedback, siteName, statsOff, store, toast, tr, track, tripCenter, tripDates, tripTop };
+  $, A11Y, CATS, HOME_SKIP, S, SCREENS, STATS_KEY, TRIP_SCREENS, addDays, ai, airbnbAreaUrl, applyA11y, aviaUrl, bindChecks, bindTripTop, bookingAreaUrl, bookingUrl, catOf, cityName, ckey, cloud, cv, domestic, esc, flightsUrl, flyCenter, fmtDay, gSearch, go, googleHotelsUrl, hasXY, hotelsComUrl, ic, isoDate, km, openAdmin, openList, openTripStep, rerenderKeepScroll, safeUrl, savedTrips, sendFeedback, siteName, statsOff, store, toast, tr, track, tripCenter, tripDates, tripTop };
 importShared();
 addEventListener("hashchange", () => importShared());
 })();

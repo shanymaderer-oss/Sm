@@ -111,6 +111,9 @@ Masa.journey = (() => {
   /* ---------- the two screens: 'when do you fly' and 'where to sleep' (helpers come from the app) ---------- */
   function install(U) {
     const { S, SCREENS, $, esc, ic, go, toast, track, partnerUrl, COST, planner, hasXY, rerenderKeepScroll, renderMap, svc } = U;
+    // opened again from inside a trip (the 'before' and 'book' folders): back to the trip, no 'next step'
+    const inTrip = () => S.screen === "tflights" || S.screen === "tstay";
+    const tripNav = title => `<div class="topnav"><button class="iconbtn" id="backTrip" aria-label="חזרה לטיול">${ic("back")}</button><span class="stepof">${title}</span><span style="width:38px"></span></div>`;
     const km = U.km;
     /* ================= where they sleep: a search like the one at the top, with a clear "found it" ================= */
     function hotelOkText() {
@@ -128,7 +131,7 @@ Masa.journey = (() => {
       const city = Masa.cities.findCity(S.dest?.q || "");
       const at = city ? { lat: city.lat, lng: city.lng } : hasXY(S.dest || {}) ? S.dest : null;
       const show = () => { const el = $("hotelOk"); if (el) el.innerHTML = hotelOkText(); };
-      const choose = h => { f.hotelPick = h; f.hotelName = h.name; inp.value = h.name; sug.innerHTML = ""; f.hotelState = ""; show(); };
+      const choose = h => { f.hotelPick = h; f.hotelName = h.name; inp.value = h.name; sug.innerHTML = ""; f.hotelState = ""; show(); const a = $("stayApply"); if (a && hasXY(h)) a.hidden = false; };
       const row = (h, i) => `<button type="button" role="option" data-h="${i}">${ic(h.kind === "apartment" ? "pin" : "bed", 2.2)}<span>${esc(h.name)}${h.address ? `<small>${esc(h.address)}</small>` : ""}</span></button>`;
       const draw = list => {
         if (!sug.isConnected) return;
@@ -228,24 +231,33 @@ Masa.journey = (() => {
       view() {
         const f = S.form, home = atHome();
         return `<div class="screen">
-        <div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 2 מתוך 4</span><span style="width:38px"></span></div>
+        ${inTrip() ? tripNav("הטיסות של הטיול") : `<div class="topnav"><button class="iconbtn" id="backHome" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 2 מתוך 4</span><span style="width:38px"></span></div>`}
         ${home ? `<div><h1>מתי יוצאים ל${esc(S.dest?.he || "טיול")}?</h1><p class="lead">בוחרים יום ומספר ימים, ונבנה מסלול לפי שעות הפתיחה, השבת ומזג האוויר.</p></div>`
           : `<div><h1>מתי טסים ל${esc(S.dest?.he || "יעד")}?</h1><p class="lead">נמצא את הטיסות הכי זולות לתאריכים שלכם, וגם ימים קרובים שזולים יותר.</p></div>`}
         ${steppers(f)}
         ${home ? "" : `<div class="card flights" id="flights">${flightsHtml()}</div>`}
-        <button class="btn coral block" id="whenNext" type="button">המשך: איפה ישנים</button>
+        ${inTrip() ? `<p class="muted small">שינוי התאריכים כאן משנה רק את חיפוש הטיסות, לא את המסלול.</p>
+        <button class="btn coral block" id="toStay" type="button">${ic("bed")} איפה לישון</button>
+        <button class="linkbtn" id="backTrip2" type="button">חזרה לטיול</button>` : `<button class="btn coral block" id="whenNext" type="button">המשך: איפה ישנים</button>
         ${home ? "" : `<button class="linkbtn" id="whenSkip" type="button">כבר יש לנו טיסה, ממשיכים</button>`}
-        ${quickBuild()}
+        ${quickBuild()}`}
       </div>`;
       },
       bind() {
-        $("backHome").onclick = () => go("home");
         let t = null;
-        if (atHome()) { bindSteppers(() => {}); $("whenNext").onclick = () => go("stay"); bindQuick(); return; }
-        bindSteppers(() => { clearTimeout(t); t = setTimeout(loadFlights, 450); });
-        bindFlights();
-        $("whenNext").onclick = $("whenSkip").onclick = () => go("stay");
-        bindQuick();
+        if (inTrip()) {
+          $("backTrip").onclick = $("backTrip2").onclick = () => go("before");
+          $("toStay").onclick = () => go("tstay");
+          bindSteppers(() => { clearTimeout(t); t = setTimeout(loadFlights, 450); });
+          bindFlights();
+        } else {
+          $("backHome").onclick = () => go("home");
+          if (atHome()) { bindSteppers(() => {}); $("whenNext").onclick = () => go("stay"); bindQuick(); return; }
+          bindSteppers(() => { clearTimeout(t); t = setTimeout(loadFlights, 450); });
+          bindFlights();
+          $("whenNext").onclick = $("whenSkip").onclick = () => go("stay");
+          bindQuick();
+        }
         if (!S.fl || S.fl.key !== `${S.dest?.q}|${S.form.start}|${S.form.days}`) { loadFlights().then(() => { if (S.fl) S.fl.key = `${S.dest?.q}|${S.form.start}|${S.form.days}`; }); }
       }
     };
@@ -258,7 +270,7 @@ Masa.journey = (() => {
       if (city) [places, areas] = await Promise.all([planner.placeIndex(city.slug), planner.heAreas(city.slug)]);
       const center = city ? { lat: city.lat, lng: city.lng } : hasXY(S.dest || {}) ? S.dest : null;
       S.bases = { key, list: J.bases(places, areas, center, S.form.interests, city?.he || S.dest?.he || "") };
-      if (S.screen === "stay") { rerenderKeepScroll(); renderMap(); }
+      if (S.screen === "stay" || S.screen === "tstay") { rerenderKeepScroll(); renderMap(); }
     }
     function basesHtml() {
       const B = S.bases, f = S.form, J = Masa.journey, back = backDate(f), city = S.dest?.he || "";
@@ -279,21 +291,27 @@ Masa.journey = (() => {
       view() {
         const f = S.form;
         return `<div class="screen">
-        <div class="topnav"><button class="iconbtn" id="backWhen" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 3 מתוך 4</span><span style="width:38px"></span></div>
+        ${inTrip() ? tripNav("איפה לישון") : `<div class="topnav"><button class="iconbtn" id="backWhen" aria-label="חזרה">${ic("back")}</button><span class="stepof">שלב 3 מתוך 4</span><span style="width:38px"></span></div>`}
         <div><h1>איפה כדאי לישון ב${esc(S.dest?.he || "יעד")}?</h1><p class="lead">חיפשנו את האזור שהכי קרוב לרוב המקומות שכדאי לראות, כדי ללכת פחות ולראות יותר.</p></div>
         <div id="bases">${basesHtml()}</div>
         <label class="field"><span class="section-label">כבר יש לכם מלון? <small class="muted">המסלול יתחיל ויסתיים לידו</small></span>
           <span class="search hotelfield">${ic("bed")}<input id="hotelInput" type="text" value="${esc(f.hotelPick?.base ? "" : f.hotelName || "")}" placeholder="שם המלון או הכתובת" autocomplete="off" aria-label="שם המלון או הכתובת" aria-controls="hotelSug" aria-autocomplete="list"></span></label>
         <div class="sugs" id="hotelSug" role="listbox"></div>
         <p class="hotelok" id="hotelOk" aria-live="polite">${f.hotelPick?.base ? "" : hotelOkText()}</p>
-        <button class="btn coral block" id="stayNext" type="button">המשך: מה בא לכם</button>
-        ${quickBuild()}
+        ${inTrip() ? `<button class="btn coral block" id="stayApply" type="button" ${f.hotelPick && hasXY(f.hotelPick) ? "" : "hidden"}>${ic("route")} לבנות את המסלול מחדש סביב המקום הזה</button>
+        <button class="linkbtn" id="backTrip2" type="button">חזרה לטיול</button>` : `<button class="btn coral block" id="stayNext" type="button">המשך: מה בא לכם</button>
+        ${quickBuild()}`}
       </div>`;
       },
       bind() {
-        $("backWhen").onclick = () => go("when");
-        $("stayNext").onclick = () => go("goals");
-        bindQuick();
+        if (inTrip()) {
+          $("backTrip").onclick = $("backTrip2").onclick = () => go("before");
+          $("stayApply").onclick = () => { const h = S.form.hotelPick; if (h && hasXY(h)) U.chooseHotel(h); };
+        } else {
+          $("backWhen").onclick = () => go("when");
+          $("stayNext").onclick = () => go("goals");
+          bindQuick();
+        }
         bindHotel();
         document.querySelectorAll("[data-base]").forEach(btn => btn.onclick = () => {
           const b = S.bases.list[+btn.dataset.base], f = S.form;
@@ -304,6 +322,8 @@ Masa.journey = (() => {
         loadBases();
       }
     };
+    // the same two screens, opened from inside a trip
+    SCREENS.tflights = SCREENS.when; SCREENS.tstay = SCREENS.stay;
   }
   const J = { airFor, flights, searchLinks, bases, stayLinks, add, iso, dayName, short, hhmm, airline, install };
   return J;
