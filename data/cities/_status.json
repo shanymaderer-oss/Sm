@@ -12060,8 +12060,8 @@
   ]
  },
  "hoi-an": {
-  "at": "2026-11-07T10:56:48.240Z",
-  "seconds": 476,
+  "at": "2026-11-09T17:12:47.255Z",
+  "seconds": 546,
   "osm": {
    "sights": 4,
    "sights2": 29,
@@ -12107,19 +12107,20 @@
    "Trần Phú (15)"
   ],
   "log": [
-   "overpass-api.de ok 4 24789ms",
-   "overpass-api.de ok 29 32034ms",
-   "overpass-api.de ok 117 38250ms",
-   "overpass-api.de ok 36 28562ms",
-   "overpass-api.de HTTP 502 296ms",
-   "overpass-api.de ok 230 35457ms",
-   "overpass-api.de ok 38 31566ms",
-   "overpass-api.de ok 17 33262ms",
-   "overpass-api.de ok 2 36718ms",
-   "overpass-api.de ok 6 38675ms",
-   "overpass-api.de ok 0 35292ms",
-   "overpass-api.de HTTP 502 299ms",
-   "overpass-api.de ok 74 30792ms",
+   "overpass-api.de ok 4 35491ms",
+   "overpass-api.de ok 29 31539ms",
+   "overpass-api.de ok 117 41782ms",
+   "overpass-api.de ok 36 38158ms",
+   "overpass-api.de ok 230 40105ms",
+   "overpass-api.de HTTP 502 491ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de ok 38 34994ms",
+   "overpass-api.de ok 17 37763ms",
+   "overpass-api.de ok 2 44739ms",
+   "overpass-api.de ok 6 32378ms",
+   "overpass-api.de HTTP 502 449ms",
+   "overpass-api.de ok 0 36859ms",
+   "overpass-api.de ok 74 40457ms",
    "streets: 74 shops",
    "fame: 6 of 6"
   ]
