@@ -11373,8 +11373,8 @@
   ]
  },
  "como": {
-  "at": "2026-11-07T10:41:10.845Z",
-  "seconds": 557,
+  "at": "2026-11-09T16:38:00.681Z",
+  "seconds": 623,
   "osm": {
    "sights": 42,
    "sights2": 9,
@@ -11421,22 +11421,20 @@
    "Via Vitani (7)"
   ],
   "log": [
-   "overpass-api.de ok 42 34983ms",
-   "overpass-api.de ok 9 26489ms",
-   "overpass-api.de HTTP 502 296ms",
-   "overpass-api.de HTTP 502 356ms",
-   "overpass-api.de ok 126 24535ms",
-   "overpass-api.de ok 80 44213ms",
-   "overpass-api.de HTTP 504 43778ms",
-   "overpass-api.de ok 52 32425ms",
-   "overpass-api.de ok 53 38020ms",
-   "overpass-api.de ok 2 38203ms",
-   "overpass-api.de ok 32 35623ms",
-   "overpass-api.de ok 4 29714ms",
-   "overpass-api.de HTTP 502 296ms",
-   "overpass-api.de ok 4 25435ms",
-   "overpass-api.de HTTP 502 297ms",
-   "overpass-api.de ok 71 29839ms",
+   "overpass-api.de ok 42 42597ms",
+   "overpass-api.de ok 9 32026ms",
+   "overpass-api.de timeout 60002ms",
+   "overpass-api.de ok 126 45931ms",
+   "overpass-api.de ok 80 41151ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de ok 52 35401ms",
+   "overpass-api.de ok 53 49480ms",
+   "overpass-api.de ok 2 49475ms",
+   "overpass-api.de ok 32 34614ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 4 29645ms",
+   "overpass-api.de ok 4 32864ms",
+   "overpass-api.de ok 71 46887ms",
    "streets: 71 shops",
    "fame: 80 of 80"
   ]
