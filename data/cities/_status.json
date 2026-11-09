@@ -2145,20 +2145,19 @@
   ]
  },
  "dubai": {
-  "at": "2026-11-06T14:27:54.399Z",
-  "seconds": 481,
+  "at": "2026-11-09T12:41:37.250Z",
+  "seconds": 1079,
   "osm": {
    "sights": 12,
    "sights2": 14,
    "restaurants": 182,
-   "cafes": 90,
+   "cafes": 0,
    "hotels": 112,
    "shopping": 58,
    "diet": 13,
    "extra": 12,
    "fitness": 4,
-   "landmarks": 1,
-   "streets": 4
+   "landmarks": 1
   },
   "voyage": {
    "eat": 59,
@@ -2195,21 +2194,32 @@
    "Jumeira Street (7)"
   ],
   "log": [
-   "overpass-api.de ok 12 32478ms",
-   "overpass-api.de ok 14 23937ms",
-   "overpass-api.de ok 182 35853ms",
-   "overpass-api.de ok 90 36181ms",
-   "overpass-api.de ok 112 28938ms",
-   "overpass-api.de ok 58 43562ms",
-   "overpass-api.de HTTP 502 398ms",
-   "overpass-api.de ok 13 38859ms",
-   "overpass-api.de HTTP 502 380ms",
-   "overpass-api.de ok 12 41823ms",
-   "overpass-api.de ok 4 30890ms",
-   "overpass-api.de ok 1 26382ms",
-   "overpass-api.de ok 196 29100ms",
-   "streets: 196 shops",
-   "fame: 68 of 68"
+   "overpass-api.de HTTP 502 497ms",
+   "overpass-api.de ok 12 44934ms",
+   "overpass-api.de HTTP 502 521ms",
+   "overpass-api.de HTTP 502 545ms",
+   "overpass-api.de ok 14 36964ms",
+   "overpass-api.de ok 182 35754ms",
+   "overpass-api.de HTTP 502 549ms",
+   "overpass-api.de HTTP 502 481ms",
+   "overpass-api.de HTTP 502 477ms",
+   "overpass.private.coffee timeout 60001ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "overpass-api.de ok 112 44527ms",
+   "overpass-api.de ok 58 43110ms",
+   "overpass-api.de ok 13 56316ms",
+   "overpass-api.de ok 12 37310ms",
+   "overpass-api.de ok 4 36502ms",
+   "overpass-api.de HTTP 502 549ms",
+   "overpass-api.de HTTP 502 519ms",
+   "overpass-api.de ok 1 34519ms",
+   "overpass-api.de HTTP 502 854ms",
+   "overpass-api.de HTTP 502 545ms",
+   "overpass-api.de HTTP 502 519ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "kept 89 places from the last good data",
+   "fame: 71 of 71"
   ]
  },
  "krakow": {
