@@ -399,6 +399,7 @@ Masa.planner = (() => {
     return p;
   }
   const PRICE_SIGN = { budget: "זול", mid: "מחיר בינוני", splurge: "יוקרתי" };
+  const upscale = p => !!(p.michelin || p.pick === "fine" || p.voyage?.priceClass === "splurge");
 
   /* ---------- picking ---------- */
   function pickFor(cands, n, chosen, minGapKm = 0.15) {
@@ -559,7 +560,7 @@ Masa.planner = (() => {
     cuisine: p.cuisine || null, hours: p.hours || p.voyage?.hours || null, website: p.website || null, phone: p.phone || null, address: p.address || null,
     price: p.voyage?.price || null, priceClass: p.priceClass || p.voyage?.priceClass || null, stars: p.stars || 0, vtext: p.voyage?.text || null, veg: p.veg || false, kosher: p.kosher || false,
     outdoor: p.outdoor || false, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null,
-    ta: p.ta || null, fame: p.fame || 0, fee: p.fee || null, mich: p.michelin || 0, wheel: p.wheel || null, shops: p.shops || 0, shopKinds: p.shopKinds || null, streetLen: p.streetLen || 0, ends: p.ends || null,
+    ta: p.ta || null, fame: p.fame || 0, fee: p.fee || null, up: p.kind === "restaurant" && upscale(p) ? 1 : 0, mich: p.michelin || 0, wheel: p.wheel || null, shops: p.shops || 0, shopKinds: p.shopKinds || null, streetLen: p.streetLen || 0, ends: p.ends || null,
     vtext2: p.kind === "street" && !p.voyage?.text ? streetWhy(p) : null
   });
 
@@ -1375,7 +1376,8 @@ Masa.planner = (() => {
     /* restaurants with a real sign of quality come first: a Michelin star, a Wikivoyage recommendation, a known place
        (Wikipedia), or a local kitchen that keeps its details up to date. Others are used only when none of these is near. */
     const goodRest = p => p.michelin || p.pick || p.voyage || p.wikidata || (p.fame || 0) > 0 || (p.website && p.hours && (p.cuisine || "").length > 0 && (LOCAL_CUISINE[geo.cc] || []).some(c => (p.cuisine || "").includes(c)));
-    const allRestaurants = by(["restaurant"]).filter(p => !p.brand && !CHAIN.test(p.local || ""));
+    // on a mid budget the upscale restaurants (a star, a "fine" pick, a Wikivoyage splurge) are not planned; they are offered when swapping a meal
+    const allRestaurants = by(["restaurant"]).filter(p => !p.brand && !CHAIN.test(p.local || "") && !(budget === "בינוני" && upscale(p)));
     const restaurants = allRestaurants.filter(goodRest);
     const anyRestaurants = allRestaurants;
     // the restaurants the smart guide knows to be good: dinner goes a little farther for one (budget trips eat simpler)
@@ -1399,8 +1401,8 @@ Masa.planner = (() => {
       if (best) { used.add(best.id); usedNames.add(normName(best.local)); const cu = (best.cuisine || "").split(";")[0]; if (cu) cuisinesUsed[cu] = (cuisinesUsed[cu] || 0) + 1; }
       return best;
     };
-    // dinner is the meal to remember: the restaurants known to be good first, the upscale ones on a mid or splurge budget
-    const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) + (f.pick === "fine" ? 3 : 0) : 0) + (f.voyage ? 1 : 0) + (f.pick === "fine" && budget === "בינוני" ? 1.5 : 0) + (f.pick === "good" ? 1 : 0);
+    // dinner is the meal to remember: the restaurants known to be good first, the upscale ones on a splurge budget
+    const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) + (f.pick === "fine" ? 3 : 0) : 0) + (f.voyage ? 1 : 0) + (f.pick === "good" ? 1 : 0);
 
 
     // a restaurant or bar the traveler named becomes a meal on the nearest day

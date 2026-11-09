@@ -1047,7 +1047,13 @@ function alternativesFor(t, d, s) {
   const inTrip = new Set(t.days.flatMap(x => x.stops.map(y => y.name)));
   const near = (t.places || []).filter(p => hasXY(p) && !inTrip.has(p.name) && !HOTEL_KINDS.includes(p.kind) && (kinds ? kinds.includes(p.kind) : p.cat === s.cat || (CATS[p.cat] && !["food", "night", "sleep"].includes(p.cat) && !["food", "night"].includes(s.cat))))
     .map(p => ({ p, k: km(s, p) })).filter(x => x.k < (d.move === "car" ? 4 : 1.3));
-  return near.sort((a, b) => (b.p.q - b.k * 3) - (a.p.q - a.k * 3)).slice(0, 4);
+  const top = near.sort((a, b) => (b.p.q - b.k * 3) - (a.p.q - a.k * 3)).slice(0, 4);
+  // a mid-budget trip plans no upscale restaurant, so a meal swap offers one, a little farther if needed
+  if (t.opts?.budget === "בינוני" && (s.meal === "lunch" || s.meal === "dinner") && !top.some(x => x.p.up)) {
+    const up = (t.places || []).filter(p => p.up && hasXY(p) && !inTrip.has(p.name)).map(p => ({ p, k: km(s, p) })).filter(x => x.k < (d.move === "car" ? 6 : 2)).sort((a, b) => a.k - b.k)[0];
+    if (up) top.splice(Math.min(3, top.length), 1, up);
+  }
+  return top;
 }
 function editBar(t, d, s, i) {
   const first = i === 0 || d.stops[i - 1]?.meal === "hotel", last = i === d.stops.length - 1;
@@ -1056,7 +1062,7 @@ function editBar(t, d, s, i) {
   let alts = "";
   if (open) {
     const list = alternativesFor(t, d, s);
-    alts = `<div class="altlist">${list.length ? list.map(({ p, k }, j) => `<div class="hrow"><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")}, ${Math.max(1, Math.round(k * 1.25 / 4.6 * 60))} דק׳ הליכה מכאן${p.signals?.[0] ? `, ${esc(p.signals[0])}` : ""}</small></span><button type="button" class="btn small" data-alt="${j}">לבחור</button></div>`).join("")
+    alts = `<div class="altlist">${list.length ? list.map(({ p, k }, j) => `<div class="hrow"><span><b>${esc(p.name)}</b><small>${esc(planner.KIND[p.kind]?.he || "")}, ${Math.max(1, Math.round(k * 1.25 / 4.6 * 60))} דק׳ הליכה מכאן${p.up ? ", יוקרתי" : ""}${p.signals?.[0] ? `, ${esc(p.signals[0])}` : ""}</small></span><button type="button" class="btn small" data-alt="${j}">לבחור</button></div>`).join("")
       : `<p class="pline">לא מצאנו מקום דומה קרוב.</p>`}<button type="button" class="linkbtn" id="altSearch">חיפוש מקום אחר</button></div>`;
   }
   if (s.meal === "hotel") return "";
@@ -1073,7 +1079,7 @@ function replaceAt(dayIdx, i, p) {
   const d = S.trip.days[dayIdx], old = d?.stops[i];
   if (!old) return null;
   const ns = { ...old, name: p.name, local: p.local || p.name, kind: p.kind, kindHe: planner.KIND[p.kind]?.he, cat: p.cat || old.cat, lat: +p.lat, lng: +p.lng, osm: p.id,
-    cuisine: p.cuisine || null, priceClass: p.priceClass || null, price: p.price || null, mich: p.mich || 0, wheel: p.wheel || null, signals: p.signals || [], hours: p.hours || null, phone: p.phone || null,
+    cuisine: p.cuisine || null, priceClass: p.priceClass || null, price: p.price || null, mich: p.mich || 0, ...(old.meal ? { cost: p.price || (p.priceClass ? PRICE[p.priceClass] : p.up ? "יוקרתי" : old.cost) } : {}), wheel: p.wheel || null, signals: p.signals || [], hours: p.hours || null, phone: p.phone || null,
     address: p.address || null, website: p.website || null, why: p.vtext || planner.KIND[p.kind]?.he || "", whyLang: p.vtext ? "en" : "he", history: "", image: null, wikidata: p.wikidata || null, _he: p._he || null, _en: p._en || null, nearby: [], tip: "", _added: true, must: false, asked: false, sunset: false,
     booking: old.meal ? { needed: false, steps: [p.hours ? `שעות פתיחה: ${p.hours}` : "בודקים שעות פתיחה בגוגל מפות.", p.website ? "אפשר לבדוק באתר אם יש הזמנת שולחן." : "בערב במקומות מבוקשים כדאי להתקשר ולהזמין."], query: `${p.local || p.name} reservation`, url: p.website || null }
       : { needed: false, steps: ["בדקו בגוגל מפות את שעות הפתיחה לפני שמגיעים."], query: p.local || p.name, url: p.website || null } };
