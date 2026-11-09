@@ -893,11 +893,11 @@ async function translateStop(s) {
 }
 function openFeedback() { S.prev = S.screen === "settings" ? S.prev : S.screen; S.openFeedback = true; go("settings"); }
 
-/* ---------- a trip is built into the traveler's Google account (the owner's decision, Nov 2026) ----------
-   Before the first trip, one sign-in with Google; the trip then lives in the account on every device and in the app.
-   What they chose is kept for the trip to the sign-in page and back, and the trip is built as soon as they return.
-   The sample trip and browsing stay open without an account. Automated browsers (tests) skip it unless masa-gate=1. */
-const gateOff = () => { try { return navigator.webdriver && localStorage.getItem("masa-gate") !== "1"; } catch { return !!navigator.webdriver; } };
+/* ---------- the sign-in step before the first trip: off since 9.11.2026 ----------
+   Strangers from the beta posts saw it and left (1 saw, 0 signed in), so the first trip is built without an account and
+   the "keep your trip" card under it asks at the moment of value (the masa-conversion skill). The step stays here and
+   comes back with localStorage masa-gate=1 (the tests use it); what they chose is kept for the way back from Google. */
+const gateOff = () => { try { return localStorage.getItem("masa-gate") !== "1"; } catch { return true; } };
 async function signedInForBuild() {
   if (!cloud.configured() || gateOff()) return true;
   if (cloud.state.status === "loading") await new Promise(ok => { const off = cloud.on(st => { if (st.status !== "loading") { off(); ok(); } }); setTimeout(() => { off(); ok(); }, 6000); });
@@ -1249,6 +1249,22 @@ function reportError(msg, src) {
 }
 addEventListener("error", e => { if (e.error || e.message) reportError(e.message || e.error?.message, `${e.filename || ""}:${e.lineno || ""}`); });
 addEventListener("unhandledrejection", e => { const r = e.reason; reportError(r?.message || String(r || ""), (r?.stack || "").split("\n")[1]?.trim()); });
+/* a visit, once per browser session, with where it came from (utm_source, or the site that sent them, or "direct"):
+   so the owner sees how many came from each post. Anonymous like the other counts: no address, no device. */
+(function countVisit() {
+  try {
+    if (sget("masa-visit")) return;
+    sset("masa-visit", "1");
+    const u = new URLSearchParams(location.search).get("utm_source");
+    let src = u ? u.toLowerCase().replace(/[^a-z0-9_.-]/g, "").slice(0, 30) : "";
+    if (!src) {
+      const r = document.referrer;
+      if (!r) src = "direct";
+      else { const h = new URL(r).hostname.replace(/^(www|m|l|lm|mobile)\./, ""); if (h === location.hostname) return; src = /facebook|fb\.com/.test(h) ? "facebook" : /linkedin|lnkd/.test(h) ? "linkedin" : /google\./.test(h) ? "google" : /instagram/.test(h) ? "instagram" : /t\.co$|twitter|x\.com/.test(h) ? "x" : /whatsapp/.test(h) ? "whatsapp" : h.slice(0, 30); }
+    }
+    track("visit", src || "other");
+  } catch {}
+})();
 /* the owner screen lives in js/admin.js, loaded when the owner opens it from the settings */
 let adminLoad = null, adminIn = false;
 function openAdmin() {

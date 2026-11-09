@@ -140,7 +140,7 @@ test("counts are anonymous, of known events only, and cannot be read", async () 
   await assertFails(setDoc(doc(db(null), "events", "e2"), { e: "build", city: "rome", uid: "alice", at: serverTimestamp() }));
   await assertFails(setDoc(doc(db(null), "events", "e3"), { e: "anything", at: serverTimestamp() }));
   await assertFails(setDoc(doc(db(null), "events", "e4"), { e: "build", n: 9999, at: serverTimestamp() }));
-  for (const e of ["flights", "prompt_show", "prompt_tap", "prompt_no", "book"]) await assertSucceeds(setDoc(doc(db(null), "events", "p_" + e), { e, n: 1, at: serverTimestamp() }));
+  for (const e of ["flights", "prompt_show", "prompt_tap", "prompt_no", "book", "visit"]) await assertSucceeds(setDoc(doc(db(null), "events", "p_" + e), { e, n: 1, at: serverTimestamp() }));
   await assertFails(getDocs(collection(db("alice"), "events")));
 });
 test("only the site's owner (verified Google email) may read feedback and counts, and delete feedback", async () => {

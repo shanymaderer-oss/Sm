@@ -63,7 +63,7 @@ jobs:
         run: |
           (python -m http.server 8790 >/dev/null 2>&1 &) ; sleep 2
           npm i --no-save --no-audit --no-fund --prefix /tmp/axe axe-core@4.10.3 >/dev/null; export AXE_JS=/tmp/axe/node_modules/axe-core/axe.min.js
-          for t in test_journey test_agent test_hints test_nudge test_gate test_ask test_pack test_mapsave test_spend test_citypages; do echo "== $t"; python tools/qa/$t.py || exit 1; done
+          for t in test_journey test_agent test_hints test_nudge test_gate test_visit test_ask test_pack test_mapsave test_spend test_citypages; do echo "== $t"; python tools/qa/$t.py || exit 1; done
       - name: Feedback and anonymous counts
         run: python tools/qa/test_feedback.py
       - name: The guide (local answers and the shared guide)

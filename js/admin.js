@@ -10,7 +10,7 @@
   const FROM0 = Date.parse("2026-11-05T08:30:00Z");
   const fromKey = "masa-admin-from";
   const from = () => { try { return +localStorage.getItem(fromKey) || FROM0; } catch { return FROM0; } };
-  const NAMES = { build: "טיולים שנבנו", signin: "התחברויות", book: "לחיצות על הזמנה", flights: "חיפושי טיסות", share_link: "שיתוף בקישור", share_image: "שיתוף כתמונה", kit_open: "פתיחת מסך ההזמנות", guide_ai: "שאלות לסוכן", feedback: "משובים" };
+  const NAMES = { visit: "כניסות לאתר", build: "טיולים שנבנו", signin: "התחברויות", book: "לחיצות על הזמנה", flights: "חיפושי טיסות", share_link: "שיתוף בקישור", share_image: "שיתוף כתמונה", kit_open: "פתיחת מסך ההזמנות", guide_ai: "שאלות לסוכן", feedback: "משובים" };
   const isProbe = f => /^probe/.test(f.id) || f.screen === "probe";
   const day = d => d ? `${d.getDate()}.${d.getMonth() + 1}` : "";
   const time = d => d ? d.toLocaleString("he-IL", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
@@ -34,6 +34,8 @@
     // the sign-in step before the first trip: seen, tapped, and trips built
     const gateSeen = count("prompt_show", x => x.n === 3), gateTap = count("prompt_tap", x => x.n === 3), ins = count("signin");
     const cities = Object.entries(builds.reduce((m, x) => (m[x.city || "?"] = (m[x.city || "?"] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const sources = Object.entries((st.ev || []).filter(x => x.e === "visit").reduce((m, x) => (m[x.city || "?"] = (m[x.city || "?"] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]);
+    const SRC = { direct: "ישירות (קישור או הקלדה)", facebook: "פייסבוק", linkedin: "לינקדאין", google: "גוגל", instagram: "אינסטגרם", whatsapp: "וואטסאפ", x: "X (טוויטר)" };
     const brands = Object.entries((st.ev || []).filter(x => x.e === "book").reduce((m, x) => (m[x.city || "?"] = (m[x.city || "?"] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]);
     const days = []; for (let i = Math.min(st.days, 30) - 1; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5); days.push({ d, n: builds.filter(x => x.at && x.at.toDateString() === d.toDateString()).length }); }
     const max = Math.max(1, ...days.map(x => x.n));
@@ -45,6 +47,7 @@
         <p class="lead">${gateSeen} ראו אותו · ${gateTap} לחצו "התחברות" · ${ins} התחברו · ${builds.length} טיולים נבנו</p>
         ${gateSeen ? `<p class="muted">${Math.round(gateTap / gateSeen * 100)}% מאלה שראו את המסך לחצו להתחבר.</p>` : ""}</div>
       ${st.days > 1 ? `<div class="card"><h2>${ic("route")} טיולים לפי יום</h2><div class="adminbars" aria-label="טיולים שנבנו בכל יום">${days.map(x => `<span title="${day(x.d)}: ${x.n}"><i style="height:${Math.round(x.n / max * 100)}%"></i><small>${x.n || ""}</small></span>`).join("")}</div></div>` : ""}
+      ${sources.length ? `<div class="card"><h2>${ic("route")} מאיפה הגיעו</h2><ol class="adminlist">${sources.map(([c, n]) => `<li><span>${esc(SRC[c] || c)}</span><b>${n}</b></li>`).join("")}</ol><p class="muted small">כניסה אחת לכל ביקור בדפדפן. נספר מ-9.11.</p></div>` : ""}
       ${cities.length ? `<div class="card"><h2>${ic("pin")} הערים הכי מבוקשות</h2><ol class="adminlist">${cities.map(([c, n]) => `<li><span>${esc(c)}</span><b>${n}</b></li>`).join("")}</ol></div>` : ""}
       ${brands.length ? `<div class="card"><h2>${ic("ticket")} לחיצות על הזמנה לפי אתר</h2><ol class="adminlist">${brands.map(([c, n]) => `<li><span>${esc(c)}</span><b>${n}</b></li>`).join("")}</ol><p class="muted small">ההזמנות עצמן והעמלות מופיעות ב-Travelpayouts.</p></div>` : ""}
       <div class="card"><h2>${ic("chat")} משוב מהמשתמשים (${fbList.length})</h2>
