@@ -11563,13 +11563,13 @@
   ]
  },
  "pattaya": {
-  "at": "2026-11-07T11:00:38.306Z",
-  "seconds": 559,
+  "at": "2026-11-09T17:03:22.611Z",
+  "seconds": 600,
   "osm": {
    "sights": 2,
    "sights2": 15,
    "restaurants": 337,
-   "cafes": 91,
+   "cafes": 93,
    "hotels": 350,
    "shopping": 300,
    "diet": 7,
@@ -11588,7 +11588,7 @@
    "districts": 1
   },
   "wiki": {
-   "he": 0,
+   "he": 1,
    "en": 14
   },
   "streetsV": 2,
@@ -11606,21 +11606,21 @@
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 2 29604ms",
-   "overpass-api.de ok 15 30021ms",
-   "overpass-api.de ok 337 34795ms",
-   "overpass-api.de HTTP 504 50392ms",
-   "overpass-api.de HTTP 502 296ms",
-   "overpass-api.de ok 91 34985ms",
-   "overpass-api.de ok 350 38410ms",
-   "overpass-api.de ok 300 31204ms",
-   "overpass-api.de ok 7 34470ms",
-   "overpass-api.de ok 8 35891ms",
-   "overpass-api.de ok 15 25004ms",
-   "overpass-api.de HTTP 502 301ms",
-   "overpass-api.de ok 0 41447ms",
-   "overpass-api.de HTTP 502 357ms",
-   "overpass-api.de ok 15 31232ms",
+   "overpass-api.de HTTP 502 549ms",
+   "overpass-api.de ok 2 37417ms",
+   "overpass-api.de ok 15 48237ms",
+   "overpass-api.de ok 337 36242ms",
+   "overpass-api.de HTTP 502 532ms",
+   "overpass-api.de ok 93 43199ms",
+   "overpass-api.de ok 350 38819ms",
+   "overpass-api.de HTTP 502 510ms",
+   "overpass-api.de ok 300 34701ms",
+   "overpass-api.de ok 7 44834ms",
+   "overpass-api.de ok 8 55352ms",
+   "overpass-api.de ok 15 43934ms",
+   "overpass-api.de HTTP 502 476ms",
+   "overpass-api.de ok 0 45508ms",
+   "overpass-api.de ok 15 38903ms",
    "streets: 15 shops",
    "fame: 2 of 2"
   ]
