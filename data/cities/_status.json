@@ -10913,8 +10913,8 @@
   ]
  },
  "pisa": {
-  "at": "2026-11-07T10:39:35.349Z",
-  "seconds": 463,
+  "at": "2026-11-09T16:44:55.873Z",
+  "seconds": 608,
   "osm": {
    "sights": 93,
    "sights2": 7,
@@ -10963,18 +10963,24 @@
    "Via Giosuè Carducci (8)"
   ],
   "log": [
-   "overpass-api.de ok 93 40435ms",
-   "overpass-api.de ok 7 31560ms",
-   "overpass-api.de ok 200 34075ms",
-   "overpass-api.de ok 126 37643ms",
-   "overpass-api.de HTTP 502 462ms",
-   "overpass-api.de ok 101 31728ms",
-   "overpass-api.de ok 64 25849ms",
-   "overpass-api.de ok 2 34426ms",
-   "overpass-api.de ok 62 31903ms",
-   "overpass-api.de ok 8 26998ms",
-   "overpass-api.de ok 32 37044ms",
-   "overpass-api.de ok 183 25098ms",
+   "overpass-api.de ok 93 32103ms",
+   "overpass-api.de HTTP 502 489ms",
+   "overpass-api.de ok 7 29431ms",
+   "overpass-api.de ok 200 41568ms",
+   "overpass-api.de HTTP 502 490ms",
+   "overpass-api.de ok 126 32431ms",
+   "overpass-api.de ok 101 32943ms",
+   "overpass-api.de ok 64 33927ms",
+   "overpass-api.de ok 2 48691ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 62 29274ms",
+   "overpass-api.de HTTP 502 471ms",
+   "overpass-api.de HTTP 502 466ms",
+   "overpass-api.de ok 8 53977ms",
+   "overpass-api.de HTTP 502 473ms",
+   "overpass-api.de ok 32 41276ms",
+   "overpass-api.de ok 183 42806ms",
    "streets: 183 shops",
    "fame: 174 of 174"
   ]
