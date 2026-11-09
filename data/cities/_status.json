@@ -2529,8 +2529,8 @@
   ]
  },
  "thessaloniki": {
-  "at": "2026-11-06T14:32:34.864Z",
-  "seconds": 480,
+  "at": "2026-11-09T12:46:09.217Z",
+  "seconds": 666,
   "osm": {
    "sights": 151,
    "sights2": 22,
@@ -2545,12 +2545,12 @@
    "streets": 8
   },
   "voyage": {
-   "eat": 33,
+   "eat": 32,
    "drink": 2,
    "buy": 3,
    "see": 43,
-   "sleep": 35,
-   "withCoords": 86,
+   "sleep": 33,
+   "withCoords": 83,
    "districts": 0
   },
   "wiki": {
@@ -2580,18 +2580,26 @@
    "Φράγκων (7)"
   ],
   "log": [
-   "overpass-api.de ok 151 35199ms",
-   "overpass-api.de ok 22 30822ms",
-   "overpass-api.de ok 232 38884ms",
-   "overpass-api.de ok 300 29276ms",
-   "overpass-api.de ok 100 34212ms",
-   "overpass-api.de ok 166 39139ms",
-   "overpass-api.de ok 12 34266ms",
-   "overpass-api.de ok 60 32912ms",
-   "overpass-api.de ok 12 37845ms",
-   "overpass-api.de ok 12 31163ms",
-   "overpass-api.de HTTP 502 441ms",
-   "overpass-api.de ok 213 28882ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de ok 151 41206ms",
+   "overpass-api.de ok 22 36568ms",
+   "overpass-api.de HTTP 502 478ms",
+   "overpass-api.de ok 232 35891ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de HTTP 502 472ms",
+   "overpass-api.de ok 300 36117ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de ok 100 46388ms",
+   "overpass-api.de HTTP 502 361ms",
+   "overpass-api.de ok 166 33754ms",
+   "overpass-api.de ok 12 42047ms",
+   "overpass-api.de ok 60 52168ms",
+   "overpass-api.de HTTP 502 299ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de ok 12 45882ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 12 44277ms",
+   "overpass-api.de ok 213 41407ms",
    "streets: 213 shops",
    "fame: 241 of 241"
   ]
