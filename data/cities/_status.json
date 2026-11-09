@@ -10441,17 +10441,17 @@
   ]
  },
  "tiberias": {
-  "at": "2026-11-07T10:33:43.858Z",
-  "seconds": 613,
+  "at": "2026-11-09T08:16:14.176Z",
+  "seconds": 691,
   "osm": {
-   "sights": 2,
-   "sights2": 0,
+   "sights": 4,
+   "sights2": 2,
    "restaurants": 11,
    "cafes": 2,
-   "hotels": 29,
+   "hotels": 34,
    "shopping": 4,
-   "diet": 7,
-   "extra": 7,
+   "diet": 10,
+   "extra": 8,
    "fitness": 0,
    "landmarks": 0,
    "streets": 0
@@ -10466,8 +10466,8 @@
    "districts": 0
   },
   "wiki": {
-   "he": 38,
-   "en": 13
+   "he": 52,
+   "en": 21
   },
   "streetsV": 2,
   "fameV": 3,
@@ -10478,29 +10478,29 @@
    "hotels": 1,
    "shopping": 1,
    "diet": 1,
-   "extra": 1
+   "extra": 1,
+   "sights2": 1
   },
   "streets": [],
   "log": [
-   "overpass-api.de ok 2 35264ms",
-   "overpass-api.de ok 0 31758ms",
-   "overpass-api.de ok 11 30960ms",
-   "overpass-api.de timeout 60002ms",
-   "overpass-api.de ok 2 38983ms",
-   "overpass-api.de ok 29 36160ms",
-   "overpass-api.de HTTP 502 362ms",
-   "overpass-api.de ok 4 37377ms",
-   "overpass-api.de HTTP 502 366ms",
-   "overpass-api.de ok 7 49326ms",
-   "overpass-api.de HTTP 502 280ms",
-   "overpass-api.de ok 7 26971ms",
-   "overpass-api.de HTTP 502 286ms",
-   "overpass-api.de HTTP 502 365ms",
-   "overpass-api.de ok 0 28999ms",
-   "overpass-api.de ok 0 35869ms",
-   "overpass-api.de ok 0 39196ms",
+   "overpass-api.de HTTP 502 571ms",
+   "overpass-api.de ok 4 43086ms",
+   "overpass-api.de ok 2 54448ms",
+   "overpass-api.de HTTP 504 50395ms",
+   "overpass-api.de ok 11 29342ms",
+   "overpass-api.de ok 2 32370ms",
+   "overpass-api.de ok 34 41208ms",
+   "overpass-api.de ok 4 39754ms",
+   "overpass-api.de ok 10 46737ms",
+   "overpass-api.de HTTP 502 294ms",
+   "overpass-api.de ok 8 36508ms",
+   "overpass-api.de HTTP 504 47806ms",
+   "overpass-api.de HTTP 502 396ms",
+   "overpass-api.de ok 0 43959ms",
+   "overpass-api.de ok 0 37460ms",
+   "overpass-api.de ok 0 36127ms",
    "streets: 0 shops",
-   "fame: 13 of 13"
+   "fame: 16 of 16"
   ]
  },
  "siena": {
