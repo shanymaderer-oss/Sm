@@ -34,6 +34,21 @@ const store = {
 };
 const cityQ = () => S.trip?.cityLocal || S.trip?.city || "";
 const gmPlace = s => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.local || s.name}, ${cityQ()}`)}`;
+/* a day of the trip in Google Maps: its stops in order (from the hotel and back, when there is one), in pieces of at most
+   10 points, since a Maps link takes up to 8 stops between the start and the end. Walking, or driving for a car trip
+   (Maps links take no stops in between for public transport). */
+function gmDay(t, d) {
+  const pts = [...(t.hotel && hasXY(t.hotel) ? [t.hotel] : []), ...d.stops.filter(hasXY), ...(t.hotel && hasXY(t.hotel) ? [t.hotel] : [])];
+  if (pts.length < 2) return [];
+  const mode = t.opts?.move === "car" ? "driving" : "walking", ll = p => `${(+p.lat).toFixed(6)},${(+p.lng).toFixed(6)}`, out = [];
+  for (let i = 0; i < pts.length - 1; i += 9) {
+    const part = pts.slice(i, i + 10);
+    if (part.length < 2) break;
+    const mid = part.slice(1, -1).map(ll).join("|");
+    out.push(`https://www.google.com/maps/dir/?api=1&origin=${ll(part[0])}&destination=${ll(part[part.length - 1])}${mid ? `&waypoints=${encodeURIComponent(mid)}` : ""}&travelmode=${mode}`);
+  }
+  return out;
+}
 const gmDir = (a, b, mode = "walking") => `https://www.google.com/maps/dir/?api=1&origin=${a.lat},${a.lng}&destination=${b.lat},${b.lng}&travelmode=${mode}`;
 /* only web links leave the site: a "javascript:" address from map data or a shared link never becomes a link */
 const safeUrl = u => {
@@ -104,7 +119,7 @@ const S = {
 };
 let checks = store.get("masa-checks", {});
 const ckey = (s, i) => `${S.trip?.city}|${s.name}|${i}`;
-const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together", "pack", "spend", "tflights", "tstay"];
+const TRIP_SCREENS = ["plan", "place", "book", "guide", "discover", "list", "poi", "info", "move", "before", "together", "pack", "spend", "tflights", "tstay", "gmaps"];
 
 /* ---------- speech (built into the browser, free) ---------- */
 const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -338,7 +353,7 @@ function setNav() {
   if (!show) return;
   // four places: the trip (its folders), discover, the agent, home
   const items = [["plan", "route", "הטיול"], ["discover", "compass", "גלו"], ["guide", "sparkle", "הסוכן"], ["home", "home", "בית"]];
-  const inTrip = ["plan", "place", "before", "book", "together", "info", "move", "pack", "spend", "tflights", "tstay"].includes(S.screen);
+  const inTrip = ["plan", "place", "before", "book", "together", "info", "move", "pack", "spend", "tflights", "tstay", "gmaps"].includes(S.screen);
   nav.innerHTML = items.map(([k, i, l]) => `<button type="button" data-k="${k}" aria-current="${S.screen === k || (k === "plan" && inTrip) || (k === "discover" && (S.screen === "list" || S.screen === "poi"))}">${ic(i)}${l}</button>`).join("");
   nav.querySelectorAll("button").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
@@ -1160,6 +1175,7 @@ SCREENS.plan = {
     ${t.source === "sample" ? "" : `<div class="daytools"><button type="button" class="chipbtn" id="editDay" aria-pressed="${!!S.edit}">${ic(S.edit ? "check" : "route")}${S.edit ? "סיום שינויים" : "לשנות את היום"}</button>
       <button type="button" class="chipbtn" id="addStop">${ic("plus")}הוספת מקום</button>
       ${d.manualOrder ? `<button type="button" class="chipbtn" id="orderDay">${ic("nav")}לסדר לפי מרחק</button>` : ""}</div>`}
+    ${(() => { const L = gmDay(t, d); return L.length ? `<div class="daytools gmday">${L.map((u, i) => `<a class="chipbtn" href="${esc(u)}" target="_blank" rel="noopener" data-gm="day">${ic("nav")}${L.length === 1 ? "היום בגוגל מפות" : i === 0 ? "תחילת היום בגוגל מפות" : "המשך היום בגוגל מפות"}</a>`).join("")}</div>` : ""; })()}
     <div class="timeline${S.edit ? " editing" : ""}">${d.stops.map((s, i) => {
       let leg = "";
       if (i) { const L2 = legInfo(d, i), p = d.stops[i - 1];
@@ -1232,6 +1248,7 @@ SCREENS.before = {
       ${t.source === "sample" || domestic(t) ? "" : card("flightsCard", "plane", "var(--coral)", "טיסות", "הטיסות הכי זולות לתאריכים שלכם")}
       ${t.source === "sample" ? "" : card("stayCard", "bed", "var(--primary)", "איפה לישון", t.hotel ? `המלון שלכם: ${esc(t.hotel.name)}. אזורים ומלונות אחרים` : "האזורים הכי נוחים למסלול, ומלונות")}
       ${t.source !== "sample" && t.hotel ? card("hotelCard", "pin", "var(--sky)", "המלון שלכם", esc(t.hotel.name)) : ""}
+      ${t.source === "sample" ? "" : card("gmapsCard", "pin", "var(--teal)", "שמירה בגוגל מפות", "כל הטיול במפה שלכם בגוגל, ואפשר לשתף")}
       ${card("infoCard", "info", "var(--teal)", "מידע על היעד", "מזג אוויר, כסף, חשמל, eSIM")}
       ${card("moveCard", "bus", "var(--violet)", "תחבורה", "מהשדה לעיר ובתוך העיר")}
       ${card("packCard", "check", "var(--sun)", "מה לארוז", "רשימה לפי מזג האוויר, הנוסעים והמסלול")}
@@ -1243,6 +1260,7 @@ SCREENS.before = {
   bind() {
     bindTripTop();
     $("hotelCard") && ($("hotelCard").onclick = () => { if (S.trip.hotel) { S.poi = { ...S.trip.hotel }; S.list = { chip: "hotel", sort: "fit", page: 1 }; go("poi"); } else openList("hotel"); });
+    $("gmapsCard") && ($("gmapsCard").onclick = () => go("gmaps"));
     $("flightsCard") && ($("flightsCard").onclick = () => openTripStep("flights"));
     $("stayCard") && ($("stayCard").onclick = () => openTripStep("stay"));
     $("infoCard").onclick = () => loadCountries().then(() => go("info"));
@@ -2344,6 +2362,54 @@ function hotelBook(p) {
     ${S.trip.hotel?.id === p.id ? `<div class="keyrow"><span class="tag new">זה המלון שלכם</span><button type="button" class="btn small soft" id="dropHotel">הסרת המלון מהמסלול</button><button type="button" class="btn small soft" id="otherHotels">מלונות אחרים</button></div>` : `<button type="button" class="btn block" id="pickHotel">${ic("bed")} בחירה כמלון שלי ובניית המסלול סביבו</button>`}
   </div>`;
 }
+/* ================= the whole trip in Google Maps (My Maps): a KML file with every stop, named by day and order, with
+   the time and the tip; imported once into My Maps it shows in the Google Maps app under "Saved", and can be shared.
+   Google lets no site create the map in their account, so the traveler does the import: three steps, explained here. ================= */
+const xmlEsc = v => String(v ?? "").replace(/[<>&"']/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&apos;" })[c]);
+const KMLC = ["ff6b4ae2", "ffe0a03b", "ff84a00e", "fff05a7a", "ff33c4ff"]; // the day colors, as KML wants them (aabbggrr)
+function tripKml(t) {
+  const styles = KMLC.map((c, i) => `<Style id="d${i}"><IconStyle><color>${c}</color><scale>1.1</scale><Icon><href>https://maps.google.com/mapfiles/kml/paddle/wht-blank.png</href></Icon></IconStyle><LineStyle><color>${c}</color><width>4</width></LineStyle></Style>`).join("");
+  const days = t.days.map((d, di) => {
+    const pts = d.stops.filter(hasXY);
+    const marks = pts.map((s, i) => {
+      const desc = [s.time ? `${s.time}` : "", s.mealHe || "", s.tip || "", s.booking?.needed ? "כדאי להזמין מראש" : "", s.address || ""].filter(Boolean).join(" · ");
+      return `<Placemark><name>${xmlEsc(`יום ${di + 1} · ${i + 1}. ${s.name}`)}</name>${desc ? `<description>${xmlEsc(desc)}</description>` : ""}<styleUrl>#d${di % 5}</styleUrl><Point><coordinates>${(+s.lng).toFixed(6)},${(+s.lat).toFixed(6)}</coordinates></Point></Placemark>`;
+    }).join("");
+    const line = pts.length > 1 ? `<Placemark><name>${xmlEsc(`יום ${di + 1}: המסלול`)}</name><styleUrl>#d${di % 5}</styleUrl><LineString><tessellate>1</tessellate><coordinates>${pts.map(s => `${(+s.lng).toFixed(6)},${(+s.lat).toFixed(6)}`).join(" ")}</coordinates></LineString></Placemark>` : "";
+    return `<Folder><name>${xmlEsc(`יום ${di + 1}${d.theme ? `: ${d.theme}` : ""}`)}</name>${marks}${line}</Folder>`;
+  }).join("");
+  const hotel = t.hotel && hasXY(t.hotel) ? `<Placemark><name>${xmlEsc(`המלון: ${t.hotel.name}`)}</name><Point><coordinates>${(+t.hotel.lng).toFixed(6)},${(+t.hotel.lat).toFixed(6)}</coordinates></Point></Placemark>` : "";
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${xmlEsc(`${t.days.length} ימים ב${t.city} · מסע`)}</name>${styles}${hotel}${days}</Document></kml>`;
+}
+function downloadKml(t) {
+  const blob = new Blob([tripKml(t)], { type: "application/vnd.google-earth.kml+xml;charset=utf-8" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `masa-${(t.cityEn || t.slug || "trip").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.kml`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("הקובץ ירד. עכשיו מייבאים אותו ל-My Maps, לפי השלבים");
+}
+SCREENS.gmaps = {
+  view() {
+    const t = S.trip, mobile = isMobile();
+    return `<div class="screen">
+    <div class="topnav"><button class="iconbtn" id="backBefore" aria-label="חזרה לטיול">${ic("back")}</button><span class="stepof">שמירה בגוגל מפות</span><span style="width:38px"></span></div>
+    <div><h1>כל הטיול בגוגל מפות</h1><p class="lead">כל התחנות, לפי ימים ובצבעים, במפה שנשמרת אצלכם בגוגל. רואים אותה באפליקציית Google Maps, גם בטיול, ואפשר לשתף אותה עם מי שנוסע איתכם.</p></div>
+    <button class="btn coral block" id="getKml" type="button">${ic("pin")} הורדת קובץ המפה</button>
+    <div class="card"><h2>${ic("info")} איך מכניסים לגוגל מפות (פעם אחת, דקה)</h2>
+      <ol class="steps">
+        <li>פותחים את <a href="https://www.google.com/maps/d/" target="_blank" rel="noopener">Google My Maps</a> ${mobile ? "(הכי נוח מהמחשב; בטלפון אפשר בדפדפן במצב \"אתר למחשב\")" : ""} ולוחצים <b>יצירת מפה חדשה</b>.</li>
+        <li>בשכבה הראשונה לוחצים <b>ייבוא</b>, ובוחרים את הקובץ שירד (${esc(`masa-${(t.cityEn || t.slug || "trip").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.kml`)}).</li>
+        <li>נותנים שם למפה, למשל "${esc(`${t.city} ${t.days.length} ימים`)}". זהו.</li>
+      </ol>
+      <p class="muted">המפה תופיע באפליקציית Google Maps: <b>שמורים</b> ← <b>מפות</b>. כדי לשתף: ב-My Maps לוחצים <b>שיתוף</b> ושולחים את הקישור.</p>
+    </div>
+    <div class="card"><h2>${ic("nav")} רק לנווט ביום עצמו?</h2><p class="lead">בכל יום במסלול יש כפתור <b>"היום בגוגל מפות"</b>: הוא פותח את כל התחנות של היום לפי הסדר, בלי להוריד כלום.</p></div>
+  </div>`;
+  },
+  bind() {
+    $("backBefore").onclick = () => go("before");
+    $("getKml").onclick = () => downloadKml(S.trip);
+  }
+};
 /* build the trip again with one setting changed, keeping the hotel, the family notes and the trip id */
 async function rebuildWith(change, msg) {
   const t = S.trip;

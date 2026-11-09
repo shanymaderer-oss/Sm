@@ -1045,3 +1045,7 @@ a.btn{text-decoration:none}
 .card.askcard h2{margin:0}
 .card.askcard .lead{margin:0}
 .card.askcard textarea{width:100%;resize:vertical}
+/* the steps to bring the trip into Google My Maps */
+ol.steps{margin:6px 0 10px;padding-inline-start:22px;display:grid;gap:8px;line-height:1.55}
+ol.steps li::marker{font-weight:700;color:var(--coral)}
+.daytools.gmday{margin-top:-4px}
