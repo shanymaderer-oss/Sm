@@ -50,13 +50,18 @@ async def main():
       ok=got==want; print("FLAG","ok " if ok else "BAD",txt,flag,"->",got)
       if not ok: FAILS.append(txt)
     # 2026-11-06: crowds are not places, the hour written counts, halal is an honest note
-    for txt,want in [("בלי תורים, לא אוהבים תיירים",[]),("לא אוהבים את מגדל אייפל",["מגדל אייפל"])]:
+    for txt,want in [("בלי תורים, לא אוהבים תיירים",[]),("לא אוהבים את מגדל אייפל",["מגדל אייפל"]),("בלי מסגדים",[])]:
       got=await pg.evaluate("t=>Masa.intent.parse(t).skips",txt)
       ok=got==want; print("SKIPS","ok " if ok else "BAD",txt,"->",got)
       if not ok: FAILS.append(txt)
     for txt,want in [("להתחיל מוקדם ב-6 בבוקר",480),("קמים מוקדם",480),("קמים מוקדם, טסים חזרה ב-10 בבוקר",480)]:
       got=await pg.evaluate("t=>Masa.intent.parse(t).start",txt)
       ok=got==want; print("START","ok " if ok else "BAD",txt,"->",got)
+      if not ok: FAILS.append(txt)
+    # 2026-11-09: mosques are a kind (avoid), "המסגד הכחול" is still a place to see
+    for txt,want in [("בלי מסגדים",[True,False]),("רוצים לראות מסגדים",[False,True]),("רוצים לראות את המסגד הכחול",[False,False])]:
+      got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);return [w.avoid.includes('church'),(w.boost.church||0)>0]}",txt)
+      ok=got==want; print("MOSQ","ok " if ok else "BAD",txt,"->",got)
       if not ok: FAILS.append(txt)
     for txt,lab,want in LABELS:
       got=await pg.evaluate("([t,l])=>Masa.intent.parse(t).labels.some(x=>x.includes(l))",[txt,lab])

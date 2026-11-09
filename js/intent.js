@@ -73,6 +73,8 @@ Masa.intent = (() => {
     T([word("היסטורי"), word("היסטוריה"), word("עתיק"), word("ארכ(?:י)?אולוג"), word("חורבות"), word("ימי הביניים"), word("טיר(?:ה|ות)"), word("ארמו(?:ן|נות)"), /\b(history|historic|ancient|ruins|castles?|palaces?)\b/], { add: ["history"], label: "היסטוריה" }, { drop: ["history"], avoid: ["sight"], label: "פחות היסטוריה" }),
     T([word("מוזיאו"), word("אמנות"), word("אומנות"), word("גלרי"), word("ציורים"), /\b(museums?|art|galler(?:y|ies))\b/], { add: ["art"], label: "מוזיאונים ואמנות" }, { drop: ["art"], avoid: ["museum", "gallery"], label: "בלי מוזיאונים" }),
     T([word("כנסי(?:ה|ות|יה|יות)"), word("קתדרל"), word("מקדש"), /\b(churche?s?|cathedrals?|temples?)\b/], { boost: { church: 3 }, label: "כנסיות ומקדשים" }, { avoid: ["church"], label: "בלי כנסיות" }),
+    // "בלי מסגדים" is a kind, not a place name (it was read as a skip and the Blue Mosque stayed in); plural only, so "המסגד הכחול" is still a place
+    T([word("מסגדים"), /\bmosques\b/], { boost: { church: 3 }, label: "מסגדים ובתי תפילה" }, { avoid: ["church"], label: "בלי מסגדים ובתי תפילה" }),
     T([word("בית כנסת"), word("בתי כנסת"), word("יהודי"), word("רובע היהודי"), /\b(synagogues?|jewish)\b/], { jewish: true, label: "מורשת יהודית: בתי כנסת והרובע היהודי" }),
     T([word("טבע(?!וני)"), word("פארק(?:ים)?(?!\\s*שעשועים)"), word("גנים"), word("ירוק"), word("אגם"), /\b(nature|parks?|gardens?)\b/], { add: ["nature"], label: "טבע ופארקים" }, { drop: ["nature"], label: "פחות פארקים" }),
     T([word("חו(?:ף|פים)"), /(?:^|\s)[ובלה]{0,2}ים(?=\s|$)/, /\bbeach(es)?\b/], { add: ["nature"], boost: { beach: 7 }, label: "חוף ים" }),
