@@ -10822,8 +10822,8 @@
   ]
  },
  "jerusalem": {
-  "at": "2026-11-07T10:31:11.648Z",
-  "seconds": 537,
+  "at": "2026-11-09T16:33:28.368Z",
+  "seconds": 927,
   "osm": {
    "sights": 105,
    "sights2": 28,
@@ -10834,8 +10834,7 @@
    "diet": 250,
    "extra": 126,
    "fitness": 2,
-   "landmarks": 13,
-   "streets": 1
+   "landmarks": 13
   },
   "voyage": {
    "eat": 70,
@@ -10869,26 +10868,32 @@
    "מאה שערים (16)"
   ],
   "log": [
-   "overpass-api.de HTTP 502 998ms",
-   "overpass-api.de ok 105 24785ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de ok 28 25267ms",
-   "overpass-api.de HTTP 502 321ms",
-   "overpass-api.de ok 108 29780ms",
-   "overpass-api.de ok 95 32687ms",
-   "overpass-api.de ok 143 24983ms",
-   "overpass-api.de ok 51 33092ms",
-   "overpass-api.de ok 250 37941ms",
-   "overpass-api.de ok 126 38539ms",
-   "overpass-api.de HTTP 502 326ms",
-   "overpass-api.de HTTP 502 387ms",
-   "overpass-api.de ok 2 38059ms",
-   "overpass-api.de ok 13 36322ms",
-   "overpass-api.de HTTP 502 326ms",
-   "overpass-api.de ok 47 37398ms",
-   "streets: 47 shops",
+   "overpass-api.de HTTP 502 372ms",
+   "overpass-api.de ok 105 39965ms",
+   "overpass-api.de HTTP 502 362ms",
+   "overpass-api.de ok 28 30218ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de ok 108 36481ms",
+   "overpass-api.de ok 95 39988ms",
+   "overpass-api.de ok 143 46740ms",
+   "overpass-api.de ok 51 46479ms",
+   "overpass-api.de ok 250 53467ms",
+   "overpass-api.de ok 126 41593ms",
+   "overpass-api.de ok 2 51443ms",
+   "overpass-api.de HTTP 502 296ms",
+   "overpass-api.de HTTP 502 373ms",
+   "overpass-api.de ok 13 33969ms",
+   "overpass-api.de HTTP 502 300ms",
+   "overpass-api.de HTTP 502 295ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
    "wikidata HTTP 429",
-   "fame: 264 of 264"
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "wikidata HTTP 429",
+   "fame: 214 of 264"
   ]
  },
  "pisa": {
