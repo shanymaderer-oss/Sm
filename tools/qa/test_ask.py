@@ -1,5 +1,6 @@
-"""The beta question under the trip ("איך המסלול?"): shown on a trip the traveler built, not on the sample; an empty answer
-asks for a few words; a failed send says so and keeps the text; "not now" hides it for the session."""
+"""The beta question under the trip ("איך המסלול?"): shown on a trip the traveler built, not on the sample; one tap answers
+it (good / not really) and then asks for a few optional words; a failed send says so; "not now" hides it for the session.
+Under it, "send the trip to who is coming along" opens WhatsApp with a link that counts as a share."""
 import asyncio, os, sys
 from playwright.async_api import async_playwright
 import flow as Q
@@ -29,10 +30,18 @@ async def main():
         await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=60000); await pg.wait_for_timeout(800)
         check(await pg.locator("#askCard").count() == 1 and "איך המסלול" in await pg.inner_text("#askCard"), "a built trip asks how the route is")
-        await pg.click("#askSend"); await pg.wait_for_timeout(300)
-        check("כמה מילים" in await pg.inner_text("#askStatus"), "an empty answer asks for a few words")
-        await pg.fill("#askText", "היום השני עמוס מדי"); await pg.click("#askSend"); await pg.wait_for_timeout(1500)
-        check("לא הצלחנו" in await pg.inner_text("#askStatus") and await pg.input_value("#askText") == "היום השני עמוס מדי", "a failed send says so and keeps the text")
+        check(await pg.locator("#askGood").count() == 1 and await pg.locator("#askBad").count() == 1, "one tap: good or not really")
+        await pg.click("#askBad"); await pg.wait_for_timeout(1500)
+        check("לא הצלחנו" in await pg.inner_text("#askStatus") and await pg.locator("#askBad").is_enabled(), "a failed send says so and the buttons work again")
+        check(await pg.locator("#shareCard").count() == 1 and "וואטסאפ" in await pg.inner_text("#shareCard"), "under the trip: send it to who is coming along, WhatsApp first")
+        await ctx.route("https://wa.me/**", lambda route: route.fulfill(body="ok", content_type="text/plain"))
+        async with ctx.expect_page() as np:
+            await pg.click("#shareWa")
+        w = await np.value; await w.wait_for_load_state()
+        from urllib.parse import unquote
+        wa = unquote(w.url); await w.close()
+        check("wa.me" in wa and "utm_source=share" in wa and "#t=" in wa, f"WhatsApp opens with the trip link ({wa[:90]})")
+        check("נשלח" in await pg.inner_text("#shareCard"), "after sending, the card says so")
         await pg.click("#askNo"); await pg.wait_for_timeout(300)
         check(await pg.locator("#askCard").count() == 0, "'not now' hides it")
         await pg.click(".daytab >> nth=1"); await pg.wait_for_timeout(400)

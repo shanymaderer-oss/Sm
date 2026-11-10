@@ -413,25 +413,71 @@ function bindNudge() {
   $("nudgeNo").onclick = () => { track("prompt_no", null, n); sset("masa-nudge", "no"); el.remove(); };
 }
 /* during the beta: a short question under the trip, so feedback comes from travelers who would not open the settings.
-   Not for the sample; once answered it does not come back for that trip; "not now" hides it for the session. */
+   One tap answers it (good / not really), and then a few words are welcome but not needed. Not for the sample; once
+   answered it does not come back for that trip; "not now" hides it for the session. */
 const askedKey = t => "masa-asked-" + (t.id || "");
 function askCard(t) {
   if (!t || t.source === "sample" || !t.id || store.get(askedKey(t), false) || sget("masa-ask") === "no") return "";
   return `<div class="card askcard" id="askCard"><h2>${ic("chat")} איך המסלול?</h2>
-    <p class="lead">מסע בגרסת ניסיון. משפט אחד מכם עוזר לנו לשפר: מה טוב, מה חסר, מה הפריע.</p>
+    <p class="lead">מסע בגרסת ניסיון, ולחיצה אחת שלכם עוזרת לנו לשפר.</p>
+    <div class="askrate"><button type="button" class="btn small" id="askGood" aria-label="המסלול טוב">👍 טוב</button><button type="button" class="btn small ghost" id="askBad" aria-label="המסלול לא משהו">👎 לא משהו</button><button type="button" class="chipbtn" id="askNo">לא עכשיו</button></div>
+    <div id="askMore" hidden><p class="lead" id="askThanks"></p>
     <textarea id="askText" rows="2" maxlength="1500" aria-label="מה דעתכם על המסלול" placeholder="למשל: היום השני עמוס מדי, ואין מספיק מסעדות כשרות"></textarea>
-    <div class="chiprow"><button type="button" class="btn small" id="askSend">שליחה</button><button type="button" class="chipbtn" id="askNo">לא עכשיו</button></div>
+    <div class="chiprow"><button type="button" class="btn small" id="askSend">שליחה</button></div></div>
     <p class="status" id="askStatus" aria-live="polite"></p></div>`;
 }
 function bindAsk(t) {
   if (!$("askCard")) return;
+  let mood = "";
   $("askNo").onclick = () => { sset("masa-ask", "no"); $("askCard").remove(); };
+  const rate = async good => {
+    mood = good ? "👍" : "👎";
+    $("askGood").disabled = $("askBad").disabled = true;
+    try { await sendFeedback(good ? "👍 המסלול טוב" : "👎 המסלול לא משהו", "", "trip"); store.set(askedKey(t), true); }
+    catch { $("askGood").disabled = $("askBad").disabled = false; $("askStatus").textContent = "לא הצלחנו לשלוח. בדקו את החיבור ונסו שוב."; return; }
+    $("askCard").querySelector(".askrate").hidden = true;
+    $("askThanks").textContent = good ? "תודה! מה הכי אהבתם, ומה עוד היה עוזר? (לא חובה)" : "תודה שאמרתם. מה היה חסר או הפריע? משפט אחד יעזור לנו לתקן (לא חובה).";
+    $("askMore").hidden = false; $("askText").focus();
+  };
+  $("askGood").onclick = () => rate(true);
+  $("askBad").onclick = () => rate(false);
   $("askSend").onclick = async () => {
     const text = $("askText").value.trim();
     if (text.length < 3) { $("askStatus").textContent = "כתבו כמה מילים, ואז שליחה."; $("askText").focus(); return; }
     $("askSend").disabled = true;
-    try { await sendFeedback(text, "", "trip"); store.set(askedKey(t), true); $("askCard").innerHTML = `<p class="lead">${ic("check")} תודה! קיבלנו.</p>`; }
+    try { await sendFeedback(`${mood} ${text}`.trim(), "", "trip"); $("askCard").innerHTML = `<p class="lead">${ic("check")} תודה! קיבלנו.</p>`; }
     catch { $("askSend").disabled = false; $("askStatus").textContent = "לא הצלחנו לשלוח. בדקו את החיבור ונסו שוב."; }
+  };
+}
+/* right after a trip is built: send it to whoever is coming along (WhatsApp first). Shown once per trip, until it is
+   sent or "no need"; a trip someone shared with you instead offers to build your own. */
+const sharedKey = t => "masa-shared-" + (t.id || "");
+function shareCard(t) {
+  if (!t || t.source === "sample" || !t.id) return "";
+  if (t.source === "shared") return sget("masa-own") === "no" ? "" : `<div class="card sharecard" id="ownCard"><h2>${ic("sparkle")} רוצים מסלול כזה לטיול שלכם?</h2>
+    <p class="lead">מסע בונה מסלול מלא, יום אחרי יום, לכל עיר ולכל טעם. בחינם, תוך דקה.</p>
+    <div class="chiprow"><button type="button" class="btn small" id="ownBuild">לבנות טיול משלי</button><button type="button" class="chipbtn" id="ownNo">לא עכשיו</button></div></div>`;
+  if (store.get(sharedKey(t), false) || sget("masa-share-no") === "1") return "";
+  return `<div class="card sharecard" id="shareCard"><h2>${ic("share")} נוסעים עם עוד מישהו?</h2>
+    <p class="lead">שלחו להם את המסלול. הם יפתחו אותו בטלפון, בלי הרשמה, ויוכלו לסמן איפה הייתם ולהוסיף הערות.</p>
+    <div class="chiprow"><button type="button" class="btn small wa" id="shareWa">${ic("chat")}שליחה בוואטסאפ</button><button type="button" class="chipbtn" id="shareOther">${ic("share")}דרך אחרת</button><button type="button" class="chipbtn" id="shareNo">לא צריך</button></div></div>`;
+}
+function bindShare(t) {
+  if ($("ownCard")) {
+    $("ownNo").onclick = () => { sset("masa-own", "no"); $("ownCard").remove(); };
+    $("ownBuild").onclick = () => go("home");
+  }
+  if (!$("shareCard")) return;
+  const done = () => { store.set(sharedKey(t), true); $("shareCard").innerHTML = `<p class="lead">${ic("check")} נשלח. אפשר לשלוח שוב מתי שרוצים, בכפתור "שיתוף" למעלה.</p>`; };
+  const link = async () => { try { return await shareLink(t); } catch { toast("לא הצלחנו ליצור קישור"); return null; } };
+  const msg = u => `בניתי לנו מסלול לטיול ל${t.city} 🗺️ יום אחרי יום, עם מפה ומסעדות: ${u}`;
+  $("shareNo").onclick = () => { sset("masa-share-no", "1"); $("shareCard").remove(); };
+  $("shareWa").onclick = async () => { const u = await link(); if (!u) return; track("share_link", t.slug || t.cityEn); window.open(`https://wa.me/?text=${encodeURIComponent(msg(u))}`, "_blank", "noopener"); done(); };
+  $("shareOther").onclick = async () => {
+    const u = await link(); if (!u) return;
+    track("share_link", t.slug || t.cityEn);
+    if (navigator.share) { try { await navigator.share({ title: `טיול ל${t.city}`, text: msg(""), url: u }); done(); } catch {} }
+    else { try { await navigator.clipboard.writeText(u); toast("הקישור הועתק. אפשר להדביק בכל אפליקציה."); done(); } catch { toast("לא הצלחנו להעתיק"); } }
   };
 }
 function saveTrip(t) {
@@ -1185,6 +1231,7 @@ SCREENS.plan = {
         ${s._added ? `<span class="tag new">הוספתם</span>` : s.notKosher ? `<span class="tag">לא מסומן כשר</span>` : s.booking?.needed ? `<span class="tag book">כדאי להזמין</span>` : "<span></span>"}</button>${S.edit ? editBar(t, d, s, i) : ""}`;
     }).join("")}</div>
     ${saveNudge(t)}
+    ${shareCard(t)}
     ${askCard(t)}
     ${ideas.length ? `<div class="ideas"><h2>נשאר לכם זמן היום? רעיונות בדרך</h2>
       ${ideas.map(n => `<div class="idea"><span class="ic" style="background:${cv(CATS[catOf(n)].c)}">${ic(catOf(n))}</span><span><b>${esc(n.name)}</b><small>ליד ${esc(n._near)} · ${esc(n.why)}</small></span><button type="button" class="btn small soft" data-add="${esc(n.name)}">${ic("plus")}הוספה</button></div>`).join("")}</div>` : ""}
@@ -1214,7 +1261,7 @@ SCREENS.plan = {
     $("cpPlus") && ($("cpPlus").onclick = () => setPeople((S.trip.opts?.people || 2) + 1));
     bindNow();
     bindNudge();
-    bindAsk(t);
+    bindAsk(t); bindShare(t);
     bindAgent(t);
     bindTripTop();
   }
@@ -2797,7 +2844,7 @@ async function shareTripImage(t) {
   if (url) { try { await navigator.clipboard.writeText(url); } catch {} }
   toast(url ? "התמונה ירדה, והקישור לטיול הועתק" : "התמונה ירדה");
 }
-async function shareLink(t) { return `${location.origin}${location.pathname}#t=${await zip(JSON.stringify(tripData(t)))}`; }
+async function shareLink(t) { return `${location.origin}${location.pathname}?utm_source=share#t=${await zip(JSON.stringify(tripData(t)))}`; }
 function mergeFam(a, b) {
   const out = { visited: { ...(a?.visited || {}) }, notes: { ...(a?.notes || {}) } };
   for (const [k, list] of Object.entries(b?.visited || {})) out.visited[k] = [...new Set([...(out.visited[k] || []), ...list])];

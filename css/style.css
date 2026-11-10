@@ -1059,3 +1059,10 @@ ol.steps li::marker{font-weight:700;color:var(--coral)}
 .bagtbl{width:100%;border-collapse:collapse;margin:6px 0;font-size:.9rem}
 .bagtbl td{padding:5px 2px;border-bottom:1px solid var(--line,#e3e6ee)}
 .bagtbl td:last-child{text-align:left;direction:ltr;font-weight:600}
+
+/* the one-tap question under the trip, and sending the trip to who is coming along */
+.askrate{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.askrate .btn{min-width:96px}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.wa{background:#167a3f;color:#fff}
+.btn.wa svg{width:16px;height:16px}

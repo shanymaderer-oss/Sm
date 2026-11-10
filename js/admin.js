@@ -35,7 +35,7 @@
     const gateSeen = count("prompt_show", x => x.n === 3), gateTap = count("prompt_tap", x => x.n === 3), ins = count("signin");
     const cities = Object.entries(builds.reduce((m, x) => (m[x.city || "?"] = (m[x.city || "?"] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]).slice(0, 10);
     const sources = Object.entries((st.ev || []).filter(x => x.e === "visit").reduce((m, x) => (m[x.city || "?"] = (m[x.city || "?"] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]);
-    const SRC = { direct: "ישירות (קישור או הקלדה)", facebook: "פייסבוק", linkedin: "לינקדאין", google: "גוגל", instagram: "אינסטגרם", whatsapp: "וואטסאפ", x: "X (טוויטר)" };
+    const SRC = { direct: "ישירות (קישור או הקלדה)", facebook: "פייסבוק", linkedin: "לינקדאין", google: "גוגל", instagram: "אינסטגרם", whatsapp: "וואטסאפ", x: "X (טוויטר)", share: "טיול ששלחו לחבר" };
     const brands = Object.entries((st.ev || []).filter(x => x.e === "book").reduce((m, x) => (m[x.city || "?"] = (m[x.city || "?"] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]);
     const days = []; for (let i = Math.min(st.days, 30) - 1; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5); days.push({ d, n: builds.filter(x => x.at && x.at.toDateString() === d.toDateString()).length }); }
     const max = Math.max(1, ...days.map(x => x.n));
