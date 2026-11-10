@@ -32,7 +32,7 @@ async def main():
         ev = [w for w in allev if w["update"]["fields"]["e"]["stringValue"] == "build"]
         check(len(ev) == 1, f"building a trip is counted once ({len(ev)})")
         names = sorted(w["update"]["fields"]["e"]["stringValue"] for w in allev)
-        check(set(names) <= {"build", "flights", "prompt_show"} and names.count("prompt_show") <= 1, f"only known events are counted, the sign-in card at most once ({names})")
+        check(set(names) <= {"build", "flights", "prompt_show", "visit"} and names.count("prompt_show") <= 1 and names.count("visit") <= 1, f"only known events are counted, the sign-in card and the visit at most once ({names})")
         if ev:
             f = ev[0]["update"]["fields"]
             check(set(f) <= {"e", "city", "n"} and f["e"]["stringValue"] == "build" and f["city"]["stringValue"] == "rome" and f["n"]["integerValue"] == "3", f"the count has only the event, city and days: {f}")
@@ -40,6 +40,9 @@ async def main():
         # feedback from the home screen link
         await pg.click("#nav button[data-k=home]"); await pg.wait_for_selector("#homeFb")
         await pg.click("#homeFb"); await pg.wait_for_selector("#fbText")
+        # the settings screen is loaded on demand and focuses the box a moment after it is drawn
+        try: await pg.wait_for_function("document.activeElement && document.activeElement.id === 'fbText'", timeout=3000)
+        except Exception: pass
         check(await pg.evaluate("document.activeElement.id") == "fbText", "the link opens the feedback box, ready to type")
         await pg.click("#fbSend"); await pg.wait_for_timeout(200)
         check("כמה מילים" in await pg.inner_text("#fbStatus"), "an empty note is not sent")
