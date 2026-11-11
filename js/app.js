@@ -88,6 +88,10 @@ function partnerUrl(href) {
     if (!key) return href;
     // a Travelpayouts brand (Tiqets, Klook): the page is opened through their redirect, which counts the booking for us
     const tp = P[key]?.tp, tpm = P["aviasales.com"]?.marker;
+    // a Stay22 brand (Booking, Hotels.com, Expedia, Agoda, Vrbo, GetYourGuide): opened through Stay22's redirect with our id
+    const s22 = P[key]?.s22, aid = window.MASA_STAY22;
+    if (s22) return /^[a-z]{2,20}$/.test(s22) && /^[a-z0-9]{2,30}$/.test(String(aid)) && u.protocol === "https:"
+      ? `https://www.stay22.com/allez/${s22}?aid=${aid}&campaign=masa&link=${encodeURIComponent(u.toString())}` : href;
     if (tp) return /^\d{1,8}$/.test(String(tp.c)) && /^\d{1,8}$/.test(String(tp.p)) && /^\d{1,12}$/.test(String(tpm)) && u.protocol === "https:"
       ? `https://tp.media/r?campaign_id=${tp.c}&marker=${tpm}&p=${tp.p}&trs=${TP_TRS}&u=${encodeURIComponent(u.toString())}` : href;
     for (const [k, v] of Object.entries(P[key] || {})) if (/^[\w-]{1,40}$/.test(k) && /^[\w-]{1,80}$/.test(String(v)) && !u.searchParams.has(k)) u.searchParams.set(k, v);

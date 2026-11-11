@@ -38,8 +38,8 @@ async def main():
         kiwi = [unquote(l) for l in links if "kiwi.com" in unquote(l)]
         check(kiwi and "/fco/" in kiwi[0] and start in kiwi[0], f"flights are filled with the airport and dates ({kiwi[:1]})")
         check(not any(x in l for l in links for x in ("skyscanner.", "kayak.", "google.com/travel", "discovercars.", "viator.")), "only our partner sites for flights, cars and tours")
-        bk = [l for l in links if "booking.com" in l]
-        check(bk and f"checkin={start}" in bk[0], "lodging search has the dates")
+        bk = [l for l in links if "booking.com" in unquote(l)]
+        check(bk and f"checkin={start}" in unquote(bk[0]) and bk[0].startswith("https://www.stay22.com/allez/booking?aid=masaplanner&"), "lodging search has the dates, through our Stay22 partner link")
         tp = [l for l in links if l.startswith("https://tp.media/r?")]
         check(any("klook.com" in l and "Rome" in l for l in tp) and any("tiqets.com" in l and "Rome" in l for l in tp), "tours are searched in the trip's city, through our Klook and Tiqets partner links")
         check(all("marker=799451" in l and "trs=594662" in l for l in tp), "every partner redirect carries our partner id and site id")
@@ -48,7 +48,7 @@ async def main():
         av = [l for l in links if "aviasales.com/search/TLV" in l]
         check(av and "marker=799451" in av[0], f"flights on Aviasales, with our partner id ({av[:1]})")
         # partnerships (Travelpayouts): Aviasales, Tiqets and Klook only; no id on other sites, and the notice says links may be partner links
-        check(not any("aid=" in l or "marker=" in l for l in links if "aviasales" not in l and not l.startswith("https://tp.media/r?")) and await pg.locator("text=חלק מהקישורים הם של שותפים").count() > 0, "partner ids only where there is a partnership, and the partner notice is shown")
+        check(not any("aid=" in l or "marker=" in l for l in links if "aviasales" not in l and not l.startswith("https://tp.media/r?") and not l.startswith("https://www.stay22.com/allez/")) and await pg.locator("text=חלק מהקישורים הם של שותפים").count() > 0, "partner ids only where there is a partnership, and the partner notice is shown")
         # mark closed, kept after reload
         await pg.click("[data-kit=insurance]"); await pg.wait_for_timeout(300)
         await pg.reload(); await pg.wait_for_timeout(1000)

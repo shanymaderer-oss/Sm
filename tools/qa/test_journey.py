@@ -94,7 +94,9 @@ async def main():
         check(len(cards) >= 1 and "מהמקומות הכי מבוקשים במרחק הליכה" in cards[0], f"a recommended area, with what is a walk away ({cards[0][:140] if cards else ''!r})")
         print("INFO areas:", [c.split("\n")[1] if "\n" in c else c[:40] for c in cards])
         links = await pg.eval_on_selector_all(".card.base >> nth=0 >> a", "a => a.map(x => x.href)")
-        bk = next((h for h in links if "booking.com" in h), ""); ab = next((h for h in links if "airbnb.com" in h), "")
+        from urllib.parse import unquote as _uq
+        bk0 = next((h for h in links if "booking.com" in _uq(h)), ""); bk = _uq(bk0); ab = next((h for h in links if "airbnb.com" in h), "")
+        check(bk0.startswith("https://www.stay22.com/allez/booking?aid=masaplanner&"), f"Booking goes through our Stay22 partner link ({bk0[:70]})")
         check("checkin=2026-11-17" in bk and "checkout=2026-11-20" in bk and "group_adults=3" in bk and "latitude=" in bk, "Booking opens on that area with the dates and travelers")
         check("order=price" in bk and "review_score%3D80" in bk, "Booking shows the cheapest first, only places rated 8 and up")
         check("checkin=2026-11-17" in ab and "adults=3" in ab and "ne_lat=" in ab, "Airbnb opens on that area with the dates and travelers")
