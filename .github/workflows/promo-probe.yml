@@ -1,0 +1,42 @@
+name: Promo probe
+# On demand: find the free Pexels clips of one photo shoot (neighbouring ids) and save a frame of each, to pick
+# clips with the same people (on the promo-probe branch).
+on:
+  workflow_dispatch:
+    inputs:
+      ranges:
+        description: "id ranges, e.g. 13931590-13931640 13326130-13326160"
+        required: true
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Probe
+        env:
+          RANGES: ${{ inputs.ranges }}
+        run: |
+          sudo apt-get install -y ffmpeg >/dev/null
+          mkdir out
+          for r in $RANGES; do
+            a=${r%-*}; b=${r#*-}
+            case "$a$b" in *[!0-9]*) echo bad; exit 1;; esac
+            [ $((b-a)) -le 120 ] || { echo "range too big"; exit 1; }
+            for id in $(seq $a $b); do
+              for v in hd_720_1280_24fps hd_1080_1920_24fps hd_720_1280_25fps hd_1080_1920_25fps hd_720_1280_30fps hd_1080_1920_30fps hd_720_1280_60fps hd_1080_1920_60fps hd_1080_2048_25fps hd_720_1366_25fps; do
+                u="https://videos.pexels.com/video-files/$id/$id-$v.mp4"
+                if curl -sfI -A "Mozilla/5.0" "$u" >/dev/null; then
+                  curl -sfL -A "Mozilla/5.0" -o v.mp4 "$u" || break
+                  d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 v.mp4)
+                  ffmpeg -loglevel error -ss $(python3 -c "print(float('$d')/2)") -i v.mp4 -frames:v 1 -vf scale=240:-1 out/$id.jpg
+                  echo "$id $v $d" >> out/list.txt
+                  break
+                fi
+              done
+            done
+          done
+          cat out/list.txt || true
+          cd out && git init -q -b promo-probe && git add . && git -c user.name=masa-bot -c user.email=masa-bot@users.noreply.github.com commit -qm probe
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" promo-probe
