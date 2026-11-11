@@ -34,6 +34,7 @@ async def main():
         await pg.press("#gq", "Enter")
         async def flights():
             await pg.wait_for_selector("#flights", timeout=20000)
+            await pg.fill("#startDate", start); await pg.dispatch_event("#startDate", "change"); await pg.wait_for_timeout(1500)
             try: await pg.wait_for_selector(".flrow", timeout=30000)
             except Exception: pass
             await shot("c_flights", 2500)
@@ -57,6 +58,12 @@ async def main():
             await pg.click("#handle"); await shot("h_map_full", 4000)
             await pg.click("#handle"); await pg.wait_for_timeout(1500)
         await step("bigmap", bigmap)
+        async def day2map():
+            await pg.get_by_role("button", name="יום 2").first.click(); await pg.wait_for_timeout(2500)
+            await pg.click("#handle"); await shot("h2_map_day2", 4000)
+            await pg.click("#handle"); await pg.wait_for_timeout(1000)
+            await pg.get_by_role("button", name="יום 1").first.click(); await pg.wait_for_timeout(2000)
+        await step("day2map", day2map)
         async def day():
             await scroll_panel(330); await shot("i_day", 2500)
             await scroll_panel(330); await shot("i2_day", 2500)
