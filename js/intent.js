@@ -48,6 +48,9 @@ Masa.intent = (() => {
     T([word("עגל(?:ה|ת)"), word("טיולון"), /\bstroller|pram\b/], { mobility: "stroller", label: "עם עגלה: מקומות נגישים ופחות מדרגות" }),
     T([word("כיסא גלגלים"), word("כסא גלגלים"), word("נכה"), word("נגיש"), /\bwheelchair\b/], { mobility: "wheelchair", label: "כיסא גלגלים: על רבים אין לנו מידע, כדאי לוודא" }),
     T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("לא הרבה הליכה"), word("הורים מבוגרים"), word("אנשים מבוגרים"), word("קשישים"), word("גיל הזהב"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
+    // "בלי מדרגות" is about walking, not a place to leave out (it showed "לא נכניס למסלול: מדרגות"); only the "no" side, and
+    // never the Spanish Steps. It does not replace a stroller or a wheelchair said in the same text.
+    T([word("מדרגות(?!\\s+ה?ספרד)"), /\bstairs\b/], null, { mobility: "walking", softMobility: true, label: "בלי מדרגות: פחות הליכה ותחנות קרובות. על מדרגות במקומות עצמם אין לנו מידע, כדאי לוודא" }),
     T([word("ירח דבש"), word("רומנטי"), word("יום נישואין"), word("זוגי"), /\b(honeymoon|romantic|anniversary)\b/], { romantic: true, boost: { view: 3, dessert: 2 }, label: "טיול זוגי: תצפיות, שקיעות וארוחת ערב טובה" }),
     // food and diet
     // no restaurant in our data says gluten free (0 of 135 cities), so say that plainly instead of promising
@@ -189,7 +192,7 @@ Masa.intent = (() => {
         (eff.drop || []).forEach(x => { w.drop.add(x); w.add.delete(x); });
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
-        for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
+        for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "mobility" && eff.softMobility && w.mobility) && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
         for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);

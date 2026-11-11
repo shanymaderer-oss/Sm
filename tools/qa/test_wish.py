@@ -10,7 +10,9 @@ CASES=[("רומא","אנחנו זוג עם ילד בן 6, לא אוכלים בש
        ("לונדון","שומרים כשרות, רוצים לראות את הביג בן ואת הלונדון איי, תחבורה ציבורית")]
 PARSE=[("אנחנו 2 מבוגרים ו-3 ילדים",5,None),("2 מבוגרים",2,None),("אנחנו 4",4,None),
        ("טסים עם הורים מבוגרים",None,"walking"),("לא הרבה הליכה",None,"walking"),("בלי הרבה הליכה",None,"walking"),
-       ("זוג עם ילד בן 6",3,None),("אנחנו זוג ושני ילדים",4,None),("זוג + 2 ילדים",4,None),("זוג עם תינוקת",3,None),("זוג",2,None),("זוג בלי ילדים",2,None)]
+       ("זוג עם ילד בן 6",3,None),("אנחנו זוג ושני ילדים",4,None),("זוג + 2 ילדים",4,None),("זוג עם תינוקת",3,None),("זוג",2,None),("זוג בלי ילדים",2,None),
+       # 2026-11-11: "בלי מדרגות" is walking, not a place; a stroller said with it stays a stroller; the Spanish Steps stay a place
+       ("בלי מדרגות",None,"walking"),("עם עגלה, בלי מדרגות",None,"stroller"),("רוצים לראות את המדרגות הספרדיות",None,None)]
 # food words that are not "we want good food": "אוכל ללא גלוטן" / "בלי אוכל חריף" must not add or drop food stops
 FOOD=[("אוכל ללא גלוטן",[False,False]),("בלי אוכל חריף",[False,False]),("אוכל לא חריף בבקשה",[False,False]),
       ("אוהבים אוכל טוב",[True,False]),("לא בא לנו לעצור לאוכל",[False,True])]
@@ -50,7 +52,7 @@ async def main():
       ok=got==want; print("FLAG","ok " if ok else "BAD",txt,flag,"->",got)
       if not ok: FAILS.append(txt)
     # 2026-11-06: crowds are not places, the hour written counts, halal is an honest note
-    for txt,want in [("בלי תורים, לא אוהבים תיירים",[]),("לא אוהבים את מגדל אייפל",["מגדל אייפל"]),("בלי מסגדים",[])]:
+    for txt,want in [("בלי תורים, לא אוהבים תיירים",[]),("לא אוהבים את מגדל אייפל",["מגדל אייפל"]),("בלי מסגדים",[]),("בלי מדרגות כי ברכיים לא טובות",[]),("בלי המדרגות הספרדיות",["המדרגות הספרדיות"])]:
       got=await pg.evaluate("t=>Masa.intent.parse(t).skips",txt)
       ok=got==want; print("SKIPS","ok " if ok else "BAD",txt,"->",got)
       if not ok: FAILS.append(txt)
