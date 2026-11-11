@@ -7,7 +7,7 @@ on:
         description: "City to film (Hebrew)"
         default: "רומא"
 permissions:
-  contents: read
+  contents: write
 jobs:
   film:
     runs-on: ubuntu-24.04
@@ -27,8 +27,9 @@ jobs:
           CITY: ${{ inputs.city }}
           OUT: screens
         run: python tools/promo/film_screens.py
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: screens
-          path: screens/
-          retention-days: 7
+      - name: Save the screens on the promo-screens branch (not main)
+        run: |
+          cd screens
+          git init -q -b promo-screens && git add . 
+          git -c user.name="masa-bot" -c user.email="masa-bot@users.noreply.github.com" commit -qm "Promo screens ${{ github.run_id }}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" promo-screens

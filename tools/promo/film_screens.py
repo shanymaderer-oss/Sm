@@ -73,7 +73,7 @@ async def main():
             await pg.click('[data-folder="plan"]'); await pg.wait_for_timeout(1500)
         await step("book", book)
         async def agent():
-            box = pg.get_by_placeholder("מה לשנות? כתבו לסוכן...")
+            box = pg.locator("input[placeholder*='מה לשנות'], textarea[placeholder*='מה לשנות']").first
             await box.click(); await box.type("פחות הליכה ביום הראשון", delay=60); await shot("m_agent", 600)
             await box.press("Enter"); await shot("m2_agent_done", 20000)
         await step("agent", agent)
