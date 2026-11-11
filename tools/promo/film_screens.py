@@ -62,6 +62,11 @@ async def main():
             await scroll_panel(330); await shot("i2_day", 2500)
             await scroll_panel(330); await shot("i3_day", 2500)
         await step("day", day)
+        async def food():
+            await pg.click('[data-folder="plan"]'); await pg.wait_for_timeout(1000)
+            el = pg.locator("#panel :text('לאדם')").first
+            await el.scroll_into_view_if_needed(); await scroll_panel(140); await shot("n_food", 2500)
+        await step("food", food)
         async def before():
             await pg.click('[data-folder="before"]'); await shot("j_before", 2000)
             await pg.click("#gmapsCard"); await pg.wait_for_selector("#getKml", timeout=10000); await shot("k_gmaps", 1500)
