@@ -1,0 +1,26 @@
+name: Promo check
+# On demand: download a rendered promo video and save a frame every 2 seconds (on the promo-check branch), to review it.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Video URL"
+        required: true
+permissions:
+  contents: write
+jobs:
+  frames:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Frames
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          case "$URL" in https://assets.vidiq.com/*) ;; *) echo "only vidIQ renders"; exit 1;; esac
+          sudo apt-get install -y ffmpeg >/dev/null
+          mkdir out && curl -sSfL -o v.mp4 "$URL"
+          ffprobe -v error -show_entries format=duration:stream=width,height -of csv=p=0 v.mp4 | tee out/info.txt
+          ffmpeg -loglevel error -i v.mp4 -vf "fps=1/2,scale=360:-1" out/f%02d.jpg
+          cd out && git init -q -b promo-check && git add . && git -c user.name=masa-bot -c user.email=masa-bot@users.noreply.github.com commit -qm "frames"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" promo-check
