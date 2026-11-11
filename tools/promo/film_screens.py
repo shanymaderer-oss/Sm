@@ -59,10 +59,10 @@ async def main():
             await pg.click("#handle"); await pg.wait_for_timeout(1500)
         await step("bigmap", bigmap)
         async def day2map():
-            await pg.get_by_role("button", name="יום 2").first.click(); await pg.wait_for_timeout(2500)
+            await pg.click('.daytab[data-i="1"]'); await pg.wait_for_timeout(2500)
             await pg.click("#handle"); await shot("h2_map_day2", 4000)
             await pg.click("#handle"); await pg.wait_for_timeout(1000)
-            await pg.get_by_role("button", name="יום 1").first.click(); await pg.wait_for_timeout(2000)
+            await pg.click('.daytab[data-i="0"]'); await pg.wait_for_timeout(2000)
         await step("day2map", day2map)
         async def day():
             await scroll_panel(330); await shot("i_day", 2500)
