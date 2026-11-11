@@ -198,11 +198,17 @@ Masa.planner = (() => {
     // only common words in common: accept just when the names are made of nothing else, in the same spot
     return d < 0.05 && shared.length === A.length && shared.length === B.size;
   }
+  /* adult venues never enter a route (a sex museum, a strip club, an erotic shop): the planner suggests places for
+     couples, families and friends alike, so these stay out unless a traveler asks the guide for them by name. */
+  const ADULT = /\b(sex|sexo|sexe|erotic|erotik|erotica|erotico|erótico|érotique|strip ?club|peep ?show|brothel|bordel|burlesque|hustler|playboy)\b|museu do sexo|sexmuseum|venustempel|מוזיאון ה(מין|סקס)/i;
+  const adultTags = t => !!t && (["stripclub", "brothel", "swingerclub", "love_hotel"].includes(t.amenity) || t.shop === "erotic" || t.shop === "adult"
+    || ADULT.test(`${t.name || ""} ${t["name:en"] || ""}`));
   function buildPool(data, geo) {
     const cc = geo.cc;
     const pool = [];
     const seen = new Map();
     for (const e of data.els || []) {
+      if (adultTags(e.tags)) continue;
       const p = fromOSM(e, cc);
       if (!p) continue;
       const key = p.wikidata || `${p.kind}|${normName(p.local)}`;
@@ -304,7 +310,7 @@ Masa.planner = (() => {
       if (p.wikidata && F.n?.[p.wikidata] != null) p.fame = F.n[p.wikidata];
       if (p.wikidata && F.he?.[p.wikidata] && !p._he) p._he = F.he[p.wikidata];
     });
-    return { pool: pool.filter(p => !p.hide), noGeo };
+    return { pool: pool.filter(p => !p.hide && !ADULT.test(`${p.local || ""} ${p.name || ""}`)), noGeo };
   }
 
   /* ---------- how the traveler moves: on foot, by public transport or by car ----------
