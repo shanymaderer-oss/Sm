@@ -86,6 +86,16 @@ async def main():
       ok=not t["wish"]["missed"] and any(want in n for n in names) and not (bad and any(bad in n for n in names))
       print("NAMED","ok " if ok else "BAD",city,txt,"->",names,t["wish"]["missed"])
       if not ok: FAILS.append(txt)
+    # 2026-11-12: Wikipedia articles about events (a famous concert, attacks, sieges) are not places: "קונצרט" in Vienna
+    # matched "קונצרט השנה החדשה בווינה" and put a Brahms statue in the trip
+    for city,txt,bad,want in [("וינה","רוצים לשמוע קונצרט של מוזיקה קלאסית בערב",["Brahms","קונצרט השנה"],None),
+                              ("ברצלונה","היסטוריה, אוהבים אדריכלות",[],None)]:
+      t=await pg.evaluate("""async ([q,notes]) => await Masa.planner.build({ query:q, days:3, interests:["history"], budget:"בינוני", pace:"מאוזן", diet:"הכול", move:"walk", notes, start:"2026-12-01", people:2 }, ()=>{}, null)""",[city,txt])
+      names=[x["name"] for x in t["wish"]["places"]]+[s["local"] or "" for d in t["days"] for s in d["stops"] if s.get("asked")]
+      allst=[(s.get("local") or "")+" "+(s.get("name") or "") for d in t["days"] for s in d["stops"]]
+      ok=not any(b in n for b in bad for n in names) and (not want or any(want in n for n in names)) and not any(re.search(r"פיגוע|טבח |המצור על|bombing|massacre|siege of",n,re.I) for n in allst)
+      print("EVENT","ok " if ok else "BAD",city,txt,"->",names)
+      if not ok: FAILS.append(txt)
     # kosher: every meal and sweet stop is kosher or says it is not; Roman-Jewish cuisine alone is not kosher
     for city in ["לונדון","רומא"]:
       t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:3, interests:["food","history"], budget:"בינוני", pace:"מאוזן", diet:"כשר", move:"walk", notes:"", start:"2026-12-01", people:2 }, ()=>{}, null)""",city)

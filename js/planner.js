@@ -174,6 +174,10 @@ Masa.planner = (() => {
   }
   /* Wikipedia "nearby" articles as sights (only used when the map data is thin) */
   const WIKI_SKIP = /(תחנת|רחוב|שדרות|כביש|קו |שדה התעופה|נמל התעופה|בית חולים|אוניברסיט|בית ספר|שגרירות|מלון|שכונ|רכבת|מטרו|חשמלית|מחוז|station|street|road|avenue|line\b|airport|hospital|universit|school|embassy|hotel|district|neighbourhood|neighborhood|metro|railway|tram|bus\b|constituency|company)/i;
+  /* Wikipedia articles about events, not places (attacks, massacres, sieges, battles, riots, assassinations, a famous concert):
+     they have coordinates, but must never become a stop or match a wish. Museums and memorials of them stay. */
+  const WIKI_EVENT = /(פיגוע|טבח |קרב |המצור על|רעידת האדמה|מהומות|^רצח |^אסון |האסון |^ועידת |קונצרט |attack|bombing|massacre|shooting\b|battle of|siege of|earthquake|riots?\b|great (\w+ )?fire|assassination|concert\b(?! hall))/i;
+  const wikiSkip = t => WIKI_SKIP.test(t) || (WIKI_EVENT.test(t) && !/(museum|memorial|monument|מוזיאון|אנדרט|הנצחה)/i.test(t));
   function wikiKind(t) {
     if (/(מוזיאון|גלריה|museum|gallery)/i.test(t)) return "museum";
     if (/(כנסיי|קתדרל|בזיליק|מנזר|בית הכנסת|מסגד|מקדש|קפלה|church|cathedral|basilica|monastery|synagogue|mosque|temple|chapel|abbey)/i.test(t)) return "church";
@@ -270,7 +274,7 @@ Masa.planner = (() => {
       const wiki = [...(data.wiki?.he || []), ...(data.wiki?.en || [])];
       const added = [];
       for (const w of wiki) {
-        if (WIKI_SKIP.test(w.title)) continue;
+        if (wikiSkip(w.title)) continue;
         if (pool.some(p => p.wikidata && km(p, w) < 0.1)) continue;
         const twin = added.find(o => km(o, w) < 0.06);
         if (twin) { if (w.lang === "en") twin._en = w.title; continue; }
@@ -910,7 +914,7 @@ Masa.planner = (() => {
     // a kind they said they do not want is not picked by its name alone ("Montmartre" is the hill, not the Montmartre Museum)
     let found = Masa.intent.findPlaces(text, items.filter(i => !w.avoid.includes(i.p.kind)), cityNames, opt).map(o => o.it.p);
     // not on the map under that name: a Hebrew Wikipedia article at that spot can stand in
-    const wikiItems = (data.wiki?.he || []).filter(x => !WIKI_SKIP.test(x.title) && km(geo, x) < 15).map(x => ({ x, names: [x.title], fame: 25 }));
+    const wikiItems = (data.wiki?.he || []).filter(x => !wikiSkip(x.title) && km(geo, x) < 15).map(x => ({ x, names: [x.title], fame: 25 }));
     found.unshift(...byAlias);
     for (const o of Masa.intent.findPlaces(text, wikiItems, cityNames, opt)) {
       const x = o.it.x;
@@ -1049,7 +1053,7 @@ Masa.planner = (() => {
         if (!fame && !t["name:he"] && !t.tourism && !t.historic) continue;
         out.push({ names: [t["name:he"], t.name, t["name:en"], t.wikidata && F.he?.[t.wikidata]], fame, he: t["name:he"] || (t.wikidata && F.he?.[t.wikidata]) || t.name });
       }
-      for (const x of d.wiki?.he || []) if (!WIKI_SKIP.test(x.title)) out.push({ names: [x.title], fame: 25, he: x.title.replace(/\s*\([^)]*\)\s*$/, "") });
+      for (const x of d.wiki?.he || []) if (!wikiSkip(x.title)) out.push({ names: [x.title], fame: 25, he: x.title.replace(/\s*\([^)]*\)\s*$/, "") });
       for (const [he] of hen[slug] || []) out.unshift({ names: he.split("|"), fame: 60, he: he.split("|")[0] });
       return out;
     }).catch(() => null));
