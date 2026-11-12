@@ -623,6 +623,20 @@ Masa.planner = (() => {
       d.stops.splice(k < 0 ? d.stops.length - 1 : k, 1);
     }
   }
+  /* ---------- opening hours in the order of a day ----------
+     Can a stop be entered at minute t on weekday dow (0 = Monday; unknown = midweek) and still be open SEE_MIN minutes later?
+     true / false, or null when we do not know. Seasonal hours ("Mar 29-Sep 30 ...") use the earliest closing time of the year;
+     a museum, gallery or zoo with no hours at all is taken to be a morning-to-afternoon place (last entry 16:00). */
+  const SEE_MIN = 45, NO_HOURS_LATEST = 16 * 60, DAYTIME_KINDS = new Set(["museum", "gallery", "zoo", "themepark"]);
+  function openFor(s, dow, t) {
+    if (!s.hours) return DAYTIME_KINDS.has(s.kind) ? t <= NO_HOURS_LATEST : null;
+    const at = m => new Date(2024, 0, 1 + (dow == null ? 2 : dow), Math.floor(m / 60) % 24, m % 60); // 2024-01-01 is a Monday
+    const a = isOpen(s.hours, at(t)), b = isOpen(s.hours, at(t + SEE_MIN));
+    if (a === false || b === false) return false;
+    if (a === true) return true;
+    const ends = [...s.hours.matchAll(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g)].filter(m => +m[3] * 60 + +m[4] > +m[1] * 60 + +m[2]).map(m => +m[3] * 60 + +m[4]);
+    return ends.length ? t + SEE_MIN <= Math.min(...ends) : null;
+  }
   /* ---------- the order of a day: the shortest sensible walk, with meals at meal times ----------
      Breakfast opens the day and dinner (then drinks) closes it; lunch lands around 13:00 and the sweet break in the afternoon.
      A sunset stop stays the last sight. Everything else is ordered for the least walking (or driving). */
@@ -640,6 +654,7 @@ Masa.planner = (() => {
     // distances once, by index (the search below tries thousands of orders)
     stops.forEach((s, i) => { s._oi = i; });
     const D = stops.map(a => stops.map(b => km(a, b)));
+    const openMemo = new Map();
     const cost = seq => {
       let dist = 0, t = start, pen = 0;
       for (let i = 0; i < seq.length; i++) {
@@ -648,6 +663,8 @@ Masa.planner = (() => {
         // lunch: around 13:00; arriving early means waiting, which wastes the morning
         if (s.meal === "lunch") { const wait = Math.max(0, 12.5 * 60 - t); t += wait; pen += wait / 60 * 1.2 + Math.max(0, Math.abs(t - 13 * 60) - 45) / 60 * 1.5; }
         if (s.meal === "treat") { if (t < 14.5 * 60 || t > 17.5 * 60) pen += 0.8; }
+        // a sight that would be closed when we get there: a heavy cost, so it moves earlier in the day
+        if (!s.meal && !s.sunset && s.hours !== undefined) { const k = s._oi + ":" + Math.round(t / 15); let o = openMemo.get(k); if (o === undefined) openMemo.set(k, o = openFor(s, day.dow, t)); if (o === false) pen += 6; }
         t += s._min || 60;
       }
       return dist + pen;
@@ -1506,6 +1523,7 @@ Masa.planner = (() => {
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
         const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null, move };
         if (wish?.start) d.startMin = wish.start;
+        if (opts.start) d.dow = ((new Date(opts.start + "T12:00:00").getDay() + 6) % 7 + i) % 7; // 0 = Monday, for opening hours
         if (wish?.sunset) d.sunsetMin = sunsetLocal(geo, opts.start, i);
         if (satDay(i)) { d.shabbat = true; d.theme = "שבת · " + d.theme; }
         optimizeDay(d);
