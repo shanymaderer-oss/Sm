@@ -307,6 +307,8 @@ Masa.intent = (() => {
     const toks = nt.split(" ").filter(Boolean);
     const variants = toks.map(t => strip(t));
     const has = w => variants.some(v => v.some(x => same(x, w)));
+    const cityW = new Set(city.flatMap(c => c.split(" ")).filter(w => w.length >= 3).flatMap(w => [w, w.replace(/^ה/, "")]));
+    const isCity = w => [...cityW].some(c => same(c, w));
     // how many places use each word: a word that many places share is not a name
     const freq = new Map();
     const prepared = items.map(it => {
@@ -325,6 +327,9 @@ Masa.intent = (() => {
         if (matched.length && matched.every(w => skip.has(w))) continue;
         // "Transport Museum" is not found by "transport" alone: a one-word name needs its kind written too, unless the place is very famous
         const gen = ws.filter(w => GENERIC.has(w) && w.length >= 3);
+        // the city's own name is not a place: "הקונצרטהאוס של ברלין" must not find "Berlin sculpture" or Berlin-Tempelhof;
+        // only "קתדרלת ברלין", where the kind is written and the rest of the name is the city, still finds it
+        if (matched.length && matched.every(w => isCity(w)) && !(core.every(w => isCity(w)) && gen.some(has))) continue;
         if (core.length === 1 && matched.length === 1 && gen.length && !gen.some(has) && (it.fame || 0) < 40) continue;
         // a one-word name of a little-known place counts only when written exactly ("Da Enzo", not just "Enzo")
         if (core.length === 1 && (it.fame || 0) < 10 && !(` ${nt} `).includes(` ${ws.filter(w => !GENERIC.has(w)).join(" ")} `)) continue;

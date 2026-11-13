@@ -948,9 +948,13 @@ Masa.planner = (() => {
     const missed = (w.asks || []).filter(a => !byAlias.some(p => p._alias.some(n => Masa.intent.norm(a).includes(Masa.intent.norm(n)))) && !Masa.intent.findPlaces(a, found.map(p => ({ names: [p.name, p.local, p.en, p._he, ...(p._alias || [])], fame: 30 })), cityNames).length
       && !Masa.intent.findPlaces(a, items.filter(i => !found.includes(i.p)).map(i => ({ ...i, fame: 0 })), cityNames).length);
     // a name that is not famous (a restaurant, a shop): every word they wrote is in its name, or it sounds the same in Hebrew
+    // (the city's name is left out: "קתדרלת ברלין" must not find any place with "Berlin" in its name)
+    const cityWs = cityNames.filter(Boolean).flatMap(n => Masa.intent.norm(n).split(" ")).filter(x => x.length >= 3);
     for (const a of [...missed]) {
-      const o = Masa.intent.looseFind(a, items.filter(i => !found.includes(i.p)))[0];
-      if (!o) continue;
+      const q = Masa.intent.norm(a).split(" ").filter(x => !cityWs.some(c => x === c || x.replace(/^[ובלמהש]{1,2}/, "") === c)).join(" ");
+      const left = items.filter(i => !found.includes(i.p));
+      const o = Masa.intent.looseFind(a, left)[0];
+      if (!o || (q !== Masa.intent.norm(a) && !Masa.intent.looseFind(q, [o]).length)) continue;
       const p = o.p;
       p.userMust = true; p.q += 25; if (!p.signals?.includes("ביקשתם")) p.signals = ["ביקשתם", ...(p.signals || [])];
       found.push(p); missed.splice(missed.indexOf(a), 1);

@@ -96,6 +96,18 @@ async def main():
       ok=not any(b in n for b in bad for n in names) and (not want or any(want in n for n in names)) and not any(re.search(r"פיגוע|טבח |המצור על|bombing|massacre|siege of",n,re.I) for n in allst)
       print("EVENT","ok " if ok else "BAD",city,txt,"->",names)
       if not ok: FAILS.append(txt)
+    # 2026-11-13: the city's own name is not a place: "הקונצרטהאוס של ברלין" put Tempelhof, "Berlin sculpture" and two busts in
+    # the trip as asked, and "קתדרלת ברלין" the Olympic stadium; a name with the city in it still counts
+    for city,txt,bad,want in [("ברלין","רוצים לראות את הקונצרטהאוס של ברלין",["Tempelhof","Berlin sculpture","Hugo Haase","Beuth"],None),
+                              ("ברלין","רוצים לראות את קתדרלת ברלין",["Olympia","Tempelhof","Berlin sculpture"],None),
+                              ("ברלין","אנדרטת השואה וחומת ברלין","Olympia Tempelhof".split(),"חומת ברלין"),
+                              ("פראג","רוצים לראות את טירת פראג",[],"טירת פראג"),
+                              ("לונדון","לאכול ב Dishoom בלונדון",[],"Dishoom")]:
+      t=await pg.evaluate("""async ([q,notes]) => await Masa.planner.build({ query:q, days:2, interests:["history"], budget:"בינוני", pace:"מאוזן", diet:"הכול", move:"walk", notes, start:"2026-12-01", people:2 }, ()=>{}, null)""",[city,txt])
+      names=[x["name"] for x in t["wish"]["places"]]+[s["local"] or "" for d in t["days"] for s in d["stops"] if s.get("asked")]
+      ok=not any(b in n for b in bad for n in names) and (not want or any(want in n for n in names))
+      print("CITYNAME","ok " if ok else "BAD",city,txt,"->",names)
+      if not ok: FAILS.append(txt)
     # kosher: every meal and sweet stop is kosher or says it is not; Roman-Jewish cuisine alone is not kosher
     for city in ["לונדון","רומא"]:
       t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:3, interests:["food","history"], budget:"בינוני", pace:"מאוזן", diet:"כשר", move:"walk", notes:"", start:"2026-12-01", people:2 }, ()=>{}, null)""",city)
