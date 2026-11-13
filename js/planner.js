@@ -590,6 +590,7 @@ Masa.planner = (() => {
     day.stops.forEach((s, i) => {
       if (s.meal === "hotel") t = start - 30;
       if (s.meal === "breakfast") t = Math.max(t, start - 15);
+      if (day.biz && !FIXED_START.includes(s.meal)) t = Math.max(t, day.biz); // a work day: the evening starts after the meetings
       if (s.meal === "lunch") t = Math.max(t, 12.75 * 60);
       if (s.sunset && day.sunsetMin) t = Math.max(t, day.sunsetMin - 35);
       if (s.meal === "dinner") t = Math.max(t, 19.5 * 60, s.sunset ? 0 : 0);
@@ -660,6 +661,7 @@ Masa.planner = (() => {
       for (let i = 0; i < seq.length; i++) {
         if (i) { const d = D[seq[i - 1]._oi][seq[i]._oi]; dist += d; t += d * 1.25 / speed * 60 + 10; }
         const s = seq[i];
+        if (day.biz && !FIXED_START.includes(s.meal)) t = Math.max(t, day.biz);
         // lunch: around 13:00; arriving early means waiting, which wastes the morning
         if (s.meal === "lunch") { const wait = Math.max(0, 12.5 * 60 - t); t += wait; pen += wait / 60 * 1.2 + Math.max(0, Math.abs(t - 13 * 60) - 45) / 60 * 1.5; }
         if (s.meal === "treat") { if (t < 14.5 * 60 || t > 17.5 * 60) pen += 0.8; }
@@ -1433,7 +1435,11 @@ Masa.planner = (() => {
       return best;
     };
     // dinner is the meal to remember: the restaurants known to be good first, the upscale ones on a splurge budget
-    const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) + (f.pick === "fine" ? 3 : 0) : 0) + (f.voyage ? 1 : 0) + (f.pick === "good" ? 1 : 0);
+    // even on a splurge budget one upscale dinner is a highlight and three in a row are too much: each one already planned
+    // makes the next less likely, and lunch is never an upscale tasting menu (it takes three hours and half the day's money)
+    let upscaleMeals = 0;
+    const dinnerBoost = f => (budget === "מפנק" ? (f.michelin ? 3 : 0) + (f.voyage?.priceClass === "splurge" ? 2 : 0) + (f.pick === "fine" ? 3 : 0) : 0) + (f.voyage ? 1 : 0) + (f.pick === "good" ? 1 : 0) - (upscale(f) ? 9 * upscaleMeals : 0);
+    const lunchExtra = f => (upscale(f) ? -40 : 0);
 
 
     // a restaurant or bar the traveler named becomes a meal on the nearest day
@@ -1452,11 +1458,21 @@ Masa.planner = (() => {
       }
       namedMeals[bi][slot] = p; used.add(p.id); usedNames.add(normName(p.local));
     });
+    /* a work trip ("פגישות", "טיסת עבודה"): meetings fill the day, so each day is a good breakfast, then from 18:00 one or two
+       places that are good after dark (a view, a square, a lit-up landmark), dinner and a drink. Museums and lunch are left out. */
+    const biz = !!wish?.biz, EVENING = new Set(["view", "square", "bridge", "street", "attraction", "sight", "canal"]);
+    const bizEvening = (g, near) => {
+      const eve = g.filter(p => EVENING.has(p.kind) && !DAYTIME_KINDS.has(p.kind)).sort((a, b) => b.q - a.q).slice(0, 2);
+      g.filter(p => !eve.includes(p)).forEach(p => used.delete(p.id));
+      if (!eve.length) { const v = nearBest(pool.filter(p => EVENING.has(p.kind) && p.q > 2), near, 1.5); if (v) eve.push(v); }
+      return eve;
+    };
     const dayPlans = groups.map((g, gi) => {
       const named = namedMeals[gi] || {};
+      if (biz) g = bizEvening(g, g[g.length - 1] || geo);
       const list = g.map(p => ({ p, meal: null }));
       const first = g[0] || geo, last = g[g.length - 1] || geo;
-      if (wantFood) {
+      if (wantFood || biz) {
         // kosher: breakfast at a kosher place even a bit farther; otherwise the café is marked as not kosher
         const b = (kosherFood && (nearBest(kosherFood, hotel || first, 1.5) || nearBest(kosherFood, first, 2.5)))
           || (hotel && nearBest(cafes, hotel, 0.5)) || nearBest(cafes, first, M.bfast[0]) || nearBest(cafes, first, M.bfast[1]);
@@ -1466,9 +1482,9 @@ Masa.planner = (() => {
       const li = list.findIndex((x, i) => i >= Math.ceil(g.length / 2) + (wantFood ? 1 : 0));
       const at = li < 0 ? list.length : li;
       const anchor = list[Math.max(0, at - 1)]?.p || first;
-      const lunch = named.lunch || mealPick(anchor, M.lunch[0], M.lunch[1]);
+      const lunch = biz ? null : named.lunch || mealPick(anchor, M.lunch[0], M.lunch[1], lunchExtra);
       if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
-      if (wantFood && g.length >= 2) {
+      if (wantFood && !biz && g.length >= 2) {
         const ti = Math.min(list.length, at + 2);
         const dayKinds = new Set(list.map(x => x.p.kind));
         // kosher: a kosher sweet place or a market to walk through first
@@ -1478,7 +1494,7 @@ Masa.planner = (() => {
         if (tr) list.splice(ti, 0, { p: tr, meal: "treat" });
       }
       const dinner = named.dinner || mealPick(last, M.dinner[0], M.dinner[1], dinnerBoost, true);
-      if (dinner) list.push({ p: dinner, meal: "dinner" });
+      if (dinner) { list.push({ p: dinner, meal: "dinner" }); if (upscale(dinner)) upscaleMeals++; }
       if (wantNight) {
         const bar = named.drinks || (wish?.music && nearBest(bars.filter(b => JAZZ.test(placeText(b))), dinner || last, 6)) || nearBest(bars, dinner || last, 1.2) || nearBest(bars, dinner || last, 3);
         if (bar) list.push({ p: bar, meal: "drinks" });
@@ -1527,6 +1543,9 @@ Masa.planner = (() => {
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
         const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null, move };
         if (wish?.start) d.startMin = wish.start;
+        if (biz) { d.startMin = wish?.start || 480; d.biz = 18 * 60; d.theme = "טיסת עבודה · בוקר וערב";
+          // more time in each place: there is only the evening, so no rushing between stops
+          stops.forEach(s => { const m = s.meal === "breakfast" ? 60 : s.meal === "dinner" ? 120 : s.meal === "drinks" ? 75 : s.meal ? s._min : Math.max(s._min || 45, 45); s._min = m; s.duration = fmtDur(m); }); }
         if (opts.start) d.dow = ((new Date(opts.start + "T12:00:00").getDay() + 6) % 7 + i) % 7; // 0 = Monday, for opening hours
         if (wish?.sunset) d.sunsetMin = sunsetLocal(geo, opts.start, i);
         if (satDay(i)) { d.shabbat = true; d.theme = "שבת · " + d.theme; }

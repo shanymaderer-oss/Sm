@@ -58,6 +58,9 @@ jobs:
         run: python tools/qa/test_hotel.py
       - name: Restaurants by budget (mid plans no upscale, the swap offers one)
         run: python tools/qa/test_budget.py
+      - name: Work trips (breakfast and evening only)
+        env: { QA_URL: "http://localhost:8790" }
+        run: python tools/qa/test_biz.py
       - name: Tests that run on a copy of the site (simulated flights and smart guide)
         env: { QA_URL: "http://localhost:8790" }
         run: |

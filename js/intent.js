@@ -113,6 +113,8 @@ Masa.intent = (() => {
     T([word("ברגל"), word("ללכת ברגל"), /\bon foot|walking\b/], { move: "walk", label: "הכול ברגל" }),
     // crowds are not a place to leave out, and we have no data on them
     T(word("(?:לא \\S+|בלי) (?:תיירים|תורים)"), { label: "אין לנו מידע על עומס" }),
+    // a work trip: meetings fill the middle of the day, so the plan is a good breakfast and the evening
+    T([word("פגישות"), word("פגישה"), word("טיסת עבודה"), word("נסיעת עבודה"), word("נסיעת עסקים"), word("טיול עסקים"), word("כנס(?=\\s|$)"), word("בשביל העבודה"), /\b(business trip|work trip|meetings?|conference)\b/], { biz: true, label: "טיסת עבודה: בוקר וערב, באמצע היום פגישות" }),
     T([word("קמים מאוחר"), word("לא מוקדם"), word("לישון עד מאוחר"), word("בלי השכמות"), /\b(sleep in|late start|not early)\b/], { start: 600, label: "מתחילים את היום ב-10:00" }),
     T([word("קמים מוקדם"), word("להתחיל מוקדם"), word("מוקדם בבוקר"), /\b(early start|early bird)\b/], { start: 480, label: "מתחילים את היום ב-8:00: קודם הרוב סגור" })
   ];
@@ -193,7 +195,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "mobility" && eff.softMobility && w.mobility) && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness", "biz"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }

@@ -803,7 +803,7 @@ function bindMine() {
   $("myAdd").onclick = () => add(inp.value);
 }
 /* what the traveler wrote fills in the choices below it (unless they set that choice by hand), and is said back to them */
-const WISH_HINTS = ["עם ילדים", "קצב רגוע", "שקיעה יפה", "אוכל מקומי", "בלי מוזיאונים", "שומרים כשרות"];
+const WISH_HINTS = ["עם ילדים", "קצב רגוע", "שקיעה יפה", "אוכל מקומי", "בלי מוזיאונים", "שומרים כשרות", "טיסת עבודה"];
 /* suggestions under the wishes box change with the city and with what they wrote: the smart guide's ideas for them
    first, then the city's best-known places, then the usual wishes; anything already in the text is not offered again */
 function hintsHtml() {

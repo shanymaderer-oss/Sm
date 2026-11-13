@@ -1,6 +1,6 @@
 """Restaurants by budget (2026-11-09, by the owner's choice): a mid-budget trip plans no upscale restaurant
 (a Michelin star, a "fine" pick, a Wikivoyage splurge), and swapping a meal offers one, marked "יוקרתי".
-A splurge trip still plans them. Must end with FAILS: []."""
+A splurge trip still plans them, at dinner only and not every night. Must end with FAILS: []."""
 import asyncio, os
 from playwright.async_api import async_playwright
 import flow as Q
@@ -30,7 +30,11 @@ async def main():
             mid = await pg.evaluate(build, [city, "בינוני"])
             check(mid == [], f"{city}, mid budget: no upscale meal ({mid})")
         top = await pg.evaluate(build, ["ניו יורק", "מפנק"])
-        check(len(top) >= 2, f"ניו יורק, splurge budget: upscale meals stay ({top})")
+        check(1 <= len(top) <= 2, f"ניו יורק, splurge budget: upscale meals stay, but not every meal ({top})")
+        lunches = await pg.evaluate("""async () => { const t = await Masa.planner.build({ query: "ניו יורק", days: 3, interests: ["history", "food"], budget: "מפנק", pace: "מאוזן", diet: "הכול", move: "walk", notes: "", start: "2026-12-07", people: 2 }, () => {}, null);
+          const up = new Set(t.places.filter(p => p.up).map(p => p.name));
+          return t.days.flatMap(d => d.stops.filter(s => s.meal === "lunch" && up.has(s.name)).map(s => s.name)); }""")
+        check(lunches == [], f"ניו יורק, splurge budget: lunch is never an upscale restaurant ({lunches})")
 
         # the screen: a mid-budget New York trip, swap a dinner
         await pg.fill("#gq", "ניו יורק"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
