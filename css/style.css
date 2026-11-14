@@ -475,6 +475,10 @@ b.price{color:var(--teal);font-weight:700}
 .legopts{display:flex;flex-wrap:wrap;gap:4px 12px;width:100%;margin-top:2px}
 .legopts a,.legopts span{display:inline-flex;align-items:center;gap:4px}
 .legopts svg{width:14px;height:14px}
+.leg:has(.legopts){flex-wrap:wrap;padding-block:4px}
+.ride{display:flex!important;align-items:flex-start;gap:6px!important;width:100%;color:var(--ink);font-weight:600;line-height:1.45}
+.ride .lnb{flex:none}
+.lnb{--c:var(--sky);display:inline-block;min-width:22px;padding:1px 6px;border-radius:6px;background:var(--c);color:#fff;font-weight:800;text-align:center;text-shadow:0 0 2px #0008}
 .mvlist{display:flex;flex-direction:column;gap:8px}
 .mvrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;border:1.5px solid var(--line);border-radius:12px;padding:10px}
 .mvrow.easy{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 7%,transparent)}

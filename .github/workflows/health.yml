@@ -61,6 +61,9 @@ jobs:
       - name: Work trips (breakfast and evening only)
         env: { QA_URL: "http://localhost:8790" }
         run: python tools/qa/test_biz.py
+      - name: Lines and stations on a far leg (simulated Overpass)
+        env: { QA_URL: "http://localhost:8790" }
+        run: python tools/qa/test_rail.py
       - name: Tests that run on a copy of the site (simulated flights and smart guide)
         env: { QA_URL: "http://localhost:8790" }
         run: |

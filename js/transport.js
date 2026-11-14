@@ -275,5 +275,85 @@ Masa.transport = (() => {
     const transit = [{ n: "Google Maps", url: "https://www.google.com/maps" }, ...(CITYMAPPER.has(slug) ? [{ n: "Citymapper", url: "https://citymapper.com/" }] : []), { n: "Moovit", url: "https://moovitapp.com/" }];
     return { ride, transit };
   }
-  return { apps, AIR, CITY, airport, taxi, MODE_HE, MODE_IC, city: slug => CITY[slug] || null };
+  /* Lines and stations, like a transit app but without live times: the metro, train, light rail and tram stops around the trip
+     come from OpenStreetMap (one Overpass query per trip area, kept on this device for offline), so a far leg can say which
+     line to take, from which station to which. Ride times are estimates by distance. Names and colours are map data:
+     the screen escapes them, and a colour is used only when it is a plain hex colour. */
+  const RAIL_HE = { subway: "מטרו", light_rail: "רכבת קלה", train: "רכבת", tram: "חשמלית", monorail: "מונורייל" };
+  const RAIL_KM = { subway: 2, light_rail: 2.2, monorail: 2.2, train: 1.4, tram: 3 }; /* minutes per km, stops included */
+  const rail = {};
+  let railBusy = false;
+  const dist = (a, b) => { const x = (b.lng - a.lng) * Math.cos((a.lat + b.lat) * Math.PI / 360), y = b.lat - a.lat; return Math.hypot(x, y) * 111.2; };
+  function railBox(t) {
+    const P = (t.days || []).flatMap(d => d.stops || []).filter(s => isFinite(s.lat) && isFinite(s.lng));
+    if (!P.length) return null;
+    const la = P.map(s => +s.lat), ln = P.map(s => +s.lng), pad = 0.009;
+    const b = [Math.min(...la) - pad, Math.min(...ln) - pad, Math.max(...la) + pad, Math.max(...ln) + pad].map(v => +v.toFixed(3));
+    return b[2] - b[0] > 0.6 || b[3] - b[1] > 0.8 ? null : b; /* a trip spread far beyond one city: no query */
+  }
+  function railParse(j) {
+    const nodes = {}, lines = [], key = {};
+    let cur = null;
+    for (const e of j.elements || []) {
+      if (e.type === "node" && e.lat != null) nodes[e.id] = e;
+      else if (e.type === "relation") {
+        const g = e.tags || {}, mode = g.route, ref = String(g.ref || "").trim().slice(0, 8);
+        if (!RAIL_HE[mode] || (mode === "train" && (!ref || ref.length > 5))) { cur = null; continue; } /* long-distance trains: no */
+        const k = mode + "|" + (ref || g.name || e.id);
+        if (key[k] == null) { key[k] = lines.length; const c = /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(g.colour || "") ? g.colour : ""; lines.push([mode, ref || String(g.name || "").slice(0, 24), c]); }
+        cur = key[k];
+      } else if (e.type === "node" && cur != null) (nodes[e.id] = nodes[e.id] || {}).li = [...(nodes[e.id].li || []), cur];
+    }
+    const st = [];
+    for (const n of Object.values(nodes)) {
+      if (n.lat == null || !n.li) continue;
+      const name = String(n.tags?.["name:he"] || n.tags?.name || "").trim().slice(0, 60);
+      if (!name) continue;
+      const p = { lat: +n.lat, lng: +n.lon };
+      const same = st.find(x => x[0] === name && dist({ lat: x[1], lng: x[2] }, p) < 0.4);
+      if (same) same[3] = [...new Set([...same[3], ...n.li])];
+      else st.push([name, +p.lat.toFixed(5), +p.lng.toFixed(5), [...new Set(n.li)]]);
+    }
+    return { v: 1, s: st, l: lines };
+  }
+  function railData(t, done) {
+    const b = railBox(t);
+    if (!b) return null;
+    const k = "masa-rail:" + b.join(",");
+    if (rail[k]) return rail[k] === 1 ? null : rail[k];
+    try { const v = JSON.parse(localStorage.getItem(k) || "null"); if (v && v.v === 1 && Array.isArray(v.s) && Array.isArray(v.l)) return (rail[k] = v); } catch { }
+    if (railBusy || !Masa.svc?.overpass || navigator.onLine === false) return null;
+    rail[k] = 1; railBusy = true;
+    const bb = `(${b.join(",")})`, M = "subway|train|light_rail|tram|monorail";
+    const q = `[out:json][timeout:25];(node[public_transport=stop_position][~"^(${M})$"~"^yes$"]${bb};node[railway~"^(stop|tram_stop|halt|station)$"]${bb};)->.p;
+rel(bn.p)[type=route][route~"^(${M})$"]->.rs;node(r.rs)->.a;node.a.p->.q;.q out qt;foreach.rs->.r(.r out tags;node(r.r)->.m;node.m.p;out ids;);`;
+    Masa.svc.overpass(q).then(j => {
+      const v = railParse(j); rail[k] = v;
+      try { localStorage.setItem(k, JSON.stringify(v)); } catch { }
+      if (v.s.length && done) done();
+    }).catch(() => { }).finally(() => { railBusy = false; }); /* a failed query is not repeated in this visit */
+    return null;
+  }
+  /* the best single line from near a to near b: walk to the station, ride, walk on. null when there is no such line or walking wins */
+  function ride(t, a, b, done, walkMin) {
+    const D = railData(t, done);
+    if (!D || !D.s.length) return null;
+    const near = p => D.s.map(x => ({ x, k: dist(p, { lat: x[1], lng: x[2] }) })).filter(o => o.k < 0.9).sort((u, v) => u.k - v.k).slice(0, 6);
+    const A = near(a), B = near(b);
+    let best = null;
+    for (const u of A) for (const w of B) {
+      if (u.x === w.x) continue;
+      for (const li of u.x[3]) {
+        if (!w.x[3].includes(li) || !D.l[li]) continue;
+        const [mode, ref, col] = D.l[li];
+        const walk = Math.round((u.k + w.k) * 1.3 * 12.5), rideMin = Math.round(dist({ lat: u.x[1], lng: u.x[2] }, { lat: w.x[1], lng: w.x[2] }) * RAIL_KM[mode]) + 1;
+        const min = walk + rideMin + 4;
+        if (!best || min < best.min) best = { min, mode, ref, col, from: u.x[0], to: w.x[0], walkA: Math.max(1, Math.round(u.k * 1.3 * 12.5)) };
+      }
+    }
+    if (!best || (walkMin && best.min >= walkMin * 0.8)) return null;
+    return { ref: best.ref, col: /^#[0-9a-f]{3,6}$/i.test(best.col) ? best.col : "",
+      txt: `${RAIL_HE[best.mode]}: ${best.walkA} דק׳ הליכה לתחנת \u2068${best.from}\u2069, נוסעים עד \u2068${best.to}\u2069 · כ-${best.min} דק׳ בסך הכול` }; /* \u2068…\u2069 keep a Latin name from pulling the comma */
+  }
+  return { apps, AIR, CITY, airport, taxi, MODE_HE, MODE_IC, ride, railParse, city: slug => CITY[slug] || null };
 })();
