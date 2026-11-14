@@ -63,7 +63,8 @@ Masa.intent = (() => {
     T([word("צמחוני"), /\b(vegetarian|veggie)\b/], { diet: "צמחוני", label: "אוכל צמחוני" }),
     T([word("טבעוני"), word("ויגן"), /\bvegan\b/], { diet: "טבעוני", label: "אוכל טבעוני" }),
     T([word("כשר"), word("כשרות"), /\bkosher\b/], { diet: "כשר", label: "אוכל כשר, ובית הכנסת הקרוב בכל יום" }),
-    T([word("שומר\\S* שבת"), word("שבת"), /\bshabbat|sabbath\b/], { shabbat: true, label: "שומרים שבת: נסמן את השבת במסלול" }),
+    // "לשבת" alone is "to sit" ("הפסקות לשבת", "מקום לשבת"), not the Sabbath; "בשבת", "השבת", "שבתות" still are
+    T([word("שומר\\S* שבת"), new RegExp(`(?:^|[^${HE}a-z])(?!ו?לשבת(?![${HE}]))[ובלמהשכ]{0,3}שבת(?:ות)?(?![${HE}])`), /\bshabbat|sabbath\b/], { shabbat: true, label: "שומרים שבת: נסמן את השבת במסלול" }),
     T([word("אוכל(?!ים|ת)(?!\\s+(?:ללא|בלי|לא|חריף|חריפ))"), word("קולינרי"), word("לטעום"), word("טעימות"), word("מסעדות טובות"), word("פודי"), /\b(food|foodie|eat well|restaurants)\b/], { add: ["food"], label: "אוכל טוב בכל יום" }, { drop: ["food"], label: "פחות עצירות אוכל" }),
     T([word("אוכל מקומי"), word("אותנטי"), word("מקומי(?:ים|ות)?(?=\\s|$)"), /\b(local food|authentic)\b/], { local: true, label: "אוכל מקומי ואותנטי" }),
     T([word("אוכל רחוב"), /\bstreet food\b/], { add: ["food"], boost: { market: 4 }, cheapFood: true, label: "אוכל רחוב ושווקים" }),
@@ -104,7 +105,7 @@ Masa.intent = (() => {
     T([word("הכי מפורסמים"), word("האטרקציות המרכזיות"), word("הקלאסיקות"), word("חובה"), word("הדברים המפורסמים"), /\b(must see|famous|highlights|top sights)\b/], { famous: true, label: "המקומות המפורסמים קודם" }),
     T([word("חינם"), word("בחינם"), /\bfree\b/], { free: true, budget: "חסכוני", label: "הרבה דברים בחינם" }),
     // pace, budget, moving around, time of day
-    T([word("רגוע"), word("בנחת"), word("לא לחוץ"), word("לא להתאמץ"), word("לנוח"), word("מנוחה"), word("לאט(?=\\s|$)"), /\b(relaxed|slow|chill|easy)\b/], { pace: "רגוע", label: "קצב רגוע" }),
+    T([word("רגוע"), word("בנחת"), word("לא לחוץ"), word("לא להתאמץ"), word("לנוח"), word("מנוחה"), word("לאט(?=\\s|$)"), word("קצב איטי"), /\b(relaxed|slow|chill|easy)\b/], { pace: "רגוע", label: "קצב רגוע" }),
     T([word("אינטנסיבי"), word("כמה שיותר(?=\\s*$|\\s+(?:מקומות|דברים|תחנות|אתרים|אטרקציות))"), word("לראות הכ(?:ו)?ל"), word("מקסימום"), word("לא לבזבז זמן"), /\b(intense|packed|see everything|as much as)\b/], { pace: "אינטנסיבי", label: "קצב מלא: יותר תחנות ביום" }),
     T([word("זול"), word("חסכוני"), word("תקציב (?:נמוך|מוגבל|קטן)"), word("בלי להוציא הרבה"), word("סטודנט"), /\b(cheap|budget|low cost|students?)\b/], { budget: "חסכוני", label: "תקציב חסכוני" }),
     T([word("יוקר"), word("מפנק"), word("לפנק"), word("מישלן"), word("פיין דיינינג"), /\b(luxury|fancy|michelin|fine dining|splurge)\b/], { budget: "מפנק", label: "מפנקים: מסעדות טובות במיוחד" }),
