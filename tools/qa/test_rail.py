@@ -51,6 +51,14 @@ async def main():
         await pg.goto(URL + "/index.html"); await pg.wait_for_timeout(500)
         await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=25000); await pg.wait_for_timeout(800)
+        # on foot: a close stop is just walking; a farther one lists the ways to get there with the easiest marked
+        await pg.wait_for_timeout(2500)
+        legs = await pg.evaluate("""[...document.querySelectorAll('.leg')].map(x => ({ t: x.innerText, min: +((x.innerText.match(/(\\d+) דק׳ הליכה/) || [])[1] || 0), ways: !!x.querySelector('.ways'), best: x.querySelectorAll('.tag.new').length, ride: !!x.querySelector('.ride') }))""")
+        print("legs on foot:", [(l["min"], l["ways"], l["best"], l["ride"]) for l in legs])
+        check(all(not l["ways"] for l in legs if 0 < l["min"] <= 15), "a stop in the same area: walking only, no list")
+        check(any(l["ways"] for l in legs), "a farther stop lists the ways to get there")
+        check(all(l["best"] <= 1 for l in legs), "at most one way is marked as easiest")
+        check(all(l["best"] == 1 for l in legs if l["ride"]), "when a line is faster than walking, it is the easiest")
         await pg.click("text=לפני הטיסה"); await pg.click("[data-move=transit]"); await pg.wait_for_selector(".triphero", timeout=25000); await pg.wait_for_timeout(1500)
         if not await pg.locator(".ride").count() and await pg.locator("text=המסלול").count(): await pg.click("text=המסלול >> nth=0"); await pg.wait_for_timeout(1500)
         await pg.wait_for_selector(".ride", timeout=15000)
@@ -58,17 +66,19 @@ async def main():
         print("rides:", rides[:3])
         check(len(rides) >= 1, f"a far leg says which line to take ({len(rides)})")
         check(any(re.search(r"מטרו: \d+ דק׳ הליכה לתחנת .+, נוסעים עד .+ · כ-\d+ דק׳", x) for x in rides), "the line, the stations and the time are written")
-        check(len(asked) == 1, f"one Overpass query for the trip ({len(asked)})")
+        boxes = [re.search(r"\(([-\d.,]+)\)", q).group(1) for q in asked]
+        check(len(boxes) == len(set(boxes)) and len(asked) <= 2, f"one Overpass query per trip (on foot, then by public transport: {len(asked)})")
+        n_asked = len(asked)
         check(await pg.evaluate("!window.PWN && !document.querySelector('.ride img')"), "a station name from the map is text, not HTML")
         styles = await pg.evaluate("[...document.querySelectorAll('.lnb')].map(x=>x.getAttribute('style')||'')")
         check(all(s == "" or re.fullmatch(r"--c:#[0-9A-Fa-f]{3,6}", s) for s in styles), f"only a plain hex colour becomes a style ({set(styles)})")
         check(not any("Frecciarossa" in x or "Milano" in x for x in rides), "long-distance trains are not offered as a city line")
         kept = await pg.evaluate("Object.keys(localStorage).filter(k=>k.startsWith('masa-rail:')).length")
-        check(kept == 1, "the stations are kept on the phone for offline")
+        check(kept == n_asked, "the stations are kept on the phone for offline")
         # the same trip again: no second query
         await pg.reload(); await pg.wait_for_timeout(1500)
         if await pg.locator(".savedtrip").count(): await pg.click(".savedtrip >> nth=0"); await pg.wait_for_timeout(1500)
-        check(len(asked) == 1, "opening the trip again does not ask Overpass again")
+        check(len(asked) == n_asked, "opening the trip again does not ask Overpass again")
         # walking a short leg never offers a ride
         short = await pg.evaluate("""() => { const t = { days: [{ stops: [{ lat: 41.9, lng: 12.48 }, { lat: 41.901, lng: 12.481 }] }] };
             return Masa.transport.ride(t, t.days[0].stops[0], t.days[0].stops[1], null, 3); }""")

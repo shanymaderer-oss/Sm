@@ -2569,19 +2569,22 @@ const loadTransport = () => transportLoad || (transportLoad = new Promise(res =>
 }));
 const tr = () => { if (!TR) loadTransport(); return TR; };
 /* the line to take on a far leg (Masa.transport.ride: OpenStreetMap stations, no live times) */
-const rideRow = (t, a, b, w) => { const r = tr()?.ride(t, a, b, rerenderKeepScroll, w); return r ? `<span class="ride"><b class="lnb"${r.col ? ` style="--c:${r.col}"` : ""}>${esc(r.ref)}</b>${esc(r.txt)}</span>` : ""; };
+/* the line to take (Masa.transport.ride: OpenStreetMap stations, no live times); "הכי נוח" marks the easiest way */
+const BEST = `<span class="tag new">הכי נוח</span>`;
+const rideRow = (t, a, b, w, best) => { const r = tr()?.ride(t, a, b, rerenderKeepScroll, w); return r ? `<span class="ride"><b class="lnb"${r.col ? ` style="--c:${r.col}"` : ""}>${esc(r.ref)}</b><span>${esc(r.txt)}${best ? " " + BEST : ""}</span></span>` : ""; };
 function legRow(t, a, b, L2) {
   if (L2.mode === "car") return `<div class="leg">${ic("car")} ${L2.kmv.toFixed(1)} ק״מ · כ-${L2.min} דק׳ נסיעה וחניה · <a href="${gmDir(a, b, "driving")}" target="_blank" rel="noopener">ניווט ברכב</a></div>`;
   if (L2.mode === "transit") return `<div class="leg">${ic("bus")} ${L2.kmv.toFixed(1)} ק״מ · כ-${L2.min} דק׳ בתחבורה ציבורית · <a href="${gmDir(a, b, "transit")}" target="_blank" rel="noopener">איזה קו לוקחים</a><span class="legopts">${rideRow(t, a, b)}</span></div>`;
   const nav = `<a href="${gmDir(a, b, L2.transit ? "transit" : "walking")}" target="_blank" rel="noopener">ניווט</a>`;
   const mob = t.opts?.mobility;
-  const far = L2.min > (mob ? 12 : 25);
   let extra = "";
-  if (far) {
+  /* close by (one area): walking is the way. Farther: the ways to get there, the easiest marked (a line that is faster than walking first) */
+  if (L2.min > (mob ? 8 : 15)) {
     const tx = tr()?.taxi(t.slug, t.cc, L2.kmv);
     const apps = (tr()?.city(t.slug)?.apps || []);
     const uber = apps.includes("Uber") ? `https://m.uber.com/ul/?action=setPickup&pickup[latitude]=${a.lat}&pickup[longitude]=${a.lng}&dropoff[latitude]=${b.lat}&dropoff[longitude]=${b.lng}` : null;
-    extra = `<span class="legopts">${rideRow(t, a, b, L2.min)}<a href="${gmDir(a, b, "transit")}" target="_blank" rel="noopener">${ic("bus")}תחבורה ציבורית</a>${tx ? `<span>${ic("car")}מונית כ-${money(COST.ils(tx))}${uber ? ` · <a href="${uber}" target="_blank" rel="noopener">Uber</a>` : apps.length ? ` · ${esc(apps.slice(0, 2).join(" / "))}` : ""}</span>` : ""}</span>`;
+    const rd = rideRow(t, a, b, L2.min, 1), best = rd ? "" : L2.min <= (mob ? 12 : 25) ? "walk" : tx ? "taxi" : "";
+    extra = `<span class="legopts"><b class="ways">דרכים להגיע:</b>${rd}${best === "walk" ? `<span>${ic("nav")}ברגל ${L2.min} דק׳ ${BEST}</span>` : ""}<a href="${gmDir(a, b, "transit")}" target="_blank" rel="noopener">${ic("bus")}תחבורה ציבורית</a>${tx ? `<span>${ic("car")}מונית כ-${money(COST.ils(tx))}${uber ? ` · <a href="${uber}" target="_blank" rel="noopener">Uber</a>` : apps.length ? ` · ${esc(apps.slice(0, 2).join(" / "))}` : ""}${best === "taxi" ? " " + BEST : ""}</span>` : ""}</span>`;
   }
   return `<div class="leg">${ic(L2.transit ? "train" : "nav")} ${L2.kmv.toFixed(1)} ק״מ · ${L2.transit ? "רחוק להליכה" : `${L2.min} דק׳ הליכה`} · ${nav}${extra}</div>`;
 }
