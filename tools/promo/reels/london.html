@@ -1,0 +1,33 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:F;src:url(fredoka-hebrew-700-normal.woff2);unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:F;src:url(fredoka-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:F6;src:url(fredoka-hebrew-600-normal.woff2);unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:F6;src:url(fredoka-latin-600-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:P;src:url(ibm-plex-sans-hebrew-hebrew-500-normal.woff2)}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#13213a;font-family:P}
+.s{position:absolute;inset:0;opacity:0;transition:opacity .45s;display:flex;flex-direction:column;justify-content:center;padding:0 90px;box-sizing:border-box;color:#fff}
+.s.on{opacity:1}
+.k{font-family:F;font-size:118px;line-height:1.08;margin:0}
+.k em{font-style:normal;color:#ffcf4a}
+.sub{font-family:F6;font-size:58px;margin-top:40px;color:#ffe9b8}
+.tag{display:inline-block;font-family:F;font-size:54px;padding:14px 38px;border-radius:60px;background:#fff;color:#13213a;align-self:flex-start;margin-bottom:46px}
+ul{list-style:none;padding:0;margin:0}
+li{font-family:F6;font-size:66px;line-height:1.25;margin:0 0 30px;display:flex;gap:28px;align-items:flex-start;opacity:0;transform:translateY(30px);transition:all .5s}
+.on li{opacity:1;transform:none}
+.on li:nth-child(2){transition-delay:.5s}.on li:nth-child(3){transition-delay:1s}.on li:nth-child(4){transition-delay:1.5s}
+li b{flex:none;width:80px;text-align:center}
+.tip{margin-top:44px;background:rgba(255,255,255,.14);border-radius:36px;padding:34px 40px;font-size:50px;line-height:1.3;opacity:0;transition:opacity .5s 2.1s}
+.on .tip{opacity:1}
+.tip strong{font-family:F;color:#ffcf4a}
+#s0{background:linear-gradient(160deg,#13213a,#2a3f6b)}
+#s1{background:linear-gradient(160deg,#5b4a86,#2c2350)}
+#s2{background:linear-gradient(160deg,#1d6b5f,#0f3a34)}
+#s3{background:linear-gradient(160deg,#a3221b,#5a1410)}
+#s4{background:linear-gradient(160deg,#13213a,#24375c);align-items:center;text-align:center;padding:0 70px}
+.phone{width:560px;border-radius:64px;overflow:hidden;border:14px solid #fff;box-shadow:0 30px 90px rgba(0,0,0,.5);margin:46px 0}
+.phone img{width:100%;display:block}
+.bio{font-family:F;font-size:64px;background:#ffcf4a;color:#13213a;border-radius:70px;padding:22px 56px}
+.small{font-size:46px;color:#cfd8ea;margin-top:20px}
+#s1{background:linear-gradient(160deg,#a3221b,#5a1410)}#s2{background:linear-gradient(160deg,#1f4f8a,#10284a)}#s3{background:linear-gradient(160deg,#1d6b5f,#0f3a34)}</style></head><body><div class="s" id="s0"><p class="k">3 ימים ב<em>לונדון</em>?</p><p class="k" style="font-size:86px;margin-top:30px">ככה מחלקים אותם, וחלק גדול בחינם</p><div class="sub">שמרו לטיול הבא 📌</div></div><div class="s" id="s1"><span class="tag">יום 1 · וסטמינסטר</span><ul><li><b>🕰️</b>ביג בן ומנזר וסטמינסטר</li><li><b>💂</b>החלפת המשמר בארמון בקינגהאם</li><li><b>🎡</b>לונדון איי בערב</li></ul><div class="tip"><strong>טיפ:</strong> החלפת המשמר לא כל יום, בודקים לוח זמנים</div></div><div class="s" id="s2"><span class="tag">יום 2 · מוזיאונים ושואו</span><ul><li><b>🏛️</b>המוזיאון הבריטי</li><li><b>🎭</b>קובנט גרדן</li><li><b>🎶</b>מחזמר בווסט אנד בערב</li></ul><div class="tip"><strong>טיפ:</strong> רוב המוזיאונים הגדולים בחינם</div></div><div class="s" id="s3"><span class="tag">יום 3 · המצודה והנהר</span><ul><li><b>👑</b>מצודת לונדון ותכשיטי הכתר</li><li><b>🌉</b>גשר טאואר</li><li><b>🥘</b>שוק בורו</li><li><b>🌆</b>סקיי גרדן, תצפית בחינם</li></ul><div class="tip"><strong>בחורף:</strong> ווינטר וונדרלנד בהייד פארק 🎄</div></div><div class="s" id="s4"><p class="k" style="font-size:88px">את המסלול הזה בונים <em>בחינם</em> תוך שניות</p><div class="phone"><img src="bud_home.png"></div><div class="bio">הקישור בביו ✈️</div><div class="small">מסע · מתכנן טיולים בעברית</div></div><script>
+const T=[[0,3.2],[3.2,9.4],[9.4,15.8],[15.8,22.4],[22.4,28]];
+window.start=()=>{const t0=performance.now();const tick=()=>{const t=(performance.now()-t0)/1000;T.forEach(([a,b],i)=>document.getElementById('s'+i).classList.toggle('on',t>=a&&t<b));if(t<28.5)requestAnimationFrame(tick)};tick();};
+</script></body></html>
