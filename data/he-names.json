@@ -1,5 +1,5 @@
 {
- "_": "Famous places and neighborhoods by the Hebrew names travelers write. Row: [Hebrew names separated by |, local name, kind, lat, lng, 1 if an area to walk around, \"football\" for the city's main football stadiums (used for a football wish)]. Used by js/planner.js (wishes) only.",
+ "_": "Famous places and neighborhoods by the Hebrew names travelers write. Row: [Hebrew names separated by |, local name, kind, lat, lng, 1 if an area to walk around, \"football\" for the city's main football stadiums (used for a football wish), \"streetart\" for the best-known street-art walls and streets (used for a street-art wish, first one first)]. Used by js/planner.js (wishes) only.",
  "paris": [
   [
    "מונמארטר|מונמרטר|מונמארטר",
@@ -57,6 +57,15 @@
    2.3602,
    0,
    "football"
+  ],
+  [
+   "רו דנואיה|רחוב דנואיה",
+   "Rue Denoyez",
+   "attraction",
+   48.8709,
+   2.3779,
+   0,
+   "streetart"
   ]
  ],
  "rome": [
@@ -195,7 +204,8 @@
    "sight",
    51.5245,
    -0.078,
-   1
+   1,
+   "streetart"
   ],
   [
    "טאוור ברידג'|טאואר ברידג'|טאוור ברידג׳|גשר המצודה",
@@ -251,6 +261,15 @@
    -0.2796,
    0,
    "football"
+  ],
+  [
+   "מנהרת ליק סטריט|ליק סטריט",
+   "Leake Street Graffiti Tunnel",
+   "attraction",
+   51.5019,
+   -0.1144,
+   0,
+   "streetart"
   ]
  ],
  "lisbon": [
@@ -319,7 +338,9 @@
    "LX Factory",
    "attraction",
    38.7034,
-   -9.1785
+   -9.1785,
+   0,
+   "streetart"
   ],
   [
    "אשטדיו דה לוז|אצטדיון האור|האצטדיון של בנפיקה",
@@ -338,6 +359,15 @@
    -9.1608,
    0,
    "football"
+  ],
+  [
+   "גלריית האמנות האורבנית בגלוריה|קלסאדה דה גלוריה",
+   "Calçada da Glória",
+   "attraction",
+   38.7155,
+   -9.144,
+   0,
+   "streetart"
   ]
  ],
  "prague": [
@@ -384,6 +414,15 @@
    "square",
    50.081,
    14.428
+  ],
+  [
+   "חומת לנון|קיר לנון",
+   "Lennonova zeď",
+   "attraction",
+   50.0862,
+   14.4067,
+   0,
+   "streetart"
   ]
  ],
  "amsterdam": [
@@ -418,6 +457,15 @@
    4.9419,
    0,
    "football"
+  ],
+  [
+   "מוזיאון שטראט|סטראט|STRAAT",
+   "STRAAT Museum",
+   "gallery",
+   52.4012,
+   4.8941,
+   0,
+   "streetart"
   ]
  ],
  "budapest": [
@@ -450,6 +498,15 @@
    19.0981,
    0,
    "football"
+  ],
+  [
+   "ציורי הקיר בקזינצי|רחוב קזינצי",
+   "Kazinczy utca",
+   "attraction",
+   47.4977,
+   19.0627,
+   0,
+   "streetart"
   ]
  ],
  "new-york": [
@@ -502,6 +559,15 @@
    "attraction",
    40.8296,
    -73.9262
+  ],
+  [
+   "בושוויק קולקטיב|בושוויק",
+   "The Bushwick Collective",
+   "attraction",
+   40.7072,
+   -73.9225,
+   0,
+   "streetart"
   ]
  ],
  "tokyo": [
@@ -593,7 +659,8 @@
    "sight",
    40.9903,
    29.029,
-   1
+   1,
+   "streetart"
   ],
   [
    "הבוספורוס|שייט בבוספורוס|שייט בבוספורוס",
@@ -694,6 +761,15 @@
    23.7875,
    0,
    "football"
+  ],
+  [
+   "אקזרכיה|אכסרכיה",
+   "Εξάρχεια",
+   "sight",
+   37.9862,
+   23.7341,
+   1,
+   "streetart"
   ]
  ],
  "madrid": [
@@ -735,6 +811,15 @@
    -3.5995,
    0,
    "football"
+  ],
+  [
+   "לבאפיס|לאבאפיס",
+   "Lavapiés",
+   "sight",
+   40.4089,
+   -3.701,
+   1,
+   "streetart"
   ]
  ],
  "milan": [
@@ -938,6 +1023,24 @@
    13.2395,
    0,
    "football"
+  ],
+  [
+   "איסט סייד גלרי|איסט סייד גלריה|האיסט סייד",
+   "East Side Gallery",
+   "attraction",
+   52.505,
+   13.4397,
+   0,
+   "streetart"
+  ],
+  [
+   "האוס שוורצנברג|חצר שוורצנברג",
+   "Haus Schwarzenberg",
+   "attraction",
+   52.5245,
+   13.402,
+   0,
+   "streetart"
   ]
  ],
  "naples": [
@@ -991,6 +1094,15 @@
    14.1931,
    0,
    "football"
+  ],
+  [
+   "ציור הקיר של מראדונה|הקיר של מראדונה",
+   "Murale di Maradona",
+   "attraction",
+   40.8413,
+   14.2464,
+   0,
+   "streetart"
   ]
  ],
  "valencia": [
@@ -1161,6 +1273,15 @@
    "sight",
    48.2066,
    16.3655
+  ],
+  [
+   "תעלת הדנובה|דונאוקנאל",
+   "Donaukanal",
+   "attraction",
+   48.2135,
+   16.3786,
+   0,
+   "streetart"
   ]
  ],
  "florence": [
@@ -1474,6 +1595,17 @@
    "park",
    41.6935,
    44.811
+  ]
+ ],
+ "tel-aviv": [
+  [
+   "פלורנטין|שכונת פלורנטין",
+   "Florentin",
+   "sight",
+   32.056,
+   34.769,
+   1,
+   "streetart"
   ]
  ]
 }

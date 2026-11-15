@@ -863,7 +863,7 @@ Masa.planner = (() => {
   const WINE = /wine|enotec|vinote|bodeg|wein|vino|cave à|bar à vin/i;
   const JAZZ = /jazz|blues|village vanguard|ronnie.?s/i, WATER = /canal|gracht|gondol|rondvaart|nyhavn|navigli|boat (?:tour|ride)|cruise/i;
   const placeText = p => `${p.local || ""} ${p.name || ""} ${p.en || ""}`;
-  function applyWish(w, pool, geo, data, aliases = []) {
+  function applyWish(w, pool, geo, data, aliases = [], days = 0) {
     const lc = LOCAL_CUISINE[geo.cc] || [];
     // one bath for the trip (a visit takes hours): the best known one
     const bath = w.baths ? pool.filter(p => p.bath && !["food", "night", "sleep"].includes(p.cat)).sort((a, b) => (b.fame || 0) - (a.fame || 0) || b.q - a.q)[0] : null;
@@ -930,6 +930,11 @@ Masa.planner = (() => {
     for (const { a, v } of cand) if (!byAlias.some(p => p._alias === a.names) && phrase(v).test(text) && !w.avoid.includes(a.kind) && !skipped.includes(a.names[0])) useAlias(a);
     // football without a stadium's name: the city's main stadium
     const footballMiss = w.football && !byAlias.some(p => p._tag === "football" || /stadi|στάδιο|arena|אצטדיון|ארנה/i.test(`${p.local} ${p.name}`)) && !(() => { const a = al.find(x => x.tag === "football"); if (a) useAlias(a); return a; })();
+    /* street art without a place's name: the city's best-known painted walls (data/he-names.json, tag "streetart"),
+       one on a short trip and two from three days; a city with none is told so */
+    const artWalls = w.streetArt ? al.filter(x => x.tag === "streetart") : [];
+    if (w.streetArt && !byAlias.some(p => p._tag === "streetart")) artWalls.filter(a => !skipped.includes(a.names[0])).slice(0, days >= 3 ? 2 : 1).forEach(useAlias);
+    const streetArtMiss = w.streetArt && !byAlias.some(p => p._tag === "streetart");
     // a kind they said they do not want is not picked by its name alone ("Montmartre" is the hill, not the Montmartre Museum)
     let found = Masa.intent.findPlaces(text, items.filter(i => !w.avoid.includes(i.p.kind)), cityNames, opt).map(o => o.it.p);
     // not on the map under that name: a Hebrew Wikipedia article at that spot can stand in
@@ -970,6 +975,7 @@ Masa.planner = (() => {
       else hotelMissed = w.hotelName;
     }
     if (footballMiss) missed.push("אצטדיון כדורגל");
+    if (streetArtMiss) missed.push("אמנות רחוב");
     // said back as they wrote it, plus the names we found for them
     const N = Masa.intent.norm, said = [];
     for (const n of [...(w.skips || []), ...(w.aiSkipShow || [])]) if (!said.some(x => N(x).includes(N(n)) || N(n).includes(N(x)))) said.push(n);
@@ -1141,7 +1147,7 @@ Masa.planner = (() => {
     if (!wish?.stores && !wish?.wine) avoid.add("deli");
     // the Hebrew names of famous places count even when nothing else in the text was understood ("לטייל בגראן ויה")
     const aliases = wish && wish.text.trim() && geo.slug ? (await heNames())[geo.slug] || [] : [];
-    let wishOut = wish && (!wish.empty || aliases.length) ? applyWish(wish, pool, geo, data, aliases) : null;
+    let wishOut = wish && (!wish.empty || aliases.length) ? applyWish(wish, pool, geo, data, aliases, days) : null;
     if (wishOut && wish.empty && !wishOut.places.length) wishOut = null;
     /* places the traveler picked on the "I'll choose" screen: each is in the trip, like a place named in the wishes */
     if (opts.picks?.length) {
@@ -1578,7 +1584,7 @@ Masa.planner = (() => {
     if (wishOut && noWater) wishOut.missed = [...wishOut.missed, "תעלות או שיט"];
     if (wishOut) trip.wish = {
       unread: wishOut.unread || [],
-      labels: wish.labels.filter(l => !(noBath && l.startsWith("מרחצאות")) && !(noMusic && l.startsWith("מוזיקה חיה")) && !(noWater && l.startsWith("תעלות")) && !(wishOut.missed.includes("אצטדיון כדורגל") && l.startsWith("כדורגל"))),
+      labels: wish.labels.filter(l => !(noBath && l.startsWith("מרחצאות")) && !(noMusic && l.startsWith("מוזיקה חיה")) && !(noWater && l.startsWith("תעלות")) && !(wishOut.missed.includes("אצטדיון כדורגל") && l.startsWith("כדורגל")) && !(wishOut.missed.includes("אמנות רחוב") && l.startsWith("אמנות רחוב"))),
       places: trip.days.flatMap((d, di) => d.stops.filter(s => s.asked || (s.meal && wishOut.places.some(p => p.id === s.osm))).map(s => ({ name: s.name, day: di }))),
       missed: wishOut.missed, hotel: wishOut.hotel ? wishOut.hotel.name : null, hotelMissed: wishOut.hotelMissed || null, skipped: wishOut.skipped || [], fitness: !!wish.fitness
     };
