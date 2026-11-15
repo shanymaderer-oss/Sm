@@ -22,6 +22,7 @@ python3 -m http.server 8790 &   # from the repo root
 | `test_ratings.py` | Restaurant ratings against a pretend Tripadvisor (local only): low-rated meals are replaced by 4.5+ restaurants from our own list, ratings show, nothing from Tripadvisor is stored. |
 | `test_rain.py` | A trip that starts in two days with a pretend rainy forecast: the day shows the forecast and offers to swap the stops outside for indoor places nearby; a dry forecast shows nothing. Must end with `FAILS: []`. |
 | `test_rail.py` | Lines and stations (simulated Overpass): a far leg says which metro/train/tram line to take, from which station to which, with a time estimate; one query per trip, kept for offline; station names and colours from the map cannot inject HTML or styles. Must end with `FAILS: []`. |
+| `test_tips.py` | The smart guide's Hebrew tips (`data/sights`): no letters of another script inside the Hebrew and no Hebrew glued to Latin letters. No browser. Must end with `FAILS: []`. |
 | `test_offline.py` | Builds a trip, goes offline, reloads and opens the saved trip from the service worker cache. Must end with `errors: []`. |
 
 Environment: `QA_URL` (default `http://localhost:8790`), `QA_OUT`, `MAPLIBRE_DIST`.

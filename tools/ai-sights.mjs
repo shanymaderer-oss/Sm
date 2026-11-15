@@ -27,6 +27,10 @@ tier "must": a highlight a first-time visitor should not miss. "good": worth it 
 min: a typical visit in minutes (inside included, 10 to 240). tip: ONE short practical tip in Hebrew (up to 90 characters),
 like booking ahead, the best hour, a dress code, the best view, or a free day; empty if there is nothing useful.
 Rules: grade only from the list, by its number. If you do not know a place, leave it out. Be strict with "must".`;
+// A tip with letters of another script inside the Hebrew (Arabic, Greek, Cyrillic, Thai, niqqud...) or a Hebrew
+// word glued to Latin letters is a broken tip (2026-11-15: ~40 such tips reached travelers). Drop it rather than show it.
+const BROKEN = /[\u0370-\u03FF\u0400-\u04FF\u0530-\u058F\u0591-\u05C7\u0600-\u06FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]|[\u05D0-\u05EA][A-Za-z]|[A-Za-z][\u05D0-\u05EA]/;
+const cleanTip = t => { t = String(t || "").replace(/[<>]/g, "").trim().slice(0, 110); return BROKEN.test(t) ? "" : t; };
 const SCHEMA = { type: "object", properties: { g: { type: "array", items: { type: "object", properties: { i: { type: "integer" }, tier: { type: "string", enum: ["must", "good", "skip"] }, min: { type: "integer" }, tip: { type: "string" } }, required: ["i", "tier", "min"] } } }, required: ["g"] };
 
 async function ask(city, items) {
@@ -64,7 +68,7 @@ async function city(c) {
   for (let s = 0; s < list.length; s += 160) {
     const chunk = list.slice(s, s + 160);
     const got = await ask(`${c.en || c.slug} (${(c.cc || "").toUpperCase()})`, chunk);
-    for (const p of got) out[chunk[p.i].id] = [p.tier, Math.max(10, Math.min(240, p.min | 0 || 60)), String(p.tip || "").replace(/[<>]/g, "").slice(0, 110)];
+    for (const p of got) out[chunk[p.i].id] = [p.tier, Math.max(10, Math.min(240, p.min | 0 || 60)), cleanTip(p.tip)];
     await sleep(4500);
   }
   mkdirSync("data/sights", { recursive: true });
