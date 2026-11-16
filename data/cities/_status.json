@@ -10397,8 +10397,8 @@
   ]
  },
  "lucerne": {
-  "at": "2026-11-06T17:02:20.449Z",
-  "seconds": 498,
+  "at": "2026-11-16T16:07:25.551Z",
+  "seconds": 574,
   "osm": {
    "sights": 39,
    "sights2": 17,
@@ -10446,19 +10446,24 @@
    "Kapellgasse (7)"
   ],
   "log": [
-   "overpass-api.de ok 39 36795ms",
-   "overpass-api.de ok 17 32934ms",
-   "overpass-api.de HTTP 502 308ms",
-   "overpass-api.de ok 166 35260ms",
-   "overpass-api.de ok 125 32363ms",
-   "overpass-api.de ok 63 38808ms",
-   "overpass-api.de ok 82 33832ms",
-   "overpass-api.de ok 13 39135ms",
-   "overpass-api.de ok 20 33263ms",
-   "overpass-api.de ok 11 30436ms",
-   "overpass-api.de ok 21 40485ms",
-   "overpass-api.de HTTP 502 314ms",
-   "overpass-api.de ok 95 30754ms",
+   "overpass-api.de ok 39 32268ms",
+   "overpass-api.de HTTP 502 376ms",
+   "overpass-api.de ok 17 30867ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de ok 166 33714ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de HTTP 502 371ms",
+   "overpass-api.de ok 125 37015ms",
+   "overpass-api.de ok 63 37490ms",
+   "overpass-api.de ok 82 36594ms",
+   "overpass-api.de ok 13 38712ms",
+   "overpass-api.de HTTP 502 427ms",
+   "overpass-api.de HTTP 502 375ms",
+   "overpass-api.de ok 20 41895ms",
+   "overpass-api.de ok 11 35705ms",
+   "overpass-api.de ok 21 31935ms",
+   "overpass-api.de HTTP 502 386ms",
+   "overpass-api.de ok 95 32472ms",
    "streets: 95 shops",
    "fame: 82 of 82"
   ]
