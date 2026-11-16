@@ -11183,20 +11183,19 @@
   ]
  },
  "siena": {
-  "at": "2026-11-07T10:43:48.789Z",
-  "seconds": 742,
+  "at": "2026-11-16T16:25:25.302Z",
+  "seconds": 1049,
   "osm": {
    "sights": 117,
    "sights2": 32,
    "restaurants": 152,
    "cafes": 101,
-   "hotels": 0,
+   "hotels": 193,
    "shopping": 11,
    "diet": 1,
    "extra": 60,
    "fitness": 5,
-   "landmarks": 22,
-   "streets": 11
+   "landmarks": 0
   },
   "voyage": {
    "eat": 6,
@@ -11223,7 +11222,8 @@
    "extra": 1,
    "fitness": 1,
    "landmarks": 1,
-   "streets": 1
+   "streets": 1,
+   "hotels": 1
   },
   "streets": [
    "Banchi di Sopra (37)",
@@ -11233,27 +11233,34 @@
    "Via dei Termini (8)"
   ],
   "log": [
-   "overpass-api.de ok 117 28069ms",
-   "overpass-api.de ok 32 35002ms",
-   "overpass-api.de ok 152 48748ms",
-   "overpass-api.de ok 101 25755ms",
-   "overpass-api.de HTTP 502 327ms",
-   "overpass-api.de HTTP 502 325ms",
-   "overpass-api.de HTTP 502 321ms",
-   "overpass.private.coffee timeout 60001ms",
+   "overpass-api.de HTTP 502 433ms",
+   "overpass-api.de ok 117 33889ms",
+   "overpass-api.de HTTP 502 433ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de ok 32 34324ms",
+   "overpass-api.de HTTP 502 419ms",
+   "overpass-api.de ok 152 31192ms",
+   "overpass-api.de ok 101 28929ms",
+   "overpass-api.de ok 193 41110ms",
+   "overpass-api.de HTTP 502 377ms",
+   "overpass-api.de ok 11 24623ms",
+   "overpass-api.de ok 1 35412ms",
+   "overpass-api.de ok 60 48707ms",
+   "overpass-api.de HTTP 502 415ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass-api.de ok 5 39203ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass-api.de HTTP 502 382ms",
+   "overpass.private.coffee timeout 60002ms",
    "overpass.kumi.systems timeout 60000ms",
-   "overpass-api.de ok 11 26813ms",
-   "overpass-api.de ok 1 35029ms",
-   "overpass-api.de ok 60 30631ms",
-   "overpass-api.de ok 5 24770ms",
-   "overpass-api.de HTTP 502 325ms",
-   "overpass-api.de HTTP 502 321ms",
-   "overpass-api.de ok 22 27000ms",
-   "overpass-api.de HTTP 502 329ms",
-   "overpass-api.de HTTP 502 321ms",
-   "overpass-api.de ok 223 28408ms",
-   "streets: 223 shops",
-   "fame: 166 of 166"
+   "overpass-api.de HTTP 502 501ms",
+   "overpass-api.de HTTP 502 378ms",
+   "overpass-api.de HTTP 502 424ms",
+   "overpass.private.coffee timeout 60000ms",
+   "overpass.kumi.systems timeout 60001ms",
+   "kept 13 places from the last good data",
+   "fame: 167 of 167"
   ]
  },
  "monaco": {
