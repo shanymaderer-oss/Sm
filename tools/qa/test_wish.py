@@ -24,7 +24,10 @@ NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",No
        ("מדריד","חייבים לראות את סנטיאגו ברנבאו","ברנבאו","Metropolitano"),("סביליה","רוצים לראות את הקתדרלה של סביליה","קתדרל","Pizjuán"),
        ("פראג","רוצים לראות את גשר קארל","קארל","hrad"),("מדריד","לטייל בגראן ויה","Gran Vía",None),("ברלין","חייבים לראות את שער ברנדנבורג","Brandenburger",None),
        # 2026-11-15: street art is painted walls, not museums (tag "streetart" in data/he-names.json)
-       ("ברלין","אוהבים אמנות רחוב","איסט סייד",None),("פראג","גרפיטי וציורי קיר","לנון",None)]
+       ("ברלין","אוהבים אמנות רחוב","איסט סייד",None),("פראג","גרפיטי וציורי קיר","לנון",None),
+       # 2026-11-16: famous places that were missed or matched to the wrong place ("הווסט אנד" -> a synagogue, "שאן דה מרס" -> a fountain)
+       ("לונדון","הולכים להופעה בווסט אנד","ווסט אנד","Synagogue"),("פריז","פיקניק בשאן דה מרס","שאן דה מרס","Fontaine"),
+       ("רומא","רוצים לראות את גבעת הפלטין","פלטין",None),("איסטנבול","לעלות למגדל גלטה","Galata",None),("לונדון","לראות את מגדל לונדון","מגדל לונדון",None)]
 FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),("רוצים לראות את ספאקה נאפולי",'baths',False),
        ("חם לנו, נעדיף מקומות סגורים כשיורד גשם",'indoor',True),("if it rains, indoors",'indoor',True),("אוהבים פארקים",'indoor',False),
        ("אוהבים כדורגל",'football',True),("רוצים לראות משחק בסטדיום",'football',True),("בלי כדורגל",'football',False),("soccer fans",'football',True),
