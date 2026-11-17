@@ -1,5 +1,5 @@
 {
- "_": "Famous places and neighborhoods by the Hebrew names travelers write. Row: [Hebrew names separated by |, local name, kind, lat, lng, 1 if an area to walk around, \"football\" for the city's main football stadiums (used for a football wish), \"streetart\" for the best-known street-art walls and streets (used for a street-art wish, first one first)]. Used by js/planner.js (wishes) only.",
+ "_": "Famous places and neighborhoods by the Hebrew names travelers write. Row: [Hebrew names separated by |, local name, kind, lat, lng, 1 if an area to walk around, \"football\" for the city's main football stadiums (used for a football wish), \"streetart\" for the best-known street-art walls and streets (used for a street-art wish, first one first), \"xmas\" for the best-known Christmas markets (used for a Christmas-market wish, first one first)]. Used by js/planner.js (wishes) only.",
  "paris": [
   [
    "מונמארטר|מונמרטר|מונמארטר",
@@ -327,6 +327,24 @@
    51.5115,
    -0.13,
    1
+  ],
+  [
+   "ווינטר וונדרלנד|וינטר וונדרלנד|ווינטר וונדרלנד בהייד פארק",
+   "Hyde Park Winter Wonderland",
+   "attraction",
+   51.5065,
+   -0.1565,
+   0,
+   "xmas"
+  ],
+  [
+   "שוק החורף בסאות'בנק",
+   "Southbank Centre Winter Market",
+   "attraction",
+   51.5056,
+   -0.1167,
+   0,
+   "xmas"
   ]
  ],
  "lisbon": [
@@ -480,6 +498,24 @@
    14.4067,
    0,
    "streetart"
+  ],
+  [
+   "שוק חג המולד בכיכר העיר העתיקה",
+   "Vánoční trhy na Staroměstském náměstí",
+   "attraction",
+   50.0875,
+   14.4213,
+   0,
+   "xmas"
+  ],
+  [
+   "שוק חג המולד בכיכר ואצלב",
+   "Vánoční trhy na Václavském náměstí",
+   "attraction",
+   50.0814,
+   14.428,
+   0,
+   "xmas"
   ]
  ],
  "amsterdam": [
@@ -571,6 +607,24 @@
    19.0627,
    0,
    "streetart"
+  ],
+  [
+   "שוק חג המולד בכיכר ורושמרטי|שוק חג המולד בורושמרטי",
+   "Vörösmarty téri karácsonyi vásár",
+   "attraction",
+   47.4964,
+   19.0505,
+   0,
+   "xmas"
+  ],
+  [
+   "שוק חג המולד ליד בזיליקת סטפן הקדוש",
+   "Advent Bazilika",
+   "attraction",
+   47.5008,
+   19.0539,
+   0,
+   "xmas"
   ]
  ],
  "new-york": [
@@ -639,6 +693,15 @@
    "street",
    40.7066,
    -74.009
+  ],
+  [
+   "ווינטר וילג'|וינטר וילג' בבריאנט פארק",
+   "Winter Village",
+   "attraction",
+   40.7536,
+   -73.9832,
+   0,
+   "xmas"
   ]
  ],
  "tokyo": [
@@ -985,6 +1048,15 @@
    11.6247,
    0,
    "football"
+  ],
+  [
+   "שוק חג המולד במריינפלאץ",
+   "Christkindlmarkt am Marienplatz",
+   "attraction",
+   48.1374,
+   11.5755,
+   0,
+   "xmas"
   ]
  ],
  "porto": [
@@ -1119,6 +1191,24 @@
    13.402,
    0,
    "streetart"
+  ],
+  [
+   "שוק חג המולד בז'נדרמנמרקט|שוק חג המולד בגנדרמנמרקט",
+   "WeihnachtsZauber Gendarmenmarkt",
+   "attraction",
+   52.5137,
+   13.3927,
+   0,
+   "xmas"
+  ],
+  [
+   "שוק חג המולד בארמון שרלוטנבורג",
+   "Weihnachtsmarkt Schloss Charlottenburg",
+   "attraction",
+   52.5208,
+   13.2957,
+   0,
+   "xmas"
   ]
  ],
  "naples": [
@@ -1360,6 +1450,24 @@
    16.3786,
    0,
    "streetart"
+  ],
+  [
+   "שוק חג המולד בכיכר העירייה|כריסטקינדלמרקט|שוק חג המולד ברתהאוספלאץ",
+   "Wiener Christkindlmarkt (Rathausplatz)",
+   "attraction",
+   48.2108,
+   16.3575,
+   0,
+   "xmas"
+  ],
+  [
+   "שוק חג המולד בשנברון",
+   "Weihnachtsmarkt Schloss Schönbrunn",
+   "attraction",
+   48.1849,
+   16.3122,
+   0,
+   "xmas"
   ]
  ],
  "florence": [
@@ -1536,6 +1644,15 @@
    "attraction",
    49.9833,
    20.055
+  ],
+  [
+   "שוק חג המולד בכיכר השוק של קרקוב",
+   "Jarmark Bożonarodzeniowy (Rynek Główny)",
+   "attraction",
+   50.0617,
+   19.9373,
+   0,
+   "xmas"
   ]
  ],
  "nice": [
@@ -1611,6 +1728,15 @@
    "street",
    55.9484,
    -3.1932
+  ],
+  [
+   "שוק חג המולד בגני פרינסס סטריט",
+   "Edinburgh's Christmas (East Princes Street Gardens)",
+   "attraction",
+   55.952,
+   -3.1925,
+   0,
+   "xmas"
   ]
  ],
  "copenhagen": [
@@ -1627,6 +1753,15 @@
    "sight",
    55.6858,
    12.5773
+  ],
+  [
+   "חג המולד בטיבולי|כריסמס בטיבולי",
+   "Jul i Tivoli",
+   "attraction",
+   55.6737,
+   12.5681,
+   0,
+   "xmas"
   ]
  ],
  "tbilisi": [
@@ -1684,6 +1819,213 @@
    34.769,
    1,
    "streetart"
+  ]
+ ],
+ "strasbourg": [
+  [
+   "שוק חג המולד בכיכר ברוי|כריסטקינדלסמריק",
+   "Christkindelsmärik (Place Broglie)",
+   "attraction",
+   48.5853,
+   7.75,
+   0,
+   "xmas"
+  ],
+  [
+   "שוק חג המולד ליד הקתדרלה של שטרסבורג",
+   "Marché de Noël place de la Cathédrale",
+   "attraction",
+   48.5818,
+   7.7509,
+   0,
+   "xmas"
+  ]
+ ],
+ "cologne": [
+  [
+   "שוק חג המולד ליד הקתדרלה של קלן",
+   "Weihnachtsmarkt am Kölner Dom",
+   "attraction",
+   50.9413,
+   6.958,
+   0,
+   "xmas"
+  ]
+ ],
+ "salzburg": [
+  [
+   "שוק חג המולד בדומפלאץ",
+   "Salzburger Christkindlmarkt (Domplatz)",
+   "attraction",
+   47.798,
+   13.047,
+   0,
+   "xmas"
+  ]
+ ],
+ "innsbruck": [
+  [
+   "שוק חג המולד בעיר העתיקה של אינסברוק",
+   "Christkindlmarkt Altstadt Innsbruck",
+   "attraction",
+   47.2686,
+   11.3933,
+   0,
+   "xmas"
+  ]
+ ],
+ "frankfurt": [
+  [
+   "שוק חג המולד ברמרברג",
+   "Weihnachtsmarkt Römerberg",
+   "attraction",
+   50.1106,
+   8.6821,
+   0,
+   "xmas"
+  ]
+ ],
+ "hamburg": [
+  [
+   "שוק חג המולד בכיכר העירייה של המבורג",
+   "Weihnachtsmarkt Rathausmarkt",
+   "attraction",
+   53.5503,
+   9.9925,
+   0,
+   "xmas"
+  ]
+ ],
+ "tallinn": [
+  [
+   "שוק חג המולד בכיכר העירייה של טאלין",
+   "Tallinna jõuluturg (Raekoja plats)",
+   "attraction",
+   59.437,
+   24.7453,
+   0,
+   "xmas"
+  ]
+ ],
+ "riga": [
+  [
+   "שוק חג המולד בכיכר הדום",
+   "Ziemassvētku tirdziņš (Doma laukums)",
+   "attraction",
+   56.949,
+   24.1048,
+   0,
+   "xmas"
+  ]
+ ],
+ "stockholm": [
+  [
+   "שוק חג המולד בסטורטורייט|שוק חג המולד בגאמלה סטן",
+   "Julmarknad på Stortorget",
+   "attraction",
+   59.3251,
+   18.0707,
+   0,
+   "xmas"
+  ]
+ ],
+ "zurich": [
+  [
+   "שוק חג המולד בתחנה המרכזית של ציריך",
+   "Christkindlimarkt im Hauptbahnhof",
+   "attraction",
+   47.3779,
+   8.5403,
+   0,
+   "xmas"
+  ]
+ ],
+ "brussels": [
+  [
+   "שוק החורף של בריסל|ווינטר וונדרס",
+   "Winter Wonders (Plaisirs d'Hiver)",
+   "attraction",
+   50.851,
+   4.3478,
+   0,
+   "xmas"
+  ]
+ ],
+ "bruges": [
+  [
+   "שוק חג המולד במרקט",
+   "Kerstmarkt op de Markt",
+   "attraction",
+   51.2089,
+   3.2247,
+   0,
+   "xmas"
+  ]
+ ],
+ "bratislava": [
+  [
+   "שוק חג המולד בכיכר הראשית של ברטיסלבה",
+   "Vianočné trhy (Hlavné námestie)",
+   "attraction",
+   48.1435,
+   17.1089,
+   0,
+   "xmas"
+  ]
+ ],
+ "zagreb": [
+  [
+   "אדוונט בזאגרב|שוק חג המולד בכיכר ילאצ'יץ'",
+   "Advent u Zagrebu (Trg bana Jelačića)",
+   "attraction",
+   45.8131,
+   15.9772,
+   0,
+   "xmas"
+  ]
+ ],
+ "ljubljana": [
+  [
+   "שוק חג המולד בכיכר פרשרן",
+   "Božični sejem (Prešernov trg)",
+   "attraction",
+   46.0514,
+   14.5061,
+   0,
+   "xmas"
+  ]
+ ],
+ "luxembourg": [
+  [
+   "שוק חג המולד בפלאס ד'ארם",
+   "Marché de Noël (Place d'Armes)",
+   "attraction",
+   49.6111,
+   6.13,
+   0,
+   "xmas"
+  ]
+ ],
+ "warsaw": [
+  [
+   "שוק חג המולד בעיר העתיקה של ורשה",
+   "Jarmark Bożonarodzeniowy (Rynek Starego Miasta)",
+   "attraction",
+   52.2497,
+   21.0122,
+   0,
+   "xmas"
+  ]
+ ],
+ "vilnius": [
+  [
+   "שוק חג המולד בכיכר הקתדרלה של וילנה",
+   "Kalėdų miestelis (Katedros aikštė)",
+   "attraction",
+   54.6858,
+   25.2877,
+   0,
+   "xmas"
   ]
  ]
 }

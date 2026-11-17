@@ -863,7 +863,7 @@ Masa.planner = (() => {
   const WINE = /wine|enotec|vinote|bodeg|wein|vino|cave à|bar à vin/i;
   const JAZZ = /jazz|blues|village vanguard|ronnie.?s/i, WATER = /canal|gracht|gondol|rondvaart|nyhavn|navigli|boat (?:tour|ride)|cruise/i;
   const placeText = p => `${p.local || ""} ${p.name || ""} ${p.en || ""}`;
-  function applyWish(w, pool, geo, data, aliases = [], days = 0) {
+  function applyWish(w, pool, geo, data, aliases = [], days = 0, start = null) {
     const lc = LOCAL_CUISINE[geo.cc] || [];
     // one bath for the trip (a visit takes hours): the best known one
     const bath = w.baths ? pool.filter(p => p.bath && !["food", "night", "sleep"].includes(p.cat)).sort((a, b) => (b.fame || 0) - (a.fame || 0) || b.q - a.q)[0] : null;
@@ -935,6 +935,11 @@ Masa.planner = (() => {
     const artWalls = w.streetArt ? al.filter(x => x.tag === "streetart") : [];
     if (w.streetArt && !byAlias.some(p => p._tag === "streetart")) artWalls.filter(a => !skipped.includes(a.names[0])).slice(0, days >= 3 ? 2 : 1).forEach(useAlias);
     const streetArtMiss = w.streetArt && !byAlias.some(p => p._tag === "streetart");
+    /* Christmas markets (tag "xmas"): one, only when the trip falls between 20 November and 6 January; otherwise said */
+    const xmasOn = (() => { if (!start) return true; const d0 = new Date(start + "T12:00:00"); for (let i = 0; i < Math.max(1, days); i++) { const d = new Date(d0); d.setDate(d0.getDate() + i); const m = d.getMonth(), n = d.getDate(); if ((m === 10 && n >= 20) || m === 11 || (m === 0 && n <= 6)) return true; } return false; })();
+    if (w.xmas && xmasOn && !byAlias.some(p => p._tag === "xmas")) al.filter(x => x.tag === "xmas" && !skipped.includes(x.names[0])).slice(0, 1).forEach(useAlias);
+    if (w.xmas && !xmasOn) for (let i = byAlias.length - 1; i >= 0; i--) if (byAlias[i]._tag === "xmas") byAlias.splice(i, 1);
+    const xmasMiss = w.xmas && !byAlias.some(p => p._tag === "xmas") ? (xmasOn ? "שוק חג המולד" : "שוק חג המולד (פתוח רק מסוף נובמבר עד תחילת ינואר)") : null;
     // a kind they said they do not want is not picked by its name alone ("Montmartre" is the hill, not the Montmartre Museum)
     let found = Masa.intent.findPlaces(text, items.filter(i => !w.avoid.includes(i.p.kind)), cityNames, opt).map(o => o.it.p);
     // not on the map under that name: a Hebrew Wikipedia article at that spot can stand in
@@ -976,6 +981,7 @@ Masa.planner = (() => {
     }
     if (footballMiss) missed.push("אצטדיון כדורגל");
     if (streetArtMiss) missed.push("אמנות רחוב");
+    if (xmasMiss) missed.push(xmasMiss);
     // said back as they wrote it, plus the names we found for them
     const N = Masa.intent.norm, said = [];
     for (const n of [...(w.skips || []), ...(w.aiSkipShow || [])]) if (!said.some(x => N(x).includes(N(n)) || N(n).includes(N(x)))) said.push(n);
@@ -1147,7 +1153,7 @@ Masa.planner = (() => {
     if (!wish?.stores && !wish?.wine) avoid.add("deli");
     // the Hebrew names of famous places count even when nothing else in the text was understood ("לטייל בגראן ויה")
     const aliases = wish && wish.text.trim() && geo.slug ? (await heNames())[geo.slug] || [] : [];
-    let wishOut = wish && (!wish.empty || aliases.length) ? applyWish(wish, pool, geo, data, aliases, days) : null;
+    let wishOut = wish && (!wish.empty || aliases.length) ? applyWish(wish, pool, geo, data, aliases, days, opts.start) : null;
     if (wishOut && wish.empty && !wishOut.places.length) wishOut = null;
     /* places the traveler picked on the "I'll choose" screen: each is in the trip, like a place named in the wishes */
     if (opts.picks?.length) {

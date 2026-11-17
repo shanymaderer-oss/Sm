@@ -27,14 +27,16 @@ NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",No
        ("ברלין","אוהבים אמנות רחוב","איסט סייד",None),("פראג","גרפיטי וציורי קיר","לנון",None),
        # 2026-11-16: famous places that were missed or matched to the wrong place ("הווסט אנד" -> a synagogue, "שאן דה מרס" -> a fountain)
        ("לונדון","הולכים להופעה בווסט אנד","ווסט אנד","Synagogue"),("פריז","פיקניק בשאן דה מרס","שאן דה מרס","Fontaine"),
-       ("רומא","רוצים לראות את גבעת הפלטין","פלטין",None),("איסטנבול","לעלות למגדל גלטה","Galata",None),("לונדון","לראות את מגדל לונדון","מגדל לונדון",None)]
+       ("רומא","רוצים לראות את גבעת הפלטין","פלטין",None),("איסטנבול","לעלות למגדל גלטה","Galata",None),("לונדון","לראות את מגדל לונדון","מגדל לונדון",None),
+       # 2026-11-17: Christmas markets (tag "xmas"): "שווקי חג המולד" in Vienna was silently dropped, "שווקי כריסמס" in Prague not understood
+       ("וינה","רוצים שווקי חג המולד ויין חם","Christkindlmarkt",None),("פראג","שווקי כריסמס בערב","Vánoční",None),("שטרסבורג","christmas markets","Christkindels",None)]
 FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),("רוצים לראות את ספאקה נאפולי",'baths',False),
        ("חם לנו, נעדיף מקומות סגורים כשיורד גשם",'indoor',True),("if it rains, indoors",'indoor',True),("אוהבים פארקים",'indoor',False),
        ("אוהבים כדורגל",'football',True),("רוצים לראות משחק בסטדיום",'football',True),("בלי כדורגל",'football',False),("soccer fans",'football',True),
        # 2026-11-14: "הפסקות לשבת" is sitting down, not the Sabbath; the Sabbath itself still is
        ("עם סבא וסבתא, קצב איטי, הרבה הפסקות לשבת",'shabbat',False),("רוצים מקום לשבת עם קפה",'shabbat',False),("ולשבת על הדשא",'shabbat',False),
        ("אנחנו שומרים שבת",'shabbat',True),("בשבת לא נוסעים",'shabbat',True),("מה פתוח בשבתות?",'shabbat',True),("shabbat observant",'shabbat',True),
-       ("אוהבים אמנות רחוב",'streetArt',True),("גרפיטי",'streetArt',True),("street art and murals",'streetArt',True),("בלי אמנות רחוב",'streetArt',False),
+       ("אוהבים אמנות רחוב",'streetArt',True),("גרפיטי",'streetArt',True),("street art and murals",'streetArt',True),("בלי אמנות רחוב",'streetArt',False),("שוק חג המולד",'xmas',True),("שווקי כריסמס",'xmas',True),("christmas market",'xmas',True),("בלי שווקי חג המולד",'xmas',False),("אוהבים שוקולד",'xmas',False),("שוק הכרמל",'xmas',False),
        ("אוהבים אמנות",'streetArt',False),("רוצים את המוזיאון לאמנות",'streetArt',False),("ציורים של ואן גוך",'streetArt',False)]
 # words that only look like a rule: (text, a piece of a label that must or must not show)
 LABELS=[("אוהבים אמנות רחוב","מוזיאונים",False),("street art","מוזיאונים",False),("אוהבים אמנות","מוזיאונים",True),("בלי תורים, לא אוהבים תיירים","מידע על עומס",True),("פחות תיירים","אין לנו מידע",False),("להתחיל מוקדם ב-6 בבוקר","קודם הרוב סגור",True),("אוכלים רק חלאל","חלאל: אין לנו מידע",True),("כיסא גלגלים","נגישים בלבד",False),("כיסא גלגלים","לוודא",True),
@@ -155,6 +157,13 @@ async def main():
     t=await pg.evaluate(build,["רומא","שיט בתעלות",1,["history"]])
     ok="תעלות או שיט" in t["wish"]["missed"]; print("WATER none","ok " if ok else "BAD",t["wish"]["missed"])
     if not ok: FAILS.append("water none")
+    # Christmas markets out of season (July) and in a city without one: said, not planned
+    t=await pg.evaluate("""async q => await Masa.planner.build({ query:q, days:2, interests:["history"], budget:"בינוני", pace:"מאוזן", diet:"הכול", move:"walk", notes:"שוק חג המולד", start:"2027-07-10", people:2 }, ()=>{}, null)""","וינה")
+    ok=any("תחילת ינואר" in m for m in t["wish"]["missed"]) and not any("Christkindl" in (s.get("local") or "") for s in stops(t)); print("XMAS july","ok " if ok else "BAD",t["wish"]["missed"])
+    if not ok: FAILS.append("xmas july")
+    t=await pg.evaluate(build,["רומא","שוק חג המולד",1,["history"]])
+    ok="שוק חג המולד" in t["wish"]["missed"]; print("XMAS none","ok " if ok else "BAD",t["wish"]["missed"])
+    if not ok: FAILS.append("xmas none")
     # flight times: landing at 16:00 and flying home at 10:00 shorten the first and the last day
     t=await pg.evaluate(build,["אמסטרדם","נוחתים ב-16:00 וטסים חזרה ב-10 בבוקר",3,["history"]])
     hm=lambda x:int(x[:2])*60+int(x[3:5])

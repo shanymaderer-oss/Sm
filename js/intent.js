@@ -77,6 +77,8 @@ Masa.intent = (() => {
     T([word("היסטורי"), word("היסטוריה"), word("עתיק"), word("ארכ(?:י)?אולוג"), word("חורבות"), word("ימי הביניים"), word("טיר(?:ה|ות)"), word("ארמו(?:ן|נות)"), /\b(history|historic|ancient|ruins|castles?|palaces?)\b/], { add: ["history"], label: "היסטוריה" }, { drop: ["history"], avoid: ["sight"], label: "פחות היסטוריה" }),
     // street art is its own wish (painted walls and streets, outside), not "museums": "אמנות רחוב" gave museums only
     T([word("א(?:ו)?מנות רחוב"), word("גרפיטי"), word("גרפיטים"), word("ציורי קיר"), word("ציור(?:י)? רחוב"), word("מורל(?:ים)?(?=\\s|$)"), word("סטריט ארט"), /\b(street art|graffiti|murals?)\b/], { add: ["art"], streetArt: true, label: "אמנות רחוב: קיר או רחוב מצויר במסלול" }, { label: "בלי אמנות רחוב" }),
+    // Christmas markets (late November to early January): one of the city's best-known markets; outside the season we say so
+    T([word("שו(?:ק|וקי) (?:של )?(?:חג המולד|כריסמס)"), word("חג המולד"), word("כריסמס"), word("אדוונט"), /\b(christmas|xmas|christkindl\w*|weihnachtsm\w*|advent markets?)\b/], { xmas: true, label: "חג המולד: שוק חג המולד במסלול" }, { label: "בלי שווקי חג המולד" }),
     T([word("מוזיאו"), word("אמנות(?! רחוב)"), word("אומנות(?! רחוב)"), word("גלרי"), word("ציורים"), /\b(museums?|(?<!street )art|galler(?:y|ies))\b/], { add: ["art"], label: "מוזיאונים ואמנות" }, { drop: ["art"], avoid: ["museum", "gallery"], label: "בלי מוזיאונים" }),
     T([word("כנסי(?:ה|ות|יה|יות)"), word("קתדרל"), word("מקדש"), /\b(churche?s?|cathedrals?|temples?)\b/], { boost: { church: 3 }, label: "כנסיות ומקדשים" }, { avoid: ["church"], label: "בלי כנסיות" }),
     // "בלי מסגדים" is a kind, not a place name (it was read as a skip and the Blue Mosque stayed in); plural only, so "המסגד הכחול" is still a place
@@ -198,7 +200,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "mobility" && eff.softMobility && w.mobility) && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness", "biz", "streetArt"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness", "biz", "streetArt", "xmas"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }
