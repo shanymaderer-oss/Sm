@@ -28,6 +28,10 @@ NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",No
        # 2026-11-16: famous places that were missed or matched to the wrong place ("הווסט אנד" -> a synagogue, "שאן דה מרס" -> a fountain)
        ("לונדון","הולכים להופעה בווסט אנד","ווסט אנד","Synagogue"),("פריז","פיקניק בשאן דה מרס","שאן דה מרס","Fontaine"),
        ("רומא","רוצים לראות את גבעת הפלטין","פלטין",None),("איסטנבול","לעלות למגדל גלטה","Galata",None),("לונדון","לראות את מגדל לונדון","מגדל לונדון",None),
+       # 2026-11-18: Jerusalem had no Hebrew names: "הכותל" found the Small Kotel, "מגדל דוד" King David's tomb, and
+       # "יד ושם", "כנסיית הקבר", "הר הזיתים", "עין כרם" were silently dropped
+       ("ירושלים","רוצים לראות את הכותל","הכותל המערבי","הקטן"),("ירושלים","מגדל דוד ויד ושם","מגדל דוד","קבר"),
+       ("ירושלים","כנסיית הקבר והר הזיתים","הר הזיתים",None),("ירושלים","הכותל, העיר העתיקה ושוק מחנה יהודה","שוק מחנה יהודה","חצ'אפוריה"),
        # 2026-11-17: Christmas markets (tag "xmas"): "שווקי חג המולד" in Vienna was silently dropped, "שווקי כריסמס" in Prague not understood
        ("וינה","רוצים שווקי חג המולד ויין חם","Christkindlmarkt",None),("פראג","שווקי כריסמס בערב","Vánoční",None),("שטרסבורג","christmas markets","Christkindels",None)]
 FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),("רוצים לראות את ספאקה נאפולי",'baths',False),
