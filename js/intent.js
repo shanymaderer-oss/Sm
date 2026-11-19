@@ -113,7 +113,7 @@ Masa.intent = (() => {
     T([word("אינטנסיבי"), word("כמה שיותר(?=\\s*$|\\s+(?:מקומות|דברים|תחנות|אתרים|אטרקציות))"), word("לראות הכ(?:ו)?ל"), word("מקסימום"), word("לא לבזבז זמן"), /\b(intense|packed|see everything|as much as)\b/], { pace: "אינטנסיבי", label: "קצב מלא: יותר תחנות ביום" }),
     T([word("זול"), word("חסכוני"), word("תקציב (?:נמוך|מוגבל|קטן)"), word("בלי להוציא הרבה"), word("סטודנט"), /\b(cheap|budget|low cost|students?)\b/], { budget: "חסכוני", label: "תקציב חסכוני" }),
     T([word("יוקר"), word("מפנק"), word("לפנק"), word("מישלן"), word("פיין דיינינג"), /\b(luxury|fancy|michelin|fine dining|splurge)\b/], { budget: "מפנק", label: "מפנקים: מסעדות טובות במיוחד" }),
-    T([word("רכב(?!ת)"), word("אוטו(?!ב|סטר)"), word("שוכרים רכב"), /\b(car|rent a car|driving)\b/], { move: "car", label: "מתניידים ברכב" }),
+    T([word("רכב(?![תל])"), word("אוטו(?!ב|סטר)"), word("שוכרים רכב"), /\b(car|rent a car|driving)\b/], { move: "car", label: "מתניידים ברכב" }),
     T([word("תחבורה ציבורית"), word("מטרו"), word("רכבת תחתית"), word("אוטובוס"), /\b(metro|subway|public transport|bus)\b/], { move: "transit", label: "תחבורה ציבורית" }),
     T([word("ברגל"), word("ללכת ברגל"), /\bon foot|walking\b/], { move: "walk", label: "הכול ברגל" }),
     // crowds are not a place to leave out, and we have no data on them
