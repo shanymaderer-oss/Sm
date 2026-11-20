@@ -36,6 +36,8 @@ NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",No
        # "סטלה מאריס", "חומות עכו", "שונית האלמוגים" were silently dropped
        ("תל אביב","נמל יפו ונווה צדק","Neve Tzedek",None),("תל אביב","שרונה ושדרות רוטשילד","Rothschild",None),("תל אביב","שוק הכרמל","Carmel Market","Nachalat"),
        ("חיפה","סטלה מאריס","Stella Maris",None),("עכו","חומות עכו והנמל","Walls of Acre",None),("אילת","שונית האלמוגים","Coral Beach",None),("טבריה","קבר הרמב\"ם","Rambam",None),
+       # 2026-11-20: "בר חורבות" in Budapest and "אנימה"/"מנגה" in Tokyo were silently dropped
+       ("בודפשט","מרחצאות תרמיים ובר חורבות","Szimpla",None),("טוקיו","אוהבים אנימה, ראמן ומקדשים","Akihabara",None),("טוקיו","מעריצים של מנגה","Akihabara",None),
        # 2026-11-17: Christmas markets (tag "xmas"): "שווקי חג המולד" in Vienna was silently dropped, "שווקי כריסמס" in Prague not understood
        ("וינה","רוצים שווקי חג המולד ויין חם","Christkindlmarkt",None),("פראג","שווקי כריסמס בערב","Vánoční",None),("שטרסבורג","christmas markets","Christkindels",None)]
 FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),("רוצים לראות את ספאקה נאפולי",'baths',False),
