@@ -628,7 +628,7 @@ const loadAgent = () => agentLoad || (agentLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/agent.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
 const useAgent = () => loadAgent().then(() => {
-  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS }); agentIn = true; }
+  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates }); agentIn = true; }
   return agentIn ? Masa.agent : null;
 });
 /* the agent's bar sits at the bottom of the route, always in reach */
@@ -1790,7 +1790,7 @@ SCREENS.guide = {
   view() {
     const cur = S.trip.days[S.day].stops[S.stop];
     const head = `<div class="guidehead"><span class="av">${ic("sparkle")}</span><div><h2>הסוכן של הטיול ב${esc(S.trip.city)}</h2><p>${S.me ? "יודע איפה אתם עכשיו." : `משנה את המסלול ועונה על שאלות. כרגע אתם ליד ${esc(cur?.name || "")}.`}</p></div></div>`;
-    const hello = `שלום! אני הסוכן של הטיול שלכם ב${S.trip.city}. אפשר לבקש שינויים במסלול ("יום 2 רגוע יותר", "בלי מוזיאונים", "תוסיפו שוק אוכל"), ולשאול מה הבא, איפה לאכול קרוב, מה עושים בגשם, או לשמוע סיפור על המקום.`;
+    const hello = `שלום! אני הסוכן של הטיול שלכם ב${S.trip.city}. אפשר לבקש שינויים במסלול ("יום 2 רגוע יותר", "בלי מוזיאונים", "תוסיפו שוק אוכל"), ולשאול מה הבא, איפה לאכול קרוב, מה עושים בגשם, או לשמוע סיפור על המקום. אפשר גם לספר לי על פגישה או הזמנה שקבעתם ("יש לי פגישה ביום 2 ב-14:00 ב-…"), או לבקש תזכורת ("תזכיר לי לעשות צ'ק-אין מחר ב-10"), ואני אכניס את זה למסלול וליומן.`;
     const chips = S.trip.source !== "sample" && agentIn ? Masa.agent.chips(S.trip).slice(0, 3) : [];
     return `<div class="screen chatwrap">${head}
     <div class="quick" id="quick">${[...chips, ...GUIDE_QUICK].map(q => `<button type="button">${esc(q)}</button>`).join("")}
@@ -1830,7 +1830,7 @@ function addMsg(r, t, acts) {
   return m;
 }
 /* a request to change the route goes to the agent; questions to the guide */
-const CHANGE_RE = /(תוסיפ|תוסיף|להוסיף|תוריד|להוריד|בלי |תעביר|להעביר|תחליפ|תחליף|להחליף|במקום|רגוע|קליל|פחות|לקצר|תקצר|לשנות|תשנ|תזיז|להזיז|יותר לאט|עייפ)/;
+const CHANGE_RE = /(פגיש|תזכיר|תזכורת|לקבוע|קבעתי|הזמנתי שולחן|יש לי (?:פגישה|הופעה|סיור|הזמנה)|תוסיפ|תוסיף|להוסיף|תוריד|להוריד|בלי |תעביר|להעביר|תחליפ|תחליף|להחליף|במקום|רגוע|קליל|פחות|לקצר|תקצר|לשנות|תשנ|תזיז|להזיז|יותר לאט|עייפ)/;
 async function ask(q) {
   if (!q || S.busy) return;
   addMsg("me", q);

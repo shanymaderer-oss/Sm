@@ -584,7 +584,21 @@ Masa.planner = (() => {
     if (day.move === "transit" && d > 1.2) return Math.min(walk, 10 + d * 3.5);
     return walk;
   }
-  function assignTimes(day) {
+  /* an appointment the traveler set ("פגישה ב-14:00"): it keeps its hour, and sits in the day where that hour falls */
+  const minOf = x => { const m = /^(\d{1,2}):(\d{2})$/.exec(x || ""); return m ? +m[1] * 60 + +m[2] : null; };
+  function placeAppts(day) {
+    const ap = day.stops.filter(s => s.at != null);
+    if (!ap.length) return;
+    day.stops = day.stops.filter(s => s.at == null);
+    timesOnly(day);
+    for (const a of ap.sort((x, y) => x.at - y.at)) {
+      let i = day.stops.findIndex(s => s.meal !== "hotel" && s.at == null && (minOf(s.time) ?? 0) >= a.at);
+      if (i < 0) i = day.stops.length;
+      day.stops.splice(i, 0, a);
+    }
+  }
+  function assignTimes(day) { placeAppts(day); timesOnly(day); }
+  function timesOnly(day) {
     const start = day.startMin || 9 * 60;
     let t = start;
     day.stops.forEach((s, i) => {
@@ -595,7 +609,7 @@ Masa.planner = (() => {
       if (s.sunset && day.sunsetMin) t = Math.max(t, day.sunsetMin - 35);
       if (s.meal === "dinner") t = Math.max(t, 19.5 * 60, s.sunset ? 0 : 0);
       if (s.meal === "drinks") t = Math.max(t, 21.25 * 60);
-      t = Math.round(t / 15) * 15;
+      t = s.at != null ? s.at : Math.round(t / 15) * 15;
       s.time = fmtTime(t);
       t += (s._min || 60) + Math.min(legMinutes(day, i), day.move === "car" ? 60 : 45) + 10;
     });

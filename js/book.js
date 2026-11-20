@@ -111,6 +111,14 @@ function tripIcs(t) {
         `DESCRIPTION:${escI(`${d.label || ""}. ${String(s.whyHe || s.why || "").slice(0, 200)}`)}`, "END:VEVENT");
     });
   });
+  // reminders the traveler asked the agent for ("תזכיר לי לעשות צ'ק-אין")
+  (t.reminders || []).forEach((r, i) => {
+    const day = r.date ? new Date(r.date + "T00:00") : addDays(start, r.day < 0 ? -1 : r.day);
+    const a = new Date(day); a.setHours(Math.floor(r.at / 60), r.at % 60, 0, 0); const b = new Date(a.getTime() + 15 * 60000);
+    const dt = x => `${ymd(x)}T${pad(x.getHours())}${pad(x.getMinutes())}00`;
+    L.push("BEGIN:VEVENT", `UID:masa-${t.id}-rem-${i}@masa`, `DTSTAMP:${stamp}`, `DTSTART:${dt(a)}`, `DTEND:${dt(b)}`, `SUMMARY:${escI(r.text)}`,
+      "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${escI(r.text)}`, "TRIGGER:PT0M", "END:VALARM", "END:VEVENT");
+  });
   // reminders for what is still open in the trip kit
   const done = kitDone();
   for (const x of kitItems(t)) {
