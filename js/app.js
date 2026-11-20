@@ -1831,6 +1831,36 @@ function addMsg(r, t, acts) {
 }
 /* a request to change the route goes to the agent; questions to the guide */
 const CHANGE_RE = /(פגיש|תזכיר|תזכורת|לקבוע|קבעתי|הזמנתי שולחן|יש לי (?:פגישה|הופעה|סיור|הזמנה)|תוסיפ|תוסיף|להוסיף|תוריד|להוריד|בלי |תעביר|להעביר|תחליפ|תחליף|להחליף|במקום|רגוע|קליל|פחות|לקצר|תקצר|לשנות|תשנ|תזיז|להזיז|יותר לאט|עייפ)/;
+/* the places a guide's answer names, as things to do: go there, put it in the trip, or book it (a table, a room, a
+   ticket: the booking itself is done by the traveler on the place's own site or a partner's, Masa never pays). Places
+   the city's lists know get every button; a name in parentheses the lists do not know can still be opened in the map. */
+function optionActs(text, t = S.trip) {
+  const txt = String(text || ""), low = txt.toLowerCase(), out = [], seen = new Set();
+  const known = (t.places || []).filter(p => hasXY(p) && (p.name || "").length > 3)
+    .filter(p => [p.name, p.local].some(n => n && n.length > 3 && low.includes(n.toLowerCase())))
+    .sort((a, b) => low.indexOf((a.local || a.name).toLowerCase()) - low.indexOf((b.local || b.name).toLowerCase()));
+  const city = encodeURIComponent(t.cityEn || t.city || "");
+  const bookFor = p => {
+    const food = ["restaurant", "cafe", "bar", "bakery", "dessert", "deli", "club"].includes(p.kind);
+    if (food) return safeUrl(p.website) ? ["להזמין שולחן באתר שלהם", p.website] : p.phone ? [`להתקשר להזמין (${p.phone})`, `tel:${String(p.phone).replace(/[^\d+]/g, "")}`] : null;
+    if (HOTEL_KINDS.includes(p.kind)) return ["לבדוק מחירים ולהזמין", partnerUrl(`https://www.booking.com/searchresults.html?ss=${encodeURIComponent((p.local || p.name) + ", " + (t.cityEn || t.city))}`)];
+    return ["כרטיסים וסיורים", partnerUrl(`https://www.getyourguide.com/s/?q=${encodeURIComponent((p.local || p.name) + " " + (t.cityEn || t.city))}`)];
+  };
+  const open = u => () => window.open(u, "_blank", "noopener");
+  for (const p of known) {
+    if (out.length >= 9 || seen.has(p.name)) continue; seen.add(p.name);
+    const nm = p.name.length > 22 ? p.name.slice(0, 21) + "…" : p.name;
+    const inTrip = t.days.some(d => d.stops.some(s => s.name === p.name));
+    if (!inTrip) out.push(act(`+ ${nm} למסלול`, () => { addPlace(p, S.day); toast(`${p.name} נוסף ל${t.days[S.day].label}`); }));
+    out.push(act(`ניווט ל${nm}`, open(gmPlace(p))));
+    const bk = bookFor(p); if (bk) out.push(act(bk[0], open(bk[1])));
+  }
+  if (!out.length) for (const m of txt.matchAll(/\(([A-Za-zÀ-ÿ'’&.\- ]{3,40})\)/g)) {
+    const n = m[1].trim(); if (seen.has(n) || out.length >= 3) continue; seen.add(n);
+    out.push(act(`במפה: ${n}`, open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n)},${city}`)));
+  }
+  return out;
+}
 async function ask(q) {
   if (!q || S.busy) return;
   addMsg("me", q);
@@ -1857,7 +1887,7 @@ async function ask(q) {
   const bubble = () => $("log")?.lastElementChild;
   const t = S.trip, cur = t.days[S.day].stops[S.stop];
   const compact = t.days.map(d => `${d.label}: ` + d.stops.map(s => `${s.name} (${s.local}, ${(+s.lat).toFixed(4)},${(+s.lng).toFixed(4)}, ${s.time || ""})`).join(" → ")).join("\n");
-  const system = `You are "מסע", a warm, practical on-the-ground tour guide and storyteller in ${t.cityLocal || t.city}, ${t.country}. Answer in Hebrew, concrete and vivid, at most about 150 words. When asked about history, tell it like a guide standing on site: dates, people, details to look for. Do not invent facts you are not sure of. Give specific nearby place names with their local names (so they can be searched on Google Maps), walking times and what to do next. Never invent booking URLs.
+  const system = `You are "מסע", a warm, practical on-the-ground tour guide and storyteller in ${t.cityLocal || t.city}, ${t.country}. Answer in Hebrew, concrete and vivid, at most about 150 words. When asked about history, tell it like a guide standing on site: dates, people, details to look for. Do not invent facts you are not sure of. Give specific nearby place names with their local names (so they can be searched on Google Maps), walking times and what to do next. Never invent booking URLs. When they ask where to eat, sleep, go or what to do, give 2-3 real options (not one), each on its own "- " line starting with its name and its local name in parentheses, e.g. "- **Da Enzo** (Da Enzo al 29): …", then one short line on why, the price level and whether to reserve ahead. Answer any question about the trip, the city or travel there; if you are not sure of a fact, say so and say where to check.
 Traveler's plan:
 ${compact}
 Traveler is currently viewing: ${t.days[S.day].label}, stop ${S.stop + 1}: ${cur?.name} (${cur?.local}).${S.me ? `\nTraveler's live location: ${S.me.lat.toFixed(5)},${S.me.lng.toFixed(5)}.` : ""}`;
@@ -1869,11 +1899,12 @@ Traveler is currently viewing: ${t.days[S.day].label}, stop ${S.stop + 1}: ${cur
     S.chat.push({ role: "assistant", content: text });
     entry.t = text;
     entry.links = fresh ? ai.lastSources() : [];
+    entry.acts = optionActs(text, t);
   } catch (e) {
     entry.t = ai.errText(e.code);
     S.chat.pop();
   } finally {
-    if (S.screen === "guide" && bubble()) { bubble().textContent = entry.t; if (entry.links?.length) bubble().insertAdjacentHTML("beforeend", linksHtml(entry.links)); }
+    if (S.screen === "guide" && bubble()) { bubble().outerHTML = msgHtml(entry); bindGuideActs($("log")?.lastElementChild); }
     S.busy = false; $("askBtn") && ($("askBtn").disabled = false);
     $("scroll").scrollTop = $("scroll").scrollHeight;
   }
