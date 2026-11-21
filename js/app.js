@@ -628,7 +628,7 @@ const loadAgent = () => agentLoad || (agentLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/agent.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
 const useAgent = () => loadAgent().then(() => {
-  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates }); agentIn = true; }
+  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates, addPlace, gmPlace, partnerUrl, safeUrl }); agentIn = true; }
   return agentIn ? Masa.agent : null;
 });
 /* the agent's bar sits at the bottom of the route, always in reach */
@@ -1831,36 +1831,6 @@ function addMsg(r, t, acts) {
 }
 /* a request to change the route goes to the agent; questions to the guide */
 const CHANGE_RE = /(פגיש|תזכיר|תזכורת|לקבוע|קבעתי|הזמנתי שולחן|יש לי (?:פגישה|הופעה|סיור|הזמנה)|תוסיפ|תוסיף|להוסיף|תוריד|להוריד|בלי |תעביר|להעביר|תחליפ|תחליף|להחליף|במקום|רגוע|קליל|פחות|לקצר|תקצר|לשנות|תשנ|תזיז|להזיז|יותר לאט|עייפ)/;
-/* the places a guide's answer names, as things to do: go there, put it in the trip, or book it (a table, a room, a
-   ticket: the booking itself is done by the traveler on the place's own site or a partner's, Masa never pays). Places
-   the city's lists know get every button; a name in parentheses the lists do not know can still be opened in the map. */
-function optionActs(text, t = S.trip) {
-  const txt = String(text || ""), low = txt.toLowerCase(), out = [], seen = new Set();
-  const known = (t.places || []).filter(p => hasXY(p) && (p.name || "").length > 3)
-    .filter(p => [p.name, p.local].some(n => n && n.length > 3 && low.includes(n.toLowerCase())))
-    .sort((a, b) => low.indexOf((a.local || a.name).toLowerCase()) - low.indexOf((b.local || b.name).toLowerCase()));
-  const city = encodeURIComponent(t.cityEn || t.city || "");
-  const bookFor = p => {
-    const food = ["restaurant", "cafe", "bar", "bakery", "dessert", "deli", "club"].includes(p.kind);
-    if (food) return safeUrl(p.website) ? ["להזמין שולחן באתר שלהם", p.website] : p.phone ? [`להתקשר להזמין (${p.phone})`, `tel:${String(p.phone).replace(/[^\d+]/g, "")}`] : null;
-    if (HOTEL_KINDS.includes(p.kind)) return ["לבדוק מחירים ולהזמין", partnerUrl(`https://www.booking.com/searchresults.html?ss=${encodeURIComponent((p.local || p.name) + ", " + (t.cityEn || t.city))}`)];
-    return ["כרטיסים וסיורים", partnerUrl(`https://www.getyourguide.com/s/?q=${encodeURIComponent((p.local || p.name) + " " + (t.cityEn || t.city))}`)];
-  };
-  const open = u => () => window.open(u, "_blank", "noopener");
-  for (const p of known) {
-    if (out.length >= 9 || seen.has(p.name)) continue; seen.add(p.name);
-    const nm = p.name.length > 22 ? p.name.slice(0, 21) + "…" : p.name;
-    const inTrip = t.days.some(d => d.stops.some(s => s.name === p.name));
-    if (!inTrip) out.push(act(`+ ${nm} למסלול`, () => { addPlace(p, S.day); toast(`${p.name} נוסף ל${t.days[S.day].label}`); }));
-    out.push(act(`ניווט ל${nm}`, open(gmPlace(p))));
-    const bk = bookFor(p); if (bk) out.push(act(bk[0], open(bk[1])));
-  }
-  if (!out.length) for (const m of txt.matchAll(/\(([A-Za-zÀ-ÿ'’&.\- ]{3,40})\)/g)) {
-    const n = m[1].trim(); if (seen.has(n) || out.length >= 3) continue; seen.add(n);
-    out.push(act(`במפה: ${n}`, open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n)},${city}`)));
-  }
-  return out;
-}
 async function ask(q) {
   if (!q || S.busy) return;
   addMsg("me", q);
@@ -1899,7 +1869,7 @@ Traveler is currently viewing: ${t.days[S.day].label}, stop ${S.stop + 1}: ${cur
     S.chat.push({ role: "assistant", content: text });
     entry.t = text;
     entry.links = fresh ? ai.lastSources() : [];
-    entry.acts = optionActs(text, t);
+    entry.acts = await useAgent().then(A => A?.options(text, t) || []).catch(() => []);
   } catch (e) {
     entry.t = ai.errText(e.code);
     S.chat.pop();

@@ -285,6 +285,37 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     if (U.S.screen !== "plan") U.toast("המסלול חזר למה שהיה");
   }
 
+  /* the places a guide's answer names, as things to do: go there, put it in the trip, or book it (a table, a room, a
+     ticket: the booking itself is done by the traveler on the place's own site or a partner's, Masa never pays). Places
+     the city's lists know get every button; a name in parentheses the lists do not know can still be opened in the map. */
+  function options(text, t = U.S.trip) {
+    const txt = String(text || ""), low = txt.toLowerCase(), out = [], seen = new Set();
+    const known = (t.places || []).filter(p => U.hasXY(p) && (p.name || "").length > 3)
+      .filter(p => [p.name, p.local].some(n => n && n.length > 3 && low.includes(n.toLowerCase())))
+      .sort((a, b) => low.indexOf((a.local || a.name).toLowerCase()) - low.indexOf((b.local || b.name).toLowerCase()));
+    const city = encodeURIComponent(t.cityEn || t.city || "");
+    const bookFor = p => {
+      const food = ["restaurant", "cafe", "bar", "bakery", "dessert", "deli", "club"].includes(p.kind);
+      if (food) return U.safeUrl(p.website) ? ["להזמין שולחן באתר שלהם", p.website] : p.phone ? [`להתקשר להזמין (${p.phone})`, `tel:${String(p.phone).replace(/[^\d+]/g, "")}`] : null;
+      if (U.HOTEL_KINDS.includes(p.kind)) return ["לבדוק מחירים ולהזמין", U.partnerUrl(`https://www.booking.com/searchresults.html?ss=${encodeURIComponent((p.local || p.name) + ", " + (t.cityEn || t.city))}`)];
+      return ["כרטיסים וסיורים", U.partnerUrl(`https://www.getyourguide.com/s/?q=${encodeURIComponent((p.local || p.name) + " " + (t.cityEn || t.city))}`)];
+    };
+    const open = u => () => window.open(u, "_blank", "noopener");
+    for (const p of known) {
+      if (out.length >= 9 || seen.has(p.name)) continue; seen.add(p.name);
+      const nm = p.name.length > 22 ? p.name.slice(0, 21) + "…" : p.name;
+      const inTrip = t.days.some(d => d.stops.some(s => s.name === p.name));
+      if (!inTrip) out.push(U.act(`+ ${nm} למסלול`, () => { U.addPlace(p, U.S.day); U.toast(`${p.name} נוסף ל${t.days[U.S.day].label}`); }));
+      out.push(U.act(`ניווט ל${nm}`, open(U.gmPlace(p))));
+      const bk = bookFor(p); if (bk) out.push(U.act(bk[0], open(bk[1])));
+    }
+    if (!out.length) for (const m of txt.matchAll(/\(([A-Za-zÀ-ÿ'’&.\- ]{3,40})\)/g)) {
+      const n = m[1].trim(); if (seen.has(n) || out.length >= 3) continue; seen.add(n);
+      out.push(U.act(`במפה: ${n}`, open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n)},${city}`)));
+    }
+    return out;
+  }
+
   window.Masa = window.Masa || {};
-  window.Masa.agent = { install(u) { U = u; }, bar, bind, run, undo, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+  window.Masa.agent = { install(u) { U = u; }, bar, bind, run, undo, options, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();
