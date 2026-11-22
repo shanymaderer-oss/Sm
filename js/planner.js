@@ -1510,7 +1510,8 @@ Masa.planner = (() => {
       const anchor = list[Math.max(0, at - 1)]?.p || first;
       const lunch = biz ? null : named.lunch || mealPick(anchor, M.lunch[0], M.lunch[1], lunchExtra);
       if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
-      if (wantFood && !biz && g.length >= 2) {
+      // a café or bakery they named is a sweet break even when food was not picked as an interest
+      if ((wantFood && !biz && g.length >= 2) || named.treat) {
         const ti = Math.min(list.length, at + 2);
         const dayKinds = new Set(list.map(x => x.p.kind));
         // kosher: a kosher sweet place or a market to walk through first
