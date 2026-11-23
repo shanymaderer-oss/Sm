@@ -89,7 +89,10 @@ Masa.intent = (() => {
     T([word("חיי לילה"), word("ברים"), word("פאב"), word("מועדו"), word("מסיבות"), word("לבלות בלילה"), word("לצאת בלילה"), word("קוקטייל"), word("בירה"), /\b(nightlife|bars|clubs?|party|cocktails?|beer|pubs?)\b/], { add: ["night"], label: "בילוי בערב" }, { drop: ["night"], label: "בלי בילויי לילה" }),
     T([word("קניות"), word("שופינג"), word("לקנות"), /\bshopping\b/], { add: ["shopping"], label: "קניות: רחובות הקניות והשווקים" }, { drop: ["shopping"], avoid: ["street", "mall", "store", "shop"], label: "בלי קניות" }),
     T([word("קניו(?:ן|נים)"), word("אאוטלט"), word("מותגים"), word("חנויות"), word("חנות"), word("כלבו"), /\b(malls?|outlets?|shops|stores?|department store)\b/], { add: ["shopping"], stores: true, label: "קניות: גם קניונים וחנויות" }, { drop: ["shopping"], avoid: ["street", "mall", "store", "shop"], label: "בלי קניות" }),
-    T([word("נו(?:ף|פים)"), word("תצפית"), word("לצלם"), word("צילום"), word("אינסטגרמ"), /\b(views?|photos?|instagram|viewpoints?)\b/], { add: ["view"], label: "תצפיות ומקומות לצילום" }),
+    // "תצפיות" was not read at all (the stem "תצפית" is not in it), and "בלי תצפיות" left out only a place named so, while
+    // the trip kept its viewpoints; now it leaves them all out. Photos have no "no" side: "לא אוהבים לצלם" is not "no views".
+    T([word("נו(?:ף|פים)"), word("תצפי(?:ת|ות)"), /\b(views?|viewpoints?)\b/], { add: ["view"], label: "תצפיות ומקומות לצילום" }, { drop: ["view"], avoid: ["view"], label: "בלי תצפיות" }),
+    T([word("לצלם"), word("צילום"), word("אינסטגרמ"), /\b(photos?|instagram)\b/], { add: ["view"], label: "תצפיות ומקומות לצילום" }),
     T([word("שקיע"), /\bsunsets?\b/], { add: ["view"], sunset: true, label: "שקיעה יפה בסוף היום" }),
     T([word("גג(?:ות)?(?=\\s|$)"), word("רופטופ"), /\brooftops?\b/], { rooftop: true, label: "ברים ומקומות על הגג" }),
     T([word("מרחצ"), word("ספא(?=\\s|$)"), word("ח(?:א)?מאם"), word("מעיינות חמ"), word("בריכות תרמ"), /\b(spa|thermal baths?|hammam|bath ?house|hot springs)\b/], { baths: true, label: "מרחצאות: מרחץ תרמי או חמאם במסלול" }),

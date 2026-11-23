@@ -89,6 +89,14 @@ async def main():
       got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);return [w.avoid.includes('church'),(w.boost.church||0)>0]}",txt)
       ok=got==want; print("MOSQ","ok " if ok else "BAD",txt,"->",got)
       if not ok: FAILS.append(txt)
+    # 2026-11-23: "תצפיות" is read, and "בלי תצפיות" leaves out every viewpoint (a kind), not one place named so; photos have no "no" side
+    for txt,want in [("בלי תצפיות",[True,True,[]]),("רוצים תצפיות",[False,False,[]]),("בלי נוף",[True,True,[]]),("לא אוהבים לצלם",[False,False,[]]),("חשמלית 28, תצפיות ופסטל דה נאטה",[False,False,[]])]:
+      got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);return [w.avoid.includes('view'),w.drop.includes('view'),w.skips]}",txt)
+      ok=got==want; print("VIEW","ok " if ok else "BAD",txt,"->",got)
+      if not ok: FAILS.append(txt)
+    got=await pg.evaluate("t=>Masa.intent.parse(t).add.includes('view')","רוצים תצפיות")
+    print("VIEW","ok " if got else "BAD","רוצים תצפיות adds view ->",got)
+    if not got: FAILS.append("רוצים תצפיות add")
     for txt,lab,want in LABELS:
       got=await pg.evaluate("([t,l])=>Masa.intent.parse(t).labels.some(x=>x.includes(l))",[txt,lab])
       ok=got==want; print("LABEL","ok " if ok else "BAD",txt,lab,"->",got)
