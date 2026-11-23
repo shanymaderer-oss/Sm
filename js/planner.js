@@ -598,6 +598,16 @@ Masa.planner = (() => {
     }
   }
   function assignTimes(day) { placeAppts(day); timesOnly(day); }
+  /* older travelers: dinner by 19:45, so the evening ends early; the day's last sights go (never one they asked for) */
+  function earlyEvening(d) {
+    for (let n = 0; n < 6; n++) {
+      const din = d.stops.find(s => s.meal === "dinner"), acts = d.stops.filter(s => !s.meal);
+      if (!din || minOf(din.time) <= 19.75 * 60 || acts.length <= 2) break;
+      const k = d.stops.lastIndexOf([...acts].reverse().find(s => !s.asked && s.at == null));
+      if (k < 0) break;
+      d.stops.splice(k, 1); assignTimes(d);
+    }
+  }
   function timesOnly(day) {
     const start = day.startMin || 9 * 60;
     let t = start;
@@ -607,7 +617,7 @@ Masa.planner = (() => {
       if (day.biz && !FIXED_START.includes(s.meal)) t = Math.max(t, day.biz); // a work day: the evening starts after the meetings
       if (s.meal === "lunch") t = Math.max(t, 12.75 * 60);
       if (s.sunset && day.sunsetMin) t = Math.max(t, day.sunsetMin - 35);
-      if (s.meal === "dinner") t = Math.max(t, 19.5 * 60, s.sunset ? 0 : 0);
+      if (s.meal === "dinner") t = Math.max(t, (day.senior ? 19 : 19.5) * 60);
       if (s.meal === "drinks") t = Math.max(t, 21.25 * 60);
       t = s.at != null ? s.at : Math.round(t / 15) * 15;
       s.time = fmtTime(t);
@@ -898,6 +908,7 @@ Masa.planner = (() => {
       if (w.jewish && p.jewish) p.q += 8;
       if (p === bath) p.q += 12;
       if (w.free && p.fee === "yes") p.q -= 3;
+      if (w.senior && (p.kind === "club" || p.kind === "themepark")) p.q -= 5;
       if (w.kids) { if (["zoo", "themepark", "park", "beach"].includes(p.kind)) p.q += 2; if (p.kind === "bar" || p.kind === "club") p.q -= 6; }
       if (w.offbeat && !["food", "night", "sleep"].includes(p.cat)) { p.q -= Math.min(8, (p.fame || 0) / 10); if (p.voyage) p.q += 2; }
       if (w.famous && p.fame) p.q += Math.min(8, p.fame / 10);
@@ -1442,7 +1453,7 @@ Masa.planner = (() => {
     // the restaurants the smart guide knows to be good: dinner goes a little farther for one (budget trips eat simpler)
     const picked = restaurants.filter(p => p.pick === "good" || (p.pick === "fine" && budget !== "חסכוני"));
     const cafes = by(["cafe", "bakery"]);
-    const treats = by(["dessert", "market", "deli", "bakery"]); // "deli" only when asked (see avoid above)
+    const treatsAll = by(["dessert", "market", "deli", "bakery"]), sitDown = by(["cafe", "dessert"]); // "deli" only when asked (see avoid above)
     const kosherFood = opts.diet === "כשר" ? by(["cafe", "bakery", "dessert"]).filter(p => p.kosher && !p.brand) : null; // breakfast: places open in the morning
     const bars = by(["bar", "club"]);
     const cuisinesUsed = {};
@@ -1511,10 +1522,11 @@ Masa.planner = (() => {
       const lunch = biz ? null : named.lunch || mealPick(anchor, M.lunch[0], M.lunch[1], lunchExtra);
       if (lunch) list.splice(at, 0, { p: lunch, meal: "lunch" });
       // a café or bakery they named is a sweet break even when food was not picked as an interest
-      if ((wantFood && !biz && g.length >= 2) || named.treat) {
+      if ((wantFood && !biz && g.length >= 2) || named.treat || (wish?.senior && !biz)) {
         const ti = Math.min(list.length, at + 2);
         const dayKinds = new Set(list.map(x => x.p.kind));
         // kosher: a kosher sweet place or a market to walk through first
+        const treats = wish?.senior ? sitDown : treatsAll;
         const tl = kosherFood ? treats.filter(t => !dayKinds.has(t.kind) && (t.kosher || t.kind === "market")) : null;
         const tr = named.treat || (tl && (nearBest(tl, list[ti - 1]?.p || anchor, 1.5))) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 0.8) || nearBest(treats.filter(t => !dayKinds.has(t.kind)), list[ti - 1]?.p || anchor, 1.5);
         if (tr && kosherFood && !tr.kosher && tr.kind !== "market" && !named.treat) tr._dietMiss = true;
@@ -1570,6 +1582,8 @@ Masa.planner = (() => {
         const cats = [...new Set(stops.filter(s => !s.meal).map(s => s.cat))].slice(0, 2).map(c => CATS[c]?.he).filter(Boolean);
         const d = { label: `יום ${i + 1}`, theme: cats.join(" ו") || "אוכל ושיטוט", stops, route: null, legs: null, move };
         if (wish?.start) d.startMin = wish.start;
+        else if (wish?.senior) d.startMin = 570; // older travelers: no rush in the morning
+        if (wish?.senior) d.senior = true;
         if (biz) { d.startMin = wish?.start || 480; d.biz = 18 * 60; d.theme = "טיסת עבודה · בוקר וערב";
           // more time in each place: there is only the evening, so no rushing between stops
           stops.forEach(s => { const m = s.meal === "breakfast" ? 60 : s.meal === "dinner" ? 120 : s.meal === "drinks" ? 75 : s.meal ? s._min : Math.max(s._min || 45, 45); s._min = m; s.duration = fmtDur(m); }); }
@@ -1578,6 +1592,7 @@ Masa.planner = (() => {
         if (satDay(i)) { d.shabbat = true; d.theme = "שבת · " + d.theme; }
         optimizeDay(d);
         assignTimes(d);
+        if (d.senior) earlyEvening(d);
         if (i === 0 && wish?.arrive != null) flightTrim(d, wish.arrive + 90, 23 * 60);
         if (i === dayPlans.length - 1 && wish?.depart != null) flightTrim(d, 0, wish.depart - 150);
         return d;

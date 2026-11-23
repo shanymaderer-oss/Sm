@@ -40,17 +40,40 @@ Masa.intent = (() => {
     w.labels[i] = "שעות הטיסה: " + [a != null && `נחיתה ב-${hhmm(a)}, היום הראשון מתחיל אחרי ההגעה למלון`, d != null && `טיסה חזרה ב-${hhmm(d)}, ביום האחרון מסיימים שעתיים וחצי לפני`].filter(Boolean).join("; ");
   }
 
+  const SENIOR = "מטיילים מבוגרים: בוקר בלי לחץ, הפסקת קפה בכל יום וארוחת ערב מוקדמת";
+  /* ages: "ההורים בני 72", "בגיל 80", "בני 8 ו-11", "70+", "בני שבעים". From 65 the day is calmer (as SENIOR says);
+     from 75 also less walking, unless a stroller or a wheelchair was already said */
+  const DECADE = { "שישים": 60, "שבעים": 70, "שמונים": 80, "תשעים": 90 };
+  function readAges(w) {
+    const ages = [];
+    for (const m of w.text.matchAll(/(?:^|[\s(])(?:ה?בני|ה?בנות|בן|בת|בגיל|גיל|גילאי|aged?)\s*[-:]?\s*(\d{1,2}|שישים|שבעים|שמונים|תשעים)((?:\s*(?:,|ו-?|-|–|and)\s*\d{1,2})*)/gi))
+      ages.push(DECADE[m[1]] || +m[1], ...(m[2].match(/\d{1,2}/g) || []).map(Number));
+    for (const m of w.text.matchAll(/(?:^|\s)\+?([5-9]\d)\s*(?:\+|פלוס)/g)) ages.push(+m[1]);
+    w.ages = ages;
+    const old = Math.max(0, ...ages);
+    if (old >= 65) { w.senior = true; if (w.pace == null) w.pace = "רגוע"; if (!w.labels.includes(SENIOR)) w.labels.push(SENIOR); }
+    if (old >= 75 && !w.mobility) w.mobility = "walking";
+    // the relaxed pace is said only when it is the pace ("בני 66, קצב אינטנסיבי" keeps theirs)
+    const i = w.labels.indexOf(SENIOR);
+    if (i >= 0 && w.pace === "רגוע") w.labels[i] = SENIOR.replace(":", ": קצב רגוע,");
+  }
+
   /* each rule: test, what it means, and how it reads back to the traveler */
   const T = (re, on, off) => ({ re: Array.isArray(re) ? re : [re], on, off });
   const RULES = [
     // who is coming
-    T([word("ילד"), word("ילדים"), word("תינוק"), word("פעוט"), word("משפחה"), word("משפחתי"), /\b(kids?|children|family|toddler|baby)\b/], { add: ["family"], kids: true, label: "עם ילדים: פארקים, גני חיות ופחות שעות במוזיאונים" }),
+    T([word("ילד"), word("ילדים"), word("נכד"), word("תינוק"), word("פעוט"), word("משפחה"), word("משפחתי"), /\b(kids?|children|family|toddler|baby)\b/], { add: ["family"], kids: true, label: "עם ילדים: פארקים, גני חיות ופחות שעות במוזיאונים" }),
     T([word("עגל(?:ה|ת)"), word("טיולון"), /\bstroller|pram\b/], { mobility: "stroller", label: "עם עגלה: מקומות נגישים ופחות מדרגות" }),
     T([word("כיסא גלגלים"), word("כסא גלגלים"), word("נכה"), word("נגיש"), /\bwheelchair\b/], { mobility: "wheelchair", label: "כיסא גלגלים: על רבים אין לנו מידע, כדאי לוודא" }),
     T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("לא הרבה הליכה"), word("הורים מבוגרים"), word("אנשים מבוגרים"), word("קשישים"), word("גיל הזהב"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
     // "בלי מדרגות" is about walking, not a place to leave out (it showed "לא נכניס למסלול: מדרגות"); only the "no" side, and
     // never the Spanish Steps. It does not replace a stroller or a wheelchair said in the same text.
     T([word("מדרגות(?!\\s+ה?ספרד)"), /\bstairs\b/], null, { mobility: "walking", softMobility: true, label: "בלי מדרגות: פחות הליכה ותחנות קרובות. על מדרגות במקומות עצמם אין לנו מידע, כדאי לוודא" }),
+    // older travelers: a relaxed pace, a café break every day and dinner early (planner); ages like "בני 72" are read in readAges.
+    // "2 מבוגרים" means adults, so "מבוגרים" counts only as "יותר מבוגרים", "זוג מבוגר", "טיול למבוגרים" and the like
+    T([word("פנסיונר"), word("גמלאי"), word("גיל ה?זהב"), word("גיל ה?שלישי"), word("סב(?:א|תא)(?=\\s|$)"), word("קשישים"), /(?:יותר|ה?זוג|טיול|אנחנו|הורים|אנשים)\s+[לה]?מבוגר\S*|מבוגר\S*\s+יותר/, /\b(seniors?|retirees?|retired|elderly)\b/], { senior: true, pace: "רגוע", label: SENIOR }),
+    // "בלי עליות" is about walking, like "בלי מדרגות", not a place to leave out
+    T([word("עליות"), word("טיפוס"), word("גבעות"), /\b(hills?|uphill|climbing)\b/], null, { mobility: "walking", softMobility: true, label: "בלי עליות: פחות הליכה ותחנות קרובות. על שיפועים אין לנו מידע מלא, כדאי להציץ במפה" }),
     T([word("ירח דבש"), word("רומנטי"), word("יום נישואין"), word("זוגי"), /\b(honeymoon|romantic|anniversary)\b/], { romantic: true, boost: { view: 3, dessert: 2 }, label: "טיול זוגי: תצפיות, שקיעות וארוחת ערב טובה" }),
     // food and diet
     // no restaurant in our data says gluten free (0 of 135 cities), so say that plainly instead of promising
@@ -203,7 +226,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "mobility" && eff.softMobility && w.mobility) && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness", "biz", "streetArt", "xmas"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness", "biz", "streetArt", "xmas", "senior"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }
@@ -267,6 +290,7 @@ Masa.intent = (() => {
     w.skips = w.skips.filter(n => !norm(n).split(" ").every(x => FILL.has(x) || GENERIC.has(x) || w.ruleWords.has(x) || rw.some(r => x.replace(/^[ובלמהשכ]{1,2}/, "").startsWith(r) || x.startsWith(r))));
     if (w.skips.length) say(`לא נכניס למסלול: ${w.skips.join(", ")}`);
     flightTimes(w);
+    readAges(w);
     // a sentence nothing above understood: the planner says so, unless it turns out to name a place
     w.unread = nohit.filter(c => c.split(/\s+/).length >= 2 && !/\d/.test(c) && !BEEN.test(c) && !SKIP.test(c) && c.search(ASK) < 0 && !/מלון|hotel/i.test(c)
       && !/^(?:אנחנו|אני|זוג|טסים|נוסעים|מגיעים|יש לנו|we are|we're|i am|i'm)(?=\s)/i.test(c));

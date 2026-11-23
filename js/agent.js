@@ -317,5 +317,30 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
   }
 
   window.Masa = window.Masa || {};
-  window.Masa.agent = { install(u) { U = u; }, bar, bind, run, undo, options, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+
+  /* the trip as a KML file for Google My Maps (one folder and colour per day); moved here from app.js to keep the start small */
+  const xmlEsc = v => String(v ?? "").replace(/[<>&"']/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&apos;" })[c]);
+  const KMLC = ["ff6b4ae2", "ffe0a03b", "ff84a00e", "fff05a7a", "ff33c4ff"]; // the day colors, as KML wants them (aabbggrr)
+  function tripKml(t) {
+    const styles = KMLC.map((c, i) => `<Style id="d${i}"><IconStyle><color>${c}</color><scale>1.1</scale><Icon><href>https://maps.google.com/mapfiles/kml/paddle/wht-blank.png</href></Icon></IconStyle><LineStyle><color>${c}</color><width>4</width></LineStyle></Style>`).join("");
+    const days = t.days.map((d, di) => {
+      const pts = d.stops.filter(U.hasXY);
+      const marks = pts.map((s, i) => {
+        const desc = [s.time ? `${s.time}` : "", s.mealHe || "", s.tip || "", s.booking?.needed ? "כדאי להזמין מראש" : "", s.address || ""].filter(Boolean).join(" · ");
+        return `<Placemark><name>${xmlEsc(`יום ${di + 1} · ${i + 1}. ${s.name}`)}</name>${desc ? `<description>${xmlEsc(desc)}</description>` : ""}<styleUrl>#d${di % 5}</styleUrl><Point><coordinates>${(+s.lng).toFixed(6)},${(+s.lat).toFixed(6)}</coordinates></Point></Placemark>`;
+      }).join("");
+      const line = pts.length > 1 ? `<Placemark><name>${xmlEsc(`יום ${di + 1}: המסלול`)}</name><styleUrl>#d${di % 5}</styleUrl><LineString><tessellate>1</tessellate><coordinates>${pts.map(s => `${(+s.lng).toFixed(6)},${(+s.lat).toFixed(6)}`).join(" ")}</coordinates></LineString></Placemark>` : "";
+      return `<Folder><name>${xmlEsc(`יום ${di + 1}${d.theme ? `: ${d.theme}` : ""}`)}</name>${marks}${line}</Folder>`;
+    }).join("");
+    const hotel = t.hotel && U.hasXY(t.hotel) ? `<Placemark><name>${xmlEsc(`המלון: ${t.hotel.name}`)}</name><Point><coordinates>${(+t.hotel.lng).toFixed(6)},${(+t.hotel.lat).toFixed(6)}</coordinates></Point></Placemark>` : "";
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${xmlEsc(`${t.days.length} ימים ב${t.city} · מסע`)}</name>${styles}${hotel}${days}</Document></kml>`;
+  }
+  function kml(t) {
+    const blob = new Blob([tripKml(t)], { type: "application/vnd.google-earth.kml+xml;charset=utf-8" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `masa-${(t.cityEn || t.slug || "trip").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.kml`;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    U.toast("הקובץ ירד. עכשיו מייבאים אותו ל-My Maps, לפי השלבים");
+  }
+
+  window.Masa.agent = { install(u) { U = u; }, bar, bind, run, undo, options, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();

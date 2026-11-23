@@ -97,6 +97,25 @@ async def main():
     got=await pg.evaluate("t=>Masa.intent.parse(t).add.includes('view')","רוצים תצפיות")
     print("VIEW","ok " if got else "BAD","רוצים תצפיות adds view ->",got)
     if not got: FAILS.append("רוצים תצפיות add")
+    # 2026-11-23: ages. From 65 (or "פנסיונרים", "סבתא", "טיול ליותר מבוגרים") a calmer day; from 75 also less walking.
+    # "2 מבוגרים" is adults, children's ages are not old, and a pace they chose stays theirs
+    for txt,want in [("ההורים שלי בני 72 ו-75",[True,"רגוע","walking"]),("אנחנו פנסיונרים",[True,"רגוע",None]),("זוג בגיל 80",[True,"רגוע","walking"]),
+                     ("טיול ליותר מבוגרים",[True,"רגוע",None]),("70+",[True,"רגוע",None]),("זוג בני שבעים",[True,"רגוע",None]),("retired couple",[True,"רגוע",None]),
+                     ("2 מבוגרים ו-3 ילדים",[False,None,None]),("ילדים בני 8 ו-11",[False,None,None]),("טיול עם ילדים ומבוגרים",[False,None,None]),
+                     ("אנחנו בני 66, קצב אינטנסיבי",[True,"אינטנסיבי",None]),("בני 40",[False,None,None]),("בלי עליות",[False,None,"walking"]),("בלי טיפוס",[False,None,"walking"])]:
+      got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);return [!!w.senior,w.pace||null,w.mobility||null]}",txt)
+      ok=got==want; print("AGE","ok " if ok else "BAD",txt,"->",got)
+      if not ok: FAILS.append(txt)
+    got=await pg.evaluate("t=>Masa.intent.parse(t).skips","טיול עם סבתא, בלי עליות")
+    print("AGE","ok " if got==[] else "BAD","בלי עליות is not a place ->",got)
+    if got!=[]: FAILS.append("בלי עליות skip")
+    # the day itself: starts at 9:30, a café break, dinner by 19:45 (without it, dinner is often after 21:00)
+    got=await pg.evaluate("""async()=>{const w=Masa.intent.parse('ההורים שלי בני 75, אוהבים היסטוריה');
+      const t=await Masa.planner.build({query:'רומא',days:3,interests:['food','history','view'],budget:'בינוני',pace:w.pace,mobility:w.mobility,notes:'ההורים שלי בני 75, אוהבים היסטוריה'},()=>{},null);
+      const m=x=>{const [h,mm]=x.split(':');return +h*60+ +mm};
+      return t.days.map(d=>[m(d.stops[0].time),d.stops.some(s=>s.meal==='treat'),Math.max(...d.stops.filter(s=>s.meal==='dinner').map(s=>m(s.time)))])}""")
+    ok=all(a>=570 and b and c<=19.75*60 for a,b,c in got); print("AGE","ok " if ok else "BAD","older travelers' days in Rome ->",got)
+    if not ok: FAILS.append("senior days")
     for txt,lab,want in LABELS:
       got=await pg.evaluate("([t,l])=>Masa.intent.parse(t).labels.some(x=>x.includes(l))",[txt,lab])
       ok=got==want; print("LABEL","ok " if ok else "BAD",txt,lab,"->",got)
