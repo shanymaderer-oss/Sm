@@ -158,6 +158,7 @@ Masa.intent = (() => {
     ["וייטנאמי", "vietnamese", ["vietnamese"]], ["קוריאני", "korean", ["korean"]], ["ים תיכוני", "mediterranean", ["mediterranean", "greek", "lebanese"]],
     ["אסייתי", "asian", ["asian", "thai", "chinese", "japanese", "vietnamese"]], ["חומוס", "hummus", ["lebanese", "middle_eastern", "falafel"]]
   ];
+  const PLACE_BEFORE = /(?:^|\s)[ובלמשה]{0,3}(?:מדרגות|גן|גני|גנים|רובע|שכונה|שכונת|כיכר|מרחץ|מרחצאות|חמאם|גשר|מקדש|ארמון|מוזיאון|קתדרלה|כנסייה|כנסיה|שער|חומה|מצודה|מבצר|נמל|בית (?:ה)?כנסת|בית (?:ה)?קברות)\s+$/;
   const CUISINE_HE = Object.fromEntries(CUISINES.map(([h, e]) => [e, h]));
 
   /* "we have been to X", "we do not want X", "skip X": the places in that part of the text are left out of the trip,
@@ -233,6 +234,8 @@ Masa.intent = (() => {
       for (const [he, en, keys] of CUISINES) {
         const f = hit(cn, word(he)) || hit(cn, new RegExp(`\\b${en}\\b`));
         if (!f) continue;
+        // a kind of food inside a place's name is not a meal: "המדרגות הספרדיות", "הגן היפני", "מרחץ טורקי", "הרובע הצרפתי"
+        if (PLACE_BEFORE.test(cn.slice(0, cn.indexOf(f.m) + (/^[^א-תa-z]/i.test(f.m) ? 1 : 0)))) continue;
         used(f.m); any = true;
         (f.neg ? w.dislikeCuisine : w.likeCuisine).push(...keys);
         say(f.neg ? `בלי ${he}` : `מסעדות: ${he}`);

@@ -71,6 +71,12 @@ async def main():
       got=await pg.evaluate("t=>{const w=Masa.intent.parse(t);const h=(s,x)=>[...(s||[])].includes(x);return [h(w.add,'food'),h(w.drop,'food')]}",txt)
       ok=got==want; print("FOOD","ok " if ok else "BAD",txt,"->",got)
       if not ok: FAILS.append(txt)
+    # 2026-11-24: a kind of food inside a place's name is not a meal ("המדרגות הספרדיות" asked for a Spanish restaurant in Rome)
+    for txt,want in [("רוצים לראות את המדרגות הספרדיות ואת מזרקת טרווי",[]),("הגן היפני",[]),("הרובע הצרפתי",[]),("בית הכנסת הספרדי",[]),
+                     ("אוהבים אוכל ספרדי",["spanish","tapas"]),("מסעדה יפנית",["japanese","sushi","ramen"]),("ארוחה יוונית ליד הנמל",["greek"])]:
+      got=await pg.evaluate("t=>Masa.intent.parse(t).likeCuisine",txt)
+      ok=got==want; print("CUISINE","ok " if ok else "BAD",txt,"->",got)
+      if not ok: FAILS.append(txt)
     for txt,flag,want in FLAGS:
       got=await pg.evaluate("([t,f])=>!!Masa.intent.parse(t)[f]",[txt,flag])
       ok=got==want; print("FLAG","ok " if ok else "BAD",txt,flag,"->",got)
