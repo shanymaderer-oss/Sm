@@ -1071,3 +1071,4 @@ ol.steps li::marker{font-weight:700;color:var(--coral)}
 .btn.ghost{background:var(--surface-2);color:var(--ink)}
 .btn.wa{background:#167a3f;color:#fff}
 .btn.wa svg{width:16px;height:16px}
+.ages{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.ages .chip small{color:var(--muted);font-weight:400;margin-inline-start:2px}.ages .chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}.ages .chip[aria-pressed="true"] small{color:inherit;opacity:.8}

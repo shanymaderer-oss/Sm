@@ -63,6 +63,7 @@ Masa.intent = (() => {
   const RULES = [
     // who is coming
     T([word("ילד"), word("ילדים"), word("נכד"), word("תינוק"), word("פעוט"), word("משפחה"), word("משפחתי"), /\b(kids?|children|family|toddler|baby)\b/], { add: ["family"], kids: true, label: "עם ילדים: פארקים, גני חיות ופחות שעות במוזיאונים" }),
+    T([word("נוער"), word("בני נוער"), word("מתבגרים"), word("מתבגר"), word("טינאייג'רים"), /\b(teens?|teenagers?)\b/], { add: ["family"], teens: true, label: "עם נוער: חוויות, אקסטרים ופחות שעות במוזיאונים" }),
     T([word("עגל(?:ה|ת)"), word("טיולון"), /\bstroller|pram\b/], { mobility: "stroller", label: "עם עגלה: מקומות נגישים ופחות מדרגות" }),
     T([word("כיסא גלגלים"), word("כסא גלגלים"), word("נכה"), word("נגיש"), /\bwheelchair\b/], { mobility: "wheelchair", label: "כיסא גלגלים: על רבים אין לנו מידע, כדאי לוודא" }),
     T([word("קש(?:ה|יים) ללכת"), word("פחות הליכה"), word("בלי הרבה הליכה"), word("מתקש\\S* (?:ב)?הליכה"), word("לא ללכת הרבה"), word("הליכה קצרה"), word("ברכיים"), word("סב(?:א|תא)(?=\\s|$)"), word("לא הרבה הליכה"), word("הורים מבוגרים"), word("אנשים מבוגרים"), word("קשישים"), word("גיל הזהב"), /\b(elderly|bad knees|can'?t walk much)\b/], { mobility: "walking", label: "פחות הליכה: תחנות קרובות יותר וזמני מנוחה" }),
@@ -227,7 +228,7 @@ Masa.intent = (() => {
         (eff.avoid || []).forEach(x => w.avoid.add(x));
         for (const [k, v] of Object.entries(eff.boost || {})) w.boost[k] = Math.max(w.boost[k] || 0, v);
         for (const k of ["diet", "mobility", "pace", "budget", "move", "start"]) if (eff[k] != null && !(k === "mobility" && eff.softMobility && w.mobility) && !(k === "diet" && w.diet === "טבעוני" && eff[k] === "צמחוני")) w[k] = eff[k]; // "טבעונים, בלי בשר" stays vegan
-        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness", "biz", "streetArt", "xmas", "senior"]) if (eff[k]) w[k] = true;
+        for (const k of ["kids", "romantic", "shabbat", "local", "wine", "stores", "sunset", "rooftop", "offbeat", "famous", "free", "jewish", "cheapFood", "baths", "indoor", "cold", "music", "canals", "football", "fitness", "biz", "streetArt", "xmas", "senior", "teens"]) if (eff[k]) w[k] = true;
         if (eff.cuisine) w.likeCuisine.push(...eff.cuisine);
         say(eff.label);
       }

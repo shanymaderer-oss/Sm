@@ -678,6 +678,8 @@ SCREENS.goals = {
       <span class="search myfield">${ic("search")}<input id="myIn" type="text" placeholder="למשל: ${esc(myExample())}" autocomplete="off" aria-label="הוספת מקום" aria-controls="mySug" aria-autocomplete="list"><button type="button" class="chip" id="myAdd">הוספה</button></span>
       <div class="sugs" id="mySug" role="listbox"></div>
     </div>
+    <div class="section-label">מי מטייל? <small class="muted">אפשר לבחור כמה. ההמלצות יותאמו לגילאים</small></div>
+    <div class="ages" id="ages" role="group" aria-label="גילאי המטיילים">${AGES.map(([v, l, r]) => `<button type="button" class="chip" data-v="${v}" aria-pressed="${(f.ages || []).includes(v)}">${l} <small>${r}</small></button>`).join("")}</div>
     <div class="section-label">מה הכי חשוב לכם? <small class="muted">נבנה תמהיל, והדברים שבחרתם יקבלו את רוב הזמן</small></div>
     <div class="tiles">${INTERESTS.map(k => `<button type="button" class="tile" data-k="${k}" aria-pressed="${f.interests.includes(k)}"><span class="ic" style="background:${cv(CATS[k].c)}">${ic(k)}</span>${CATS[k].he}</button>`).join("")}</div>
     <div class="wishbox">
@@ -709,6 +711,9 @@ SCREENS.goals = {
     document.querySelectorAll(".tile").forEach(t => t.onclick = () => { const k = t.dataset.k, on = f.interests.includes(k); touched.add("i:" + k); f.interests = on ? f.interests.filter(x => x !== k) : [...f.interests, k]; t.setAttribute("aria-pressed", !on); });
     ["budget", "pace", "diet"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.onclick = () => { touched.add(id); f[id] = b.textContent; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); }));
     $("moveForm").querySelectorAll("button").forEach(b => b.onclick = () => { touched.add("move"); f.move = b.dataset.v; $("moveForm").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
+    $("ages").querySelectorAll("button").forEach(b => b.onclick = () => { touched.add("ages"); const v = b.dataset.v, on = (f.ages || []).includes(v); f.ages = on ? f.ages.filter(x => x !== v) : [...(f.ages || []), v]; b.setAttribute("aria-pressed", !on);
+      // kids or teens: the family tile lights up too (they can turn it off)
+      if (!on && ["baby", "kids", "teens"].includes(v) && !f.interests.includes("family") && !touched.has("i:family")) { f.interests = [...f.interests, "family"]; document.querySelector('.tile[data-k="family"]')?.setAttribute("aria-pressed", "true"); } });
     $("mobility").querySelectorAll("button").forEach(b => b.onclick = () => { touched.add("mobility"); f.mobility = b.dataset.v; $("mobility").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
     let wt = null;
     $("notes").oninput = e => { f.notes = e.target.value; clearTimeout(wt); wt = setTimeout(syncWish, 220); };
@@ -1070,6 +1075,7 @@ async function build() {
 
 /* ---------- plan ---------- */
 function peakWord(s) { if (!s.busy) return ""; const open = s.busy.filter(v => v > 0); const avg = open.length ? open.reduce((a, b) => a + b, 0) / open.length : 0; return avg > 75 ? "עמוס מאוד" : avg > 55 ? "עמוס בצהריים" : "בדרך כלל רגוע"; }
+const AGES = [["baby", "תינוקות", "0–3"], ["kids", "ילדים", "4–12"], ["teens", "נוער", "13–17"], ["young", "צעירים", "18–30"], ["adults", "מבוגרים", "30–60"], ["senior", "גיל הזהב", "60+"]];
 const MOVES = [["walk", "ברגל", "nav"], ["transit", "תחבורה ציבורית", "bus"], ["car", "רכב", "car"]];
 function legInfo(d, i) {
   const a = d.stops[i - 1], b = d.stops[i];

@@ -16,6 +16,8 @@ Masa.planner = (() => {
 
   /* ---------- place kinds ---------- */
   /* kind = what the place is; cat = which interest it serves (colors and icons) */
+  /* the ages picked on the wishes screen, in the words the wishes reader knows */
+  const AGE_WISH = { baby: "עם תינוק, קצב רגוע", kids: "עם ילדים", teens: "עם נוער", young: "לבלות בלילה", adults: "", senior: "גיל הזהב" };
   const KIND = {
     restaurant: { cat: "food", he: "מסעדה", min: 75 }, cafe: { cat: "food", he: "בית קפה", min: 45 }, dessert: { cat: "food", he: "קינוח", min: 30 },
     bakery: { cat: "food", he: "מאפייה", min: 25 }, market: { cat: "food", he: "שוק", min: 60 }, deli: { cat: "food", he: "מעדנייה", min: 30 },
@@ -910,6 +912,7 @@ Masa.planner = (() => {
       if (w.free && p.fee === "yes") p.q -= 3;
       if (w.senior && (p.kind === "club" || p.kind === "themepark")) p.q -= 5;
       if (w.kids) { if (["zoo", "themepark", "park", "beach"].includes(p.kind)) p.q += 2; if (p.kind === "bar" || p.kind === "club") p.q -= 6; }
+      if (w.teens) { if (["themepark", "view", "beach", "market", "street"].includes(p.kind)) p.q += 2; if (p.kind === "club") p.q -= 6; if (p.kind === "museum" && (p.fame || 0) < 40) p.q -= 2; }
       if (w.offbeat && !["food", "night", "sleep"].includes(p.cat)) { p.q -= Math.min(8, (p.fame || 0) / 10); if (p.voyage) p.q += 2; }
       if (w.famous && p.fame) p.q += Math.min(8, p.fame / 10);
       if (w.avoid.includes(p.kind)) p.q -= 20;
@@ -1124,7 +1127,9 @@ Masa.planner = (() => {
   const loadTA = () => TA || (TA = Promise.resolve({}));
   async function build(opts, step, signal) {
     const { query, days, budget, pace } = opts;
-    const interests = opts.interests.length ? opts.interests : ["food", "history", "view"];
+    const interests0 = opts.interests.length ? opts.interests : ["food", "history", "view"];
+    // children or teens on the trip: family places (zoo, theme park, parks) are part of the mix
+    const interests = (opts.ages || []).some(x => ["baby", "kids", "teens"].includes(x)) && !interests0.includes("family") ? [...interests0, "family"] : interests0;
     const chk = () => { if (signal?.aborted) throw { code: "cancelled" }; };
 
     step(0);
@@ -1161,7 +1166,10 @@ Masa.planner = (() => {
     /* "I have places": each one is read like "חייבים לראות את ..." in the wishes box, so it is found the same way
        (Hebrew names, the map, Wikipedia) and said back if it was not found; the rest of the trip is our recommendations */
     const mine = (opts.mine || []).map(n => String(n).replace(/[,.;!?\n]/g, " ").trim()).filter(n => n.length >= 2).slice(0, 20);
-    const wish = Masa.intent ? Masa.intent.parse([opts.notes || "", ...mine.map(n => `חייבים לראות את ${n}`)].filter(Boolean).join(", ")) : null;
+    // who is traveling (the ages they picked), read as if they wrote it
+    const ages = (opts.ages || []).filter(a => AGE_WISH[a] != null);
+    const ageWords = ages.filter(a => !(a === "young" && (ages.includes("kids") || ages.includes("baby")))).map(a => AGE_WISH[a]).filter(Boolean);
+    const wish = Masa.intent ? Masa.intent.parse([...ageWords, opts.notes || "", ...mine.map(n => `חייבים לראות את ${n}`)].filter(Boolean).join(", ")) : null;
     /* what the smart guide read in the same words (only when it read exactly this text) */
     if (wish && opts.aiWish && opts.aiWish.text === opts.notes) {
       const names = a => (a || []).flatMap(x => [x.name, x.he]).filter(Boolean);
@@ -1567,7 +1575,7 @@ Masa.planner = (() => {
     const trip = {
       city: geo.name, slug: geo.slug || null, cityLocal: geo.local, cityEn: geo.en || geo.local, country: geo.country, cc: geo.cc, tz: geo.tz || null, lat: geo.lat, lng: geo.lng,
       source: "osm", dataSource: data.source, createdAt: Date.now(), pending: true,
-      opts: { query, days, budget, pace, diet: opts.diet || "הכול", mobility: opts.mobility || "", move, notes: opts.notes || "", ...(mine.length ? { mine } : {}), interests, start: opts.start || null, people: opts.people || 2,
+      opts: { query, days, budget, pace, diet: opts.diet || "הכול", mobility: opts.mobility || "", move, notes: opts.notes || "", ...(mine.length ? { mine } : {}), interests, start: opts.start || null, people: opts.people || 2, ...(opts.ages?.length ? { ages: opts.ages.slice(0, 6) } : {}),
         ...(opts.picks?.length ? { picks: opts.picks, onlyPicks: !!opts.onlyPicks, pickDays: opts.pickDays || null, pickObjs: (opts.pickObjs || []).map(o => ({ id: o.id, name: o.name, local: o.local, kind: o.kind, cat: o.cat, lat: o.lat, lng: o.lng, q: o.q, signals: o.signals || [] })) } : {}) },
       hotel: hotel ? { ...hotel } : null,
       summary: "",
