@@ -628,7 +628,7 @@ const loadAgent = () => agentLoad || (agentLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/agent.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
 const useAgent = () => loadAgent().then(() => {
-  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates, addPlace, gmPlace, partnerUrl, safeUrl }); agentIn = true; }
+  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates, addPlace, gmPlace, partnerUrl, safeUrl, FRESH_Q }); agentIn = true; }
   return agentIn ? Masa.agent : null;
 });
 /* the agent's bar sits at the bottom of the route, always in reach */
@@ -1834,7 +1834,9 @@ const CHANGE_RE = /(פגיש|תזכיר|תזכורת|לקבוע|קבעתי|הז�
 async function ask(q) {
   if (!q || S.busy) return;
   addMsg("me", q);
-  if (agentIn && ai.enabled() && S.trip.source !== "sample" && CHANGE_RE.test(q)) {
+  // with the smart guide, the agent gets every message: it decides by itself whether to change the trip or just answer
+  // (news of today, like openings and events, still goes to the guide that searches the web)
+  if (agentIn && ai.enabled() && navigator.onLine !== false && S.trip.source !== "sample" && (CHANGE_RE.test(q) || !FRESH_Q.test(q.replace(/ל?(היום|מחר|הערב|הלילה|השבוע|כרגע)/g, "")))) {
     S.busy = true; $("askBtn") && ($("askBtn").disabled = true);
     const entry = addMsg("bot", "מסדרים את המסלול…");
     const r = await Masa.agent.run(S.trip, q).catch(() => null);
@@ -1855,24 +1857,11 @@ async function ask(q) {
   S.busy = true; $("askBtn") && ($("askBtn").disabled = true);
   const entry = addMsg("bot", "חושב…");
   const bubble = () => $("log")?.lastElementChild;
-  const t = S.trip, cur = t.days[S.day].stops[S.stop];
-  const compact = t.days.map(d => `${d.label}: ` + d.stops.map(s => `${s.name} (${s.local}, ${(+s.lat).toFixed(4)},${(+s.lng).toFixed(4)}, ${s.time || ""})`).join(" → ")).join("\n");
-  const system = `You are "מסע", a warm, practical on-the-ground tour guide and storyteller in ${t.cityLocal || t.city}, ${t.country}. Answer in Hebrew, concrete and vivid, at most about 150 words. When asked about history, tell it like a guide standing on site: dates, people, details to look for. Do not invent facts you are not sure of. Give specific nearby place names with their local names (so they can be searched on Google Maps), walking times and what to do next. Never invent booking URLs. When they ask where to eat, sleep, go or what to do, give 2-3 real options (not one), each on its own "- " line starting with its name and its local name in parentheses, e.g. "- **Da Enzo** (Da Enzo al 29): …", then one short line on why, the price level and whether to reserve ahead. Answer any question about the trip, the city or travel there; if you are not sure of a fact, say so and say where to check.
-Traveler's plan:
-${compact}
-Traveler is currently viewing: ${t.days[S.day].label}, stop ${S.stop + 1}: ${cur?.name} (${cur?.local}).${S.me ? `\nTraveler's live location: ${S.me.lat.toFixed(5)},${S.me.lng.toFixed(5)}.` : ""}`;
-  S.chat.push({ role: "user", content: q });
   try {
-    const fresh = ai.shared() && FRESH_Q.test(q) ? { q, city: t.cityEn || t.cityLocal || t.city } : null;
-    track("guide_ai", t.slug || t.cityEn);
-    const text = await ai.chat(system, S.chat.slice(-10), fresh);
-    S.chat.push({ role: "assistant", content: text });
-    entry.t = text;
-    entry.links = fresh ? ai.lastSources() : [];
-    entry.acts = await useAgent().then(A => A?.options(text, t) || []).catch(() => []);
+    const A = await useAgent();
+    Object.assign(entry, A ? await A.chat(q) : { t: ai.errText("ai_error") });
   } catch (e) {
     entry.t = ai.errText(e.code);
-    S.chat.pop();
   } finally {
     if (S.screen === "guide" && bubble()) { bubble().outerHTML = msgHtml(entry); bindGuideActs($("log")?.lastElementChild); }
     S.busy = false; $("askBtn") && ($("askBtn").disabled = false);
