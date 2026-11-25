@@ -40,6 +40,8 @@ NAMED=[("פריז","רוצים לראות את מונמארטר","Montmartre",No
        ("בודפשט","מרחצאות תרמיים ובר חורבות","Szimpla",None),("טוקיו","אוהבים אנימה, ראמן ומקדשים","Akihabara",None),("טוקיו","מעריצים של מנגה","Akihabara",None),
        # 2026-11-22: Lisbon's viewpoints and pastel de nata, Vienna's Sacher were not understood; a named café or bakery was dropped when food was not an interest
        ("ליסבון","חשמלית 28, תצפיות ופסטל דה נאטה","Manteigaria",None),("ליסבון","תצפיות בשקיעה","Senhora do Monte",None),("וינה","קפה וזאכר טורטה","Sacher",None),
+       # 2026-11-25: "שיט על הסן" in Paris put a gym called CanalCentral in the trip; the Seine boats (Bateaux-Mouches) are the boat
+       ("פריז","טיול רומנטי, שיט על הסן בערב","Bateaux","CanalCentral"),
        # 2026-11-17: Christmas markets (tag "xmas"): "שווקי חג המולד" in Vienna was silently dropped, "שווקי כריסמס" in Prague not understood
        ("וינה","רוצים שווקי חג המולד ויין חם","Christkindlmarkt",None),("פראג","שווקי כריסמס בערב","Vánoční",None),("שטרסבורג","christmas markets","Christkindels",None)]
 FLAGS=[("רוצים מרחצאות",'baths',True),("חמאם טורקי",'baths',True),("thermal baths",'baths',True),("בלי ספא",'baths',False),("ספארי",'baths',False),("רוצים לראות את ספאקה נאפולי",'baths',False),

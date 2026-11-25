@@ -885,13 +885,13 @@ Masa.planner = (() => {
   /* the traveler's own words: lift what they asked for, push down what they did not want, and find the places they named */
   const ROOFTOP = /rooftop|roof ?top|terrazz|terrace|terraza|azotea|sky ?bar|dachterr|teras/i;
   const WINE = /wine|enotec|vinote|bodeg|wein|vino|cave à|bar à vin/i;
-  const JAZZ = /jazz|blues|village vanguard|ronnie.?s/i, WATER = /canal|gracht|gondol|rondvaart|nyhavn|navigli|boat (?:tour|ride)|cruise/i;
+  const JAZZ = /jazz|blues|village vanguard|ronnie.?s/i, WATER = /canal|gracht|gondol|rondvaart|nyhavn|navigli|boat (?:tour|ride)|cruise|bateau/i;
   const placeText = p => `${p.local || ""} ${p.name || ""} ${p.en || ""}`;
   function applyWish(w, pool, geo, data, aliases = [], days = 0, start = null) {
     const lc = LOCAL_CUISINE[geo.cc] || [];
     // one bath for the trip (a visit takes hours): the best known one
     const bath = w.baths ? pool.filter(p => p.bath && !["food", "night", "sleep"].includes(p.cat)).sort((a, b) => (b.fame || 0) - (a.fame || 0) || b.q - a.q)[0] : null;
-    const boat = p => /שיט|גונדול|boat|gondol|cruise/i.test(w.text) && /gondol|boat|cruise|rondvaart/i.test(placeText(p)) ? 1 : 0; // they asked to be on the water, not beside it
+    const boat = p => /שיט|גונדול|boat|gondol|cruise/i.test(w.text) && /gondol|boat|cruise|rondvaart|bateau/i.test(placeText(p)) ? 1 : 0; // they asked to be on the water, not beside it
     const water = w.canals ? pool.filter(p => WATER.test(placeText(p)) && !["food", "night", "sleep", "art"].includes(p.cat)).sort((a, b) => boat(b) - boat(a) || (b.fame || 0) - (a.fame || 0) || b.q - a.q)[0] : null;
     for (const p of pool) {
       if (w.boost[p.kind]) p.q += w.boost[p.kind];
