@@ -761,7 +761,7 @@ body.docpage{overflow:auto;padding:0}
 .tabadge small{color:var(--muted)}
 /* the guide's answers with actions */
 .msgacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.msgacts .chipbtn{background:var(--surface);font-size:.82rem;padding:5px 10px}
+.msgacts .chipbtn{background:var(--surface);font-size:.82rem;padding:5px 10px;min-height:44px}
 .msgacts .chipbtn:disabled{opacity:.5}
 .guidehead h2{color:inherit}
 .ownkey{margin-top:10px}.ownkey summary{cursor:pointer;font-weight:600;padding:6px 0}.ownkey[open]{display:grid;gap:8px}
@@ -940,7 +940,7 @@ a.btn{text-decoration:none}
 .agenthead .av svg{width:18px;height:18px}
 .agenthead b{display:block;font-size:1rem}
 .agenthead small{color:var(--muted);font-size:.82rem}
-.agentsay{background:var(--surface-2);border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:.92rem;line-height:1.55}
+.agentsay{background:var(--surface-2);border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:.92rem;line-height:1.55;white-space:pre-line}
 .agentsay .linkbtn{display:inline-flex;gap:4px;align-items:center;margin-top:6px}
 .agentsay.busy{display:flex;gap:8px;align-items:center;color:var(--muted)}
 .agentsay.busy i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--primary);animation:spin 1s linear infinite}

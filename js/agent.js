@@ -23,6 +23,9 @@
     else out.push("יום רגוע יותר");
     if (kinds.has("museum")) out.push("פחות מוזיאונים");
     out.push("משהו מיוחד שתיירים לא מכירים");
+    const L = ledger(t);
+    // once they started booking something: what is closed and what is still open
+    if (L.done.length || L.open.some(x => !x.s || x.s.reserve || x.s.bookOpen)) return [...out.slice(0, 3), "מה סגור ומה עוד פתוח?"];
     return out.slice(0, 4);
   }
 
@@ -151,11 +154,11 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
           _min: mins, duration: U.fmtDur ? U.fmtDur(mins) : `${mins} דקות`, why: `${title}${a.loc.address ? " · " + a.loc.address : ""}`, tip: "שעה קבועה: המסלול מסתדר סביבה." };
         if (a.venue) {
           const v = a.venue;
-          Object.assign(s, { osm: v.id, cuisine: v.cuisine, phone: v.phone, website: v.website, hours: v.hours, kindHe: "שולחן שמור", tip: "שעה קבועה. להזמנת השולחן: הכפתור בצ'אט או באתר של המסעדה." });
+          Object.assign(s, { osm: v.id, cuisine: v.cuisine, phone: v.phone, website: v.website, hours: v.hours, kindHe: "שולחן", reserve: true, tip: "שעה קבועה. להזמנת השולחן: הכפתור בצ'אט או באתר של המסעדה." });
           // the table replaces that day's meal at about the same hour
           const meal = at >= 17 * 60 ? "dinner" : at >= 11 * 60 && at < 16 * 60 ? "lunch" : null, mi = meal ? d.stops.findIndex(x => x.meal === meal) : -1;
           if (mi >= 0) { done.push({ c: "-", n: d.stops[mi].name }); d.stops.splice(mi, 1); }
-          book.push({ v, at, di: t.days.indexOf(d), party: Math.max(1, Math.min(20, Math.round(+a.party) || 2)) });
+          book.push({ v, s, at, di: t.days.indexOf(d), party: Math.max(1, Math.min(20, Math.round(+a.party) || 2)) });
         }
         d.stops.push(s); touched.add(d); done.push({ c: "@", n: `${title} ב-${fmtHM(at)}` }); cal.push({ day: t.days.indexOf(d), at, mins, title, where: a.loc.address || a.loc.name, lat: a.loc.lat, lng: a.loc.lng });
       } else if (k === "remind" && clean(a.text)) {
@@ -272,6 +275,8 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
   async function run(t, text) {
     if (A.busy || !text) return null;
     A.closed = false;
+    const q = quick(t, text);
+    if (q) { Object.assign(A, { say: q.say, acts: q.acts, undo: null }); refresh(); return q; }
     if (!U.ai.enabled()) {
       // without the smart guide: the guide's answers on the device (remove, replace, a lighter day, food near by…)
       let r = null; try { r = U.localAnswer(text); } catch {}
@@ -316,9 +321,10 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
         const v = b.v, site = U.safeUrl(v.website), num = phoneOf(v), tel = num ? `tel:${num}` : "", msg = reserveText(t, b);
         const btns = [];
         // a ready message in the restaurant's language: they check it and press send (Masa never books by itself)
-        if (num.startsWith("+")) btns.push(U.act(`לשלוח ל-${v.name} הודעת הזמנה בוואטסאפ`, open(`https://wa.me/${num.slice(1)}?text=${encodeURIComponent(msg.text)}`)));
-        btns.push(site ? U.act(`להזמין באתר של ${v.name}`, open(v.website)) : tel ? U.act(`להתקשר ל-${v.name} ולהזמין`, open(tel))
-          : U.act(`${v.name} בגוגל מפות (שם אפשר להזמין)`, open(U.gmPlace(v))));
+        const go = u => then(open(u), t, { n: v.name, s: b.s, id: v.id });
+        if (num.startsWith("+")) btns.push(U.act(`לשלוח ל-${v.name} הודעת הזמנה בוואטסאפ`, go(`https://wa.me/${num.slice(1)}?text=${encodeURIComponent(msg.text)}`)));
+        btns.push(site ? U.act(`להזמין באתר של ${v.name}`, go(v.website)) : tel ? U.act(`להתקשר ל-${v.name} ולהזמין`, go(tel))
+          : U.act(`${v.name} בגוגל מפות (שם אפשר להזמין)`, go(U.gmPlace(v))));
         acts.unshift(...btns);
         if (num.startsWith("+") && !/הודעת הזמנה|הודעה מוכנה/.test(A.say)) A.say = `${A.say} הכנתי הודעת הזמנה ${msg.he} לוואטסאפ: לוחצים, בודקים ושולחים.`.trim();
       }
@@ -364,7 +370,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       const inTrip = t.days.some(d => d.stops.some(s => s.name === p.name));
       if (!inTrip) out.push(U.act(`+ ${nm} למסלול`, () => { U.addPlace(p, U.S.day); U.toast(`${p.name} נוסף ל${t.days[U.S.day].label}`); }));
       out.push(U.act(`ניווט ל${nm}`, open(U.gmPlace(p))));
-      const bk = bookFor(p); if (bk) out.push(U.act(bk[0], open(bk[1])));
+      const bk = bookFor(p); if (bk) out.push(U.act(bk[0], then(open(bk[1]), t, { n: p.name })));
     }
     if (!out.length) for (const m of txt.matchAll(/\(([A-Za-zÀ-ÿ'’&.\- ]{3,40})\)/g)) {
       const n = m[1].trim(); if (seen.has(n) || out.length >= 3) continue; seen.add(n);
@@ -417,5 +423,70 @@ Traveler is currently viewing: ${t.days[U.S.day].label}, stop ${U.S.stop + 1}: $
     } catch (e) { U.S.chat.pop(); throw e; }
   }
 
-  window.Masa.agent = { install(u) { U = u; }, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+  /* ---------- what is closed and what is still open ----------
+     After a booking button (WhatsApp, the place's site, a phone call) the agent asks whether it was closed. "Yes" puts a
+     ✓ on the stop (or, for a place not in the trip, on the trip's list); the agent only writes down what the traveler
+     says: it never books, so it never marks anything closed by itself. */
+  const asked = new Set();
+  const stopOf = (t, it) => (it.s && t.days.some(d => d.stops.includes(it.s)) ? it.s : null) || t.days.flatMap(d => d.stops).find(s => s.name === it.n || s.local === it.n || (it.id && s.osm === it.id)) || null;
+  function then(fn, t, it) {
+    return () => {
+      fn();
+      const key = t.id + "|" + it.n;
+      if (asked.has(key) || (stopOf(t, it) || {}).booked) return;
+      asked.add(key);
+      setTimeout(() => {
+        if (U.S.trip !== t) return;
+        const yes = U.act("כן, נסגר ✓", () => mark(t, it, true)), no = U.act("עוד לא", () => mark(t, it, false));
+        tell(t, `נסגר ב-${it.n}? ספרו לי, ואסמן את זה ברשימה של מה שסגור בטיול.`, [yes, no]);
+      }, 1200);
+    };
+  }
+  function mark(t, it, ok) {
+    asked.delete(t.id + "|" + it.n);
+    const s = stopOf(t, it);
+    if (s) { if (ok) { s.booked = true; delete s.bookOpen; if (s.reserve) s.kindHe = "שולחן שמור"; } else if (!s.booked) s.bookOpen = true; }
+    else {
+      t.bk = (t.bk || []).filter(x => x.n !== it.n);
+      t.bk.push({ n: String(it.n).slice(0, 80), ok: !!ok }); t.bk = t.bk.slice(-30);
+    }
+    U.saveEdit();
+    const L = status(t);
+    tell(t, ok ? `מעולה, סימנתי ✓ על ${it.n}. ${L.say}` : `בסדר, ${it.n} נשאר ברשימה של מה שעוד פתוח. אפשר לחזור לזה מתי שתרצו.`, ok ? L.acts : []);
+  }
+  /* an answer that goes both to the bar on the route and to the conversation */
+  function tell(t, say, acts) {
+    Object.assign(A, { say, acts, undo: null, closed: false });
+    U.S.chatLog.push({ r: "bot", t: say, acts });
+    if (U.S.screen === "guide") U.rerenderKeepScroll(); else refresh();
+  }
+  const when = (t, s) => { const di = t.days.findIndex(d => d.stops.includes(s)); return di < 0 ? "" : ` (${t.days[di].label}${s.time ? ", " + s.time : ""})`; };
+  function ledger(t) {
+    const all = t.days.flatMap(d => d.stops);
+    const done = [...all.filter(s => s.booked).map(s => ({ n: s.name, s, w: when(t, s) })), ...(t.bk || []).filter(x => x.ok).map(x => ({ n: x.n, w: "" }))];
+    const open = [...all.filter(s => !s.booked && (s.reserve || s.bookOpen || s.booking?.needed)).map(s => ({ n: s.name, s, w: when(t, s) })), ...(t.bk || []).filter(x => !x.ok).map(x => ({ n: x.n, w: "" }))]
+      .sort((a, b) => !!(b.s?.reserve || b.s?.bookOpen || !b.s) - !!(a.s?.reserve || a.s?.bookOpen || !a.s)); // what they started to book first
+    return { done, open };
+  }
+  function status(t) {
+    const { done, open } = ledger(t), list = a => a.slice(0, 8).map(x => `- ${x.n}${x.w}`).join("\n") + (a.length > 8 ? `\n- ועוד ${a.length - 8}` : "");
+    if (!done.length && !open.length) return { say: "עוד לא סגרתם כלום, ואין במסלול מקום שחייבים להזמין מראש. כשתלחצו על כפתור הזמנה, אשאל אם נסגר ואסמן ✓.", acts: [] };
+    const say = [done.length ? `**סגור ✓**\n${list(done)}` : "עוד לא סימנתם שום דבר כסגור.", open.length ? `**עוד פתוח**\n${list(open)}` : "אין מה שעוד פתוח. הכל סגור!"].join("\n");
+    const acts = [];
+    for (const x of open.slice(0, 3)) {
+      const s = x.s || {}, v = (t.places || []).find(p => p.name === x.n || (s.osm && p.id === s.osm)) || s, site = U.safeUrl(v.website || s.booking?.url);
+      const u = site || (s.booking?.query ? `https://www.google.com/search?q=${encodeURIComponent(s.booking.query)}` : U.hasXY(v) ? U.gmPlace(v) : "");
+      if (u) acts.push(U.act(`להזמין: ${x.n.length > 22 ? x.n.slice(0, 21) + "…" : x.n}`, then(() => window.open(u, "_blank", "noopener"), t, { n: x.n, s: x.s })));
+      acts.push(U.act(`${x.n.length > 18 ? x.n.slice(0, 17) + "…" : x.n}: כבר נסגר ✓`, () => mark(t, { n: x.n, s: x.s }, true)));
+    }
+    return { say, acts };
+  }
+  const STATUS_Q = /(מה (?:כבר )?(?:סגרנו|סגור|נסגר|הזמנו|הזמנתי|סגרתי)|מה עוד (?:צריך|פתוח|לא סגור|נשאר)|מה נשאר להזמין|מה צריך להזמין|רשימת (?:ה)?הזמנות|סגור ומה)/;
+  /* questions the agent answers on the device at once (also without the smart guide or the net) */
+  function quick(t, text) {
+    if (!t || t.source === "sample" || !STATUS_Q.test(String(text || ""))) return null;
+    return status(t);
+  }
+
+  window.Masa.agent = { install(u) { U = u; }, quick, status, _mark: mark, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();

@@ -1238,7 +1238,7 @@ SCREENS.plan = {
         leg = legRow(t, p, s, L2); }
       return leg + `<button type="button" class="stop" data-i="${i}">${s.image ? `<span class="thumb" style="background-image:url('${cssUrl(s.image)}')"><span class="n" style="color:${col}">${i + 1}</span></span>` : `<span class="ic" style="background:${cv(CATS[catOf(s)].c)}">${ic(catOf(s))}<span class="n" style="color:${col}">${i + 1}</span></span>`}
         <span style="min-width:0">${s.mealHe ? `<span class="mealtag">${esc(s.mealHe)}</span>` : s.asked ? `<span class="mealtag must">ביקשתם</span>` : s.must ? `<span class="mealtag must">חובה לראות</span>` : ""}<span class="t">${esc(s.name)}</span>${placeLine(s) ? `<span class="pline">${placeLine(s)}</span>` : ""}<span class="meta">${s.time ? `<span>${ic("clock")}${esc(s.time)}</span>` : ""}${s.duration ? `<span>${ic("hourglass")}${esc(s.duration)}</span>` : ""}${s.busy ? `<span>${ic("users")}${peakWord(s)}</span>` : ""}</span></span>
-        ${s._added ? `<span class="tag new">הוספתם</span>` : s.notKosher ? `<span class="tag">לא מסומן כשר</span>` : s.booking?.needed ? `<span class="tag book">כדאי להזמין</span>` : "<span></span>"}</button>${S.edit ? editBar(t, d, s, i) : ""}`;
+        ${s.booked ? `<span class="tag free">✓ נסגר</span>` : s._added ? `<span class="tag new">הוספתם</span>` : s.notKosher ? `<span class="tag">לא מסומן כשר</span>` : s.booking?.needed ? `<span class="tag book">כדאי להזמין</span>` : "<span></span>"}</button>${S.edit ? editBar(t, d, s, i) : ""}`;
     }).join("")}</div>
     ${saveNudge(t)}
     ${shareCard(t)}
@@ -1282,7 +1282,7 @@ SCREENS.plan = {
 const domestic = t => t?.cc === "il";
 const HOME_SKIP = new Set(["flights", "insurance", "transfer", "esim", "entry"]);
 const FOLDERS = [["plan", "route", "המסלול"], ["before", "info", "לפני הטיסה"], ["book", "ticket", "הזמנות"], ["together", "users", "ביחד"]];
-const bookPending = t => t.days.flatMap(d => d.stops).filter(s => s.booking?.needed && !(s.booking.steps || []).every((_, i) => checks[ckey(s, i)])).length;
+const bookPending = t => t.days.flatMap(d => d.stops).filter(s => s.booking?.needed && !s.booked && !(s.booking.steps || []).every((_, i) => checks[ckey(s, i)])).length;
 function tripTop(t, active) {
   const all = t.days.flatMap(d => d.stops), pend = bookPending(t);
   const nums = [`${all.length} תחנות`, `${totalWalk(t).toFixed(1)} ק״מ הליכה`, (t.opts?.move || "walk") !== "walk" ? `${totalDrive(t).toFixed(0)} ${t.opts.move === "car" ? "ק״מ נסיעה" : "ק״מ בתחבורה"}` : "", all.filter(s => s.booking?.needed).length ? `${all.filter(s => s.booking?.needed).length} להזמין` : ""].filter(Boolean);
@@ -1840,6 +1840,8 @@ const CHANGE_RE = /(פגיש|תזכיר|תזכורת|לקבוע|קבעתי|הז�
 async function ask(q) {
   if (!q || S.busy) return;
   addMsg("me", q);
+  const qk = agentIn && Masa.agent.quick(S.trip, q); // "מה סגור ומה פתוח?": the agent answers on the device
+  if (qk) { addMsg("bot", qk.say, qk.acts); return; }
   // with the smart guide, the agent gets every message: it decides by itself whether to change the trip or just answer
   // (news of today, like openings and events, still goes to the guide that searches the web)
   if (agentIn && ai.enabled() && navigator.onLine !== false && S.trip.source !== "sample" && (CHANGE_RE.test(q) || !FRESH_Q.test(q.replace(/ל?(היום|מחר|הערב|הלילה|השבוע|כרגע)/g, "")))) {
