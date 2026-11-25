@@ -81,14 +81,14 @@ Change the trip to do what they asked, as a great local guide would:
 Appointments and reminders (the traveler is your assistant's boss, like a personal secretary):
 - A fixed appointment they tell you about (a meeting, a reservation they made, a tour, a show: "יש לי פגישה ביום שני ב-14:00 ב-Rothschild 22", "הזמנתי שולחן ב-20:00 ב-X"): {"do":"appt","day":2,"time":"14:00","minutes":60,"title":"פגישה","where":"Rothschild 22"}. "where" is the address or place name exactly as they wrote it (in its original language), "" if they gave none. "minutes" is how long it takes (default 60; a dinner 90; a show 150). If it falls on a meal of that day, also remove that meal stop.
 - Something to remember ("תזכיר לי לעשות צ'ק-אין מחר ב-10", "להתקשר למלון ביום 2 בבוקר"): {"do":"remind","day":1,"time":"10:00","text":"צ'ק-אין לטיסה"}. "day" is the trip day (0 = before the trip starts, then "date" "YYYY-MM-DD" if they said one). "time" "HH:MM" (09:00 if they said none).
-- A table to book ("תזמין לי מסעדה ב-20:00 ביום 2", "מקום לארוחת ערב רומנטית מחר", "שולחן לארבעה בצהריים"): choose ONE restaurant from PLACES (its p-id) near that day's stops that fits what they asked (cuisine, kosher, budget, mood), and answer {"do":"appt","day":2,"time":"20:00","minutes":90,"title":"ארוחת ערב ב-<its name>","place":"p12"} (no "where"). Also remove that day's dinner (or lunch) stop. In "say" name the place and one reason, and tell them to tap the button to reserve the table.
+- A table to book ("תזמין לי מסעדה ב-20:00 ביום 2", "מקום לארוחת ערב רומנטית מחר", "שולחן לארבעה בצהריים"): choose ONE restaurant from PLACES (its p-id) near that day's stops that fits what they asked (cuisine, kosher, budget, mood), and answer {"do":"appt","day":2,"time":"20:00","minutes":90,"title":"ארוחת ערב ב-<its name>","place":"p12"} (no "where"; add "party":4 when they said how many people: "לארבעה" 4, "לזוג"/"לשנינו" 2). Also remove that day's dinner (or lunch) stop. In "say" name the place and one reason, and tell them the reservation message is ready: they tap the button and send it.
 - Never say you booked or paid anything: you add it to the plan and the calendar; booking is done by them with the button.
 "say": Hebrew, warm, speaking to them in plural (אתם, e.g. "שתיהנו", "ביקשתם"). After a change: at most 2 short sentences, what you changed and why, naming the places. For a question: the answer itself.
 "chips": 3 short Hebrew suggestions (max 30 characters each) for their next change, specific to this trip and city now, each starting with an infinitive verb (e.g. "להוסיף גלידה בג'וליטי", "לקצר את יום 1").
 Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","..."]}`;
   const SHAPE = { type: "OBJECT", properties: {
     say: { type: "STRING" },
-    actions: { type: "ARRAY", items: { type: "OBJECT", properties: { do: { type: "STRING", enum: ["remove", "move", "add", "replace", "appt", "remind"] }, time: { type: "STRING" }, minutes: { type: "NUMBER" }, title: { type: "STRING" }, where: { type: "STRING" }, text: { type: "STRING" }, date: { type: "STRING" }, stop: { type: "STRING" }, place: { type: "STRING" }, day: { type: "INTEGER" } }, required: ["do"] } },
+    actions: { type: "ARRAY", items: { type: "OBJECT", properties: { do: { type: "STRING", enum: ["remove", "move", "add", "replace", "appt", "remind"] }, time: { type: "STRING" }, minutes: { type: "NUMBER" }, title: { type: "STRING" }, where: { type: "STRING" }, text: { type: "STRING" }, date: { type: "STRING" }, party: { type: "NUMBER" }, stop: { type: "STRING" }, place: { type: "STRING" }, day: { type: "INTEGER" } }, required: ["do"] } },
     chips: { type: "ARRAY", items: { type: "STRING" } } }, required: ["say", "actions", "chips"], propertyOrdering: ["say", "actions", "chips"] };
   const short = n => String(n).slice(0, 48);
   function prompt(t, text, cands) {
@@ -155,7 +155,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
           // the table replaces that day's meal at about the same hour
           const meal = at >= 17 * 60 ? "dinner" : at >= 11 * 60 && at < 16 * 60 ? "lunch" : null, mi = meal ? d.stops.findIndex(x => x.meal === meal) : -1;
           if (mi >= 0) { done.push({ c: "-", n: d.stops[mi].name }); d.stops.splice(mi, 1); }
-          book.push(v);
+          book.push({ v, at, di: t.days.indexOf(d), party: Math.max(1, Math.min(20, Math.round(+a.party) || 2)) });
         }
         d.stops.push(s); touched.add(d); done.push({ c: "@", n: `${title} ב-${fmtHM(at)}` }); cal.push({ day: t.days.indexOf(d), at, mins, title, where: a.loc.address || a.loc.name, lat: a.loc.lat, lng: a.loc.lng });
       } else if (k === "remind" && clean(a.text)) {
@@ -201,6 +201,31 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       if (r?.[0]) a.loc = r[0];
       else a.missing = w;
     }
+  }
+
+  /* a reservation request in the restaurant's own language, to send on WhatsApp (the traveler checks it and sends) */
+  const phoneOf = v => { const p = String(v.phone || "").split(/[;,]/)[0].trim(); return p ? (p.startsWith("+") ? "+" : "") + p.replace(/\D/g, "") : ""; };
+  const RESERVE = {
+    he: ["בעברית", "שלום! אשמח להזמין שולחן ל-{n} אנשים ב{date} בשעה {time}.", "על שם {name}.", "תודה!"],
+    en: ["באנגלית", "Hello! I would like to reserve a table for {n} on {date} at {time}.", "The name is {name}.", "Thank you!"],
+    it: ["באיטלקית", "Buongiorno! Vorrei prenotare un tavolo per {n} persone {date} alle {time}.", "A nome di {name}.", "Grazie mille!"],
+    fr: ["בצרפתית", "Bonjour ! Je voudrais réserver une table pour {n} personnes le {date} à {time}.", "Au nom de {name}.", "Merci beaucoup !"],
+    es: ["בספרדית", "¡Hola! Quisiera reservar una mesa para {n} personas el {date} a las {time}.", "A nombre de {name}.", "¡Muchas gracias!"],
+    de: ["בגרמנית", "Guten Tag! Ich möchte gerne einen Tisch für {n} Personen am {date} um {time} Uhr reservieren.", "Auf den Namen {name}.", "Vielen Dank!"],
+    pt: ["בפורטוגזית", "Olá! Gostaria de reservar uma mesa para {n} pessoas para {date}, às {time}.", "Em nome de {name}.", "Muito obrigado!"],
+    nl: ["בהולנדית", "Hallo! Ik wil graag een tafel reserveren voor {n} personen op {date} om {time}.", "Op naam van {name}.", "Hartelijk dank!"],
+    el: ["ביוונית", "Γεια σας! Θα ήθελα να κλείσω ένα τραπέζι για {n} άτομα την {date} στις {time}.", "Στο όνομα {name}.", "Ευχαριστώ πολύ!"]
+  };
+  const LANG_OF = { il: "he", it: "it", sm: "it", va: "it", fr: "fr", be: "fr", lu: "fr", mc: "fr", es: "es", mx: "es", ar: "es", cl: "es", co: "es", pe: "es", cr: "es",
+    de: "de", at: "de", ch: "de", pt: "pt", br: "pt", nl: "nl", gr: "el", cy: "el" };
+  function reserveText(t, b) {
+    const lang = LANG_OF[String(t.cc || "").toLowerCase()] || "en", L = RESERVE[lang];
+    let date = `day ${b.di + 1}`;
+    try { const x = new Date(U.tripDates(t).start); x.setDate(x.getDate() + b.di); if (!isNaN(x)) date = x.toLocaleDateString(lang === "he" ? "he-IL" : lang, { weekday: "long", day: "numeric", month: "long" }); } catch {}
+    const name = (window.Masa?.cloud?.state?.user?.fullName || "").replace(/[<>]/g, "").trim();
+    const n = lang === "en" ? (b.party === 1 ? "1 person" : `${b.party} people`) : String(b.party);
+    const text = [L[1], name ? L[2] : "", L[3]].filter(Boolean).join(" ").replace("{n}", n).replace("{date}", date).replace("{time}", fmtHM(b.at)).replace("{name}", name);
+    return { text, lang, he: L[0] };
   }
 
   /* the appointments and reminders it just added, as a calendar file for the phone */
@@ -275,7 +300,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       // it said it changed something but nothing it gave could be done: say that honestly
       if (!done.length && /(הוספ|הסר|הורד|העבר|החלפ|שינית|עדכנ|הכנסתי|אזכיר)/.test(say)) say = "";
       // a table it chose is not booked yet: never let the answer say otherwise
-      if (book.length && /(הזמנתי|שמרתי שולחן|סגרתי|השולחן מוזמן|הזמנה בוצעה)/.test(say)) say = `שיבצתי את ${book[0].name} במסלול. כדי לשמור שולחן, לוחצים על הכפתור.`;
+      if (book.length && /(הזמנתי|שמרתי שולחן|סגרתי|השולחן מוזמן|הזמנה בוצעה)/.test(say)) say = `שיבצתי את ${book[0].v.name} במסלול. כדי לשמור שולחן, לוחצים על הכפתור.`;
       const freed = done.filter(x => x.c === "x").map(x => x.n);
       if (freed.length) say = `${say} כדי לפנות זמן לפגישה, הורדתי: ${freed.join(", ")}.`.trim();
       if (missing.length) say = `${say ? say + " " : ""}לא מצאתי את הכתובת "${missing[0]}". כתבו כתובת מלאה (רחוב ומספר) ואכניס את זה למסלול.`.trim();
@@ -287,12 +312,17 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       const acts = done.length ? [U.act("לבטל את השינוי", () => undo(U.S.trip))] : [];
       if (calAct) acts.unshift(calAct);
       const open = u => () => window.open(u, "_blank", "noopener");
-      for (const v of book.slice(0, 2)) {
-        const site = U.safeUrl(v.website), tel = v.phone ? `tel:${String(v.phone).replace(/[^\d+]/g, "")}` : "";
-        acts.unshift(site ? U.act(`להזמין שולחן ב-${v.name}`, open(v.website)) : tel ? U.act(`להתקשר ל-${v.name} ולהזמין`, open(tel))
+      for (const b of book.slice(0, 2).reverse()) {
+        const v = b.v, site = U.safeUrl(v.website), num = phoneOf(v), tel = num ? `tel:${num}` : "", msg = reserveText(t, b);
+        const btns = [];
+        // a ready message in the restaurant's language: they check it and press send (Masa never books by itself)
+        if (num.startsWith("+")) btns.push(U.act(`לשלוח ל-${v.name} הודעת הזמנה בוואטסאפ`, open(`https://wa.me/${num.slice(1)}?text=${encodeURIComponent(msg.text)}`)));
+        btns.push(site ? U.act(`להזמין באתר של ${v.name}`, open(v.website)) : tel ? U.act(`להתקשר ל-${v.name} ולהזמין`, open(tel))
           : U.act(`${v.name} בגוגל מפות (שם אפשר להזמין)`, open(U.gmPlace(v))));
+        acts.unshift(...btns);
+        if (num.startsWith("+") && !/הודעת הזמנה|הודעה מוכנה/.test(A.say)) A.say = `${A.say} הכנתי הודעת הזמנה ${msg.he} לוואטסאפ: לוחצים, בודקים ושולחים.`.trim();
       }
-      if (book.length && !A.acts?.length) A.acts = acts.slice(0, 1);
+      if (book.length && !A.acts?.length) A.acts = acts.slice(0, Math.min(2, book.length + 1));
       if (!done.length && say) acts.push(...options(say, t));
       return { say: A.say, acts };
     } catch (e) {
@@ -387,5 +417,5 @@ Traveler is currently viewing: ${t.days[U.S.day].label}, stop ${U.S.stop + 1}: $
     } catch (e) { U.S.chat.pop(); throw e; }
   }
 
-  window.Masa.agent = { install(u) { U = u; }, bar, bind, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+  window.Masa.agent = { install(u) { U = u; }, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();

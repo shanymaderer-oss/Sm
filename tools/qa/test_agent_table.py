@@ -27,7 +27,7 @@ async def main():
                 m = re.search(r"^p(\d+) (.+?) \[restaurant", prm, re.M)
                 seen["rest"] = m.group(2).strip() if m else None
                 if mode["m"] == "table":
-                    j = {"say": f"הזמנתי לכם שולחן ב-{seen['rest']}.", "actions": [{"do": "appt", "day": 1, "time": "20:00", "minutes": 90, "title": f"ארוחת ערב ב-{seen['rest']}", "place": f"p{m.group(1)}"}], "chips": []}
+                    j = {"say": f"הזמנתי לכם שולחן ב-{seen['rest']}.", "actions": [{"do": "appt", "day": 1, "time": "20:00", "minutes": 90, "title": f"ארוחת ערב ב-{seen['rest']}", "place": f"p{m.group(1)}", "party": 4}], "chips": []}
                 else:
                     j = {"say": f"הקולוסיאום נבנה בשנת 80 לספירה. ליד יש את {seen['rest']} ({seen['rest']}) לארוחה טובה.", "actions": [], "chips": []}
                 return await route.fulfill(json={"candidates": [{"content": {"parts": [{"text": json.dumps(j, ensure_ascii=False)}]}}]})
@@ -52,6 +52,16 @@ async def main():
         check("הזמנתי" not in last and "לוחצים על הכפתור" in last, f"it never says it booked ({last[:90]!r})")
         btns = await pg.locator("#log .msg.bot:last-child [data-gact]").all_inner_texts()
         check(any(("להזמין" in x) or ("להתקשר" in x) or ("גוגל מפות" in x) for x in btns), f"a button to reserve it ({btns})")
+        # a ready reservation message in the restaurant's language, for WhatsApp (they check it and press send)
+        msg = await pg.evaluate("Masa.agent._reserve({cc:'it', days:[{stops:[]}]}, {at: 1200, di: 0, party: 4}).text")
+        check("Vorrei prenotare un tavolo per 4 persone" in msg and "20:00" in msg, f"the message is in Italian, for 4, at 20:00 ({msg!r})")
+        en = await pg.evaluate("Masa.agent._reserve({cc:'jp', days:[{stops:[]}]}, {at: 1170, di: 0, party: 2}).text")
+        check("table for 2 people" in en and "19:30" in en, f"English where we have no template ({en!r})")
+        check(await pg.evaluate("Masa.agent._phone({phone:'+39 06 686 4009;+39 333 1'})") == "+39066864009", "the first phone number, digits only")
+        wa = [x for x in btns if "וואטסאפ" in x]
+        has_phone = await pg.evaluate("(() => { const t = JSON.parse(localStorage.getItem('masa-trips'))[0]; const s = t.days[0].stops.find(s => s.at != null); return String(s.phone || '').trim().startsWith('+'); })()")
+        check(bool(wa) == bool(has_phone), f"a WhatsApp button exactly when the place has an international phone ({wa}, phone={has_phone})")
+        if wa: check("הודעת הזמנה" in last, "the answer says the message is ready")
         mode["m"] = "question"
         await pg.fill("#askInput", "מתי נבנה הקולוסיאום?"); await pg.press("#askInput", "Enter"); await pg.wait_for_timeout(2500)
         last = await pg.inner_text("#log .msg.bot:last-child")
