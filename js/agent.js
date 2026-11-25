@@ -99,7 +99,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     const log = (U.S.chatLog || []).slice(-7, -1).filter(m => m.t && m.t !== "חושב…" && m.t !== "מסדרים את המסלול…")
       .map(m => `${m.r === "me" ? "traveler" : "you"}: ${String(m.t).replace(/\s+/g, " ").slice(0, 160)}`).join("\n");
     const now = U.S.me ? `\nTheir live location now: ${(+U.S.me.lat).toFixed(4)},${(+U.S.me.lng).toFixed(4)}.` : "";
-    const head = `City: ${t.cityEn || t.city}, ${t.country || ""}. ${t.days.length} days, moving by ${t.opts?.move || "walk"}.${t.opts?.ages?.length ? ` Travelers' ages: ${t.opts.ages.join(", ")} (baby 0-3, kids 4-12, teens 13-17, young 18-30, adults 30-60, senior 60+): fit every suggestion to them.` : ""} Today on their screen: day ${(U.S.day || 0) + 1}.${now}\nTHE TRIP:\n${days}\n${log ? `EARLIER IN THIS CHAT:\n${log}\n` : ""}THE TRAVELER WROTE (Hebrew): """${String(text).slice(0, 300)}"""\nPLACES:\n`;
+    const head = `City: ${t.cityEn || t.city}, ${t.country || ""}. ${t.days.length} days, moving by ${t.opts?.move || "walk"}.${t.opts?.ages?.length ? ` Travelers' ages: ${t.opts.ages.join(", ")} (baby 0-3, kids 4-12, teens 13-30, adults 30-60, senior 60+): fit every suggestion to them.` : ""} Today on their screen: day ${(U.S.day || 0) + 1}.${now}\nTHE TRIP:\n${days}\n${log ? `EARLIER IN THIS CHAT:\n${log}\n` : ""}THE TRAVELER WROTE (Hebrew): """${String(text).slice(0, 300)}"""\nPLACES:\n`;
     // the places fill what is left of the message (the guide server keeps 6000 characters of it)
     let out = head, n = 0;
     for (let i = 0; i < cands.length; i++) {

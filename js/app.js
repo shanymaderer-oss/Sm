@@ -1075,7 +1075,7 @@ async function build() {
 
 /* ---------- plan ---------- */
 function peakWord(s) { if (!s.busy) return ""; const open = s.busy.filter(v => v > 0); const avg = open.length ? open.reduce((a, b) => a + b, 0) / open.length : 0; return avg > 75 ? "עמוס מאוד" : avg > 55 ? "עמוס בצהריים" : "בדרך כלל רגוע"; }
-const AGES = [["baby", "תינוקות", "0–3"], ["kids", "ילדים", "4–12"], ["teens", "נוער", "13–17"], ["young", "צעירים", "18–30"], ["adults", "מבוגרים", "30–60"], ["senior", "גיל הזהב", "60+"]];
+const AGES = [["baby", "תינוקות", "0–3"], ["kids", "ילדים", "4–12"], ["teens", "נוער וצעירים", "13–30"], ["adults", "מבוגרים", "30–60"], ["senior", "גיל הזהב", "60+"]];
 const MOVES = [["walk", "ברגל", "nav"], ["transit", "תחבורה ציבורית", "bus"], ["car", "רכב", "car"]];
 function legInfo(d, i) {
   const a = d.stops[i - 1], b = d.stops[i];

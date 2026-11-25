@@ -1,5 +1,5 @@
 """Who is traveling (2026-11-25, the owner asked: "שהטיול יהיה אופציה לגילאים ואז משם זה לוקח את הרעיונות"). On the
-wishes screen the traveler picks the ages (babies, kids, teens, young, adults, 60+); the trip is built for them (read
+wishes screen the traveler picks the ages (babies, kids, teens and young, adults, 60+; adults with 60+ together walk less but keep the pace); the trip is built for them (read
 like the same words in the wishes box) and the agent is told the ages, so every later suggestion fits them."""
 import asyncio, os, json
 from playwright.async_api import async_playwright
@@ -27,7 +27,7 @@ async def main():
         check(teens["teens"], f"the wishes reader knows teens ({teens})")
         await pg.fill("#gq", "רומא"); await pg.press("#gq", "Enter"); await pg.wait_for_timeout(500); await Q.to_goals(pg)
         chips = await pg.locator("#ages button").all_inner_texts()
-        check(len(chips) == 6 and "ילדים" in chips[1] and "גיל הזהב" in chips[5], f"six age chips on the wishes screen ({chips})")
+        check(len(chips) == 5 and "ילדים" in chips[1] and "נוער וצעירים" in chips[2] and "גיל הזהב" in chips[4], f"five age chips on the wishes screen ({chips})")
         await pg.click("#ages button[data-v=kids]"); await pg.click("#ages button[data-v=adults]")
         check(await pg.get_attribute("#ages button[data-v=kids]", "aria-pressed") == "true", "a chip turns on")
         await pg.click("#buildBtn"); await pg.wait_for_selector(".triphero", timeout=40000)
@@ -38,6 +38,12 @@ async def main():
         # the same city with the ages read by the planner directly: kids lift parks and zoos
         lab = await pg.evaluate("""(async () => { const t = await Masa.planner.build({query:'רומא', days:2, interests:['history','view','food'], budget:'בינוני', pace:'מאוזן', notes:'', ages:['senior']}, ()=>{}, null); return t.opts.ages; })()""")
         check(lab == ["senior"], f"the planner takes ages directly ({lab})")
+        # 60+ alone: calmer days; 60+ with younger adults: less walking but the same pace
+        n = await pg.evaluate("""(async () => { const go = a => Masa.planner.build({query:'רומא', days:2, interests:['history','view','food'], budget:'בינוני', pace:'מאוזן', notes:'', ages:a}, ()=>{}, null);
+          const s = await go(['senior']), m = await go(['adults','senior']);
+          return { s: s.wish?.labels || [], m: m.wish?.labels || [] }; })()""")
+        check(any("קצב רגוע" in x for x in n["s"]), f"60+ alone: a calm pace ({n['s']})")
+        check(any("פחות הליכה" in x for x in n["m"]) and not any("קצב רגוע" in x for x in n["m"]), f"adults with 60+: less walking, same pace ({n['m']})")
         check(not errs, f"no page errors {errs[:2]}")
         await b.close()
     print("FAILS:", FAILS)
