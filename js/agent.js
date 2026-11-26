@@ -483,8 +483,12 @@ Traveler is currently viewing: ${t.days[U.S.day].label}, stop ${U.S.stop + 1}: $
   }
   const STATUS_Q = /(מה (?:כבר )?(?:סגרנו|סגור|נסגר|הזמנו|הזמנתי|סגרתי)|מה עוד (?:צריך|פתוח|לא סגור|נשאר)|מה נשאר להזמין|מה צריך להזמין|רשימת (?:ה)?הזמנות|סגור ומה)/;
   /* questions the agent answers on the device at once (also without the smart guide or the net) */
+  // "מה הבא?": the next stop and the walk to it are in the trip itself, so the device answers at once (offline too, no server call)
+  const NEXT_Q = /^\s*(מה הבא|מה עכשיו|לאן עכשיו|התחנה הבאה|לאן הולכים)\s*[?!.]*\s*$/;
   function quick(t, text) {
-    if (!t || t.source === "sample" || !STATUS_Q.test(String(text || ""))) return null;
+    if (!t || t.source === "sample") return null;
+    if (NEXT_Q.test(String(text || ""))) { let r = null; try { r = U.localAnswer(text); } catch {} return r ? { say: r.text, acts: r.acts || [] } : null; }
+    if (!STATUS_Q.test(String(text || ""))) return null;
     return status(t);
   }
 
