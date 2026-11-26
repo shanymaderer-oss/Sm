@@ -57,13 +57,16 @@
   const refresh = () => { if (U.S.screen === "plan") U.rerenderKeepScroll(); };
 
   /* ---------- what the guide is told ---------- */
-  function candidates(t) {
+  const FREE_Q = /(חינם|חינמי|בחינם|בלי לשלם|ללא תשלום|\bfree\b)/i;
+  function candidates(t, text) {
     const inTrip = new Set(t.days.flatMap(d => d.stops.map(s => s.name)));
     const pool = (t.places || []).filter(p => U.hasXY(p) && !inTrip.has(p.name) && !U.HOTEL_KINDS.includes(p.kind));
     const best = (f, n) => pool.filter(f).sort((a, b) => (b.q || 0) + (b.fame || 0) / 20 - (a.q || 0) - (a.fame || 0) / 20).slice(0, n);
     const food = ["restaurant", "cafe", "bakery", "dessert", "market", "deli", "bar", "club"];
     const seen = new Set(), out = [];
-    for (const p of [...best(p => !food.includes(p.kind), 45), ...best(p => food.includes(p.kind), 25)]) if (!seen.has(p.name)) { seen.add(p.name); out.push(p); }
+    // they ask for something free: the places with free entry come first, so the guide can choose from them
+    const free = FREE_Q.test(String(text || "")) ? best(p => p.fee === "no" && !food.includes(p.kind), 15) : [];
+    for (const p of [...free, ...best(p => !food.includes(p.kind), 45), ...best(p => food.includes(p.kind), 25)]) if (!seen.has(p.name)) { seen.add(p.name); out.push(p); }
     return out;
   }
   function nearestDay(t, p) {
@@ -85,13 +88,15 @@ Appointments and reminders (the traveler is your assistant's boss, like a person
 - A fixed appointment they tell you about (a meeting, a reservation they made, a tour, a show: "יש לי פגישה ביום שני ב-14:00 ב-Rothschild 22", "הזמנתי שולחן ב-20:00 ב-X"): {"do":"appt","day":2,"time":"14:00","minutes":60,"title":"פגישה","where":"Rothschild 22"}. "where" is the address or place name exactly as they wrote it (in its original language), "" if they gave none. "minutes" is how long it takes (default 60; a dinner 90; a show 150). If it falls on a meal of that day, also remove that meal stop.
 - Something to remember ("תזכיר לי לעשות צ'ק-אין מחר ב-10", "להתקשר למלון ביום 2 בבוקר"): {"do":"remind","day":1,"time":"10:00","text":"צ'ק-אין לטיסה"}. "day" is the trip day (0 = before the trip starts, then "date" "YYYY-MM-DD" if they said one). "time" "HH:MM" (09:00 if they said none).
 - A table to book ("תזמין לי מסעדה ב-20:00 ביום 2", "מקום לארוחת ערב רומנטית מחר", "שולחן לארבעה בצהריים"): choose ONE restaurant from PLACES (its p-id) near that day's stops that fits what they asked (cuisine, kosher, budget, mood), and answer {"do":"appt","day":2,"time":"20:00","minutes":90,"title":"ארוחת ערב ב-<its name>","place":"p12"} (no "where"; add "party":4 when they said how many people: "לארבעה" 4, "לזוג"/"לשנינו" 2). Also remove that day's dinner (or lunch) stop. In "say" name the place and one reason, and tell them the reservation message is ready: they tap the button and send it.
-- Never say you booked or paid anything: you add it to the plan and the calendar; booking is done by them with the button.
+- A free walking tour ("סיור הליכה חינם", "free tour", "סיור עם מדריך בלי לשלם"): {"do":"tour","day":2,"time":"10:00","minutes":150}. Choose the hour yourself if they gave none (10:00 is when most start; 15:00 or 16:00 also common). It has no place in the lists: never name a tour company, a guide or a meeting point. In "say" tell them it is in the day at that hour, that the button opens the registration (no credit card; at the end you tip the guide what you like) and that the meeting point is on the registration page.
+- Free entry at a time ("מקום עם כניסה חינם", "מוזיאון בחינם ביום 3 בבוקר"): choose a place marked "free" in PLACES, near that day, and answer {"do":"appt","day":3,"time":"10:00","minutes":90,"title":"<its name>","place":"p9"}. If none is marked free, say so and do not pretend one is.
+- Never say you booked, registered or paid anything: you add it to the plan and the calendar; booking or registering is done by them with the button.
 "say": Hebrew, warm, speaking to them in plural (אתם, e.g. "שתיהנו", "ביקשתם"). After a change: at most 2 short sentences, what you changed and why, naming the places. For a question: the answer itself.
 "chips": 3 short Hebrew suggestions (max 30 characters each) for their next change, specific to this trip and city now, each starting with an infinitive verb (e.g. "להוסיף גלידה בג'וליטי", "לקצר את יום 1").
 Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","..."]}`;
   const SHAPE = { type: "OBJECT", properties: {
     say: { type: "STRING" },
-    actions: { type: "ARRAY", items: { type: "OBJECT", properties: { do: { type: "STRING", enum: ["remove", "move", "add", "replace", "appt", "remind"] }, time: { type: "STRING" }, minutes: { type: "NUMBER" }, title: { type: "STRING" }, where: { type: "STRING" }, text: { type: "STRING" }, date: { type: "STRING" }, party: { type: "NUMBER" }, stop: { type: "STRING" }, place: { type: "STRING" }, day: { type: "INTEGER" } }, required: ["do"] } },
+    actions: { type: "ARRAY", items: { type: "OBJECT", properties: { do: { type: "STRING", enum: ["remove", "move", "add", "replace", "appt", "remind", "tour"] }, time: { type: "STRING" }, minutes: { type: "NUMBER" }, title: { type: "STRING" }, where: { type: "STRING" }, text: { type: "STRING" }, date: { type: "STRING" }, party: { type: "NUMBER" }, stop: { type: "STRING" }, place: { type: "STRING" }, day: { type: "INTEGER" } }, required: ["do"] } },
     chips: { type: "ARRAY", items: { type: "STRING" } } }, required: ["say", "actions", "chips"], propertyOrdering: ["say", "actions", "chips"] };
   const short = n => String(n).slice(0, 48);
   function prompt(t, text, cands) {
@@ -106,7 +111,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     // the places fill what is left of the message (the guide server keeps 6000 characters of it)
     let out = head, n = 0;
     for (let i = 0; i < cands.length; i++) {
-      const c = cands[i], extra = [c.cuisine, c.kosher ? "kosher" : "", c.up || c.michelin ? "upscale" : c.voyage?.priceClass === "budget" ? "cheap" : ""].filter(Boolean).join(",");
+      const c = cands[i], extra = [c.cuisine, c.kosher ? "kosher" : "", c.up || c.michelin ? "upscale" : c.voyage?.priceClass === "budget" ? "cheap" : "", c.fee === "no" ? "free" : c.fee === "yes" ? "paid" : ""].filter(Boolean).join(",");
       const line = `p${i + 1} ${short(nameOf(c))} [${c.kind}${extra ? ":" + extra : ""}, day ${nearestDay(t, c) + 1}]\n`;
       if (out.length + line.length > 5800) break;
       out += line; n++;
@@ -129,7 +134,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     const dayAt = n => t.days[Math.round(+n) - 1] || null, said = dayFromText(t, text);
     // resolve every id against the trip as the guide saw it, before anything moves
     const plan = (Array.isArray(actions) ? actions : []).slice(0, 6).map(a => ({ a, st: stopAt(a?.stop), p: placeAt(a?.place), to: dayAt(a?.day) || (said ? dayAt(said) : null) || (a?.do === "add" && stopAt(a?.stop) ? stopAt(a.stop).d : null) }));
-    const touched = new Set(), used = new Set(), done = [], cal = [], book = [];
+    const touched = new Set(), used = new Set(), done = [], cal = [], book = [], visit = [];
     for (const { a, st, p, to } of plan) {
       const k = a?.do;
       if (k === "remove" && st && st.s.meal !== "hotel") {
@@ -152,7 +157,14 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
         const title = clean(a.title) || "פגישה";
         const s = { name: title, local: a.loc.local || a.loc.name, lat: a.loc.lat, lng: a.loc.lng, address: a.loc.address || "", kind: "appt", kindHe: "פגישה", at, asked: true,
           _min: mins, duration: U.fmtDur ? U.fmtDur(mins) : `${mins} דקות`, why: `${title}${a.loc.address ? " · " + a.loc.address : ""}`, tip: "שעה קבועה: המסלול מסתדר סביבה." };
-        if (a.venue) {
+        if (a.venue && !FOOD.includes(a.venue.kind)) {
+          // a sight at a fixed hour (free entry, a time slot): the button opens its own site to register, nothing is booked here
+          const v = a.venue, free = v.fee === "no";
+          Object.assign(s, { name: v.name, local: v.local || v.name, osm: v.id, website: v.website, phone: v.phone, hours: v.hours, fee: v.fee || null, kindHe: free ? "כניסה חינם" : "ביקור בשעה",
+            why: free ? "כניסה חינם, בשעה שקבעתם" : "ביקור בשעה שקבעתם", tip: free ? "כניסה חינם. אם יש הרשמה מראש, היא באתר של המקום." : "שעה קבועה. כרטיסים ושעות: באתר של המקום.",
+            booking: { needed: true, url: U.safeUrl(v.website) || null, query: `${v.local || v.name} ${t.cityEn || t.city} ${free ? "free entry booking" : "tickets"}` } });
+          visit.push({ v, s, free });
+        } else if (a.venue) {
           const v = a.venue;
           Object.assign(s, { osm: v.id, cuisine: v.cuisine, phone: v.phone, website: v.website, hours: v.hours, kindHe: "שולחן", reserve: true, tip: "שעה קבועה. להזמנת השולחן: הכפתור בצ'אט או באתר של המסעדה." });
           // the table replaces that day's meal at about the same hour
@@ -161,6 +173,11 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
           book.push({ v, s, at, di: t.days.indexOf(d), party: Math.max(1, Math.min(20, Math.round(+a.party) || 2)) });
         }
         d.stops.push(s); touched.add(d); done.push({ c: "@", n: `${title} ב-${fmtHM(at)}` }); cal.push({ day: t.days.indexOf(d), at, mins, title, where: a.loc.address || a.loc.name, lat: a.loc.lat, lng: a.loc.lng });
+      } else if (k === "tour" && (to || dayAt(1))) {
+        const d = to || dayAt(1), di = t.days.indexOf(d), at = hm(a.time) ?? 600, s = tourStop(t, d, di, at, a.minutes);
+        if (!s) continue;
+        d.stops.push(s); touched.add(d); done.push({ c: "@", n: `${s.name} ב-${fmtHM(at)}` }); visit.push({ s, tour: true, di, at });
+        cal.push({ day: di, at, mins: s._min, title: s.name, where: "נקודת המפגש: בדף ההרשמה" });
       } else if (k === "remind" && clean(a.text)) {
         const at = hm(a.time) ?? 540, di = Math.round(+a.day || 0) - 1;
         const r = { text: clean(a.text), at, day: di, date: /^\d{4}-\d{2}-\d{2}$/.test(a.date || "") ? a.date : null };
@@ -185,7 +202,55 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
         }
       }
     }
-    return { touched: [...touched], done, cal, book };
+    return { touched: [...touched], done, cal, book, visit };
+  }
+  const FOOD = ["restaurant", "cafe", "bakery", "dessert", "market", "deli", "bar", "club"];
+
+  /* a free walking tour (the guide works for tips): a fixed hour in the day. We do not know the tour or its meeting point,
+     so the stop sits at the heart of the city and says honestly that the meeting point is on the registration page. */
+  const dayDate = (t, di, lang = "en-GB") => { try { const x = new Date(U.tripDates(t).start); x.setDate(x.getDate() + di); return isNaN(x) ? "" : x.toLocaleDateString(lang, { day: "numeric", month: "long" }); } catch { return ""; } };
+  function tourStop(t, d, di, at, minutes) {
+    const near = U.hasXY(t) ? t : d.stops.find(s => U.hasXY(s) && !s.meal) || d.stops.find(U.hasXY);
+    if (!near || d.stops.some(s => s.tour)) return null;
+    const mins = Math.max(60, Math.min(240, Math.round(+minutes || 150))), city = t.cityEn || t.city;
+    return { name: "סיור הליכה חינמי", local: `Free walking tour ${city}`, lat: +near.lat, lng: +near.lng, address: "", kind: "appt", kindHe: "סיור חינמי", tour: true, at, asked: true,
+      _min: mins, duration: U.fmtDur ? U.fmtDur(mins) : `${mins} דקות`, why: "סיור הליכה עם מדריך מקומי. בסוף משאירים לו טיפ כמה שרוצים.",
+      tip: "נקודת המפגש המדויקת כתובה בדף ההרשמה. נרשמים בלי כרטיס אשראי.",
+      booking: { needed: true, query: `free walking tour ${city} ${dayDate(t, di)}`.trim() } };
+  }
+  const tourUrl = s => `https://www.google.com/search?q=${encodeURIComponent(s.booking?.query || s.local)}`;
+  /* the buttons for a tour or a visit it put in the day: register on their page (the traveler does it; then we ask if it is closed) */
+  function visitActs(t, visit) {
+    const out = [], open = u => () => window.open(u, "_blank", "noopener");
+    for (const x of visit.slice(0, 2)) {
+      if (x.tour) { out.push(U.act("להירשם לסיור החינמי (בלי כרטיס אשראי)", then(open(tourUrl(x.s)), t, { n: x.s.name, s: x.s }))); continue; }
+      const v = x.v, site = U.safeUrl(v.website);
+      out.push(site ? U.act(`${x.free ? "להירשם / לבדוק שעות" : "כרטיסים"} באתר של ${v.name}`, then(open(site), t, { n: v.name, s: x.s, id: v.id }))
+        : U.act(`${v.name} בגוגל מפות (שעות והרשמה)`, open(U.gmPlace(v))));
+    }
+    return out;
+  }
+  /* "תמצא לנו סיור הליכה חינם ביום 2" also without the smart guide or the net: the device puts it in the day by itself */
+  const TOUR_Q = /(סיור(?:י)?\s+(?:הליכה\s+)?(?:חינם|חינמי|בחינם|בלי לשלם)|free\s+(?:walking\s+)?tour)/i;
+  function timeFromText(q) {
+    const m = String(q || "").match(/(?:בשעה|ב-|ב)\s*(\d{1,2})(?:[:.](\d{2}))?(?!\s*(?:ימים|יום|אנשים|\d))/);
+    if (!m || +m[1] > 23) return null;
+    let h = +m[1]; if (h < 8 && !/בבוקר/.test(q)) h += 12;
+    return `${String(h).padStart(2, "0")}:${m[2] || "00"}`;
+  }
+  function tourNow(t, text) {
+    const day = dayFromText(t, text) || (/מחר/.test(text) ? Math.min(t.days.length, (U.S.day || 0) + 2) : (U.S.day || 0) + 1);
+    if (t.days[day - 1].stops.some(s => s.tour)) return { say: `כבר יש סיור הליכה חינמי ב${t.days[day - 1].label}. אפשר להירשם אליו בכפתור.`, acts: visitActs(t, [{ tour: true, s: t.days[day - 1].stops.find(s => s.tour) }]) };
+    const before = JSON.stringify(t.days);
+    const { touched, done, cal, visit } = apply(t, [{ do: "tour", day, time: timeFromText(text) || "10:00" }], [], text);
+    if (!visit.length) return null;
+    const s = visit[0].s, freed = done.filter(x => x.c === "x").map(x => x.n);
+    const say = `הכנסתי סיור הליכה חינמי ל${t.days[day - 1].label} ב-${fmtHM(s.at)} (כשעתיים וחצי). נרשמים בכפתור, בלי כרטיס אשראי, ובסוף משאירים למדריך טיפ. נקודת המפגש כתובה בדף ההרשמה.${freed.length ? ` כדי לפנות זמן הורדתי: ${freed.join(", ")}.` : ""}`;
+    Object.assign(A, { say, undo: before, closed: false });
+    finish(t, touched); U.toast("המסלול עודכן");
+    const acts = [...visitActs(t, visit), U.act("להוסיף ליומן בטלפון", () => calendar(t, cal)), U.act("לבטל את השינוי", () => undo(U.S.trip))];
+    A.acts = acts.slice(0, 2);
+    return { say, acts, keep: true };
   }
   const hm = x => { const m = /^(\d{1,2})[:.](\d{2})$/.exec(String(x || "").trim()) || /^(\d{1,2})$/.exec(String(x || "").trim()); return m && +m[1] < 24 ? +m[1] * 60 + (+m[2] || 0) : null; };
   const fmtHM = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
@@ -276,7 +341,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     if (A.busy || !text) return null;
     A.closed = false;
     const q = quick(t, text);
-    if (q) { Object.assign(A, { say: q.say, acts: q.acts, undo: null }); refresh(); return q; }
+    if (q) { Object.assign(A, { say: q.say, acts: q.acts, undo: q.keep ? A.undo : null }); refresh(); return q; }
     if (!U.ai.enabled()) {
       // without the smart guide: the guide's answers on the device (remove, replace, a lighter day, food near by…)
       let r = null; try { r = U.localAnswer(text); } catch {}
@@ -287,7 +352,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
     A.busy = true; A.acts = null; refresh();
     U.track("guide_ai", t.slug || t.cityEn, 2);
     try {
-      const cands = candidates(t), snapshot = t.days.map(d => d.stops.map(x => x.name));
+      const cands = candidates(t, text), snapshot = t.days.map(d => d.stops.map(x => x.name));
       // a slow answer (the guide server tries up to three models): after 25 seconds the device answers instead
       const j = await Promise.race([U.ai.structured(SYSTEM, prompt(t, text, cands), SHAPE),
         new Promise((_, no) => setTimeout(() => no(Object.assign(new Error("slow"), { code: "shared_quota" })), 25000))]);
@@ -296,7 +361,7 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       const r = Array.isArray(j) ? { actions: j } : j || {};
       await locate(t, r.actions, cands);
       if (U.S.trip !== t) { A.busy = false; return null; }
-      const { touched, done, cal, book } = apply(t, r.actions, cands, text);
+      const { touched, done, cal, book, visit } = apply(t, r.actions, cands, text);
       const missing = (r.actions || []).filter(a => a?.missing).map(a => a.missing);
       const chips = (Array.isArray(r.chips) ? r.chips : []).map(c => String(c || "").replace(/<[^>]*>/g, "").replace(/[<>"`]/g, "").trim().slice(0, 34)).filter(Boolean).slice(0, 3);
       const idName = id => { const m = /^s(\d+)\.(\d+)$/.exec(id); if (m) return snapshot[+m[1] - 1]?.[+m[2] - 1] || ""; const k = /^p(\d+)$/.exec(id); return k ? cands[+k[1] - 1]?.name || "" : ""; };
@@ -306,8 +371,10 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
       if (!done.length && /(הוספ|הסר|הורד|העבר|החלפ|שינית|עדכנ|הכנסתי|אזכיר)/.test(say)) say = "";
       // a table it chose is not booked yet: never let the answer say otherwise
       if (book.length && /(הזמנתי|שמרתי שולחן|סגרתי|השולחן מוזמן|הזמנה בוצעה)/.test(say)) say = `שיבצתי את ${book[0].v.name} במסלול. כדי לשמור שולחן, לוחצים על הכפתור.`;
+      // a tour or a free entry it put in the day is not registered yet either
+      if (visit.length && /(רשמתי אתכם|נרשמתי|נרשמתם|ההרשמה בוצעה|שמרתי לכם מקום|הזמנתי)/.test(say)) say = `הכנסתי את ${visit[0].tour ? "סיור ההליכה החינמי" : visit[0].v.name} למסלול. כדי להירשם, לוחצים על הכפתור.`;
       const freed = done.filter(x => x.c === "x").map(x => x.n);
-      if (freed.length) say = `${say} כדי לפנות זמן לפגישה, הורדתי: ${freed.join(", ")}.`.trim();
+      if (freed.length) say = `${say} כדי לפנות זמן${visit.some(x => x.tour) ? "" : " לפגישה"}, הורדתי: ${freed.join(", ")}.`.trim();
       if (missing.length) say = `${say ? say + " " : ""}לא מצאתי את הכתובת "${missing[0]}". כתבו כתובת מלאה (רחוב ומספר) ואכניס את זה למסלול.`.trim();
       Object.assign(A, { say: say || (done.length ? describe(done) : "לא מצאתי מה לשנות. נסו לכתוב את זה אחרת, או לשאול על מקום מסוים."), chips: chips.length ? chips : startChips(t).filter(c => c !== text), undo: done.length ? before : null });
       A.busy = false;
@@ -328,11 +395,14 @@ Answer with one JSON object: {"say":"...","actions":[...],"chips":["...","...","
         acts.unshift(...btns);
         if (num.startsWith("+") && !/הודעת הזמנה|הודעה מוכנה/.test(A.say)) A.say = `${A.say} הכנתי הודעת הזמנה ${msg.he} לוואטסאפ: לוחצים, בודקים ושולחים.`.trim();
       }
+      if (visit.length) { const va = visitActs(t, visit); acts.unshift(...va); A.acts = [...va, ...(A.acts || [])].slice(0, 2); }
       if (book.length && !A.acts?.length) A.acts = acts.slice(0, Math.min(2, book.length + 1));
       if (!done.length && say) acts.push(...options(say, t));
       return { say: A.say, acts };
     } catch (e) {
       // the smart guide is busy or offline: the guide's answers on the device still work for the common changes
+      A.busy = false;
+      if (TOUR_Q.test(String(text)) && U.S.trip === t) { const k = tourNow(t, String(text)); if (k) return k; }
       let r = null; try { r = U.localAnswer(text); } catch {}
       Object.assign(A, { busy: false, say: r ? r.text : U.ai.errText(e.code), acts: r?.acts || null, undo: null }); refresh();
       return { say: A.say, acts: A.acts };
@@ -487,10 +557,11 @@ Traveler is currently viewing: ${t.days[U.S.day].label}, stop ${U.S.stop + 1}: $
   const NEXT_Q = /^\s*(מה הבא|מה עכשיו|לאן עכשיו|התחנה הבאה|לאן הולכים)\s*[?!.]*\s*$/;
   function quick(t, text) {
     if (!t || t.source === "sample") return null;
+    if (TOUR_Q.test(String(text || "")) && (!U.ai.enabled() || navigator.onLine === false)) return tourNow(t, String(text));
     if (NEXT_Q.test(String(text || ""))) { let r = null; try { r = U.localAnswer(text); } catch {} return r ? { say: r.text, acts: r.acts || [] } : null; }
     if (!STATUS_Q.test(String(text || ""))) return null;
     return status(t);
   }
 
-  window.Masa.agent = { install(u) { U = u; }, quick, status, _mark: mark, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+  window.Masa.agent = { install(u) { U = u; }, quick, status, _mark: mark, _tourNow: tourNow, _time: timeFromText, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();
