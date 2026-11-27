@@ -587,7 +587,7 @@ Masa.planner = (() => {
     return walk;
   }
   /* an appointment the traveler set ("פגישה ב-14:00"): it keeps its hour, and sits in the day where that hour falls */
-  const minOf = x => { const m = /^(\d{1,2}):(\d{2})$/.exec(x || ""); return m ? +m[1] * 60 + +m[2] : null; };
+  const minOf = x => { const m = /^(\d{1,2}):(\d{2})$/.exec(x || ""); return m ? (m[1] < 5 ? 1440 : 0) + m[1] * 60 + +m[2] : null; }; // before 05:00 = after midnight
   function placeAppts(day) {
     const ap = day.stops.filter(s => s.at != null);
     if (!ap.length) return;
@@ -600,13 +600,15 @@ Masa.planner = (() => {
     }
   }
   function assignTimes(day) { placeAppts(day); timesOnly(day); }
-  /* older travelers: dinner by 19:45, so the evening ends early; the day's last sights go (never one they asked for) */
-  function earlyEvening(d) {
-    for (let n = 0; n < 6; n++) {
+  /* a day that runs too late: dinner by 22:00 (older travelers by 19:45), so the last sights before dinner go
+     (never one they asked for). Times after midnight ("01:15") count as late, not early. */
+  function earlyEvening(d, lim) {
+    for (let n = 0; n < 8; n++) {
       const din = d.stops.find(s => s.meal === "dinner"), acts = d.stops.filter(s => !s.meal);
-      if (!din || minOf(din.time) <= 19.75 * 60 || acts.length <= 2) break;
-      const k = d.stops.lastIndexOf([...acts].reverse().find(s => !s.asked && s.at == null));
-      if (k < 0) break;
+      if (!din || minOf(din.time) <= lim || acts.length <= 2) break;
+      let k = d.stops.indexOf(din), s;
+      while ((s = d.stops[--k]) && (s.meal || s.asked || s.at != null || s.sunset));
+      if (!s) break;
       d.stops.splice(k, 1); assignTimes(d);
     }
   }
@@ -640,7 +642,7 @@ Masa.planner = (() => {
       d.stops = d.stops.filter(s => s.meal || s === walk);
       if (walk) { walk._min = Math.min(walk._min || 60, 30); walk.tip = "יום הטיסה: הליכה קצרה בבוקר, רק אם יש זמן לפני הנסיעה לשדה."; }
     }
-    const end = s => { const [h, m] = s.time.split(":"); return (+h < 5 ? 1440 : 0) + +h * 60 + +m + (s._min || 60); };
+    const end = s => minOf(s.time) + (s._min || 60);
     for (let n = 0; n < 40; n++) {
       assignTimes(d);
       if (d.stops.length <= 1 || end(d.stops[d.stops.length - 1]) <= to) break;
@@ -1601,7 +1603,7 @@ Masa.planner = (() => {
         if (satDay(i)) { d.shabbat = true; d.theme = "שבת · " + d.theme; }
         optimizeDay(d);
         assignTimes(d);
-        if (d.senior) earlyEvening(d);
+        earlyEvening(d, d.senior ? 1185 : 1320);
         if (i === 0 && wish?.arrive != null) flightTrim(d, wish.arrive + 90, 23 * 60);
         if (i === dayPlans.length - 1 && wish?.depart != null) flightTrim(d, 0, wish.depart - 150);
         return d;

@@ -218,6 +218,12 @@ async def main():
     ok=len(t["days"])==3 and 1<=len(d1)<=5 and min(hm(s["time"]) for s in d1 if s.get("meal")!="hotel")>=17*60+30 and 1<=len(d3)<=2 and max(hm(s["time"]) for s in d3)<=7*60+30 and any("נחיתה ב-16:00" in l for l in t["wish"]["labels"])
     print("FLIGHT","ok " if ok else "BAD",[(s["time"],s.get("meal") or "") for s in d1],[(s["time"],s.get("meal") or "") for s in d3])
     if not ok: FAILS.append("flight times")
+    # a day never runs past 22:00 to dinner (Paris day 2 had dinner at 01:15, Barcelona at 00:00); after midnight counts as late
+    for city,txt in [("פריז","אוכל צמחוני, שוקי פשפשים ומונמארטר"),("ברצלונה","גאודי, חוף ים וטאפאס, בלי מוזיאונים")]:
+      t=await pg.evaluate(build,[city,txt,3,["food","history","view"]])
+      late=[(s["time"],s["name"]) for d in t["days"] for s in d["stops"] if s.get("meal")=="dinner" and (hm(s["time"])<5*60 or hm(s["time"])>22*60)]
+      ok=not late; print("LATE","ok " if ok else "BAD",city,late)
+      if not ok: FAILS.append("late dinner "+city)
     plain=await pg.evaluate(build,["בודפשט","",2,["history"]]); cold=await pg.evaluate(build,["בודפשט","קר מאוד, כמה שיותר בפנים",2,["history"]])
     out=lambda t:sum(s.get("kind") in ("park","view","bridge","square","beach","street") for s in stops(t))
     ok=out(cold)<out(plain); print("COLD","ok " if ok else "BAD",out(plain),"->",out(cold))
