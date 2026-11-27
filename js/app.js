@@ -622,13 +622,14 @@ let journeyLoad = null;
 const loadJourney = () => journeyLoad || (journeyLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/journey.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
-/* the agent on the route lives in js/agent.js, loaded when a trip is open */
+/* the agent on the route lives in js/agent.js, loaded when a trip is open; it also puts "לשאול את מסע" and the
+   microphone on the other screens of the trip */
 let agentLoad = null, agentIn = false;
 const loadAgent = () => agentLoad || (agentLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/agent.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
 const useAgent = () => loadAgent().then(() => {
-  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates, addPlace, gmPlace, partnerUrl, safeUrl, FRESH_Q }); agentIn = true; }
+  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates, addPlace, gmPlace, partnerUrl, safeUrl, FRESH_Q, go, ask, harden }); agentIn = true; }
   return agentIn ? Masa.agent : null;
 });
 /* the agent's bar sits at the bottom of the route, always in reach */

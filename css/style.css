@@ -983,6 +983,13 @@ a.btn{text-decoration:none}
 .agentbar .agentform:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 25%,transparent)}
 .agentbar .agentform .btn{width:38px;height:38px;min-height:0;padding:0;display:grid;place-items:center;flex:none;border-radius:50%}
 .agentbar .agentform .btn svg{width:17px;height:17px}
+.micbtn{flex:none;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:none;color:var(--muted);cursor:pointer;padding:0}
+.micbtn svg{width:20px;height:20px}
+.micbtn:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
+.micbtn.on{background:var(--coral);color:#fff}
+@media (prefers-reduced-motion:no-preference){.micbtn.on{animation:micp 1.2s ease-in-out infinite}}
+@keyframes micp{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--coral) 30%,transparent)}}
+.askbar .agentchips{margin-bottom:6px}
 .agentsay .linkbtn{white-space:nowrap;font-size:.86rem;gap:4px}
 .agentsay .linkbtn svg{width:14px;height:14px;flex:none}
 .linkbtn.quickbuild{display:flex;gap:6px;align-items:center;justify-content:center;margin:10px auto 0;color:var(--primary);font-weight:600}

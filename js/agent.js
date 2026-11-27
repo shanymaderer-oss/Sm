@@ -41,11 +41,80 @@
       : A.say && !A.closed ? `<div class="agentsay" aria-live="polite"><button type="button" class="agentx" id="agentX" aria-label="סגירה">×</button>${U.richText(A.say)}${A.acts?.length ? `<div class="msgacts">${A.acts.map(a => `<button type="button" class="chipbtn" data-gact="${a.id}">${esc(a.label)}</button>`).join("")}</div>` : ""}${A.undo ? `<button type="button" class="linkbtn" id="agentUndo">${ic("back")}לבטל את השינוי</button>` : ""}</div>` : "";
     return `<div class="agentbar" id="agent">${say}
       <div class="agentchips" aria-label="הצעות">${chips.map((c, i) => `<button type="button" class="chipbtn" data-ach="${i}">${esc(c)}</button>`).join("")}</div>
-      <form class="agentform" id="agentForm"><span class="sp">${ic("sparkle")}</span><input id="agentIn" type="text" maxlength="300" autocomplete="off" placeholder="מה לשנות? כתבו לסוכן…" aria-label="מה לשנות במסלול? כתבו לסוכן"><button class="btn small" type="submit" aria-label="שליחה" ${A.busy ? "disabled" : ""}>${ic("nav")}</button></form>
+      <form class="agentform" id="agentForm"><span class="sp">${ic("sparkle")}</span><input id="agentIn" type="text" maxlength="300" autocomplete="off" placeholder="מה לשנות? כתבו לסוכן…" aria-label="מה לשנות במסלול? כתבו לסוכן">${micBtn("agentMic")}<button class="btn small" type="submit" aria-label="שליחה" ${A.busy ? "disabled" : ""}>${ic("nav")}</button></form>
     </div>`;
   }
+  /* speaking instead of typing: the browser's own dictation (Hebrew), when it has one. What was heard shows in the box,
+     and is sent when they stop talking; nothing is recorded or kept by Masa */
+  const SR = () => window.SpeechRecognition || window.webkitSpeechRecognition;
+  const MIC = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>`;
+  const micBtn = id => SR() ? `<button type="button" class="micbtn" id="${id}" aria-label="לדבר במקום לכתוב" aria-pressed="false">${MIC}</button>` : "";
+  function mic(btn, input, send) {
+    if (!btn || !input || !SR()) return;
+    let rec = null;
+    const off = () => { btn.classList.remove("on"); btn.setAttribute("aria-pressed", "false"); btn.setAttribute("aria-label", "לדבר במקום לכתוב"); };
+    btn.onclick = () => {
+      if (rec) { try { rec.stop(); } catch {} return; }
+      try { rec = new (SR())(); } catch { rec = null; return; }
+      let said = "", bad = false;
+      rec.lang = "he-IL"; rec.interimResults = true; rec.maxAlternatives = 1;
+      rec.onresult = e => { said = Array.from(e.results).map(r => r[0]?.transcript || "").join(" ").replace(/\s+/g, " ").trim(); input.value = said; };
+      rec.onerror = e => { bad = true; const c = e?.error; if (c === "not-allowed" || c === "service-not-allowed") U.toast("כדי לדבר צריך לאשר לדפדפן להשתמש במיקרופון"); else if (c !== "aborted") U.toast("לא שמענו. נסו שוב, או כתבו"); };
+      rec.onend = () => { rec = null; off(); if (said && !bad) { input.value = ""; send(said.slice(0, 300)); } else input.focus(); };
+      btn.classList.add("on"); btn.setAttribute("aria-pressed", "true"); btn.setAttribute("aria-label", "מקשיבים… לחצו כדי לעצור");
+      try { rec.start(); } catch { rec = null; off(); }
+    };
+  }
+
+  /* "לשאול את מסע" at the bottom of the other screens of the trip (the place, discover, before the flight): a question
+     or a change, said or written, opens the agent's conversation with it. On a place, the question is about that place */
+  const ASK = {
+    place: ["איפה לאכול קרוב לכאן?", "מה עוד יש קרוב?"],
+    discover: ["מה הכי שווה שאין לנו במסלול?", "מה עושים בערב?"],
+    before: ["מה לארוז?", "איך מגיעים מהשדה לעיר?"]
+  };
+  const stopHere = () => U.S.trip?.days[U.S.day]?.stops[U.S.stop];
+  function askBar(t, where) {
+    if (!t || t.source === "sample") return "";
+    const { esc, ic } = U, s = where === "place" ? stopHere() : null;
+    const ph = s ? `לשאול את מסע על ${s.name}…` : where === "before" ? "לשאול את מסע: טיסות, מלון, מה לארוז…" : "לשאול את מסע: מה כדאי, איפה לאכול…";
+    return `<div class="agentbar askbar" id="askBar">
+      <div class="agentchips" aria-label="שאלות לדוגמה">${(ASK[where] || []).map((c, i) => `<button type="button" class="chipbtn" data-ask="${i}">${esc(c)}</button>`).join("")}</div>
+      <form class="agentform" id="askBarForm"><span class="sp">${ic("sparkle")}</span><input id="askBarIn" type="text" maxlength="300" autocomplete="off" placeholder="${esc(ph.length > 60 ? ph.slice(0, 58) + "…" : ph)}" aria-label="${esc(s ? `שאלה או בקשה לסוכן על ${s.name}` : "שאלה או בקשה לסוכן")}">${micBtn("askBarMic")}<button class="btn small" type="submit" aria-label="שליחה לסוכן">${ic("nav")}</button></form>
+    </div>`;
+  }
+  function bindAskBar(t, where) {
+    const el = U.$("askBar"); if (!el) return;
+    const send = q => {
+      q = String(q || "").trim(); if (!q) return;
+      const s = where === "place" ? stopHere() : null;
+      // the agent sees which place they mean, unless they named it
+      if (s && !q.includes(s.name) && !(s._he && q.includes(s._he))) q = `על ${s.name}: ${q}`;
+      U.S.prev = U.S.screen; U.go("guide"); U.ask(q);
+    };
+    el.querySelectorAll("[data-ask]").forEach(b => b.onclick = () => send(ASK[where][+b.dataset.ask]));
+    U.$("askBarForm").onsubmit = e => { e.preventDefault(); send(U.$("askBarIn").value); };
+    mic(U.$("askBarMic"), U.$("askBarIn"), send);
+  }
+
+  // the bar is put in its place once this file is loaded, if they are still on that screen of the same trip
+  function askHere(n) {
+    const t = U.S.trip, slot = U.$("composerSlot");
+    if (!t || t.source === "sample" || U.S.screen !== n || !slot) return;
+    slot.innerHTML = askBar(t, n); U.harden(slot); bindAskBar(t, n);
+  }
+  // the agent's own screen: a microphone next to the send button
+  function guideMic() {
+    const go = U.$("askBtn"); if (!go || U.$("askMic") || !SR()) return;
+    go.insertAdjacentHTML("beforebegin", micBtn("askMic"));
+    mic(U.$("askMic"), U.$("askInput"), U.ask);
+  }
+  // after every screen is drawn (the app replaces the screen's content): the bar or the microphone, where they belong
+  const here = () => { const n = U.S.screen; if (ASK[n]) { if (!U.$("askBar")) askHere(n); } else if (n === "guide") guideMic(); };
+
   function bind(t) {
     const el = U.$("agent"); if (!el) return;
+    mic(U.$("agentMic"), U.$("agentIn"), v => ask(U.S.trip, v));
     const chips = chipsOf(t);
     el.querySelectorAll("[data-ach]").forEach(b => b.onclick = () => ask(U.S.trip, chips[+b.dataset.ach]));
     U.$("agentForm").onsubmit = e => { e.preventDefault(); const v = U.$("agentIn").value.trim(); if (v) ask(U.S.trip, v); };
@@ -563,5 +632,5 @@ Traveler is currently viewing: ${t.days[U.S.day].label}, stop ${U.S.stop + 1}: $
     return status(t);
   }
 
-  window.Masa.agent = { install(u) { U = u; }, quick, status, _mark: mark, _tourNow: tourNow, _time: timeFromText, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+  window.Masa.agent = { install(u) { U = u; const sc = u.$("screen"); if (sc) new MutationObserver(here).observe(sc, { childList: true }); here(); }, quick, status, _mark: mark, _tourNow: tourNow, _time: timeFromText, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, askBar, bindAskBar, askHere, guideMic, mic, micBtn, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();
