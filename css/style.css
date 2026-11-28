@@ -1079,3 +1079,10 @@ ol.steps li::marker{font-weight:700;color:var(--coral)}
 .btn.wa{background:#167a3f;color:#fff}
 .btn.wa svg{width:16px;height:16px}
 .ages{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.ages .chip small{color:var(--muted);font-weight:400;margin-inline-start:2px}.ages .chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}.ages .chip[aria-pressed="true"] small{color:inherit;opacity:.8}
+/* the agent's own tip under the "now" card: the next place closes soon, or a free hour */
+.nowtip{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;margin:-6px 0 14px;padding:10px 12px;border-radius:14px;background:var(--surface-2);font-size:.9rem;line-height:1.5}
+.nowtip .sp{color:var(--primary);padding-top:2px}
+.nowtip .sp svg{width:16px;height:16px}
+.nowtip p{margin:0}
+.nowtip .msgacts{grid-column:1/-1;margin-top:2px}
+.nowtip a.chipbtn{text-decoration:none;display:inline-flex;align-items:center}

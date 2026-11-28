@@ -110,7 +110,7 @@
     mic(U.$("askMic"), U.$("askInput"), U.ask);
   }
   // after every screen is drawn (the app replaces the screen's content): the bar or the microphone, where they belong
-  const here = () => { const n = U.S.screen; if (ASK[n]) { if (!U.$("askBar")) askHere(n); } else if (n === "guide") guideMic(); };
+  const here = () => { const n = U.S.screen; if (ASK[n]) { if (!U.$("askBar")) askHere(n); } else if (n === "guide") guideMic(); else if (n === "plan") showTip(); };
 
   function bind(t) {
     const el = U.$("agent"); if (!el) return;
@@ -627,10 +627,112 @@ Traveler is currently viewing: ${t.days[U.S.day].label}, stop ${U.S.stop + 1}: $
   function quick(t, text) {
     if (!t || t.source === "sample") return null;
     if (TOUR_Q.test(String(text || "")) && (!U.ai.enabled() || navigator.onLine === false)) return tourNow(t, String(text));
-    if (NEXT_Q.test(String(text || ""))) { let r = null; try { r = U.localAnswer(text); } catch {} return r ? { say: r.text, acts: r.acts || [] } : null; }
+    if (NEXT_Q.test(String(text || ""))) {
+      let r = null; try { r = U.localAnswer(text); } catch {}
+      const tip = nowTip(t), ta = tip ? tip.acts.map(a => U.act(a.label, a.run || (() => window.open(a.url, "_blank", "noopener")))) : [];
+      return r || tip ? { say: [r?.text, tip?.say].filter(Boolean).join("\n"), acts: [...ta, ...(r?.acts || [])].slice(0, 4) } : null;
+    }
     if (!STATUS_Q.test(String(text || ""))) return null;
     return status(t);
   }
 
-  window.Masa.agent = { install(u) { U = u; const sc = u.$("screen"); if (sc) new MutationObserver(here).observe(sc, { childList: true }); here(); }, quick, status, _mark: mark, _tourNow: tourNow, _time: timeFromText, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, askBar, bindAskBar, askHere, guideMic, mic, micBtn, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
+  /* ---------- "מה עכשיו?" by itself: during the trip, under the "now" card ----------
+     When the trip is open on a day of the trip, the agent looks at the next stop and the clock and says one thing that
+     helps, with the buttons to do it: the next place closes soon (go now, or move it to tomorrow), or there is a free
+     hour before the next stop (a place of the city near by that is open now, put in the day at once). Places only from
+     the city's lists; one tap undoes; nothing is booked. */
+  const NOW_KINDS = ["cafe", "dessert", "bakery", "market", "deli", "view", "park", "square", "church", "bridge", "gallery", "sight", "attraction", "museum", "street"];
+  const tipOff = new Set();
+  // the minute (city time) the place closes, within the next hours; null if it stays open or its hours are unknown
+  function closesAt(hours, now, N, upto = 240) {
+    if (!hours || U.planner.isOpen(hours, now) !== true) return null;
+    for (let k = 10; k <= upto; k += 10) if (U.planner.isOpen(hours, new Date(now.getTime() + k * 6e4)) === false) return N + k - 10;
+    return null;
+  }
+  const cut = n => (n = String(n || "")).length > 22 ? n.slice(0, 21) + "…" : n;
+  const about = m => m < 60 ? `כ-${m} דק׳` : `כ${m < 120 ? "שעה" : m < 180 ? "שעתיים" : `-${Math.floor(m / 60)} שעות`}${m % 60 >= 10 ? ` ו-${m % 60} דק׳` : ""}`;
+  const to_ = n => /^[\u0590-\u05ff]/.test(n) ? "ל" : "ל-";
+  const walkMin = (a, b) => Math.max(1, Math.round(U.km(a, b) * 1.25 / 4.8 * 60));
+  function nowTip(t = U.S.trip) {
+    if (!t || t.source === "sample" || !U.nowInfo) return null;
+    let x = null; try { x = U.nowInfo(t); } catch {}
+    if (!x || x.end || !x.s) return null;
+    const s = x.s, d = t.days[x.di], from = U.S.me && U.km(U.S.me, s) < 50 ? U.S.me : d.stops.slice(0, x.i).reverse().find(U.hasXY) || s;
+    const go = U.hasXY(s) ? `https://www.google.com/maps/dir/?api=1&destination=${+s.lat},${+s.lng}&travelmode=walking` : "";
+    // 1. the next place closes soon
+    const shut = s.meal || s.at != null || s.booked ? null : closesAt(s.hours, x.now, x.N);
+    if (shut != null && !tipOff.has("c" + placeKeyOf(s))) {
+      const stay = shut - x.at, need = Math.min(s._min || 60, 45), next = t.days[x.di + 1];
+      if (stay < need) return { key: "c" + placeKeyOf(s), s, kind: "close",
+        say: `${s.name} נסגר ב-${fmtHM(shut)}, ולא יישאר לכם מספיק זמן שם${stay > 0 ? ` (רק ${stay} דק׳)` : ""}.${next ? ` כדאי להעביר אותו ל${next.label} ולהמשיך הלאה.` : " כדאי לדלג עליו היום."}`,
+        acts: next ? [{ label: `להעביר את ${cut(s.name)} ל${next.label}`, run: () => moveOn(t, x.di, s) }] : [] };
+      if (shut - x.N <= 120) return { key: "c" + placeKeyOf(s), s, kind: "close",
+        say: `${s.name} נסגר ב-${fmtHM(shut)}. אם יוצאים עכשיו, יהיו לכם שם ${about(stay)}.`,
+        acts: go ? [{ label: `ניווט ${to_(s.name)}${cut(s.name)} עכשיו`, url: go }] : [] };
+    }
+    // 2. a free hour before the next stop: a place near by, open now, that fits in it
+    const at = hm(s.time), gap = at == null ? 0 : at - (x.N + (x.walk || 0));
+    if (gap >= 50 && !tipOff.has("g" + x.di + s.time)) {
+      const inTrip = new Set(t.days.flatMap(e => e.stops.flatMap(e2 => [e2.name, e2.osm].filter(Boolean))));
+      const fits = (t.places || []).filter(p => U.hasXY(p) && !inTrip.has(p.name) && !inTrip.has(p.id) && NOW_KINDS.includes(p.kind) && !U.HOTEL_KINDS.includes(p.kind))
+        .map(p => ({ p, w: walkMin(from, p), v: Math.min(U.planner.KIND[p.kind]?.min || 45, 60) }))
+        .filter(o => o.w <= 15 && o.w + o.v + walkMin(o.p, s) <= gap && (U.planner.isOpen(o.p.hours, x.now) || (U.planner.isOpen(o.p.hours, x.now) == null && x.N >= 540 && x.N <= 1140)) && U.planner.isOpen(o.p.hours, new Date(x.now.getTime() + (o.w + o.v) * 6e4)) !== false)
+        .sort((a, b) => (b.p.q || 0) + (b.p.fame || 0) / 20 - b.w / 10 - ((a.p.q || 0) + (a.p.fame || 0) / 20 - a.w / 10));
+      const o = fits[0];
+      if (o) {
+        const kind = U.planner.KIND[o.p.kind]?.he || "", open = U.planner.isOpen(o.p.hours, x.now) === true;
+        return { key: "g" + x.di + s.time, s, kind: "gap", p: o.p,
+          say: `יש לכם ${about(gap)} פנויות עד ${s.name} (${s.time}). קרוב אליכם: ${o.p.name}${kind ? ` (${kind})` : ""}, ${o.w} דק׳ הליכה${open ? ", פתוח עכשיו" : ""}.`,
+          acts: [{ label: `להכניס את ${cut(o.p.name)} עכשיו`, run: () => fillGap(t, x, o) }, { label: `ניווט ${to_(o.p.name)}${cut(o.p.name)}`, url: `https://www.google.com/maps/dir/?api=1&destination=${+o.p.lat},${+o.p.lng}&travelmode=walking` }] };
+      }
+    }
+    return null;
+  }
+  const placeKeyOf = s => s.osm || s.name;
+  // the changes the tip makes: the trip changes at once, the bar says what was done, one tap undoes it
+  function didNow(t, before, say, touched) {
+    Object.assign(A, { say, undo: before, closed: false, acts: null });
+    U.S.chatLog?.push({ r: "bot", t: say, acts: [] });
+    finish(t, touched); U.toast("המסלול עודכן");
+  }
+  function moveOn(t, di, s) {
+    const d = t.days[di], to = t.days[di + 1], i = d.stops.indexOf(s);
+    if (!to || i < 0) return;
+    const before = JSON.stringify(t.days);
+    d.stops.splice(i, 1); delete s.time;
+    if (s.meal) { delete s.meal; delete s.mealHe; }
+    to.stops.push(s); to.manualOrder = false;
+    U.planner.optimizeDay(to); U.planner.assignTimes(d); U.planner.assignTimes(to); d.route = d.legs = to.route = to.legs = null;
+    didNow(t, before, `העברתי את ${s.name} ל${to.label}, כי היום הוא נסגר לפני שתספיקו. ממשיכים לתחנה הבאה.`, [d, to]);
+  }
+  function fillGap(t, x, o) {
+    const d = t.days[x.di], i = d.stops.indexOf(x.s);
+    if (i < 0 || d.stops.some(e => e.name === o.p.name)) return;
+    const before = JSON.stringify(t.days), p = o.p, at = Math.ceil((x.N + o.w) / 5) * 5;
+    const st = Object.assign(U.stopFrom({ ...p, why: p.vtext || U.planner.KIND[p.kind]?.he || "" }), { osm: p.id, kind: p.kind, kindHe: U.planner.KIND[p.kind]?.he, cuisine: p.cuisine, priceClass: p.priceClass, signals: p.signals || [], hours: p.hours, phone: p.phone, address: p.address, website: p.website, _he: p._he || null, asked: true, at, _min: o.v });
+    // only this stop gets its hour; the rest of the day keeps the times they see (the later stops still fit)
+    d.stops.splice(i, 0, st); st.time = fmtHM(at); d.route = d.legs = null;
+    didNow(t, before, `הכנסתי את ${p.name} עכשיו, לפני ${x.s.name}. ${o.w} דק׳ הליכה, וכ-${o.v} דק׳ שם.`, [d]);
+  }
+  function tipHtml(tip) {
+    const { esc, ic } = U;
+    return `<section class="nowtip" id="nowTip" aria-live="polite"><span class="sp">${ic("sparkle")}</span><p>${esc(tip.say)}</p>
+      <div class="msgacts">${tip.acts.map((a, k) => a.url ? `<a class="chipbtn" href="${esc(U.safeUrl(a.url) || "#")}" target="_blank" rel="noopener" data-tip="${k}">${esc(a.label)}</a>` : `<button type="button" class="chipbtn" data-tip="${k}">${esc(a.label)}</button>`).join("")}
+      <button type="button" class="chipbtn soft" id="nowTipX" aria-label="לא עכשיו, להסתיר את ההצעה">לא עכשיו</button></div></section>`;
+  }
+  // put the tip under the "now" card (again after the card is redrawn, every minute)
+  function showTip() {
+    const old = U.$("nowTip"), t = U.S.trip, card = U.$("nowCard");
+    if (U.S.screen !== "plan" || !card) { old?.remove(); return; }
+    const tip = nowTip(t);
+    if (!tip) { old?.remove(); return; }
+    if (old && old.dataset.key === tip.key && old.previousElementSibling === card) return;
+    old?.remove();
+    card.insertAdjacentHTML("afterend", tipHtml(tip));
+    const el = U.$("nowTip"); el.dataset.key = tip.key; U.harden(el);
+    el.querySelectorAll("[data-tip]").forEach(b => { const a = tip.acts[+b.dataset.tip]; if (a.run) b.onclick = () => { el.remove(); a.run(); }; });
+    U.$("nowTipX").onclick = () => { tipOff.add(tip.key); el.remove(); };
+  }
+
+  window.Masa.agent = { install(u) { U = u; const sc = u.$("screen"); if (sc) new MutationObserver(here).observe(sc, { childList: true }); here(); setInterval(() => U.S.screen === "plan" && showTip(), 6e4); document.addEventListener("visibilitychange", () => { if (!document.hidden && U.S.screen === "plan") setTimeout(showTip, 50); }); }, quick, status, nowTip, showTip, _mark: mark, _tourNow: tourNow, _time: timeFromText, _reserve: (t, b) => reserveText(t, b), _phone: v => phoneOf(v), bar, bind, askBar, bindAskBar, askHere, guideMic, mic, micBtn, run, undo, options, chat, kml, chips: chipsOf, _state: A, _apply: apply, _candidates: candidates, _prompt: prompt, _system: SYSTEM };
 })();

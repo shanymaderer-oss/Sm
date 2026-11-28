@@ -629,7 +629,7 @@ const loadAgent = () => agentLoad || (agentLoad = new Promise(res => {
   const el = document.createElement("script"); el.src = "js/min/agent.js"; el.onload = el.onerror = () => res(); document.head.append(el);
 }));
 const useAgent = () => loadAgent().then(() => {
-  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates, addPlace, gmPlace, partnerUrl, safeUrl, FRESH_Q, go, ask, harden }); agentIn = true; }
+  if (Masa.agent && !agentIn) { Masa.agent.install({ S, $, esc, ic, ai, km, hasXY, planner, track, toast, richText, renderMap, rerenderKeepScroll, saveEdit, stopFrom, replaceAt, localAnswer, bindGuideActs, act, HOTEL_KINDS, svc, tripDates, addPlace, gmPlace, partnerUrl, safeUrl, FRESH_Q, go, ask, harden, nowInfo }); agentIn = true; }
   return agentIn ? Masa.agent : null;
 });
 /* the agent's bar sits at the bottom of the route, always in reach */
@@ -1856,7 +1856,7 @@ async function ask(q) {
   }
   // the trip itself answers first: instant, free and works offline
   let local = null;
-  try { local = localAnswer(q); } catch (e) { console.warn("[masa] guide", e); }
+  try { local = localAnswer(q); } catch (e) { console.warn(e); }
   if (local) { addMsg("bot", local.text, local.acts); return; }
   if (!ai.enabled()) {
     addMsg("bot", "על זה עוד אין לי תשובה בלי המדריך החכם. אפשר לשאול: מה הבא, איפה לאכול קרוב, מה עושים בגשם, יש לי שעתיים, להוריד או להחליף תחנה, מה עושים בערב, או לשמוע סיפור על המקום.",
