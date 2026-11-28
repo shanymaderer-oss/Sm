@@ -606,8 +606,9 @@ Masa.planner = (() => {
     for (let n = 0; n < 8; n++) {
       const din = d.stops.find(s => s.meal === "dinner"), acts = d.stops.filter(s => !s.meal);
       if (!din || minOf(din.time) <= lim || acts.length <= 2) break;
-      let k = d.stops.indexOf(din), s;
-      while ((s = d.stops[--k]) && (s.meal || s.asked || s.at != null || s.sunset));
+      // the last sight before dinner goes; a must-see (the Colosseum) only when no other sight can
+      let k, s;
+      for (const m of [0, 1]) if (!s) for (k = d.stops.indexOf(din); (s = d.stops[--k]) && (s.meal || s.asked || s.at != null || s.must > m || s.sunset););
       if (!s) break;
       d.stops.splice(k, 1); assignTimes(d);
     }
@@ -625,7 +626,7 @@ Masa.planner = (() => {
       if (s.meal === "drinks") t = Math.max(t, 21.25 * 60);
       t = s.at != null ? s.at : Math.round(t / 15) * 15;
       s.time = fmtTime(t);
-      t += (s._min || 60) + Math.min(legMinutes(day, i), day.move === "car" ? 60 : 45) + 10;
+      t += (s._min ?? 60) + Math.min(legMinutes(day, i), day.move === "car" ? 60 : 45) + 10; // the hotel takes no time (_min 0): the day does not start an hour late
     });
   }
   /* the landing day and the flight-home day: the day starts after reaching the hotel (90 minutes after landing) and ends

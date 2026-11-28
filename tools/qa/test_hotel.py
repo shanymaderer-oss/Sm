@@ -76,10 +76,19 @@ async def main():
             avg = lambda tr: sum(km(h, s) for d in tr["days"] for s in d["stops"] if s.get("meal") != "hotel") / max(1, sum(1 for d in tr["days"] for s in d["stops"] if s.get("meal") != "hotel"))
             a0, a1 = avg(base), avg(t)
             # each day is one area and the must-sees are spread over the city, so a far day can stay; what the hotel changes
-            # is how much of the trip is close to it: more stops within a kilometer, and the average no farther than before (10%)
-            near = lambda tr: sum(1 for d in tr["days"] for s in d["stops"] if s.get("meal") != "hotel" and km(h, s) <= 1)
+            # is how much of the trip is close to it: a bigger share of the stops within a kilometer (days that run late lose
+            # their last sights, so the count alone can drop), and the average no farther than before (10%)
+            stops = lambda tr: [s for d in tr["days"] for s in d["stops"] if s.get("meal") != "hotel"]
+            near = lambda tr: sum(1 for s in stops(tr) if km(h, s) <= 1)
             n0, n1 = near(base), near(t)
-            check(n1 > n0 and a1 <= a0 * 1.1, f"the trip stays closer to the hotel ({n0} stops within 1 km without it, {n1} with it; {a0:.2f} km on average without it, {a1:.2f} with it)")
+            c0, c1 = len(stops(base)), len(stops(t))
+            check(n1 / max(1, c1) > n0 / max(1, c0) and a1 <= a0 * 1.1, f"the trip stays closer to the hotel ({n0}/{c0} stops within 1 km without it, {n1}/{c1} with it; {a0:.2f} km on average without it, {a1:.2f} with it)")
+            # leaving the hotel takes no time: the first stop of the day is not later than without a hotel
+            first = lambda tr: [next(s["time"] for s in d["stops"] if s.get("meal") != "hotel") for d in tr["days"]]
+            f0, f1 = first(base), first(t)
+            check(all(b <= a for a, b in zip(f0, f1)), f"the hotel does not make the day start later ({f0} without it, {f1} with it)")
+            # a day that runs late loses its last minor sights, never a must-see like the Colosseum
+            check(any(s.get("must") and "קולוסיאום" in s["name"] for s in stops(t)), "the Colosseum stays in the trip with a hotel")
         t2 = await build("Hotel Nowhere Imaginary 123")
         check(not t2.get("hotel") and "לא מצאנו" in await pg.inner_text(".screen"), "a hotel we cannot find is said plainly, and the trip is still built")
         check(not errs, f"no page errors {errs[:2]}")
